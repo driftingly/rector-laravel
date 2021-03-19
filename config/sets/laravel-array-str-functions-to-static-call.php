@@ -11,6 +11,7 @@ use Symplify\SymfonyPhpConfig\ValueObjectInliner;
 // @see https://laravel.com/docs/5.7/facades#facades-vs-dependency-injection
 
 return static function (ContainerConfigurator $containerConfigurator): void {
+    $containerConfigurator->import(__DIR__ . '/../../../../../config/config.php');
     $services = $containerConfigurator->services();
 
     $services->set(FuncCallToStaticCallRector::class)

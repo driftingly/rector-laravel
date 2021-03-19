@@ -16,8 +16,3 @@ parameters:
     excludePaths:
         - */Source/*
         - *Source/*
-
-    ignoreErrors:
-        -
-            message: '#Do not inherit from abstract class, better use composition#'
-            path: '*Rector.php'
