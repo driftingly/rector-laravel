@@ -1,0 +1,15 @@
+includes:
+    - vendor/symplify/phpstan-extensions/config/config.neon
+    - vendor/symplify/phpstan-rules/config/symplify-rules.neon
+
+parameters:
+    level: max
+
+    paths:
+        - config
+        - src
+        - tests
+
+    excludePaths:
+        - */Source/*
+        - *Source/*

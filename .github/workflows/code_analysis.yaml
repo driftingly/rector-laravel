@@ -1,0 +1,35 @@
+name: Code Analysis
+
+on:
+    pull_request: null
+    push:
+        branches:
+            - main
+
+jobs:
+    code_analysis:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                actions:
+                    -
+                        name: 'PHPStan'
+                        run: composer phpstan
+                    -
+                        name: 'ECS'
+                        run: composer check-cs
+
+        name: ${{ matrix.actions.name }}
+
+        steps:
+            -   uses: actions/checkout@v2
+
+            -
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 7.3
+                    coverage: none
+
+            -   uses: "ramsey/composer-install@v1"
+
+            -   run: ${{ matrix.actions.run }}

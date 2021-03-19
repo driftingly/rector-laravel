@@ -1,0 +1,9 @@
+.editorconfig export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+
+ecs.php export-ignore
+phpstan.neon export-ignore
+phpunit.xml export-ignore
+stubs export-ignore
+tests export-ignore
