@@ -12,6 +12,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         ->autowire()
         ->autoconfigure();
 
-    $services->load('Rector\\', __DIR__ . '/../src')
+    $services->load('Rector\\Laravel\\', __DIR__ . '/../src')
         ->exclude([__DIR__ . '/../src/{Rector,ValueObject}']);
 };
