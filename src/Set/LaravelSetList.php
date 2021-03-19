@@ -6,7 +6,7 @@ namespace Rector\Laravel\Set;
 
 use Rector\Set\Contract\SetListInterface;
 
-final class LaravelSetProvider implements SetListInterface
+final class LaravelSetList implements SetListInterface
 {
     /**
      * @var string
