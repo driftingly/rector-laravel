@@ -7,6 +7,7 @@ namespace Rector\Laravel\Rector\Class_;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
@@ -120,7 +121,16 @@ CODE_SAMPLE
     private function isTestingConsoleOutput(Class_ $class): bool
     {
         return (bool) $this->betterNodeFinder->findFirst($class->stmts, function (Node $node): bool {
-            return $this->nodeNameResolver->isStaticCallNamed($node, 'Illuminate\Support\Facades\Artisan', 'output');
+            if (! $node instanceof StaticCall) {
+                return false;
+            }
+
+            $callerType = $this->nodeTypeResolver->resolve($node->class);
+            if (! $callerType->isSuperTypeOf(new ObjectType('Illuminate\Support\Facades\Artisan'))) {
+                return false;
+            }
+
+            return $this->isName($node->name, 'output');
         });
     }
 

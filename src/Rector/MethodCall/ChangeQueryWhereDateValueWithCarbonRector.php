@@ -13,6 +13,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -132,7 +133,7 @@ CODE_SAMPLE
         }
 
         // nothing to change
-        if ($this->nodeNameResolver->isStaticCallNamed($argValue, 'Carbon\Carbon', 'today')) {
+        if ($this->isCarbonTodayStaticCall($argValue)) {
             return null;
         }
 
@@ -165,5 +166,21 @@ CODE_SAMPLE
         $whereTimeArgs = [$methodCall->args[0], $methodCall->args[1], new Arg($dateTimeVariable)];
 
         return new MethodCall($methodCall->var, 'whereTime', $whereTimeArgs);
+    }
+
+    private function isCarbonTodayStaticCall(Expr $expr): bool
+    {
+        if (! $expr instanceof StaticCall) {
+            return false;
+        }
+
+        $carbonObjectType = new ObjectType('Carbon\Carbon');
+
+        $callerType = $this->nodeTypeResolver->resolve($expr->class);
+        if (! $carbonObjectType->isSuperTypeOf($callerType)->yes()) {
+            return false;
+        }
+
+        return $this->isName($expr->name, 'today');
     }
 }
