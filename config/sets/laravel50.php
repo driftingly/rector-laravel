@@ -10,7 +10,6 @@ use Symplify\SymfonyPhpConfig\ValueObjectInliner;
 
 # see: https://laravel.com/docs/5.0/upgrade
 return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->import(__DIR__ . '/../../../../../config/config.php');
     $services = $containerConfigurator->services();
 
     # https://stackoverflow.com/a/24949656/1348344

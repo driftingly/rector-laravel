@@ -22,7 +22,6 @@ use Symplify\SymfonyPhpConfig\ValueObjectInliner;
 # https://github.com/laravel/docs/pull/5531/files
 
 return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->import(__DIR__ . '/../../../../../config/config.php');
     $services = $containerConfigurator->services();
 
     $services->set(MethodCallToReturnRector::class)

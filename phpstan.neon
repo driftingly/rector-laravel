@@ -16,3 +16,9 @@ parameters:
     excludePaths:
         - */Source/*
         - *Source/*
+
+    ignoreErrors:
+        -
+            message: '#Do not use static property#'
+            paths:
+                - tests/bootstrap.php

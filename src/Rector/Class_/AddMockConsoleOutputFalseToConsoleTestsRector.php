@@ -126,7 +126,7 @@ CODE_SAMPLE
             }
 
             $callerType = $this->nodeTypeResolver->resolve($node->class);
-            if (! $callerType->isSuperTypeOf(new ObjectType('Illuminate\Support\Facades\Artisan'))) {
+            if (! $callerType->isSuperTypeOf(new ObjectType('Illuminate\Support\Facades\Artisan'))->yes()) {
                 return false;
             }
 

@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 # see: https://laravel.com/docs/5.1/upgrade
 return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->import(__DIR__ . '/../../../../../config/config.php');
     $services = $containerConfigurator->services();
 
     $services->set(RenameClassRector::class)
