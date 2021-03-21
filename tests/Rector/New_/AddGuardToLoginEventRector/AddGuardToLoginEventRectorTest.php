@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Tests\Laravel\Rector\New_\AddGuardToLoginEventRector;
+namespace Rector\Laravel\Tests\Rector\New_\AddGuardToLoginEventRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

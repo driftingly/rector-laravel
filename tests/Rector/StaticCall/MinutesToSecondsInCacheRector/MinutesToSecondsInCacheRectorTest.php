@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Tests\Laravel\Rector\StaticCall\MinutesToSecondsInCacheRector;
+namespace Rector\Laravel\Tests\Rector\StaticCall\MinutesToSecondsInCacheRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

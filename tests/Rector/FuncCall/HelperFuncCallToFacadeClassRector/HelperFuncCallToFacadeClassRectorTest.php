@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Tests\Laravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
+namespace Rector\Laravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

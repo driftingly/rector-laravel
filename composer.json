@@ -20,7 +20,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Rector\\Tests\\Laravel\\": "tests"
+            "Rector\\Laravel\\Tests\\": "tests"
         },
         "classmap": ["stubs"]
     },

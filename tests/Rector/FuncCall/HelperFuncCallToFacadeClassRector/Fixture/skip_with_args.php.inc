@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Tests\Laravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector\Fixture;
+namespace Rector\Laravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector\Fixture;
 
 class SkipWithArgs
 {

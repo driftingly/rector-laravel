@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Tests\Laravel\Rector\ClassMethod\AddParentBootToModelClassMethodRector\Fixture;
+namespace Rector\Laravel\Tests\Rector\ClassMethod\AddParentBootToModelClassMethodRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,7 +17,7 @@ class OnTheLastLine extends Model
 -----
 <?php
 
-namespace Rector\Tests\Laravel\Rector\ClassMethod\AddParentBootToModelClassMethodRector\Fixture;
+namespace Rector\Laravel\Tests\Rector\ClassMethod\AddParentBootToModelClassMethodRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 
