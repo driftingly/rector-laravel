@@ -29,6 +29,11 @@
         "check-cs": "vendor/bin/ecs check --ansi",
         "fix-cs": "vendor/bin/ecs check --fix --ansi"
     },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.10-dev"
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
