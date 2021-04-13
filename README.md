@@ -5,7 +5,7 @@ See available [Laravel rules](/docs/rector_rules_overview.md)
 ## Install
 
 ```bash
-composer require rector/rector-laravel
+composer require rector/rector-laravel --dev
 ```
 
 ## Use Sets
