@@ -114,11 +114,11 @@ CODE_SAMPLE
 
     private function matchWhereDateThirdArgValue(MethodCall $methodCall): ?Expr
     {
-        if (! $this->isOnClassMethodCall(
-            $methodCall,
-            new ObjectType('Illuminate\Database\Query\Builder'),
-            'whereDate'
-        )) {
+        if (! $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Database\Query\Builder'))) {
+            return null;
+        }
+
+        if (! $this->isName($methodCall->name, 'whereDate')) {
             return null;
         }
 
