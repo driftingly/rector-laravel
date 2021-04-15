@@ -1,5 +1,6 @@
 {
     "name": "rector/rector-laravel",
+    "type": "rector-extension",
     "license": "MIT",
     "description": "Rector upgrades rules for Laravel Framework",
     "require": {
@@ -37,6 +38,11 @@
     "extra": {
         "branch-alias": {
             "dev-main": "0.10-dev"
+        },
+        "rector": {
+            "includes": [
+                "config/config.php"
+            ]
         }
     },
     "conflict": {
