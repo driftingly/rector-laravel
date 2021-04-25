@@ -13,7 +13,9 @@
         "symplify/phpstan-extensions": "^9.2",
         "symplify/easy-coding-standard": "^9.2",
         "tracy/tracy": "^2.8",
-        "symplify/rule-doc-generator": "^9.2"
+        "symplify/rule-doc-generator": "^9.2",
+        "rector/rector-phpstan-rules": "dev-main",
+        "phpstan/extension-installer": "^1.1"
     },
     "autoload": {
         "psr-4": {

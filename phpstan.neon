@@ -1,7 +1,3 @@
-includes:
-    - vendor/symplify/phpstan-extensions/config/config.neon
-    - vendor/symplify/phpstan-rules/config/symplify-rules.neon
-
 parameters:
     level: max
 
@@ -16,9 +12,3 @@ parameters:
     excludePaths:
         - */Source/*
         - *Source/*
-
-    ignoreErrors:
-        -
-            message: '#Do not use static property#'
-            paths:
-                - tests/bootstrap.php
