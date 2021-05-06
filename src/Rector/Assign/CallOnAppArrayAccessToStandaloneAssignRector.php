@@ -37,7 +37,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',
             'Illuminate\Validation\Factory',
-        'validationFactory'
+            'validationFactory'
         );
 
         $this->appAssignFactory = $appAssignFactory;
@@ -102,7 +102,8 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
     {
         return new RuleDefinition(
             'Replace magical call on $this->app["something"] to standalone type assign variable',
-            [new CodeSample(<<<'CODE_SAMPLE'
+            [new CodeSample(
+                <<<'CODE_SAMPLE'
 class SomeClass
 {
     /**
@@ -116,7 +117,8 @@ class SomeClass
     }
 }
 CODE_SAMPLE
-, <<<'CODE_SAMPLE'
+,
+                <<<'CODE_SAMPLE'
 class SomeClass
 {
     /**
@@ -132,6 +134,7 @@ class SomeClass
     }
 }
 CODE_SAMPLE
-                )]);
+            )]
+        );
     }
 }
