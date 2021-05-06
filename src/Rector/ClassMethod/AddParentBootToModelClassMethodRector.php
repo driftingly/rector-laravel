@@ -66,9 +66,9 @@ class Product extends Model
     }
 }
 CODE_SAMPLE
-
-            ),
-            ]);
+                ),
+            ]
+        );
     }
 
     /**
