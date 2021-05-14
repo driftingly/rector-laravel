@@ -13,6 +13,8 @@ parameters:
         - */Source/*
         - *Source/*
 
+    reportUnmatchedIgnoredErrors: false
+
     ignoreErrors:
         # not on PHP 7.4 yet
         - '#This property type might be inlined to PHP\. Do you have confidence it is correct\? Put it here#'
