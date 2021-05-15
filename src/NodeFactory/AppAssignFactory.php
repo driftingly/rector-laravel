@@ -15,14 +15,9 @@ use Rector\Laravel\ValueObject\ServiceNameTypeAndVariableName;
 
 final class AppAssignFactory
 {
-    /**
-     * @var PhpDocInfoFactory
-     */
-    private $phpDocInfoFactory;
-
-    public function __construct(PhpDocInfoFactory $phpDocInfoFactory)
-    {
-        $this->phpDocInfoFactory = $phpDocInfoFactory;
+    public function __construct(
+        private PhpDocInfoFactory $phpDocInfoFactory
+    ) {
     }
 
     public function createAssignExpression(
