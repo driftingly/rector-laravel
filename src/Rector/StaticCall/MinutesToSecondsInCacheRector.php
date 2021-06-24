@@ -8,12 +8,11 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Mul;
-use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\LNumber;
-use PhpParser\Node\Stmt\ClassConst;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Laravel\Reflection\ClassConstantReflectionResolver;
 use Rector\Laravel\ValueObject\TypeToTimeMethodAndPosition;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -51,8 +50,9 @@ final class MinutesToSecondsInCacheRector extends AbstractRector
      */
     private array $typeToTimeMethodsAndPositions = [];
 
-    public function __construct()
-    {
+    public function __construct(
+        private ClassConstantReflectionResolver $classConstantReflectionResolver
+    ) {
         $this->typeToTimeMethodsAndPositions = [
             new TypeToTimeMethodAndPosition('Illuminate\Support\Facades\Cache', self::PUT, 2),
             new TypeToTimeMethodAndPosition('Illuminate\Contracts\Cache\Repository', self::PUT, 2),
@@ -130,24 +130,17 @@ CODE_SAMPLE
             }
 
             $argValue = $node->args[$typeToTimeMethodAndPosition->getPosition()]->value;
-
             return $this->processArgumentOnPosition($node, $argValue, $typeToTimeMethodAndPosition->getPosition());
         }
 
         return $node;
     }
 
-    /**
-     * @param StaticCall|MethodCall $node
-     * @return StaticCall|MethodCall|null
-     */
-    private function processArgumentOnPosition(Node $node, Expr $argExpr, int $argumentPosition): ?Expr
-    {
-        if ($argExpr instanceof ClassConstFetch) {
-            $this->refactorClassConstFetch($argExpr);
-            return null;
-        }
-
+    private function processArgumentOnPosition(
+        StaticCall | MethodCall $node,
+        Expr $argExpr,
+        int $argumentPosition
+    ): StaticCall | MethodCall | null {
         if (! $this->nodeTypeResolver->isNumberType($argExpr)) {
             return null;
         }
@@ -156,24 +149,6 @@ CODE_SAMPLE
         $node->args[$argumentPosition] = new Arg($mul);
 
         return $node;
-    }
-
-    private function refactorClassConstFetch(ClassConstFetch $classConstFetch): void
-    {
-        $classConst = $this->nodeRepository->findClassConstByClassConstFetch($classConstFetch);
-        if (! $classConst instanceof ClassConst) {
-            return;
-        }
-
-        $onlyConst = $classConst->consts[0];
-
-        $alreadyMultiplied = (bool) $onlyConst->getAttribute(self::ATTRIBUTE_KEY_ALREADY_MULTIPLIED);
-        if ($alreadyMultiplied) {
-            return;
-        }
-
-        $onlyConst->value = $this->mulByNumber($onlyConst->value, 60);
-        $onlyConst->setAttribute(self::ATTRIBUTE_KEY_ALREADY_MULTIPLIED, true);
     }
 
     private function mulByNumber(Expr $argExpr, int $value): Expr
