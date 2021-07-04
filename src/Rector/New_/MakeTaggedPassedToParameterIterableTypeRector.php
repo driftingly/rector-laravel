@@ -13,6 +13,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PHPStanStaticTypeMapper\ValueObject\TypeKind;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -123,7 +124,7 @@ CODE_SAMPLE
             return;
         }
 
-        $argTypeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($argValueType);
+        $argTypeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($argValueType, TypeKind::PARAM());
         $param->type = $argTypeNode;
     }
 }
