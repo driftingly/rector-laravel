@@ -28,11 +28,6 @@ final class MinutesToSecondsInCacheRector extends AbstractRector
     /**
      * @var string
      */
-    private const ATTRIBUTE_KEY_ALREADY_MULTIPLIED = 'already_multiplied';
-
-    /**
-     * @var string
-     */
     private const PUT = 'put';
 
     /**
@@ -145,18 +140,14 @@ CODE_SAMPLE
             return null;
         }
 
-        $mul = $this->mulByNumber($argExpr, 60);
+        // already multiplied
+        if ($argExpr instanceof Mul) {
+            return null;
+        }
+
+        $mul = new Mul($argExpr, new LNumber(60));
         $node->args[$argumentPosition] = new Arg($mul);
 
         return $node;
-    }
-
-    private function mulByNumber(Expr $argExpr, int $value): Expr
-    {
-        if ($this->valueResolver->isValue($argExpr, 1)) {
-            return new LNumber($value);
-        }
-
-        return new Mul($argExpr, new LNumber($value));
     }
 }
