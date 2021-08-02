@@ -23,12 +23,6 @@ use Symplify\SymfonyPhpConfig\ValueObjectInliner;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
-    $services->set(MethodCallToReturnRector::class)
-        ->call('configure', [[
-            MethodCallToReturnRector::METHOD_CALL_WRAPS => ValueObjectInliner::inline([
-                new MethodCallToReturn('Illuminate\Auth\Access\HandlesAuthorization', 'deny'),
-            ]),
-        ]]);
 
     # https://github.com/laravel/framework/commit/67a38ba0fa2acfbd1f4af4bf7d462bb4419cc091
     $services->set(ParamTypeDeclarationRector::class);
