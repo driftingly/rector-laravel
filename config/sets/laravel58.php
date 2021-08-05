@@ -37,5 +37,4 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ]),
         ]]);
     $services->set(PropertyDeferToDeferrableProviderToRector::class);
-    $services->set(MakeTaggedPassedToParameterIterableTypeRector::class);
 };
