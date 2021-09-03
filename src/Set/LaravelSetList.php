@@ -71,6 +71,11 @@ final class LaravelSetList implements SetListInterface
     /**
      * @var string
      */
+    public const LARAVEL_80 = __DIR__ . '/../../config/sets/laravel80.php';
+
+    /**
+     * @var string
+     */
     public const LARAVEL_STATIC_TO_INJECTION = __DIR__ . '/../../config/sets/laravel-static-to-injection.php';
 
     /**
