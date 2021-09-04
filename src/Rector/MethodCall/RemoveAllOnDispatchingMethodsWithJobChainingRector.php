@@ -12,6 +12,9 @@ use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * @see \Rector\Laravel\Tests\Rector\MethodCall\RemoveAllOnDispatchingMethodsWithJobChainingRector\RemoveAllOnDispatchingMethodsWithJobChainingRectorTest
+ */
 class RemoveAllOnDispatchingMethodsWithJobChainingRector extends AbstractRector
 {
     /**
