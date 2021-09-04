@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
+use Rector\Laravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
+use Rector\Laravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
+use Rector\Laravel\ValueObject\AddArgumentDefaultValue;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
@@ -31,7 +34,15 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         ]]);
 
     # https://github.com/laravel/framework/commit/46084d946cdcd1ae1f32fc87a4f1cc9e3a5bccf6
-    // TODO: Add default value to argument
+    $services->set(AddArgumentDefaultValueRector::class)
+        ->call('configure', [[
+            AddArgumentDefaultValueRector::ADDED_ARGUMENTS => ValueObjectInliner::inline([
+                new AddArgumentDefaultValue('Illuminate\Contracts\Events\Dispatcher', 'listen', 1, null),
+            ]),
+        ]]);
+
+    # https://github.com/laravel/framework/commit/f1289515b27e93248c09f04e3011bb7ce21b2737
+    $services->set(AddParentRegisterToEventServiceProviderRector::class);
 
     $services->set(RenamePropertyRector::class)
         ->call('configure', [[
