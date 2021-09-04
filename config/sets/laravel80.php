@@ -6,6 +6,7 @@ use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Laravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
 use Rector\Laravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
+use Rector\Laravel\Rector\MethodCall\RemoveAllOnDispatchingMethodsWithJobChainingRector;
 use Rector\Laravel\ValueObject\AddArgumentDefaultValue;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
@@ -71,4 +72,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 new MethodCallRename('Illuminate\Testing\TestResponse', 'assertExactJson', 'assertSimilarJson'),
             ]),
         ]]);
+
+    # https://github.com/laravel/framework/commit/de662daf75207a8dd69565ed3630def74bc538d3
+    $services->set(RemoveAllOnDispatchingMethodsWithJobChainingRector::class);
 };
