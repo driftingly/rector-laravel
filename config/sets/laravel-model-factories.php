@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Rector\Laravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
 use Rector\Laravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector;
 use Rector\Laravel\Rector\Namespace_\FactoryDefinitionRector;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
