@@ -87,4 +87,9 @@ final class LaravelSetList implements SetListInterface
      * @var string
      */
     public const LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL = __DIR__ . '/../../config/sets/laravel-array-str-functions-to-static-call.php';
+
+    /**
+     * @var string
+     */
+    public const LARAVEL_MODEL_FACTORIES = __DIR__ . '/../../config/sets/laravel-model-factories.php';
 }
