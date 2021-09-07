@@ -14,14 +14,13 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\Laravel\Tests\Rector\FuncCall\FactoryDefinitionRector\FactoryDefinitionRectorTest
+ * @see \Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\FactoryDefinitionRectorTest
  */
 class FactoryDefinitionRector extends AbstractRector
 {
     public function __construct(
         private ModelFactoryFactory $modelFactoryFactory
-    )
-    {
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -98,52 +97,6 @@ CODE_SAMPLE
         return $node;
     }
 
-    private function getNameFromClassConstFetch(Expr $classConstFetch): ?Node\Name
-    {
-        if (! $classConstFetch instanceof Node\Expr\ClassConstFetch) {
-            return null;
-        }
-        if ($classConstFetch->class instanceof Expr) {
-            return null;
-        }
-        return $classConstFetch->class;
-    }
-
-    private function processFactoryConfiguration(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall): void
-    {
-
-        if ($this->isName($methodCall->name, 'define')) {
-
-            $this->addDefinition($factory, $methodCall);
-        }
-
-        if ($this->isName($methodCall->name, 'state')) {
-
-            $this->addState($factory, $methodCall);
-        }
-
-        if (! $this->isNames($methodCall->name, ['afterMaking', 'afterCreating'])) {
-            return;
-        }
-        $name = $this->getName($methodCall->name);
-        if ($name === null) {
-            return;
-        }
-        $this->addAfterCalling($factory, $methodCall, $name);
-    }
-
-    private function shouldSkipExpression(Node\Expr\MethodCall $methodCall): bool
-    {
-        if (! $methodCall->args[0]->value instanceof Node\Expr\ClassConstFetch) {
-            return true;
-
-        }
-        if (! $this->isNames($methodCall->name, ['define', 'state', 'afterMaking', 'afterCreating'])) {
-            return true;
-        }
-        return false;
-    }
-
     public function addState(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall): void
     {
         if (count($methodCall->args) !== 3) {
@@ -163,6 +116,48 @@ CODE_SAMPLE
             return;
         }
         $factory->stmts[] = $this->modelFactoryFactory->createDefinition($callback);
+    }
+
+    private function getNameFromClassConstFetch(Expr $classConstFetch): ?Node\Name
+    {
+        if (! $classConstFetch instanceof Node\Expr\ClassConstFetch) {
+            return null;
+        }
+        if ($classConstFetch->class instanceof Expr) {
+            return null;
+        }
+        return $classConstFetch->class;
+    }
+
+    private function processFactoryConfiguration(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall): void
+    {
+        if ($this->isName($methodCall->name, 'define')) {
+            $this->addDefinition($factory, $methodCall);
+        }
+
+        if ($this->isName($methodCall->name, 'state')) {
+            $this->addState($factory, $methodCall);
+        }
+
+        if (! $this->isNames($methodCall->name, ['afterMaking', 'afterCreating'])) {
+            return;
+        }
+        $name = $this->getName($methodCall->name);
+        if ($name === null) {
+            return;
+        }
+        $this->addAfterCalling($factory, $methodCall, $name);
+    }
+
+    private function shouldSkipExpression(Node\Expr\MethodCall $methodCall): bool
+    {
+        if (! $methodCall->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+            return true;
+        }
+        if (! $this->isNames($methodCall->name, ['define', 'state', 'afterMaking', 'afterCreating'])) {
+            return true;
+        }
+        return false;
     }
 
     private function factoryTypeChanged(Node\Expr $expr): bool

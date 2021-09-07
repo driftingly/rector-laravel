@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rector\Laravel\NodeFactory;
 
 use PhpParser\Node;
@@ -14,17 +16,15 @@ use Symplify\Astral\ValueObject\NodeBuilder\MethodBuilder;
 class ModelFactoryFactory
 {
     public function __construct(
-        private NodeNameResolver            $nodeNameResolver,
-        private NodeFactory                 $nodeFactory,
-        private ValueResolver               $valueResolver,
+        private NodeNameResolver $nodeNameResolver,
+        private NodeFactory $nodeFactory,
+        private ValueResolver $valueResolver,
         private SimpleCallableNodeTraverser $simpleCallableNodeTraverser
-    )
-    {
+    ) {
     }
 
     public function createStateMethod(MethodCall $methodCall): Node\Stmt\ClassMethod
     {
-
         $closure = $methodCall->args[2]->value;
         if ($closure instanceof Node\Expr\Closure) {
             $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[0]);
@@ -45,6 +45,30 @@ class ModelFactoryFactory
     {
         $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[0]);
         return $this->createPublicMethod('definition', $closure->stmts);
+    }
+
+    public function createEmptyConfigure(): Node\Stmt\ClassMethod
+    {
+        return $this->createPublicMethod('configure', [new Node\Stmt\Return_(new Node\Expr\Variable('this'))]);
+    }
+
+    public function appendConfigure(Node\Stmt\ClassMethod $classMethod, string $name, Node\Expr\Closure $closure): void
+    {
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable(
+            (array) $classMethod->stmts,
+            function (Node $node) use ($closure, $name) {
+                if (! $node instanceof Node\Stmt\Return_) {
+                    return null;
+                }
+                if ($node->expr === null) {
+                    return null;
+                }
+                $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[1]);
+                unset($closure->params[1]);
+                $node->expr = $this->nodeFactory->createMethodCall($node->expr, $name, [$closure]);
+                return $node;
+            }
+        );
     }
 
     /**
@@ -77,26 +101,5 @@ class ModelFactoryFactory
         $methodBuilder->makePublic();
         $methodBuilder->addStmts($stmts);
         return $methodBuilder->getNode();
-    }
-
-    public function createEmptyConfigure(): Node\Stmt\ClassMethod
-    {
-        return $this->createPublicMethod('configure', [new Node\Stmt\Return_(new Node\Expr\Variable('this'))]);
-    }
-
-    public function appendConfigure(Node\Stmt\ClassMethod $classMethod, string $name, Node\Expr\Closure $closure): void
-    {
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use ($closure, $name) {
-            if (! $node instanceof Node\Stmt\Return_) {
-                return null;
-            }
-            if ($node->expr === null) {
-                return null;
-            }
-            $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[1]);
-            unset($closure->params[1]);
-            $node->expr = $this->nodeFactory->createMethodCall($node->expr, $name, [$closure]);
-            return $node;
-        });
     }
 }
