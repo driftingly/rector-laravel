@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Rector\Laravel\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\StaticCall;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -12,8 +15,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Laravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector\FactoryFuncCallToStaticCallRectorTest
  */
-class FactoryFuncCallToStaticCallRector extends AbstractRector
+final class FactoryFuncCallToStaticCallRector extends AbstractRector
 {
+    /**
+     * @var string
+     */
+    private const FACTORY = 'factory';
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Use the static factory method instead of global factory function.', [
@@ -35,7 +43,7 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [Node\Expr\FuncCall::class];
+        return [FuncCall::class];
     }
 
     /**
@@ -43,21 +51,27 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isName($node->name, 'factory')) {
+        if (! $this->isName($node->name, self::FACTORY)) {
             return null;
         }
-        if (count($node->args) === 0) {
+
+        if ($node->args === []) {
             return null;
         }
+
         $firstArgValue = $node->args[0]->value;
-        if (! $firstArgValue instanceof Node\Expr\ClassConstFetch) {
+        if (! $firstArgValue instanceof ClassConstFetch) {
             return null;
         }
+
         $model = $firstArgValue->class;
 
+        // create model
         if (count($node->args) === 1) {
-            return new Node\Expr\StaticCall($model, 'factory');
+            return new StaticCall($model, self::FACTORY);
         }
-        return new Node\Expr\StaticCall($model, 'factory', [$node->args[1]]);
+
+        // create models of a given type
+        return new StaticCall($model, self::FACTORY, [$node->args[1]]);
     }
 }
