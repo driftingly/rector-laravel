@@ -85,7 +85,7 @@ CODE_SAMPLE
             // 1. extract assign
             $dateTimeVariable = new Variable('dateTime');
             $assign = new Assign($dateTimeVariable, $argValue);
-            $this->addNodeBeforeNode($assign, $node);
+            $this->nodesToAddCollector->addNodeBeforeNode($assign, $node);
 
             $node->args[2]->value = $dateTimeVariable;
 
@@ -94,7 +94,7 @@ CODE_SAMPLE
 
             // 2. add "whereTime()" time call
             $whereTimeMethodCall = $this->createWhereTimeMethodCall($node, $dateTimeVariable);
-            $this->addNodeAfterNode($whereTimeMethodCall, $node);
+            $this->nodesToAddCollector->addNodeAfterNode($whereTimeMethodCall, $node);
 
             return $node;
         }
@@ -106,7 +106,7 @@ CODE_SAMPLE
 
             // 2. add "whereTime()" time call
             $whereTimeMethodCall = $this->createWhereTimeMethodCall($node, $dateTimeVariable);
-            $this->addNodeAfterNode($whereTimeMethodCall, $node);
+            $this->nodesToAddCollector->addNodeAfterNode($whereTimeMethodCall, $node);
         }
 
         return null;
