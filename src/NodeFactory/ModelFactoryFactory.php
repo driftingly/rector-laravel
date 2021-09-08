@@ -12,6 +12,7 @@ use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
 use Symplify\Astral\ValueObject\NodeBuilder\MethodBuilder;
+use Symplify\Astral\ValueObject\NodeBuilder\PropertyBuilder;
 
 class ModelFactoryFactory
 {
@@ -23,6 +24,18 @@ class ModelFactoryFactory
     ) {
     }
 
+    public function createEmptyFactory(string $name, Node\Expr $expr): Node\Stmt\Class_
+    {
+        $factory = new Node\Stmt\Class_($name . 'Factory');
+        $factory->extends = new Node\Name\FullyQualified('Illuminate\Database\Eloquent\Factories\Factory');
+        $builder = new PropertyBuilder('model');
+        $builder->makeProtected();
+        $builder->setDefault($expr);
+        $model = $builder->getNode();
+        $factory->stmts[] = $model;
+        return $factory;
+    }
+
     public function createStateMethod(MethodCall $methodCall): Node\Stmt\ClassMethod
     {
         $closure = $methodCall->args[2]->value;
@@ -30,15 +43,9 @@ class ModelFactoryFactory
             $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[0]);
             $closure->params[0] = $this->nodeFactory->createParamFromNameAndType('attributes', new ObjectType('array'));
         }
-
-        return $this->createPublicMethod(
-            $this->valueResolver->getValue($methodCall->args[1]->value),
-            [
-                new Node\Stmt\Return_($this->nodeFactory->createMethodCall('this', 'state', [
-                    $methodCall->args[2],
-                ])),
-            ]
-        );
+        $expr = $this->nodeFactory->createMethodCall('this', 'state', [$methodCall->args[2]]);
+        $return = new Node\Stmt\Return_($expr);
+        return $this->createPublicMethod($this->valueResolver->getValue($methodCall->args[1]->value), [$return]);
     }
 
     public function createDefinition(Node\Expr\Closure $closure): Node\Stmt\ClassMethod
@@ -49,7 +56,8 @@ class ModelFactoryFactory
 
     public function createEmptyConfigure(): Node\Stmt\ClassMethod
     {
-        return $this->createPublicMethod('configure', [new Node\Stmt\Return_(new Node\Expr\Variable('this'))]);
+        $return = new Node\Stmt\Return_(new Node\Expr\Variable('this'));
+        return $this->createPublicMethod('configure', [$return]);
     }
 
     public function appendConfigure(Node\Stmt\ClassMethod $classMethod, string $name, Node\Expr\Closure $closure): void

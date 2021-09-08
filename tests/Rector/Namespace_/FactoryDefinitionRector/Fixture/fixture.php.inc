@@ -2,35 +2,31 @@
 
 namespace Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
 
-use App\User;
-use Faker\Generator as Faker;
-use Illuminate\Support\Str;
+use Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model;
 
-$factory->define(User::class, function (\Faker\Generator $faker) {
+$factory->define(Model::class, function ($faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-        'remember_token' => Str::random(10),
     ];
 });
 
-$factory->state(User::class, 'address', function ($faker) {
+$factory->state(Model::class, 'address', function ($faker) {
     return [
         'address' => $faker->address,
     ];
 });
 
-$factory->state(User::class, 'delinquent', [
+$factory->state(Model::class, 'delinquent', [
     'account_status' => 'delinquent',
 ]);
 
-$factory->afterMaking(User::class, function (User $user, $faker) {
+$factory->afterMaking(Model::class, function (Model $user, $faker) {
     $user->name = $faker->name;
 });
 
-$factory->afterCreating(User::class, function ($user, $faker) {
+$factory->afterCreating(Model::class, function ($user, $faker) {
     $user->name = $faker->name;
     $user->accounts()->save(factory(\App\Account::class)->make());
 });
@@ -41,20 +37,16 @@ $factory->afterCreating(User::class, function ($user, $faker) {
 
 namespace Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
 
-use App\User;
-use Faker\Generator as Faker;
-use Illuminate\Support\Str;
-class UserFactory extends \Illuminate\Database\Eloquent\Factories\Factory
+use Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model;
+class ModelFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 {
-    protected $model = User::class;
+    protected $model = Model::class;
     public function definition()
     {
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
-            'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'remember_token' => Str::random(10),
         ];
     }
     public function address()
@@ -73,7 +65,7 @@ class UserFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     }
     public function configure()
     {
-        return $this->afterMaking(function (User $user) {
+        return $this->afterMaking(function (Model $user) {
             $user->name = $this->faker->name;
         })->afterCreating(function ($user) {
             $user->name = $this->faker->name;

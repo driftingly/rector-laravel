@@ -2,24 +2,20 @@
 
 namespace Illuminate\Database\Eloquent\Factories;
 
-if (class_exists('Illuminate\Database\Eloquent\Factories\Factory')) {
-    return;
-}
-
-class Factory
-{
-
-    use Closure;
-    use Faker\Generator;
-    use Illuminate\Container\Container;
-    use Illuminate\Contracts\Foundation\Application;
-    use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Closure;
+use Faker\Generator;
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Macroable;
 use Throwable;
+if (class_exists('Illuminate\Database\Eloquent\Factories\Factory')) {
+    return;
+}
 
 abstract class Factory
 {
@@ -824,5 +820,4 @@ abstract class Factory
             );
         }
     }
-}
 }

@@ -9,7 +9,6 @@ use PhpParser\Node\Expr;
 use Rector\Core\PhpParser\Node\CustomNode\FileWithoutNamespace;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Laravel\NodeFactory\ModelFactoryFactory;
-use Symplify\Astral\ValueObject\NodeBuilder\PropertyBuilder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -25,25 +24,32 @@ class FactoryDefinitionRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Change app() func calls to facade calls', [
+        return new RuleDefinition('Upgrade legacy factories to support classes.', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
-class SomeClass
-{
-    public function run()
-    {
-        return app('translator')->trans('value');
-    }
-}
+use Faker\Generator as Faker;
+
+$factory->define(App\User::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name,
+        'email' => $faker->unique()->safeEmail,
+    ];
+});
 CODE_SAMPLE
 
                 ,
                 <<<'CODE_SAMPLE'
-class SomeClass
+use Faker\Generator as Faker;
+
+class UserFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 {
-    public function run()
+    protected $model = App\User::class;
+    public function definition()
     {
-        return \Illuminate\Support\Facades\App::get('translator')->trans('value');
+        return [
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+        ];
     }
 }
 CODE_SAMPLE
@@ -97,25 +103,24 @@ CODE_SAMPLE
         return $node;
     }
 
-    public function addState(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall): void
+    private function factoryTypeChanged(Node\Expr $expr): bool
     {
-        if (count($methodCall->args) !== 3) {
-            return;
+        if (! $expr instanceof Node\Expr\Assign) {
+            return false;
         }
 
-        $factory->stmts[] = $this->modelFactoryFactory->createStateMethod($methodCall);
+        return $this->isName($expr->var, 'factory');
     }
 
-    public function addDefinition(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall): void
+    private function shouldSkipExpression(Node\Expr\MethodCall $methodCall): bool
     {
-        if (count($methodCall->args) !== 2) {
-            return;
+        if (! $methodCall->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+            return true;
         }
-        $callback = $methodCall->args[1]->value;
-        if (! $callback instanceof Node\Expr\Closure) {
-            return;
+        if (! $this->isNames($methodCall->name, ['define', 'state', 'afterMaking', 'afterCreating'])) {
+            return true;
         }
-        $factory->stmts[] = $this->modelFactoryFactory->createDefinition($callback);
+        return false;
     }
 
     private function getNameFromClassConstFetch(Expr $classConstFetch): ?Node\Name
@@ -129,8 +134,16 @@ CODE_SAMPLE
         return $classConstFetch->class;
     }
 
+    private function createFactory(string $name, Expr $expr): Node\Stmt\Class_
+    {
+        return $this->modelFactoryFactory->createEmptyFactory($name, $expr);
+    }
+
     private function processFactoryConfiguration(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall): void
     {
+        if (! $this->isName($methodCall->var, 'factory')) {
+            return;
+        }
         if ($this->isName($methodCall->name, 'define')) {
             $this->addDefinition($factory, $methodCall);
         }
@@ -149,36 +162,25 @@ CODE_SAMPLE
         $this->addAfterCalling($factory, $methodCall, $name);
     }
 
-    private function shouldSkipExpression(Node\Expr\MethodCall $methodCall): bool
+    private function addDefinition(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall): void
     {
-        if (! $methodCall->args[0]->value instanceof Node\Expr\ClassConstFetch) {
-            return true;
+        if (count($methodCall->args) !== 2) {
+            return;
         }
-        if (! $this->isNames($methodCall->name, ['define', 'state', 'afterMaking', 'afterCreating'])) {
-            return true;
+        $callback = $methodCall->args[1]->value;
+        if (! $callback instanceof Node\Expr\Closure) {
+            return;
         }
-        return false;
+        $factory->stmts[] = $this->modelFactoryFactory->createDefinition($callback);
     }
 
-    private function factoryTypeChanged(Node\Expr $expr): bool
+    private function addState(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall): void
     {
-        if (! $expr instanceof Node\Expr\Assign) {
-            return false;
+        if (count($methodCall->args) !== 3) {
+            return;
         }
 
-        return $this->isName($expr->var, 'factory');
-    }
-
-    private function createFactory(string $name, Expr $expr): Node\Stmt\Class_
-    {
-        $factory = new Node\Stmt\Class_($name . 'Factory');
-        $factory->extends = new Node\Name\FullyQualified('Illuminate\Database\Eloquent\Factories\Factory');
-        $builder = new PropertyBuilder('model');
-        $builder->makeProtected();
-        $builder->setDefault($expr);
-        $model = $builder->getNode();
-        $factory->stmts[] = $model;
-        return $factory;
+        $factory->stmts[] = $this->modelFactoryFactory->createStateMethod($methodCall);
     }
 
     private function addAfterCalling(Node\Stmt\Class_ $factory, Node\Expr\MethodCall $methodCall, string $name): void
@@ -196,26 +198,5 @@ CODE_SAMPLE
             return;
         }
         $this->modelFactoryFactory->appendConfigure($method, $name, $closure);
-    }
-
-    /**
-     * @param Node\Stmt[] $stmts
-     * @param \PhpParser\Node\Param $param
-     */
-    private function fakerVariableToPropertyFetch(array $stmts, Node\Param $param): void
-    {
-        $this->traverseNodesWithCallable($stmts, function (Node $node) use ($param) {
-            if (! $node instanceof Node\Expr\Variable) {
-                return null;
-            }
-            $name = $this->getName($param->var);
-            if ($name === null) {
-                return null;
-            }
-            if (! $this->isName($node, $name)) {
-                return null;
-            }
-            return $this->nodeFactory->createPropertyFetch('this', 'faker');
-        });
     }
 }
