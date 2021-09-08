@@ -91,5 +91,5 @@ final class LaravelSetList implements SetListInterface
     /**
      * @var string
      */
-    public const LARAVEL_MODEL_FACTORIES = __DIR__ . '/../../config/sets/laravel-model-factories.php';
+    public const LARAVEL_LEGACY_FACTORIES_TO_CLASSES = __DIR__ . '/../../config/sets/laravel-legacy-factories-to-classes.php';
 }
