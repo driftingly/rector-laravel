@@ -23,7 +23,7 @@ final class FactoryApplyingStatesRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Upgrade legacy factories to support classes.', [
+        return new RuleDefinition('Call the state methods directly instead of specify the name of state.', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
 $factory->state('delinquent');
