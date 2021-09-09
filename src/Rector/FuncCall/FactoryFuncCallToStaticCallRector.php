@@ -13,6 +13,9 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
+ * @see https://laravel.com/docs/7.x/database-testing#creating-models
+ * @see https://laravel.com/docs/8.x/database-testing#instantiating-models
+ *
  * @see \Rector\Laravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector\FactoryFuncCallToStaticCallRectorTest
  */
 final class FactoryFuncCallToStaticCallRector extends AbstractRector

@@ -15,7 +15,6 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
-use PHPStan\Type\ObjectType;
 use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -53,7 +52,10 @@ final class ModelFactoryNodeFactory
 
     public function createDefinition(Closure $closure): ClassMethod
     {
-        $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[0]);
+        if (isset($closure->params[0])) {
+            $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[0]);
+        }
+
         return $this->createPublicMethod('definition', $closure->stmts);
     }
 
@@ -61,12 +63,9 @@ final class ModelFactoryNodeFactory
     {
         $thirdArg = $methodCall->args[2];
         // the third argument may be closure or array
-        if ($thirdArg->value instanceof Closure) {
+        if ($thirdArg->value instanceof Closure && isset($thirdArg->value->params[0])) {
             $this->fakerVariableToPropertyFetch($thirdArg->value->stmts, $thirdArg->value->params[0]);
-            $thirdArg->value->params[0] = $this->nodeFactory->createParamFromNameAndType(
-                'attributes',
-                new ObjectType('array')
-            );
+            unset($thirdArg->value->params[0]);
         }
 
         $expr = $this->nodeFactory->createMethodCall(self::THIS, 'state', [$methodCall->args[2]]);
@@ -93,9 +92,12 @@ final class ModelFactoryNodeFactory
                     return null;
                 }
 
-                $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[1]);
-                // remove argument $faker
-                unset($closure->params[1]);
+                if (isset($closure->params[1])) {
+                    $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[1]);
+                    // remove argument $faker
+                    unset($closure->params[1]);
+                }
+
                 $node->expr = $this->nodeFactory->createMethodCall($node->expr, $name, [$closure]);
                 return $node;
             }

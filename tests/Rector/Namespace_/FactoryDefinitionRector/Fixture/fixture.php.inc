@@ -51,7 +51,7 @@ class ModelFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     }
     public function address()
     {
-        return $this->state(function (\array $attributes) {
+        return $this->state(function () {
             return [
                 'address' => $this->faker->address,
             ];
