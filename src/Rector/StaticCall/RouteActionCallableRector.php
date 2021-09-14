@@ -10,10 +10,10 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Reflection\Php\PhpMethodReflection;
-use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Laravel\NodeFactory\RouterRegisterNodeAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -45,6 +45,7 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
 
     public function __construct(
         private ReflectionResolver $reflectionResolver,
+        private RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer
     ) {
     }
 
@@ -81,7 +82,7 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isRouteAdditionMethod($node)) {
+        if (! $this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node)) {
             return null;
         }
 
@@ -93,7 +94,40 @@ CODE_SAMPLE
 
         $arg = $node->args[$position];
 
-        $action = $this->valueResolver->getValue($arg->value);
+        $segments = $this->resolveControllerFromAction($this->valueResolver->getValue($arg->value));
+        if ($segments === null) {
+            return null;
+        }
+
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+
+        $phpMethodReflection = $this->reflectionResolver->resolveMethodReflection($segments[0], $segments[1], $scope);
+
+        if (! $phpMethodReflection instanceof PhpMethodReflection) {
+            return null;
+        }
+
+        $node->args[$position]->value = $this->nodeFactory->createArray([
+            $this->nodeFactory->createClassConstReference($segments[0]),
+            $segments[1],
+        ]);
+        return $node;
+    }
+
+    public function configure(array $configuration): void
+    {
+        $this->routes = $configuration[self::ROUTES] ?? [];
+        if (isset($configuration[self::NAMESPACE])) {
+            $this->namespace = $configuration[self::NAMESPACE];
+        }
+    }
+
+    /**
+     * @param mixed $action
+     * @return array<string>|null
+     */
+    private function resolveControllerFromAction($action): ?array
+    {
         if (! $this->isActionString($action)) {
             return null;
         }
@@ -109,55 +143,16 @@ CODE_SAMPLE
             $controller = $namespace . '\\' . $controller;
         }
 
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
-
-        $phpMethodReflection = $this->reflectionResolver->resolveMethodReflection($controller, $method, $scope);
-
-        if (! $phpMethodReflection instanceof PhpMethodReflection) {
-            return null;
-        }
-
-        $node->args[$position]->value = $this->nodeFactory->createArray([
-            $this->nodeFactory->createClassConstReference($controller),
-            $method,
-        ]);
-        return $node;
-    }
-
-    public function configure(array $configuration): void
-    {
-        $this->routes = $configuration[self::ROUTES] ?? [];
-        if (isset($configuration[self::NAMESPACE])) {
-            $this->namespace = $configuration[self::NAMESPACE];
-        }
-    }
-
-    private function isRouteAdditionMethod(MethodCall|StaticCall $node): bool
-    {
-        if (! $this->isNames(
-            $node->name,
-            ['any', 'delete', 'get', 'options', 'patch', 'post', 'put', 'match', 'fallback']
-        )) {
-            return false;
-        }
-
-        if ($node instanceof MethodCall && $this->nodeTypeResolver->isObjectTypes(
-            $node->var,
-            [new ObjectType('Illuminate\Routing\Router'), new ObjectType('Illuminate\Routing\RouteRegistrar')]
-        )) {
-            return true;
-        }
-
-        return $node instanceof StaticCall && $this->isName($node->class, 'Illuminate\Support\Facades\Route');
+        return [$controller, $method];
     }
 
     private function getActionPosition(Identifier|Expr $name): int
     {
-        if ($this->isName($name, 'fallback')) {
+        if ($this->routerRegisterNodeAnalyzer->isRegisterFallback($name)) {
             return 0;
         }
 
-        if ($this->isName($name, 'match')) {
+        if ($this->routerRegisterNodeAnalyzer->isRegisterMultipleVerbs($name)) {
             return 2;
         }
 
