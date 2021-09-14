@@ -103,7 +103,7 @@ CODE_SAMPLE
             return null;
         }
 
-        [$controller,$method] = $segments;
+        [$controller, $method] = $segments;
         $namespace = $this->getNamespace($this->file->getSmartFileInfo());
         if (! str_starts_with($controller, '\\')) {
             $controller = $namespace . '\\' . $controller;
