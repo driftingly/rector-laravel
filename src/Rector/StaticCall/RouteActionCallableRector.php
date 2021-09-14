@@ -98,7 +98,12 @@ CODE_SAMPLE
             return null;
         }
 
-        [$controller, $method] = explode('@', $action);
+        $segments = explode('@', $action);
+        if (count($segments) !== 2) {
+            return null;
+        }
+
+        [$controller,$method] = $segments;
         $namespace = $this->getNamespace($this->file->getSmartFileInfo());
         if (! str_starts_with($controller, '\\')) {
             $controller = $namespace . '\\' . $controller;
