@@ -75,7 +75,7 @@ CODE_SAMPLE
      */
     private function getStatesFromArgs(array $args): array
     {
-        if (count($args) === 1) {
+        if (count($args) === 1 && isset($args[0])) {
             return (array) $this->valueResolver->getValue($args[0]->value);
         }
 

@@ -59,8 +59,11 @@ final class ModelFactoryNodeFactory
         return $this->createPublicMethod('definition', $closure->stmts);
     }
 
-    public function createStateMethod(MethodCall $methodCall): ClassMethod
+    public function createStateMethod(MethodCall $methodCall): ?ClassMethod
     {
+        if (! isset($methodCall->args[2])) {
+            return null;
+        }
         $thirdArg = $methodCall->args[2];
         // the third argument may be closure or array
         if ($thirdArg->value instanceof Closure && isset($thirdArg->value->params[0])) {
@@ -70,6 +73,9 @@ final class ModelFactoryNodeFactory
 
         $expr = $this->nodeFactory->createMethodCall(self::THIS, 'state', [$methodCall->args[2]]);
         $return = new Return_($expr);
+        if (! isset($methodCall->args[1])) {
+            return null;
+        }
         return $this->createPublicMethod($this->valueResolver->getValue($methodCall->args[1]->value), [$return]);
     }
 

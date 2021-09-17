@@ -58,7 +58,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($node->args === []) {
+        if (! isset($node->args[0])) {
             return null;
         }
 
@@ -70,7 +70,7 @@ CODE_SAMPLE
         $model = $firstArgValue->class;
 
         // create model
-        if (count($node->args) === 1) {
+        if (! isset($node->args[1])) {
             return new StaticCall($model, self::FACTORY);
         }
 

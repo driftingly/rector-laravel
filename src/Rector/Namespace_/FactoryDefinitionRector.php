@@ -133,6 +133,9 @@ CODE_SAMPLE
 
     private function shouldSkipExpression(MethodCall $methodCall): bool
     {
+        if (! isset($methodCall->args[0])) {
+            return true;
+        }
         if (! $methodCall->args[0]->value instanceof ClassConstFetch) {
             return true;
         }
@@ -190,6 +193,9 @@ CODE_SAMPLE
             return;
         }
 
+        if (! isset($methodCall->args[1])) {
+            return;
+        }
         $callback = $methodCall->args[1]->value;
         if (! $callback instanceof Closure) {
             return;
@@ -204,7 +210,11 @@ CODE_SAMPLE
             return;
         }
 
-        $class->stmts[] = $this->modelFactoryNodeFactory->createStateMethod($methodCall);
+        $method = $this->modelFactoryNodeFactory->createStateMethod($methodCall);
+        if ($method === null) {
+            return;
+        }
+        $class->stmts[] = $method;
     }
 
     private function appendAfterCalling(Class_ $class, MethodCall $methodCall, string $name): void
@@ -212,7 +222,9 @@ CODE_SAMPLE
         if (count($methodCall->args) !== 2) {
             return;
         }
-
+        if (! isset($methodCall->args[1])) {
+            return;
+        }
         $closure = $methodCall->args[1]->value;
         if (! $closure instanceof Closure) {
             return;
