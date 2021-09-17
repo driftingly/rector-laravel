@@ -114,10 +114,11 @@ CODE_SAMPLE
             unset($node->stmts[$key]);
         }
 
-        foreach ($factories as $factory) {
-            $node->stmts[] = $factory;
+        if ($factories === []) {
+            return null;
         }
 
+        $node->stmts = array_merge($node->stmts, $factories);
         return $node;
     }
 
