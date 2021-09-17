@@ -83,7 +83,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
                 $methodCall->var
             );
 
-            $this->addNodeBeforeNode($assignExpression, $node);
+            $this->nodesToAddCollector->addNodeBeforeNode($assignExpression, $node);
             $methodCall->var = new Variable($serviceNameTypeAndVariableName->getVariableName());
 
             return $node;

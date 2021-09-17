@@ -80,7 +80,7 @@ CODE_SAMPLE
 
         $guardVariable = new Variable('guard');
         $assign = $this->createGuardAssign($guardVariable);
-        $this->addNodeBeforeNode($assign, $node);
+        $this->nodesToAddCollector->addNodeBeforeNode($assign, $node);
 
         $node->args = array_merge([new Arg($guardVariable)], $node->args);
 
