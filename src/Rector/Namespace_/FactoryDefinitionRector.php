@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
 use Rector\Core\PhpParser\Node\CustomNode\FileWithoutNamespace;
@@ -136,6 +137,7 @@ CODE_SAMPLE
         if (! isset($methodCall->args[0])) {
             return true;
         }
+
         if (! $methodCall->args[0]->value instanceof ClassConstFetch) {
             return true;
         }
@@ -196,6 +198,7 @@ CODE_SAMPLE
         if (! isset($methodCall->args[1])) {
             return;
         }
+
         $callback = $methodCall->args[1]->value;
         if (! $callback instanceof Closure) {
             return;
@@ -210,11 +213,12 @@ CODE_SAMPLE
             return;
         }
 
-        $method = $this->modelFactoryNodeFactory->createStateMethod($methodCall);
-        if ($method === null) {
+        $classMethod = $this->modelFactoryNodeFactory->createStateMethod($methodCall);
+        if (! $classMethod instanceof ClassMethod) {
             return;
         }
-        $class->stmts[] = $method;
+
+        $class->stmts[] = $classMethod;
     }
 
     private function appendAfterCalling(Class_ $class, MethodCall $methodCall, string $name): void
@@ -222,9 +226,11 @@ CODE_SAMPLE
         if (count($methodCall->args) !== 2) {
             return;
         }
+
         if (! isset($methodCall->args[1])) {
             return;
         }
+
         $closure = $methodCall->args[1]->value;
         if (! $closure instanceof Closure) {
             return;
