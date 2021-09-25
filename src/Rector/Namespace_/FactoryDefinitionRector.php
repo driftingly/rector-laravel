@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rector\Laravel\Rector\Namespace_;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -15,6 +16,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\PhpParser\Node\CustomNode\FileWithoutNamespace;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Laravel\NodeFactory\ModelFactoryNodeFactory;
@@ -30,7 +32,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class FactoryDefinitionRector extends AbstractRector
 {
     public function __construct(
-        private ModelFactoryNodeFactory $modelFactoryNodeFactory
+        private ModelFactoryNodeFactory $modelFactoryNodeFactory,
+        private ArgsAnalyzer $argsAnalyzer
     ) {
     }
 
@@ -101,13 +104,15 @@ CODE_SAMPLE
                 continue;
             }
 
-            $name = $this->getNameFromClassConstFetch($stmt->expr->args[0]->value);
+            /** @var Arg $firstArg */
+            $firstArg = $stmt->expr->args[0];
+            $name = $this->getNameFromClassConstFetch($firstArg->value);
             if (! $name instanceof Name) {
                 continue;
             }
 
             if (! isset($factories[$name->toString()])) {
-                $factories[$name->toString()] = $this->createFactory($name->getLast(), $stmt->expr->args[0]->value);
+                $factories[$name->toString()] = $this->createFactory($name->getLast(), $firstArg->value);
             }
 
             $this->processFactoryConfiguration($factories[$name->toString()], $stmt->expr);
@@ -135,6 +140,10 @@ CODE_SAMPLE
     private function shouldSkipExpression(MethodCall $methodCall): bool
     {
         if (! isset($methodCall->args[0])) {
+            return true;
+        }
+
+        if (! $methodCall->args[0] instanceof Arg) {
             return true;
         }
 
@@ -195,11 +204,13 @@ CODE_SAMPLE
             return;
         }
 
-        if (! isset($methodCall->args[1])) {
+        if (! $this->argsAnalyzer->isArgInstanceInArgsPosition($methodCall->args, 1)) {
             return;
         }
 
-        $callback = $methodCall->args[1]->value;
+        /** @var Arg $secondArg */
+        $secondArg = $methodCall->args[1];
+        $callback = $secondArg->value;
         if (! $callback instanceof Closure) {
             return;
         }
@@ -228,6 +239,10 @@ CODE_SAMPLE
         }
 
         if (! isset($methodCall->args[1])) {
+            return;
+        }
+
+        if (! $methodCall->args[1] instanceof Arg) {
             return;
         }
 

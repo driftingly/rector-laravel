@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Rector\Laravel\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -24,6 +26,11 @@ final class FactoryFuncCallToStaticCallRector extends AbstractRector
      * @var string
      */
     private const FACTORY = 'factory';
+
+    public function __construct(
+        private ArgsAnalyzer $argsAnalyzer
+    ) {
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -62,6 +69,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if (! $node->args[0] instanceof Arg) {
+            return null;
+        }
+
         $firstArgValue = $node->args[0]->value;
         if (! $firstArgValue instanceof ClassConstFetch) {
             return null;
@@ -70,7 +81,7 @@ CODE_SAMPLE
         $model = $firstArgValue->class;
 
         // create model
-        if (! isset($node->args[1])) {
+        if (! $this->argsAnalyzer->isArgInstanceInArgsPosition($node->args, 1)) {
             return new StaticCall($model, self::FACTORY);
         }
 

@@ -110,10 +110,7 @@ CODE_SAMPLE
         return new MethodCall($variable, new Identifier($methodName), $node->args);
     }
 
-    /**
-     * @param StaticCall|FuncCall $node
-     */
-    private function shouldSkip(Node $node): bool
+    private function shouldSkip(StaticCall|FuncCall $node): bool
     {
         if ($node instanceof StaticCall) {
             return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);

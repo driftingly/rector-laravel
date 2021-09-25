@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\VariadicPlaceholder;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -70,15 +71,15 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Arg[] $args
+     * @param array<Arg|VariadicPlaceholder> $args
      * @return mixed[]
      */
     private function getStatesFromArgs(array $args): array
     {
-        if (count($args) === 1 && isset($args[0])) {
+        if (count($args) === 1 && isset($args[0]) && $args[0] instanceof Arg) {
             return (array) $this->valueResolver->getValue($args[0]->value);
         }
 
-        return array_map(fn ($arg) => $this->valueResolver->getValue($arg->value), $args);
+        return array_map(fn ($arg) => $arg instanceof Arg ? $this->valueResolver->getValue($arg->value) : null, $args);
     }
 }

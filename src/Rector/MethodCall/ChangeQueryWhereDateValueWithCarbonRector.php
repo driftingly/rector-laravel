@@ -87,7 +87,14 @@ CODE_SAMPLE
             $assign = new Assign($dateTimeVariable, $argValue);
             $this->nodesToAddCollector->addNodeBeforeNode($assign, $node);
 
+            if (! $node->args[2] instanceof Arg) {
+                return null;
+            }
+
             $node->args[2]->value = $dateTimeVariable;
+            if (! $node->args[1] instanceof Arg) {
+                return null;
+            }
 
             // update assign ">" → ">="
             $this->changeCompareSignExpr($node->args[1]);
@@ -99,7 +106,7 @@ CODE_SAMPLE
             return $node;
         }
 
-        if ($argValue instanceof Variable) {
+        if ($argValue instanceof Variable && $node->args[1] instanceof Arg) {
             $dateTimeVariable = $argValue;
 
             $this->changeCompareSignExpr($node->args[1]);
@@ -126,6 +133,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if (! $methodCall->args[2] instanceof Arg) {
+            return null;
+        }
+
         $argValue = $methodCall->args[2]->value;
         if (! $this->isObjectType($argValue, new ObjectType('DateTimeInterface'))) {
             return null;
@@ -133,6 +144,10 @@ CODE_SAMPLE
 
         // nothing to change
         if ($this->isCarbonTodayStaticCall($argValue)) {
+            return null;
+        }
+
+        if (! $methodCall->args[1] instanceof Arg) {
             return null;
         }
 

@@ -6,7 +6,7 @@ namespace Rector\Laravel\ValueObject;
 
 use PHPStan\Type\ObjectType;
 
-class AddArgumentDefaultValue
+final class AddArgumentDefaultValue
 {
     /**
      * @param mixed $defaultValue

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rector\Laravel\Rector\StaticCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
@@ -79,6 +80,10 @@ CODE_SAMPLE
         }
 
         if (! isset($node->args[2])) {
+            return null;
+        }
+
+        if (! $node->args[2] instanceof Arg) {
             return null;
         }
 

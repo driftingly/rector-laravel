@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rector\Laravel\NodeFactory;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
@@ -15,6 +16,7 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -33,7 +35,8 @@ final class ModelFactoryNodeFactory
         private NodeNameResolver $nodeNameResolver,
         private NodeFactory $nodeFactory,
         private ValueResolver $valueResolver,
-        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser
+        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser,
+        private ArgsAnalyzer $argsAnalyzer
     ) {
     }
 
@@ -61,10 +64,11 @@ final class ModelFactoryNodeFactory
 
     public function createStateMethod(MethodCall $methodCall): ?ClassMethod
     {
-        if (! isset($methodCall->args[2])) {
+        if (! $this->argsAnalyzer->isArgInstanceInArgsPosition($methodCall->args, 2)) {
             return null;
         }
 
+        /** @var Arg $thirdArg */
         $thirdArg = $methodCall->args[2];
         // the third argument may be closure or array
         if ($thirdArg->value instanceof Closure && isset($thirdArg->value->params[0])) {
@@ -75,6 +79,10 @@ final class ModelFactoryNodeFactory
         $expr = $this->nodeFactory->createMethodCall(self::THIS, 'state', [$methodCall->args[2]]);
         $return = new Return_($expr);
         if (! isset($methodCall->args[1])) {
+            return null;
+        }
+
+        if (! $methodCall->args[1] instanceof Arg) {
             return null;
         }
 
