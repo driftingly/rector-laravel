@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use PHPStan\Type\ArrayType;
+use PHPStan\Type\MixedType;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Laravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
@@ -29,7 +31,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     0,
                     'arguments',
                     [], // TODO: Add argument without default value
-                    'array'
+                    new ArrayType(new MixedType(), new MixedType())
                 ),
             ]),
         ]]);

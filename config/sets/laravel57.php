@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use PHPStan\Type\ObjectType;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Core\ValueObject\Visibility;
@@ -37,7 +38,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     0,
                     'request',
                     null,
-                    'Illuminate\Http\Illuminate\Http'
+                    new ObjectType('Illuminate\Http\Illuminate\Http')
                 ),
                 new ArgumentAdder(
                     'Illuminate\Foundation\Auth\SendsPasswordResetEmails',
@@ -45,7 +46,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     0,
                     'request',
                     null,
-                    'Illuminate\Http\Illuminate\Http'
+                    new ObjectType('Illuminate\Http\Illuminate\Http')
                 ),
                 new ArgumentAdder('Illuminate\Database\ConnectionInterface', 'select', 2, 'useReadPdo', true),
                 new ArgumentAdder('Illuminate\Database\ConnectionInterface', 'selectOne', 2, 'useReadPdo', true),
