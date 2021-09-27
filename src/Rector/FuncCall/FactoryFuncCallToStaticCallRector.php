@@ -9,7 +9,6 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
-use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -26,11 +25,6 @@ final class FactoryFuncCallToStaticCallRector extends AbstractRector
      * @var string
      */
     private const FACTORY = 'factory';
-
-    public function __construct(
-        private ArgsAnalyzer $argsAnalyzer
-    ) {
-    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -81,7 +75,7 @@ CODE_SAMPLE
         $model = $firstArgValue->class;
 
         // create model
-        if (! $this->argsAnalyzer->isArgInstanceInArgsPosition($node->args, 1)) {
+        if (! isset($node->args[1])) {
             return new StaticCall($model, self::FACTORY);
         }
 

@@ -16,7 +16,6 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
-use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\PhpParser\Node\CustomNode\FileWithoutNamespace;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Laravel\NodeFactory\ModelFactoryNodeFactory;
@@ -32,8 +31,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class FactoryDefinitionRector extends AbstractRector
 {
     public function __construct(
-        private ModelFactoryNodeFactory $modelFactoryNodeFactory,
-        private ArgsAnalyzer $argsAnalyzer
+        private ModelFactoryNodeFactory $modelFactoryNodeFactory
     ) {
     }
 
@@ -200,17 +198,15 @@ CODE_SAMPLE
 
     private function addDefinition(Class_ $class, MethodCall $methodCall): void
     {
-        if (count($methodCall->args) !== 2) {
+        if (! isset($methodCall->args[1])) {
             return;
         }
 
-        if (! $this->argsAnalyzer->isArgInstanceInArgsPosition($methodCall->args, 1)) {
+        if (! $methodCall->args[1] instanceof Arg) {
             return;
         }
 
-        /** @var Arg $secondArg */
-        $secondArg = $methodCall->args[1];
-        $callback = $secondArg->value;
+        $callback = $methodCall->args[1]->value;
         if (! $callback instanceof Closure) {
             return;
         }
@@ -220,10 +216,6 @@ CODE_SAMPLE
 
     private function addState(Class_ $class, MethodCall $methodCall): void
     {
-        if (count($methodCall->args) !== 3) {
-            return;
-        }
-
         $classMethod = $this->modelFactoryNodeFactory->createStateMethod($methodCall);
         if (! $classMethod instanceof ClassMethod) {
             return;
@@ -234,10 +226,6 @@ CODE_SAMPLE
 
     private function appendAfterCalling(Class_ $class, MethodCall $methodCall, string $name): void
     {
-        if (count($methodCall->args) !== 2) {
-            return;
-        }
-
         if (! isset($methodCall->args[1])) {
             return;
         }
