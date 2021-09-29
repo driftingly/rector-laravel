@@ -24,6 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see https://github.com/laravel/laravel/pull/5670
+ * @see https://github.com/laravel/framework/pull/38868
  * @see https://wiki.php.net/rfc/nullsafe_operator
  *
  * @see \Rector\Laravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest
@@ -35,6 +36,9 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
      */
     public const EXCLUDE_METHODS = 'exclude_methods';
 
+    /**
+     * @var string[]
+     */
     private array $excludeMethods = [];
 
     public function __construct(
@@ -91,6 +95,7 @@ CODE_SAMPLE
             return null;
         }
 
+        // exclude macro methods
         if ($node instanceof MethodCall && $this->isNames($node->name, $this->excludeMethods)) {
             return null;
         }
@@ -103,12 +108,14 @@ CODE_SAMPLE
             return null;
         }
 
+        // skip if the second arg exists and not null
         if (isset($node->var->args[1]) && $node->var->args[1] instanceof Arg && ! $this->valueResolver->isNull(
             $node->var->args[1]->value
         )) {
             return null;
         }
 
+        // skip if the first arg cannot be used as variable directly
         if ($this->typeChecker->isInstanceOf(
             $node->var->args[0]->value,
             [ConstFetch::class, Scalar::class, Array_::class]
