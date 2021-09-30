@@ -22,6 +22,9 @@ jobs:
                     -
                         name: 'ECS'
                         run: composer check-cs
+                    -
+                        name: 'Rector'
+                        run: vendor/bin/rector --dry-run --ansi
 
         name: ${{ matrix.actions.name }}
 
