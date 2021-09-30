@@ -12,7 +12,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\LNumber;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Laravel\Reflection\ClassConstantReflectionResolver;
 use Rector\Laravel\ValueObject\TypeToTimeMethodAndPosition;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -45,9 +44,8 @@ final class MinutesToSecondsInCacheRector extends AbstractRector
      */
     private array $typeToTimeMethodsAndPositions = [];
 
-    public function __construct(
-        private ClassConstantReflectionResolver $classConstantReflectionResolver
-    ) {
+    public function __construct()
+    {
         $this->typeToTimeMethodsAndPositions = [
             new TypeToTimeMethodAndPosition('Illuminate\Support\Facades\Cache', self::PUT, 2),
             new TypeToTimeMethodAndPosition('Illuminate\Contracts\Cache\Repository', self::PUT, 2),
@@ -121,6 +119,10 @@ CODE_SAMPLE
             }
 
             if (! isset($node->args[$typeToTimeMethodAndPosition->getPosition()])) {
+                continue;
+            }
+
+            if (! $node->args[$typeToTimeMethodAndPosition->getPosition()] instanceof Arg) {
                 continue;
             }
 

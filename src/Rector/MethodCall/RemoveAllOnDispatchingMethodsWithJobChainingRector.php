@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Rector\Laravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Defluent\NodeAnalyzer\FluentChainMethodCallNodeAnalyzer;
@@ -15,13 +18,16 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Laravel\Tests\Rector\MethodCall\RemoveAllOnDispatchingMethodsWithJobChainingRector\RemoveAllOnDispatchingMethodsWithJobChainingRectorTest
  */
-class RemoveAllOnDispatchingMethodsWithJobChainingRector extends AbstractRector
+final class RemoveAllOnDispatchingMethodsWithJobChainingRector extends AbstractRector
 {
     /**
      * @var string
      */
     private const DISPATCH = 'dispatch';
 
+    /**
+     * @var array<string, string>
+     */
     private const SWAPPED_METHODS = [
         'allOnQueue' => 'onQueue',
         'allOnConnection' => 'onConnection',
@@ -65,11 +71,11 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [Node\Expr\MethodCall::class];
+        return [MethodCall::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param MethodCall $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -85,7 +91,7 @@ CODE_SAMPLE
 
         // Note that this change only affects code using the withChain method.
         $callerNode = $rootExpr->getAttribute(AttributeKey::PARENT_NODE);
-        if (! $callerNode instanceof Node\Expr\StaticCall) {
+        if (! $callerNode instanceof StaticCall) {
             return null;
         }
 
@@ -102,14 +108,15 @@ CODE_SAMPLE
         // These methods should be called before calling the dispatch method.
         $end = $node->var;
         $current = $node->var;
-        while ($current instanceof Node\Expr\MethodCall) {
+        while ($current instanceof MethodCall) {
             if ($this->isName($current->name, self::DISPATCH)) {
                 $var = $current->var;
                 $current->var = $node;
-                $node->name = new Node\Identifier(self::SWAPPED_METHODS[$this->getName($node->name)]);
+                $node->name = new Identifier(self::SWAPPED_METHODS[$this->getName($node->name)]);
                 $node->var = $var;
                 break;
             }
+
             $current = $current->var;
         }
 

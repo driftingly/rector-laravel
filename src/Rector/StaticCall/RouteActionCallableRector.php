@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rector\Laravel\Rector\StaticCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -89,6 +90,10 @@ CODE_SAMPLE
         $position = $this->getActionPosition($node->name);
 
         if (! isset($node->args[$position])) {
+            return null;
+        }
+
+        if (! $node->args[$position] instanceof Arg) {
             return null;
         }
 
