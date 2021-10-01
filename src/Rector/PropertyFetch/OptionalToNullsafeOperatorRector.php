@@ -6,7 +6,9 @@ namespace Rector\Laravel\Rector\PropertyFetch;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
@@ -15,6 +17,7 @@ use PhpParser\Node\Expr\NullsafePropertyFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
@@ -37,12 +40,18 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
+     * @var array<class-string<Expr>>
+     */
+    private const SKIP_VALUE_TYPES = [ConstFetch::class, Scalar::class, Array_::class, ClassConstFetch::class];
+
+    /**
      * @var string[]
      */
     private array $excludeMethods = [];
 
     public function __construct(
-        private TypeChecker $typeChecker
+        private TypeChecker $typeChecker,
+        private ArgsAnalyzer $argsAnalyzer
     ) {
     }
 
@@ -100,34 +109,27 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! isset($node->var->args[0])) {
-            return null;
-        }
-
-        if (! $node->var->args[0] instanceof Arg) {
+        if (! $this->argsAnalyzer->isArgInstanceInArgsPosition($node->var->args, 0)) {
             return null;
         }
 
         // skip if the second arg exists and not null
-        if (isset($node->var->args[1]) && $node->var->args[1] instanceof Arg && ! $this->valueResolver->isNull(
-            $node->var->args[1]->value
-        )) {
+        if ($this->hasCallback($node->var)) {
             return null;
         }
 
+        /** @var Arg $firstArg */
+        $firstArg = $node->var->args[0];
         // skip if the first arg cannot be used as variable directly
-        if ($this->typeChecker->isInstanceOf(
-            $node->var->args[0]->value,
-            [ConstFetch::class, Scalar::class, Array_::class]
-        )) {
+        if ($this->typeChecker->isInstanceOf($firstArg->value, self::SKIP_VALUE_TYPES)) {
             return null;
         }
 
         if ($node instanceof PropertyFetch) {
-            return new NullsafePropertyFetch($node->var->args[0]->value, $node->name);
+            return new NullsafePropertyFetch($firstArg->value, $node->name);
         }
 
-        return new NullsafeMethodCall($node->var->args[0]->value, $node->name);
+        return new NullsafeMethodCall($firstArg->value, $node->name, $node->args);
     }
 
     public function provideMinPhpVersion(): int
@@ -138,5 +140,12 @@ CODE_SAMPLE
     public function configure(array $configuration): void
     {
         $this->excludeMethods = $configuration[self::EXCLUDE_METHODS] ?? [];
+    }
+
+    private function hasCallback(FuncCall $funcCall): bool
+    {
+        return isset($funcCall->args[1]) && $funcCall->args[1] instanceof Arg && ! $this->valueResolver->isNull(
+            $funcCall->args[1]->value
+        );
     }
 }
