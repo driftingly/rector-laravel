@@ -129,7 +129,7 @@ CODE_SAMPLE
             return new NullsafePropertyFetch($firstArg->value, $node->name);
         }
 
-        return new NullsafeMethodCall($firstArg->value, $node->name, $node->getArgs());
+        return new NullsafeMethodCall($firstArg->value, $node->name, $node->args);
     }
 
     public function provideMinPhpVersion(): int
