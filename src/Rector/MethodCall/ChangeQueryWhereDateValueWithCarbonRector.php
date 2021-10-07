@@ -190,7 +190,7 @@ CODE_SAMPLE
 
         $carbonObjectType = new ObjectType('Carbon\Carbon');
 
-        $callerType = $this->nodeTypeResolver->resolve($expr->class);
+        $callerType = $this->nodeTypeResolver->getType($expr->class);
         if (! $carbonObjectType->isSuperTypeOf($callerType)->yes()) {
             return false;
         }

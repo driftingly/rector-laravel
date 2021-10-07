@@ -22,7 +22,7 @@ final class ClassConstantReflectionResolver
 
     public function resolveFromClassConstFetch(ClassConstFetch $classConstFetch): ?ConstantReflection
     {
-        $constClassType = $this->nodeTypeResolver->resolve($classConstFetch->class);
+        $constClassType = $this->nodeTypeResolver->getType($classConstFetch->class);
         if (! $constClassType instanceof TypeWithClassName) {
             return null;
         }
