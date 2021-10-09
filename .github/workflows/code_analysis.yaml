@@ -12,31 +12,4 @@ env:
 
 jobs:
     code_analysis:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                actions:
-                    -
-                        name: 'PHPStan'
-                        run: composer phpstan
-                    -
-                        name: 'ECS'
-                        run: composer check-cs
-                    -
-                        name: 'Rector'
-                        run: vendor/bin/rector --dry-run --ansi
-
-        name: ${{ matrix.actions.name }}
-
-        steps:
-            -   uses: actions/checkout@v2
-
-            -
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: 8.0
-                    coverage: none
-
-            -   uses: "ramsey/composer-install@v1"
-
-            -   run: ${{ matrix.actions.run }}
+        uses: rectorphp/reusable-workflows/.github/workflows/code_analysis.yaml@main
