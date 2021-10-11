@@ -24,3 +24,6 @@ parameters:
         -
             message: '#\$service\-\>call\("configure", \[\[ \.\.\. \]\]\) must be followed by exact array#'
             path: config/sets/laravel-static-to-injection.php
+
+        # should be resolved with getArgs() and new release of phpstan
+        - '#(.*?) expects array<PhpParser\\Node\\Arg\>, array<PhpParser\\Node\\Arg\|PhpParser\\Node\\VariadicPlaceholder\> given#'
