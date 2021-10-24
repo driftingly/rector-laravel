@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Core\Configuration\Option;
 use Rector\Nette\NodeAnalyzer\BinaryOpAnalyzer;
 use Rector\PHPUnit\NodeAnalyzer\TestsNodeAnalyzer;
+use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -36,8 +37,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(BinaryOpAnalyzer::class);
     $services->set(TestsNodeAnalyzer::class);
 
-    $containerConfigurator->import(SetList::PHP_80);
-    $containerConfigurator->import(SetList::PHP_74);
-    $containerConfigurator->import(SetList::PHP_73);
+    $containerConfigurator->import(LevelSetList::UP_TO_PHP_80);
     $containerConfigurator->import(SetList::DEAD_CODE);
 };
