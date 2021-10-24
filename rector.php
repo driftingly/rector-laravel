@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\Core\Configuration\Option;
 use Rector\Nette\NodeAnalyzer\BinaryOpAnalyzer;
+use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 use Rector\PHPUnit\NodeAnalyzer\TestsNodeAnalyzer;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
@@ -21,6 +22,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         // for tests
         '*/Source/*',
         '*/Fixture/*',
+
+        // skip for handle scoped, like in the rector-src as well
+        // @see https://github.com/rectorphp/rector-src/blob/7f73cf017214257c170d34db3af7283eaeeab657/rector.php#L71
+        StringClassNameToClassConstantRector::class,
     ]);
 
     // needed for DEAD_CODE list, just in split package like this
