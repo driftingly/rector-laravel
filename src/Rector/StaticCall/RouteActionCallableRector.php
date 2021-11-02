@@ -19,6 +19,7 @@ use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Symplify\SmartFileSystem\SmartFileInfo;
+use Webmozart\Assert\Assert;
 
 /**
  * @see https://laravel.com/docs/8.x/upgrade#automatic-controller-namespace-prefixing
@@ -37,7 +38,12 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
      */
     public const NAMESPACE = 'namespace';
 
-    private string $namespace = 'App\Http\Controllers';
+    /**
+     * @var string
+     */
+    private const DEFAULT_NAMESPACE = 'App\Http\Controllers';
+
+    private string $namespace = self::DEFAULT_NAMESPACE;
 
     /**
      * @var array<string, string>
@@ -99,12 +105,16 @@ CODE_SAMPLE
 
         $arg = $node->args[$position];
 
-        $segments = $this->resolveControllerFromAction($this->valueResolver->getValue($arg->value));
+        $argValue = $this->valueResolver->getValue($arg->value);
+        $segments = $this->resolveControllerFromAction($argValue);
         if ($segments === null) {
             return null;
         }
 
         $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if (! $scope instanceof \PHPStan\Analyzer\Scope) {
+            return null;
+        }
 
         $phpMethodReflection = $this->reflectionResolver->resolveMethodReflection($segments[0], $segments[1], $scope);
 
@@ -119,24 +129,33 @@ CODE_SAMPLE
         return $node;
     }
 
+    /**
+     * @param array<string, string|mied[]> $configuration
+     */
     public function configure(array $configuration): void
     {
-        $this->routes = $configuration[self::ROUTES] ?? [];
-        if (isset($configuration[self::NAMESPACE])) {
-            $this->namespace = $configuration[self::NAMESPACE];
-        }
+        $routes = $configuration[self::ROUTES] ?? [];
+        Assert::allString($routes);
+        Assert::allString(array_keys($routes));
+        /** @var array<string, string> routes */
+        $this->routes = $routes;
+
+        $namespace = $configuration[self::NAMESPACE] ?? self::DEFAULT_NAMESPACE;
+        Assert::string($namespace);
+        /** @var string namespace */
+        $this->namespace = $namespace;
     }
 
     /**
-     * @param mixed $action
      * @return array<string>|null
      */
-    private function resolveControllerFromAction($action): ?array
+    private function resolveControllerFromAction(mixed $action): ?array
     {
         if (! $this->isActionString($action)) {
             return null;
         }
 
+        /** @var string $action */
         $segments = explode('@', $action);
         if (count($segments) !== 2) {
             return null;
