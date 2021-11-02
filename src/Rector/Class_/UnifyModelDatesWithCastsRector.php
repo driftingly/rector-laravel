@@ -16,6 +16,7 @@ use Rector\Core\Rector\AbstractRector;
 use Symplify\Astral\ValueObject\NodeBuilder\PropertyBuilder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @see https://github.com/laravel/framework/pull/32856
@@ -90,6 +91,10 @@ CODE_SAMPLE
         }
 
         $dates = $this->valueResolver->getValue($datesPropertyProperty->default);
+        if (! is_array($dates)) {
+            return null;
+        }
+
         if ($dates === []) {
             return null;
         }
@@ -110,6 +115,8 @@ CODE_SAMPLE
         $casts = $this->valueResolver->getValue($castsPropertyProperty->default);
         // exclude attributes added in $casts
         $missingDates = array_diff($dates, array_keys($casts));
+        Assert::allString($missingDates);
+
         foreach ($missingDates as $missingDate) {
             $castsPropertyProperty->default->items[] = new ArrayItem(
                 new String_('datetime'),
