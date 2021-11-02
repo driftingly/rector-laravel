@@ -15,7 +15,8 @@
         "symplify/easy-coding-standard": "^10.0",
         "symplify/rule-doc-generator": "^10.0",
         "rector/phpstan-rules": "^0.4.8",
-        "phpstan/extension-installer": "^1.1"
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-webmozart-assert": "^1.0"
     },
     "autoload": {
         "psr-4": {

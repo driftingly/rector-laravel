@@ -10,6 +10,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
+use PHPStan\Analyzer\Scope;
 use PHPStan\Reflection\Php\PhpMethodReflection;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
@@ -112,7 +113,7 @@ CODE_SAMPLE
         }
 
         $scope = $node->getAttribute(AttributeKey::SCOPE);
-        if (! $scope instanceof \PHPStan\Analyzer\Scope) {
+        if (! $scope instanceof Scope) {
             return null;
         }
 
@@ -137,12 +138,10 @@ CODE_SAMPLE
         $routes = $configuration[self::ROUTES] ?? [];
         Assert::allString($routes);
         Assert::allString(array_keys($routes));
-        /** @var array<string, string> routes */
         $this->routes = $routes;
 
         $namespace = $configuration[self::NAMESPACE] ?? self::DEFAULT_NAMESPACE;
         Assert::string($namespace);
-        /** @var string namespace */
         $this->namespace = $namespace;
     }
 
