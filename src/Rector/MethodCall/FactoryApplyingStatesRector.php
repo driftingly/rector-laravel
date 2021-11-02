@@ -13,6 +13,7 @@ use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @see https://laravel.com/docs/7.x/database-testing#creating-models
@@ -63,6 +64,9 @@ CODE_SAMPLE
 
         $var = $node->var;
         $states = $this->getStatesFromArgs($node->args);
+
+        Assert::allString($states);
+
         foreach ($states as $state) {
             $var = $this->nodeFactory->createMethodCall($var, $state);
         }

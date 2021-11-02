@@ -24,6 +24,7 @@ use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\PackageBuilder\Php\TypeChecker;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @see https://github.com/laravel/laravel/pull/5670
@@ -137,9 +138,15 @@ CODE_SAMPLE
         return PhpVersion::PHP_80;
     }
 
+    /**
+     * @param array<string, string[]> $configuration
+     */
     public function configure(array $configuration): void
     {
-        $this->excludeMethods = $configuration[self::EXCLUDE_METHODS] ?? [];
+        $excludeMethods = $configuration[self::EXCLUDE_METHODS] ?? [];
+        Assert::allString($excludeMethods);
+
+        $this->excludeMethods = $excludeMethods;
     }
 
     private function hasCallback(FuncCall $funcCall): bool
