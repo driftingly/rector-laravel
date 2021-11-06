@@ -16,6 +16,8 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -48,6 +50,16 @@ final class ModelFactoryNodeFactory
 
         $property = $propertyBuilder->getNode();
         $class->stmts[] = $property;
+
+        // decorate with namespaced names
+        $nameResolver = new NameResolver(null, [
+            'replaceNodes' => false,
+            'preserveOriginalNames' => true,
+        ]);
+        $nodeTraverser = new NodeTraverser();
+        $nodeTraverser->addVisitor($nameResolver);
+        $nodeTraverser->traverse([$class]);
+
         return $class;
     }
 
