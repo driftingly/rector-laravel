@@ -64,6 +64,28 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 new MethodCallRename('Illuminate\Routing\UrlGenerator', 'forceSchema', 'forceScheme'),
                 new MethodCallRename('Illuminate\Validation\Validator', 'addError', 'addFailure'),
                 new MethodCallRename('Illuminate\Validation\Validator', 'doReplacements', 'makeReplacements'),
+
+                # https://github.com/laravel/framework/commit/f23ac640fa403ca8d4131c36367b53e123b6b852
+                new MethodCallRename(
+                    'Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase',
+                    'seeInDatabase',
+                    'assertDatabaseHas'
+                ),
+                new MethodCallRename(
+                    'Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase',
+                    'missingFromDatabase',
+                    'assertDatabaseMissing'
+                ),
+                new MethodCallRename(
+                    'Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase',
+                    'dontSeeInDatabase',
+                    'assertDatabaseMissing'
+                ),
+                new MethodCallRename(
+                    'Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase',
+                    'notSeeInDatabase',
+                    'assertDatabaseMissing'
+                ),
             ]),
         ]]);
 };
