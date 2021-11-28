@@ -106,12 +106,14 @@ CODE_SAMPLE
     }
 
     /**
-     * @param array<string, AddArgumentDefaultValue[]> $configuration
+     * @param mixed[] $configuration
      */
     public function configure(array $configuration): void
     {
         $addedArguments = $configuration[self::ADDED_ARGUMENTS] ?? [];
+        Assert::isArray($addedArguments);
         Assert::allIsInstanceOf($addedArguments, AddArgumentDefaultValue::class);
+
         $this->addedArguments = $addedArguments;
     }
 }

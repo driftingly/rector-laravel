@@ -139,11 +139,12 @@ CODE_SAMPLE
     }
 
     /**
-     * @param array<string, string[]> $configuration
+     * @param mixed[] $configuration
      */
     public function configure(array $configuration): void
     {
         $excludeMethods = $configuration[self::EXCLUDE_METHODS] ?? [];
+        Assert::isArray($excludeMethods);
         Assert::allString($excludeMethods);
 
         $this->excludeMethods = $excludeMethods;
