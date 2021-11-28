@@ -131,13 +131,14 @@ CODE_SAMPLE
     }
 
     /**
-     * @param array<string, string|mixed[]> $configuration
+     * @param mixed[] $configuration
      */
     public function configure(array $configuration): void
     {
         $routes = $configuration[self::ROUTES] ?? [];
-        Assert::allString($routes);
+        Assert::isArray($routes);
         Assert::allString(array_keys($routes));
+        Assert::allString($routes);
         $this->routes = $routes;
 
         $namespace = $configuration[self::NAMESPACE] ?? self::DEFAULT_NAMESPACE;

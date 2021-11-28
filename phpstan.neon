@@ -35,3 +35,6 @@ parameters:
         -
             path: src/Rector/Class_/UnifyModelDatesWithCastsRector.php
             message: '#Parameter \#1 \$array of function array_keys expects array, mixed given#'
+
+        # rector co-variant
+        - '#Parameter \#1 \$node \(PhpParser\\Node\\(.*?) of method Rector\\(.*?)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Core\\Contract\\Rector\\PhpRectorInterface\:\:refactor\(\)#'
