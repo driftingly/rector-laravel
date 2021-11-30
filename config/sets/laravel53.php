@@ -8,10 +8,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
     $services->set(RemoveTraitUseRector::class)
-        ->call('configure', [[
-            RemoveTraitUseRector::TRAITS_TO_REMOVE => [
-                # see https://laravel.com/docs/5.3/upgrade
-                'Illuminate\Foundation\Auth\Access\AuthorizesResources',
-            ],
-        ]]);
+        ->configure([
+            # see https://laravel.com/docs/5.3/upgrade
+            'Illuminate\Foundation\Auth\Access\AuthorizesResources',
+        ]);
 };
