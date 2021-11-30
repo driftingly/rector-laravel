@@ -143,7 +143,7 @@ CODE_SAMPLE
      */
     public function configure(array $configuration): void
     {
-        $excludeMethods = $configuration[self::EXCLUDE_METHODS] ?? [];
+        $excludeMethods = $configuration[self::EXCLUDE_METHODS] ?? $configuration;
         Assert::isArray($excludeMethods);
         Assert::allString($excludeMethods);
 

@@ -110,7 +110,7 @@ CODE_SAMPLE
      */
     public function configure(array $configuration): void
     {
-        $addedArguments = $configuration[self::ADDED_ARGUMENTS] ?? [];
+        $addedArguments = $configuration[self::ADDED_ARGUMENTS] ?? $configuration;
         Assert::isArray($addedArguments);
         Assert::allIsInstanceOf($addedArguments, AddArgumentDefaultValue::class);
 
