@@ -16,7 +16,7 @@ use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\NullsafePropertyFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
 use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\PhpVersion;
@@ -33,7 +33,7 @@ use Webmozart\Assert\Assert;
  *
  * @see \Rector\Laravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest
  */
-final class OptionalToNullsafeOperatorRector extends AbstractRector implements MinPhpVersionInterface, ConfigurableRectorInterface
+final class OptionalToNullsafeOperatorRector extends AbstractRector implements MinPhpVersionInterface, AllowEmptyConfigurableRectorInterface
 {
     /**
      * @var string
