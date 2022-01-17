@@ -9,9 +9,9 @@ use PHPStan\Type\ObjectType;
 final class TypeToTimeMethodAndPosition
 {
     public function __construct(
-        private string $type,
-        private string $methodName,
-        private int $position
+        private readonly string $type,
+        private readonly string $methodName,
+        private readonly int $position
     ) {
     }
 

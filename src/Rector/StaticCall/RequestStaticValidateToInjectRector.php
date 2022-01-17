@@ -29,7 +29,7 @@ final class RequestStaticValidateToInjectRector extends AbstractRector
     private array $requestObjectTypes = [];
 
     public function __construct(
-        private ClassMethodManipulator $classMethodManipulator
+        private readonly ClassMethodManipulator $classMethodManipulator
     ) {
         $this->requestObjectTypes = [new ObjectType('Illuminate\Http\Request'), new ObjectType('Request')];
     }

@@ -27,7 +27,7 @@ final class AddParentBootToModelClassMethodRector extends AbstractRector
     private const BOOT = 'boot';
 
     public function __construct(
-        private StaticCallAnalyzer $staticCallAnalyzer
+        private readonly StaticCallAnalyzer $staticCallAnalyzer
     ) {
     }
 

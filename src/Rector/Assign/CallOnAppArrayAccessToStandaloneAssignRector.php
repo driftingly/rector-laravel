@@ -28,7 +28,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
     private array $serviceNameTypeAndVariableNames = [];
 
     public function __construct(
-        private AppAssignFactory $appAssignFactory
+        private readonly AppAssignFactory $appAssignFactory
     ) {
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',

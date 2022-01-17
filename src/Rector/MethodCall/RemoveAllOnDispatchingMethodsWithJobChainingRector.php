@@ -34,7 +34,7 @@ final class RemoveAllOnDispatchingMethodsWithJobChainingRector extends AbstractR
     ];
 
     public function __construct(
-        private FluentChainMethodCallNodeAnalyzer $fluentChainMethodCallNodeAnalyzer
+        private readonly FluentChainMethodCallNodeAnalyzer $fluentChainMethodCallNodeAnalyzer
     ) {
     }
 

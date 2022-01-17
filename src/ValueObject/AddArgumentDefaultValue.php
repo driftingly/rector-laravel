@@ -12,9 +12,9 @@ final class AddArgumentDefaultValue
      * @param mixed $defaultValue
      */
     public function __construct(
-        private string $class,
-        private string $method,
-        private int $position,
+        private readonly string $class,
+        private readonly string $method,
+        private readonly int $position,
         private $defaultValue
     ) {
     }
