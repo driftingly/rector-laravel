@@ -26,7 +26,7 @@ use Webmozart\Assert\Assert;
 final class UnifyModelDatesWithCastsRector extends AbstractRector
 {
     public function __construct(
-        private ClassInsertManipulator $classInsertManipulator
+        private readonly ClassInsertManipulator $classInsertManipulator
     ) {
     }
 

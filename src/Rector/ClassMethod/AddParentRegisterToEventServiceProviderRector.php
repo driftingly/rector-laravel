@@ -27,7 +27,7 @@ final class AddParentRegisterToEventServiceProviderRector extends AbstractRector
     private const REGISTER = 'register';
 
     public function __construct(
-        private StaticCallAnalyzer $staticCallAnalyzer
+        private readonly StaticCallAnalyzer $staticCallAnalyzer
     ) {
     }
 

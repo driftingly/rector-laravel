@@ -26,8 +26,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class AddMockConsoleOutputFalseToConsoleTestsRector extends AbstractRector
 {
     public function __construct(
-        private PropertyFetchAnalyzer $propertyFetchAnalyzer,
-        private SetUpClassMethodNodeManipulator $setUpClassMethodNodeManipulator
+        private readonly PropertyFetchAnalyzer $propertyFetchAnalyzer,
+        private readonly SetUpClassMethodNodeManipulator $setUpClassMethodNodeManipulator
     ) {
     }
 

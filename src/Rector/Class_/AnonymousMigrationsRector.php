@@ -23,7 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class AnonymousMigrationsRector extends AbstractRector
 {
     public function __construct(
-        private ClassAnalyzer $classAnalyzer
+        private readonly ClassAnalyzer $classAnalyzer
     ) {
     }
 

@@ -33,10 +33,10 @@ final class ModelFactoryNodeFactory
     private const THIS = 'this';
 
     public function __construct(
-        private NodeNameResolver $nodeNameResolver,
-        private NodeFactory $nodeFactory,
-        private ValueResolver $valueResolver,
-        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser
+        private readonly NodeNameResolver $nodeNameResolver,
+        private readonly NodeFactory $nodeFactory,
+        private readonly ValueResolver $valueResolver,
+        private readonly SimpleCallableNodeTraverser $simpleCallableNodeTraverser
     ) {
     }
 

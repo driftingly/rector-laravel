@@ -32,12 +32,12 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
     /**
      * @var string
      */
-    public const ROUTES = 'routes';
+    public final const ROUTES = 'routes';
 
     /**
      * @var string
      */
-    public const NAMESPACE = 'namespace';
+    public final const NAMESPACE = 'namespace';
 
     /**
      * @var string
@@ -52,8 +52,8 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
     private array $routes = [];
 
     public function __construct(
-        private ReflectionResolver $reflectionResolver,
-        private RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer
+        private readonly ReflectionResolver $reflectionResolver,
+        private readonly RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer
     ) {
     }
 

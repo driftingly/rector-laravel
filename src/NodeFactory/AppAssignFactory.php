@@ -16,7 +16,7 @@ use Rector\Laravel\ValueObject\ServiceNameTypeAndVariableName;
 final class AppAssignFactory
 {
     public function __construct(
-        private PhpDocInfoFactory $phpDocInfoFactory
+        private readonly PhpDocInfoFactory $phpDocInfoFactory
     ) {
     }
 

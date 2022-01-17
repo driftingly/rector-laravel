@@ -31,7 +31,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class FactoryDefinitionRector extends AbstractRector
 {
     public function __construct(
-        private ModelFactoryNodeFactory $modelFactoryNodeFactory
+        private readonly ModelFactoryNodeFactory $modelFactoryNodeFactory
     ) {
     }
 
