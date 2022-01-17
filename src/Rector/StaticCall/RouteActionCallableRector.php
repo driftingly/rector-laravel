@@ -32,12 +32,12 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
     /**
      * @var string
      */
-    public final const ROUTES = 'routes';
+    final public const ROUTES = 'routes';
 
     /**
      * @var string
      */
-    public final const NAMESPACE = 'namespace';
+    final public const NAMESPACE = 'namespace';
 
     /**
      * @var string

@@ -38,7 +38,7 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     /**
      * @var string
      */
-    public final const EXCLUDE_METHODS = 'exclude_methods';
+    final public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var array<class-string<Expr>>

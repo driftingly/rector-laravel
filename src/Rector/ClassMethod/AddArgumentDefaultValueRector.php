@@ -23,7 +23,7 @@ final class AddArgumentDefaultValueRector extends AbstractRector implements Conf
     /**
      * @var string
      */
-    public final const ADDED_ARGUMENTS = 'added_arguments';
+    final public const ADDED_ARGUMENTS = 'added_arguments';
 
     /**
      * @var AddArgumentDefaultValue[]
