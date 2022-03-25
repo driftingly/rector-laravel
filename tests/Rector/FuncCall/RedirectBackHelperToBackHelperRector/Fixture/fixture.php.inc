@@ -2,11 +2,18 @@
 
 namespace Rector\Laravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector\Fixture;
 
+use Illuminate\Support\Facades\Redirect;
+
 class Fixture
 {
-    public function run()
+    public function store()
     {
         return redirect()->back()->with('error', 'Incorrect credential.');
+    }
+
+    public function update()
+    {
+        return Redirect::back()->with('error', 'Incorrect credential.');
     }
 }
 
@@ -16,9 +23,16 @@ class Fixture
 
 namespace Rector\Laravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector\Fixture;
 
+use Illuminate\Support\Facades\Redirect;
+
 class Fixture
 {
-    public function run()
+    public function store()
+    {
+        return back()->with('error', 'Incorrect credential.');
+    }
+
+    public function update()
     {
         return back()->with('error', 'Incorrect credential.');
     }
