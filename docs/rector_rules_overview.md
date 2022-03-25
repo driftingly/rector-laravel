@@ -486,3 +486,31 @@ Unify Model `$dates` property with `$casts`
 ```
 
 <br>
+
+## RedirectBackToBackHelperRector
+
+Code refactoring `redirect()->back()` call to `back()`
+
+- class: [`Rector\Laravel\Rector\MethodCall/RedirectBackToBackHelperRector`](../src/Rector/MethodCall/RedirectBackToBackHelperRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Support\Facades\Redirect;
+
+ class Person extends Model
+ {
+    public function store()
+    {
+-        return redirect()->back()->with('error', 'Incorrect details.');
++        return back()->with('error', 'Incorrect details.');
+    }
+
+    public function update()
+    {
+-        return Redirect::back()->with('error', 'Incorrect details.');
++        return back()->with('error', 'Incorrect details.');
+    }
+ }
+```
+
+<br>
