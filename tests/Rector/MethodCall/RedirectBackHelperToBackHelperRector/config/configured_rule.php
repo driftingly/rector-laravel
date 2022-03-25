@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Rector\Laravel\Rector\MethodCall\RedirectBackHelperToBackHelperRector;
+use Rector\Laravel\Rector\MethodCall\RedirectBackToBackHelperRector;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
@@ -10,5 +10,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $services = $containerConfigurator->services();
 
-    $services->set(RedirectBackHelperToBackHelperRector::class);
+    $services->set(RedirectBackToBackHelperRector::class);
 };

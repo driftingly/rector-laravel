@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackHelperToBackHelperRector\Fixture;
+namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector\Fixture;
 
 class SkipWithStaticCall
 {

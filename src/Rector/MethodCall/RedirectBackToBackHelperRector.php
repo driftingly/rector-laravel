@@ -16,10 +16,10 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\Laravel\Tests\Rector\MethodCall\RedirectBackHelperToBackHelperRector\RedirectBackHelperToBackHelperRectorTest
+ * @see \Rector\Laravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector\RedirectBackToBackHelperRectorTest
  */
 
-final class RedirectBackHelperToBackHelperRector extends AbstractRector
+final class RedirectBackToBackHelperRector extends AbstractRector
 {
     /**
      * @var string

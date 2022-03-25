@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackHelperToBackHelperRector;
+namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-final class RedirectBackHelperToBackHelperRectorTest extends AbstractRectorTestCase
+final class RedirectBackToBackHelperRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
