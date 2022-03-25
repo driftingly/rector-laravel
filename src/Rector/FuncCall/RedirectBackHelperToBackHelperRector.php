@@ -7,6 +7,7 @@ namespace Rector\Laravel\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use Rector\Defluent\NodeAnalyzer\FluentChainMethodCallNodeAnalyzer;
 use Rector\Core\Rector\AbstractRector;
@@ -42,11 +43,18 @@ final class RedirectBackHelperToBackHelperRector extends AbstractRector
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
+use Illuminate\Support\Facades\Redirect;
+
 class SomeClass
 {
     public function store()
     {
         return redirect()->back()->with('error', 'Incorrect Details.')
+    }
+
+    public function update()
+    {
+        return Redirect::back()->with('error', 'Incorrect Details.')
     }
 }
 CODE_SAMPLE
@@ -55,6 +63,11 @@ CODE_SAMPLE
 class SomeClass
 {
     public function store()
+    {
+        return back()->with('error', 'Incorrect Details.')
+    }
+
+    public function update()
     {
         return back()->with('error', 'Incorrect Details.')
     }
@@ -70,7 +83,7 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [MethodCall::class];
+        return [MethodCall::class, StaticCall::class];
     }
 
     /**
@@ -78,38 +91,58 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isName($node->name, self::BACK_KEYWORD) || ! $node instanceof MethodCall) {
-            return null;
+        if ($node instanceof MethodCall) {
+            if (! $this->isName($node->name, self::BACK_KEYWORD)) {
+                return null;
+            }
+
+            $rootExpr = $this->fluentChainMethodCallNodeAnalyzer->resolveRootExpr($node);
+            $parentNode = $rootExpr->getAttribute(AttributeKey::PARENT_NODE);
+
+            if (! $this->isPatternMatch($parentNode)) {
+                return null;
+            }
+
+            $this->removeNode($node);
+
+            $parentNode->var->name = new Name(self::BACK_KEYWORD);
+
+            return $parentNode;
         }
 
-        $rootExpr = $this->fluentChainMethodCallNodeAnalyzer->resolveRootExpr($node);
-        $parentNode = $rootExpr->getAttribute(AttributeKey::PARENT_NODE);
-
-        if ($this->shouldSkip($parentNode)) {
+        if (! $this->isStaticCallPatternMatch($node)) {
             return null;
         }
-
-        $this->removeNode($node);
-
-        $parentNode->var->name = new Name(self::BACK_KEYWORD);
-
-        return $parentNode;
+        return new FuncCall(new Name('back'), $node->args);
     }
 
-    private function shouldSkip(MethodCall|FuncCall $node): bool
+    private function isPatternMatch(MethodCall $node): bool
     {
         if (! $node->var instanceof FuncCall) {
-            return true;
+            return false;
         }
 
         if (count($node->var->getArgs()) > 0) {
-            return true;
+            return false;
         }
 
         if ($this->getName($node->var->name) !== self::REDIRECT_KEYWORD) {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
+    }
+
+    public function isStaticCallPatternMatch(Node $node): bool
+    {
+        if (! $this->isName($node->class, 'Illuminate\Support\Facades\Redirect')) {
+            return false;
+        }
+
+        if (! $this->isName($node->name, 'back')) {
+            return false;
+        }
+
+        return true;
     }
 }
