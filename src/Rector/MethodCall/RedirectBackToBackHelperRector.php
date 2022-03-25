@@ -126,7 +126,7 @@ CODE_SAMPLE
         return false;
     }
 
-    public function isNotRedirectBackStaticCall(Node $node): bool
+    private function isNotRedirectBackStaticCall(Node $node): bool
     {
         if (! $this->isName($node->class, 'Illuminate\Support\Facades\Redirect')) {
             return true;
