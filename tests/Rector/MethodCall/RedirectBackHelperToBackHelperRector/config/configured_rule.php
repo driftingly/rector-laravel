@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Rector\Laravel\Rector\FuncCall\RedirectBackHelperToBackHelperRector;
+use Rector\Laravel\Rector\MethodCall\RedirectBackHelperToBackHelperRector;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $containerConfigurator): void {

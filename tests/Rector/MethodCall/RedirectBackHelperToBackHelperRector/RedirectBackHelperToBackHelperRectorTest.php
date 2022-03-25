@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\FuncCall\RedirectBackHelperToBackHelperRector;
+namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackHelperToBackHelperRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

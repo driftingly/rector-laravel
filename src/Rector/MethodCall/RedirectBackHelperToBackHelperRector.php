@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\FuncCall;
+namespace Rector\Laravel\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\Laravel\Tests\Rector\FuncCall\RedirectBackHelperToBackHelperRector\RedirectBackHelperToBackHelperRectorTest
+ * @see \Rector\Laravel\Tests\Rector\MethodCall\RedirectBackHelperToBackHelperRector\RedirectBackHelperToBackHelperRectorTest
  */
 
 final class RedirectBackHelperToBackHelperRector extends AbstractRector

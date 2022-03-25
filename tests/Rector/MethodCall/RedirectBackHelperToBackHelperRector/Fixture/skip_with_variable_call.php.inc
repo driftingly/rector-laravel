@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector\Fixture;
+namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackHelperToBackHelperRector\Fixture;
 
 use Illuminate\Support\Facades\Redirect;
 
@@ -16,7 +16,7 @@ class SkipWithStaticCall
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector\Fixture;
+namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackHelperToBackHelperRector\Fixture;
 
 use Illuminate\Support\Facades\Redirect;
 
