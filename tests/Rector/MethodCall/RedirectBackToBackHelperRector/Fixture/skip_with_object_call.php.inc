@@ -4,7 +4,7 @@ namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector\
 
 use Illuminate\Support\Facades\Redirect;
 
-class SkipWithStaticCall
+class SkipWithObjectCall
 {
     public function run(Redirect $redirect)
     {

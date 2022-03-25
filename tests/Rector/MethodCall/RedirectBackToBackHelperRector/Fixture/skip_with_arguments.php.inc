@@ -2,7 +2,7 @@
 
 namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector\Fixture;
 
-class SkipWithStaticCall
+class SkipWithArguments
 {
     public function run()
     {
