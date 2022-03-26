@@ -107,7 +107,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($parentNode->var->getArgs()) > 0) {
+        if ($parentNode->var->getArgs() !== []) {
             return null;
         }
 
