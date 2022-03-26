@@ -111,7 +111,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($this->getName($parentNode->var->name) !== 'redirect') {
+        if (! $this->isName($parentNode->var->name, 'redirect')) {
             return null;
         }
 
