@@ -204,7 +204,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             new ArgumentFuncCallToMethodCall('info', 'Illuminate\Log\Writer', 'info'),
             new ArgumentFuncCallToMethodCall('view', 'Illuminate\Contracts\View\Factory', 'make'),
             new ArgumentFuncCallToMethodCall('bcrypt', 'Illuminate\Hashing\BcryptHasher', 'make'),
-            new ArgumentFuncCallToMethodCall('redirect', 'Illuminate\Routing\Redirector', 'back'),
+            new ArgumentFuncCallToMethodCall('redirect', 'Illuminate\Routing\Redirector', 'to'),
             new ArgumentFuncCallToMethodCall('broadcast', 'Illuminate\Contracts\Broadcasting\Factory', 'event'),
             new ArgumentFuncCallToMethodCall('event', 'Illuminate\Events\Dispatcher', 'dispatch'),
             new ArgumentFuncCallToMethodCall('dispatch', 'Illuminate\Events\Dispatcher', 'dispatch'),
