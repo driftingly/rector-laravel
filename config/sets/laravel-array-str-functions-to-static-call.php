@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
+use Rector\Config\RectorConfig;
+
 use Rector\Transform\Rector\FuncCall\FuncCallToStaticCallRector;
 use Rector\Transform\ValueObject\FuncCallToStaticCall;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 // @see https://medium.freecodecamp.org/moving-away-from-magic-or-why-i-dont-want-to-use-laravel-anymore-2ce098c979bd
 // @see https://laravel.com/docs/5.7/facades#facades-vs-dependency-injection
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+return static function (RectorConfig $rectorConfig): void {
+    $services = $rectorConfig->services();
     $services->set(FuncCallToStaticCallRector::class)
         ->configure([new FuncCallToStaticCall('array_add', 'Illuminate\Support\Arr', 'add'),
             new FuncCallToStaticCall('array_collapse', 'Illuminate\Support\Arr', 'collapse'),

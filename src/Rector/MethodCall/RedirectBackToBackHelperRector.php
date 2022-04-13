@@ -90,13 +90,13 @@ CODE_SAMPLE
         return $this->updateRedirectStaticCall($node);
     }
 
-    private function updateRedirectHelperCall(MethodCall $node): ?MethodCall
+    private function updateRedirectHelperCall(MethodCall $methodCall): ?MethodCall
     {
-        if (! $this->isName($node->name, 'back')) {
+        if (! $this->isName($methodCall->name, 'back')) {
             return null;
         }
 
-        $rootExpr = $this->fluentChainMethodCallNodeAnalyzer->resolveRootExpr($node);
+        $rootExpr = $this->fluentChainMethodCallNodeAnalyzer->resolveRootExpr($methodCall);
         $parentNode = $rootExpr->getAttribute(AttributeKey::PARENT_NODE);
 
         if (! $parentNode instanceof MethodCall) {
@@ -115,23 +115,23 @@ CODE_SAMPLE
             return null;
         }
 
-        $this->removeNode($node);
+        $this->removeNode($methodCall);
 
         $parentNode->var->name = new Name('back');
 
         return $parentNode;
     }
 
-    private function updateRedirectStaticCall(StaticCall $node): ?FuncCall
+    private function updateRedirectStaticCall(StaticCall $staticCall): ?FuncCall
     {
-        if (! $this->isName($node->class, 'Illuminate\Support\Facades\Redirect')) {
+        if (! $this->isName($staticCall->class, 'Illuminate\Support\Facades\Redirect')) {
             return null;
         }
 
-        if (! $this->isName($node->name, 'back')) {
+        if (! $this->isName($staticCall->name, 'back')) {
             return null;
         }
 
-        return new FuncCall(new Name('back'), $node->args);
+        return new FuncCall(new Name('back'), $staticCall->args);
     }
 }
