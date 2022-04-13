@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Rector\Config\RectorConfig;
+
 use Rector\Laravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
 use Rector\Laravel\Rector\StaticCall\RequestStaticValidateToInjectRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -11,16 +13,15 @@ use Rector\Transform\Rector\StaticCall\StaticCallToMethodCallRector;
 use Rector\Transform\ValueObject\ArgumentFuncCallToMethodCall;
 use Rector\Transform\ValueObject\ArrayFuncCallToMethodCall;
 use Rector\Transform\ValueObject\StaticCallToMethodCall;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 /**
  * @see https://www.freecodecamp.org/news/moving-away-from-magic-or-why-i-dont-want-to-use-laravel-anymore-2ce098c979bd/
  * @see https://tomasvotruba.com/blog/2019/03/04/how-to-turn-laravel-from-static-to-dependency-injection-in-one-day/
  * @see https://laravel.com/docs/5.7/facades#facades-vs-dependency-injection
  */
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->import(__DIR__ . '/laravel-array-str-functions-to-static-call.php');
-    $services = $containerConfigurator->services();
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/laravel-array-str-functions-to-static-call.php');
+    $services = $rectorConfig->services();
     $services->set(StaticCallToMethodCallRector::class)
         ->configure([new StaticCallToMethodCall(
             'Illuminate\Support\Facades\App',

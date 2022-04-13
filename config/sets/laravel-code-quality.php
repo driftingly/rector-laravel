@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-use Rector\Laravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+use Rector\Laravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
+
+return static function (RectorConfig $rectorConfig): void {
+    $services = $rectorConfig->services();
     $services->set(CallOnAppArrayAccessToStandaloneAssignRector::class);
 };

@@ -101,13 +101,13 @@ CODE_SAMPLE
             return null;
         }
 
-        $docInfo = $this->phpDocInfoFactory->createFromNode($node);
-        if (! $docInfo instanceof PhpDocInfo) {
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
+        if (! $phpDocInfo instanceof PhpDocInfo) {
             return null;
         }
 
         // Return, if already has return type
-        if ($node->getDocComment() !== null && $docInfo->hasByName('return')) {
+        if ($node->getDocComment() !== null && $phpDocInfo->hasByName('return')) {
             return null;
         }
 
@@ -132,7 +132,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $docInfo->addTagValueNode(
+        $phpDocInfo->addTagValueNode(
             new ReturnTagValueNode(
                 new GenericTypeNode(
                     new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
@@ -186,13 +186,13 @@ CODE_SAMPLE
         return $modelType->getClassName();
     }
 
-    private function shouldSkipNode(ClassMethod $node): bool
+    private function shouldSkipNode(ClassMethod $classMethod): bool
     {
-        if ($node->stmts === null) {
+        if ($classMethod->stmts === null) {
             return true;
         }
 
-        $classLike = $this->betterNodeFinder->findParentType($node, ClassLike::class);
+        $classLike = $this->betterNodeFinder->findParentType($classMethod, ClassLike::class);
 
         if (! $classLike instanceof ClassLike) {
             return true;

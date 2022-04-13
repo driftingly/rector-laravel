@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use PHPStan\Type\ArrayType;
+
 use PHPStan\Type\MixedType;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
+use Rector\Config\RectorConfig;
 use Rector\Laravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
 use Rector\Laravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
 use Rector\Laravel\Rector\MethodCall\RemoveAllOnDispatchingMethodsWithJobChainingRector;
@@ -14,11 +16,10 @@ use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 # see https://laravel.com/docs/8.x/upgrade
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+return static function (RectorConfig $rectorConfig): void {
+    $services = $rectorConfig->services();
 
     # https://github.com/laravel/framework/commit/4d228d6e9dbcbd4d97c45665980d8b8c685b27e6
     $services->set(ArgumentAdderRector::class)

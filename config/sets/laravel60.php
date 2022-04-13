@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
+
 use Rector\Arguments\ValueObject\ArgumentAdder;
+use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\Visibility;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -13,13 +15,12 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\TypeDeclaration\Rector\FunctionLike\ParamTypeDeclarationRector;
 use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 # see https://laravel.com/docs/6.x/upgrade
 # https://github.com/laravel/docs/pull/5531/files
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+return static function (RectorConfig $rectorConfig): void {
+    $services = $rectorConfig->services();
 
     # https://github.com/laravel/framework/commit/67a38ba0fa2acfbd1f4af4bf7d462bb4419cc091
     $services->set(ParamTypeDeclarationRector::class);

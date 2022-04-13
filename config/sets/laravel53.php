@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
+
+return static function (RectorConfig $rectorConfig): void {
+    $services = $rectorConfig->services();
     $services->set(RemoveTraitUseRector::class)
         ->configure([
             # see https://laravel.com/docs/5.3/upgrade
