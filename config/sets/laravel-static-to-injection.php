@@ -21,9 +21,8 @@ use Rector\Transform\ValueObject\StaticCallToMethodCall;
  */
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/laravel-array-str-functions-to-static-call.php');
-    $services = $rectorConfig->services();
-    $services->set(StaticCallToMethodCallRector::class)
-        ->configure([new StaticCallToMethodCall(
+    $rectorConfig
+        ->ruleWithConfiguration(StaticCallToMethodCallRector::class, [new StaticCallToMethodCall(
             'Illuminate\Support\Facades\App',
             '*',
             'Illuminate\Foundation\Application',
@@ -186,11 +185,11 @@ return static function (RectorConfig $rectorConfig): void {
             ),
             new StaticCallToMethodCall('Illuminate\Support\Facades\View', '*', 'Illuminate\View\Factory', '*'),
         ]);
-    $services->set(RequestStaticValidateToInjectRector::class);
+    $rectorConfig->rule(RequestStaticValidateToInjectRector::class);
     // @see https://github.com/laravel/framework/blob/78828bc779e410e03cc6465f002b834eadf160d2/src/Illuminate/Foundation/helpers.php#L959
     // @see https://gist.github.com/barryvdh/bb6ffc5d11e0a75dba67
-    $services->set(ArgumentFuncCallToMethodCallRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(ArgumentFuncCallToMethodCallRector::class, [
             new ArgumentFuncCallToMethodCall('auth', 'Illuminate\Contracts\Auth\Guard'),
             new ArgumentFuncCallToMethodCall('policy', 'Illuminate\Contracts\Auth\Access\Gate', 'getPolicyFor'),
             new ArgumentFuncCallToMethodCall('cookie', 'Illuminate\Contracts\Cookie\Factory', 'make'),
@@ -221,15 +220,15 @@ return static function (RectorConfig $rectorConfig): void {
             new ArrayFuncCallToMethodCall('session', 'Illuminate\Session\SessionManager', 'put', 'get'),
         ]);
 
-    $services->set(FuncCallToNewRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(FuncCallToNewRector::class, [
             'collect' => 'Illuminate\Support\Collection',
         ]);
 
-    $services->set(HelperFuncCallToFacadeClassRector::class);
+    $rectorConfig->rule(HelperFuncCallToFacadeClassRector::class);
 
-    $services->set(RenameClassRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(RenameClassRector::class, [
             'App' => 'Illuminate\Support\Facades\App',
             'Artisan' => 'Illuminate\Support\Facades\Artisan',
             'Auth' => 'Illuminate\Support\Facades\Auth',

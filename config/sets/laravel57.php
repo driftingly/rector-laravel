@@ -20,15 +20,16 @@ use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
 # see: https://laravel.com/docs/5.7/upgrade
 return static function (RectorConfig $rectorConfig): void {
-    $services = $rectorConfig->services();
-    $services->set(ChangeMethodVisibilityRector::class)
-        ->configure(
+    $rectorConfig
+        ->ruleWithConfiguration(
+            ChangeMethodVisibilityRector::class,
             [new ChangeMethodVisibility('Illuminate\Routing\Router', 'addRoute', Visibility::PUBLIC),
                 new ChangeMethodVisibility('Illuminate\Contracts\Auth\Access\Gate', 'raw', Visibility::PUBLIC),
             ]
         );
-    $services->set(ArgumentAdderRector::class)
-        ->configure(
+    $rectorConfig
+        ->ruleWithConfiguration(
+            ArgumentAdderRector::class,
             [new ArgumentAdder('Illuminate\Auth\Middleware\Authenticate', 'authenticate', 0, 'request'),
                 new ArgumentAdder(
                     'Illuminate\Foundation\Auth\ResetsPasswords',
@@ -50,14 +51,17 @@ return static function (RectorConfig $rectorConfig): void {
                 new ArgumentAdder('Illuminate\Database\ConnectionInterface', 'selectOne', 2, 'useReadPdo', true),
             ]
         );
-    $services->set(Redirect301ToPermanentRedirectRector::class);
-    $services->set(ArgumentRemoverRector::class)
-        ->configure([new ArgumentRemover('Illuminate\Foundation\Application', 'register', 1, [
-            'name' => 'options',
-        ]),
-        ]);
-    $services->set(AddParentBootToModelClassMethodRector::class);
-    $services->set(ChangeQueryWhereDateValueWithCarbonRector::class);
-    $services->set(AddMockConsoleOutputFalseToConsoleTestsRector::class);
-    $services->set(AddGuardToLoginEventRector::class);
+    $rectorConfig->rule(Redirect301ToPermanentRedirectRector::class);
+    $rectorConfig
+        ->ruleWithConfiguration(
+            ArgumentRemoverRector::class,
+            [new ArgumentRemover('Illuminate\Foundation\Application', 'register', 1, [
+                'name' => 'options',
+            ]),
+            ]
+        );
+    $rectorConfig->rule(AddParentBootToModelClassMethodRector::class);
+    $rectorConfig->rule(ChangeQueryWhereDateValueWithCarbonRector::class);
+    $rectorConfig->rule(AddMockConsoleOutputFalseToConsoleTestsRector::class);
+    $rectorConfig->rule(AddGuardToLoginEventRector::class);
 };

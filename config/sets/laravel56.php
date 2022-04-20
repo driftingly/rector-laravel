@@ -13,9 +13,8 @@ use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 # see: https://laravel.com/docs/5.6/upgrade
 
 return static function (RectorConfig $rectorConfig): void {
-    $services = $rectorConfig->services();
-    $services->set(RenameMethodRector::class)
-        ->configure([new MethodCallRename(
+    $rectorConfig
+        ->ruleWithConfiguration(RenameMethodRector::class, [new MethodCallRename(
             'Illuminate\Validation\ValidatesWhenResolvedTrait',
             'validate',
             'validateResolved'
@@ -27,8 +26,9 @@ return static function (RectorConfig $rectorConfig): void {
             ),
         ]);
 
-    $services->set(ChangeMethodVisibilityRector::class)
-        ->configure(
+    $rectorConfig
+        ->ruleWithConfiguration(
+            ChangeMethodVisibilityRector::class,
             [new ChangeMethodVisibility('Illuminate\Routing\Router', 'addRoute', Visibility::PUBLIC),
                 new ChangeMethodVisibility('Illuminate\Contracts\Auth\Access\Gate', 'raw', Visibility::PUBLIC),
                 new ChangeMethodVisibility('Illuminate\Database\Grammar', 'getDateFormat', Visibility::PUBLIC),

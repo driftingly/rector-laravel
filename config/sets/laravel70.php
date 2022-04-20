@@ -15,11 +15,9 @@ use Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration;
 
 # see https://laravel.com/docs/7.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
-    $services = $rectorConfig->services();
-
     # https://github.com/laravel/framework/pull/30610/files
-    $services->set(AddParamTypeDeclarationRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(AddParamTypeDeclarationRector::class, [
             new AddParamTypeDeclaration(
                 'Illuminate\Contracts\Debug\ExceptionHandler',
                 'report',
@@ -47,8 +45,8 @@ return static function (RectorConfig $rectorConfig): void {
         ]);
 
     # https://github.com/laravel/framework/pull/30471/files
-    $services->set(ArgumentAdderRector::class)
-        ->configure([new ArgumentAdder(
+    $rectorConfig
+        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
             'Illuminate\Contracts\Routing\UrlRoutable',
             'resolveRouteBinding',
             1,
@@ -57,8 +55,8 @@ return static function (RectorConfig $rectorConfig): void {
         ),
         ]);
 
-    $services->set(RenameMethodRector::class)
-        ->configure([                # https://github.com/laravel/framework/commit/aece7d78f3d28b2cdb63185dcc4a9b6092841310
+    $rectorConfig
+        ->ruleWithConfiguration(RenameMethodRector::class, [                # https://github.com/laravel/framework/commit/aece7d78f3d28b2cdb63185dcc4a9b6092841310
             new MethodCallRename('Illuminate\Support\Facades\Blade', 'component', 'aliasComponent'),
             # https://github.com/laravel/framework/pull/31463/files
             new MethodCallRename(
@@ -73,8 +71,8 @@ return static function (RectorConfig $rectorConfig): void {
                 'makeVisible'
             ),
         ]);
-    $services->set(RenameClassRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(RenameClassRector::class, [
             # https://github.com/laravel/framework/pull/30619/files
             'Illuminate\Http\Resources\Json\Resource' => 'Illuminate\Http\Resources\Json\JsonResource',
             # https://github.com/laravel/framework/pull/31050/files

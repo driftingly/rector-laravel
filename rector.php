@@ -1,20 +1,18 @@
 <?php
 
 declare(strict_types=1);
+use Rector\DogFood\Rector\Closure\UpgradeRectorConfigRector;
 
 use Rector\Config\RectorConfig;
 
-use Rector\Core\Configuration\Option;
 use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $parameters = $rectorConfig->parameters();
-
-    $parameters->set(Option::AUTO_IMPORT_NAMES, true);
-    $parameters->set(Option::PATHS, [__DIR__ . '/src', __DIR__ . '/tests']);
-    $parameters->set(Option::SKIP, [
+    $rectorConfig->importNames();
+    $rectorConfig->paths([__DIR__ . '/src', __DIR__ . '/tests']);
+    $rectorConfig->skip([
         // for tests
         '*/Source/*',
         '*/Fixture/*',
@@ -24,8 +22,5 @@ return static function (RectorConfig $rectorConfig): void {
         StringClassNameToClassConstantRector::class,
     ]);
 
-    $rectorConfig->import(LevelSetList::UP_TO_PHP_81);
-    $rectorConfig->import(SetList::DEAD_CODE);
-    $rectorConfig->import(SetList::CODE_QUALITY);
-    $rectorConfig->import(SetList::NAMING);
+    $rectorConfig->sets([LevelSetList::UP_TO_PHP_81, SetList::DEAD_CODE, SetList::CODE_QUALITY, SetList::NAMING]);
 };

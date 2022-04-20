@@ -20,13 +20,11 @@ use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 # https://github.com/laravel/docs/pull/5531/files
 
 return static function (RectorConfig $rectorConfig): void {
-    $services = $rectorConfig->services();
-
     # https://github.com/laravel/framework/commit/67a38ba0fa2acfbd1f4af4bf7d462bb4419cc091
-    $services->set(ParamTypeDeclarationRector::class);
+    $rectorConfig->rule(ParamTypeDeclarationRector::class);
 
-    $services->set(RenameMethodRector::class)
-        ->configure([new MethodCallRename(
+    $rectorConfig
+        ->ruleWithConfiguration(RenameMethodRector::class, [new MethodCallRename(
             'Illuminate\Auth\Access\Gate',
                     # https://github.com/laravel/framework/commit/69de466ddc25966a0f6551f48acab1afa7bb9424
                     'access',
@@ -47,8 +45,8 @@ return static function (RectorConfig $rectorConfig): void {
             ),
         ]);
 
-    $services->set(RenameStaticMethodRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(RenameStaticMethodRector::class, [
             // https://github.com/laravel/framework/commit/55785d3514a8149d4858acef40c56a31b6b2ccd1
             new RenameStaticMethod(
                 'Illuminate\Support\Facades\Input',
@@ -58,21 +56,21 @@ return static function (RectorConfig $rectorConfig): void {
             ),
         ]);
 
-    $services->set(RenameClassRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(RenameClassRector::class, [
             'Illuminate\Support\Facades\Input' => 'Illuminate\Support\Facades\Request',
         ]);
 
-    $services->set(ChangeMethodVisibilityRector::class)
-        ->configure([new ChangeMethodVisibility(
+    $rectorConfig
+        ->ruleWithConfiguration(ChangeMethodVisibilityRector::class, [new ChangeMethodVisibility(
             'Illuminate\Foundation\Http\FormRequest',
             'validationData',
             Visibility::PUBLIC
         ),
         ]);
 
-    $services->set(ArgumentAdderRector::class)
-        ->configure([                // https://github.com/laravel/framework/commit/6c1e014943a508afb2c10869c3175f7783a004e1
+    $rectorConfig
+        ->ruleWithConfiguration(ArgumentAdderRector::class, [                // https://github.com/laravel/framework/commit/6c1e014943a508afb2c10869c3175f7783a004e1
             new ArgumentAdder('Illuminate\Database\Capsule\Manager', 'table', 1, 'as', null),
             new ArgumentAdder('Illuminate\Database\Connection', 'table', 1, 'as', null),
             new ArgumentAdder('Illuminate\Database\ConnectionInterface', 'table', 1, 'as', null),

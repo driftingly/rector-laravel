@@ -7,6 +7,5 @@ use Rector\Config\RectorConfig;
 use Rector\Laravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
 
 return static function (RectorConfig $rectorConfig): void {
-    $services = $rectorConfig->services();
-    $services->set(CallOnAppArrayAccessToStandaloneAssignRector::class);
+    $rectorConfig->rule(CallOnAppArrayAccessToStandaloneAssignRector::class);
 };
