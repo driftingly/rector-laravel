@@ -10,16 +10,16 @@ use Rector\Transform\ValueObject\StringToClassConstant;
 
 # see: https://laravel.com/docs/5.2/upgrade
 return static function (RectorConfig $rectorConfig): void {
-    $services = $rectorConfig->services();
-    $services->set(RenameClassRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(RenameClassRector::class, [
             'Illuminate\Auth\Access\UnauthorizedException' => 'Illuminate\Auth\Access\AuthorizationException',
             'Illuminate\Http\Exception\HttpResponseException' => 'Illuminate\Foundation\Validation\ValidationException',
             'Illuminate\Foundation\Composer' => 'Illuminate\Support\Composer',
         ]);
 
-    $services->set(StringToClassConstantRector::class)
-        ->configure(
+    $rectorConfig
+        ->ruleWithConfiguration(
+            StringToClassConstantRector::class,
             [new StringToClassConstant('artisan.start', 'Illuminate\Console\Events\ArtisanStarting', 'class'),
                 new StringToClassConstant('auth.attempting', 'Illuminate\Auth\Events\Attempting', 'class'),
                 new StringToClassConstant('auth.login', 'Illuminate\Auth\Events\Login', 'class'),

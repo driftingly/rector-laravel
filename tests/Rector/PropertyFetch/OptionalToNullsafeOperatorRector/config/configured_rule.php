@@ -9,12 +9,10 @@ use Rector\Laravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../../../config/config.php');
 
-    $services = $rectorConfig->services();
-
-    $services->set(OptionalToNullsafeOperatorRector::class)
-        ->call('configure', [
-            [
-                OptionalToNullsafeOperatorRector::EXCLUDE_METHODS => ['present'],
-            ],
-        ]);
+    $rectorConfig->ruleWithConfiguration(
+        OptionalToNullsafeOperatorRector::class,
+        [
+            OptionalToNullsafeOperatorRector::EXCLUDE_METHODS => ['present'],
+        ],
+    );
 };

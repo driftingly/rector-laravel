@@ -13,9 +13,8 @@ use Rector\Transform\ValueObject\StringToClassConstant;
 # see: https://laravel.com/docs/5.4/upgrade
 
 return static function (RectorConfig $rectorConfig): void {
-    $services = $rectorConfig->services();
-    $services->set(StringToClassConstantRector::class)
-        ->configure([new StringToClassConstant(
+    $rectorConfig
+        ->ruleWithConfiguration(StringToClassConstantRector::class, [new StringToClassConstant(
             'kernel.handled',
             'Illuminate\Foundation\Http\Events\RequestHandled',
             'class'
@@ -24,8 +23,8 @@ return static function (RectorConfig $rectorConfig): void {
             new StringToClassConstant('illuminate.log', 'Illuminate\Log\Events\MessageLogged', 'class'),
         ]);
 
-    $services->set(RenameClassRector::class)
-        ->configure([
+    $rectorConfig
+        ->ruleWithConfiguration(RenameClassRector::class, [
             'Illuminate\Console\AppNamespaceDetectorTrait' => 'Illuminate\Console\DetectsApplicationNamespace',
             'Illuminate\Http\Exception\HttpResponseException' => 'Illuminate\Http\Exceptions\HttpResponseException',
             'Illuminate\Http\Exception\PostTooLargeException' => 'Illuminate\Http\Exceptions\PostTooLargeException',
@@ -33,8 +32,12 @@ return static function (RectorConfig $rectorConfig): void {
             'Symfony\Component\HttpFoundation\Session\SessionInterface' => 'Illuminate\Contracts\Session\Session',
         ]);
 
-    $services->set(RenameMethodRector::class)
-        ->configure([new MethodCallRename('Illuminate\Support\Collection', 'every', 'nth'),
+    $rectorConfig
+        ->ruleWithConfiguration(RenameMethodRector::class, [new MethodCallRename(
+            'Illuminate\Support\Collection',
+            'every',
+            'nth'
+        ),
             new MethodCallRename('Illuminate\Database\Eloquent\Relations\BelongsToMany', 'setJoin', 'performJoin'),
             new MethodCallRename(
                 'Illuminate\Database\Eloquent\Relations\BelongsToMany',

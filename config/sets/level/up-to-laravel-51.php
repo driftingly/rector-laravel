@@ -7,6 +7,5 @@ use Rector\Config\RectorConfig;
 use Rector\Laravel\Set\LaravelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->import(LaravelSetList::LARAVEL_50);
-    $rectorConfig->import(LaravelSetList::LARAVEL_51);
+    $rectorConfig->sets([LaravelSetList::LARAVEL_50, LaravelSetList::LARAVEL_51]);
 };

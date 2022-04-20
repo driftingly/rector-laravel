@@ -17,11 +17,11 @@ use Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration;
 # see: https://laravel.com/docs/5.8/upgrade
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/laravel-array-str-functions-to-static-call.php');
-    $services = $rectorConfig->services();
-    $services->set(MinutesToSecondsInCacheRector::class);
+    $rectorConfig->rule(MinutesToSecondsInCacheRector::class);
 
-    $services->set(AddReturnTypeDeclarationRector::class)
-        ->configure(
+    $rectorConfig
+        ->ruleWithConfiguration(
+            AddReturnTypeDeclarationRector::class,
             [new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Repository', 'put', new BooleanType()),
                 new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Repository', 'forever', new BooleanType()),
                 new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'put', new BooleanType()),
@@ -29,7 +29,10 @@ return static function (RectorConfig $rectorConfig): void {
                 new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'forever', new BooleanType()),
             ]
         );
-    $services->set(RenamePropertyRector::class)
-        ->configure([new RenameProperty('Illuminate\Routing\UrlGenerator', 'cachedSchema', 'cachedScheme')]);
-    $services->set(PropertyDeferToDeferrableProviderToRector::class);
+    $rectorConfig
+        ->ruleWithConfiguration(
+            RenamePropertyRector::class,
+            [new RenameProperty('Illuminate\Routing\UrlGenerator', 'cachedSchema', 'cachedScheme')]
+        );
+    $rectorConfig->rule(PropertyDeferToDeferrableProviderToRector::class);
 };

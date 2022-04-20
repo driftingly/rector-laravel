@@ -8,6 +8,5 @@ use Rector\Laravel\Set\LaravelLevelSetList;
 use Rector\Laravel\Set\LaravelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->import(LaravelSetList::LARAVEL_52);
-    $rectorConfig->import(LaravelLevelSetList::UP_TO_LARAVEL_51);
+    $rectorConfig->sets([LaravelSetList::LARAVEL_52, LaravelLevelSetList::UP_TO_LARAVEL_51]);
 };
