@@ -17,5 +17,5 @@ return static function (RectorConfig $rectorConfig): void {
     $services->load('Rector\\Laravel\\', __DIR__ . '/../src')
         ->exclude([__DIR__ . '/../src/{Rector,ValueObject}']);
 
-    $rectorConfig->rule(RenameClassNonPhpRector::class);
+    $services->set(RenameClassNonPhpRector::class);
 };
