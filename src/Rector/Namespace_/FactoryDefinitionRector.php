@@ -240,7 +240,7 @@ CODE_SAMPLE
         }
 
         $method = $class->getMethod('configure');
-        if ($method === null) {
+        if (! $method instanceof ClassMethod) {
             $method = $this->modelFactoryNodeFactory->createEmptyConfigure();
             $class->stmts[] = $method;
         }
