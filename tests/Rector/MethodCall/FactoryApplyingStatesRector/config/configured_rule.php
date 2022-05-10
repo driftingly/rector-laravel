@@ -9,7 +9,5 @@ use Rector\Laravel\Rector\MethodCall\FactoryApplyingStatesRector;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../../../config/config.php');
 
-    $services = $rectorConfig->services();
-
-    $services->set(FactoryApplyingStatesRector::class);
+    $rectorConfig->rule(FactoryApplyingStatesRector::class);
 };

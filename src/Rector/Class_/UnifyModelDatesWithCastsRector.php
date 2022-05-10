@@ -102,7 +102,7 @@ CODE_SAMPLE
         $castsProperty = $node->getProperty('casts');
 
         // add property $casts if not exists
-        if ($castsProperty === null) {
+        if (! $castsProperty instanceof Property) {
             $castsProperty = $this->createCastsProperty();
             $this->classInsertManipulator->addAsFirstMethod($node, $castsProperty);
         }
