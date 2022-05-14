@@ -21,7 +21,7 @@ class Fixture
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector\Fixture;
+namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectRouteToToRouteHelperRector\Fixture;
 
 use Illuminate\Support\Facades\Redirect;
 
