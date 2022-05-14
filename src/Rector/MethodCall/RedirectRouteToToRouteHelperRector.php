@@ -117,7 +117,7 @@ CODE_SAMPLE
 
         $this->removeNode($methodCall);
 
-        $parentNode->var->name = new Name('to_route', $methodCall->getArgs());
+        $parentNode->var->name = new Name('to_route');
         $parentNode->var->args = $methodCall->getArgs();
 
         return $parentNode;
