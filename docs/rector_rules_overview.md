@@ -471,6 +471,7 @@ It will removes the dump data just like dd or dump functions from the code.
      public function update()
      {
 -        dump('test');
+        return true;
      }
  }
 ```
