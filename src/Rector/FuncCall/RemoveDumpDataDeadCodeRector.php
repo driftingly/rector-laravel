@@ -76,7 +76,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $this->isName($node->name, 'dd') && ! $this->isName($node->name, 'dump')) {
+        if (! $this->isNames($node->name, ['dd', 'dump'])) {
             return null;
         }
 
