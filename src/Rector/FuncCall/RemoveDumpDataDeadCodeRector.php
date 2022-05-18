@@ -73,10 +73,6 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof FuncCall) {
-            return null;
-        }
-
         if (! $this->isNames($node->name, ['dd', 'dump'])) {
             return null;
         }

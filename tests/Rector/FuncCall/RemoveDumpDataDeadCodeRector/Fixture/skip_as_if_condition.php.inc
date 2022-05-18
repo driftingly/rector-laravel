@@ -2,7 +2,7 @@
 
 namespace Rector\Laravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\Fixture;
 
-class SkipWithArguments
+class SkipAsIfCondition
 {
     public function run()
     {
