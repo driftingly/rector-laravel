@@ -6,8 +6,9 @@ namespace Rector\Laravel\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -68,7 +69,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param FuncCall|StaticCall $node
+     * @param FuncCall $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -80,7 +81,13 @@ CODE_SAMPLE
             return null;
         }
 
+        $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
+        if (! $parentNode instanceof Expression) {
+            return null;
+        }
+
         $this->removeNode($node);
+
         return null;
     }
 }
