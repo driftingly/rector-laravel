@@ -453,7 +453,7 @@ Remove `allOnQueue()` and `allOnConnection()` methods used with job chaining, us
 
 <br>
 
-## RedirectRouteToToRouteHelperRector
+## RemoveDumpDataDeadCodeRector
 
 It will removes the dump data just like dd or dump functions from the code.
 
