@@ -2,21 +2,12 @@
 
 declare(strict_types=1);
 
-use PHPStan\Type\ArrayType;
-
-use PHPStan\Type\MixedType;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\Visibility;
-use Rector\Laravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
-use Rector\Laravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
-use Rector\Laravel\Rector\MethodCall\RemoveAllOnDispatchingMethodsWithJobChainingRector;
-use Rector\Laravel\ValueObject\AddArgumentDefaultValue;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
-use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
-use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
 # see https://laravel.com/docs/9.x/upgrade
@@ -29,7 +20,7 @@ return static function (RectorConfig $rectorConfig): void {
             'path',
             ''
         ),
-    ]);
+        ]);
 
     $rectorConfig
         ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
@@ -39,7 +30,7 @@ return static function (RectorConfig $rectorConfig): void {
             'path',
             ''
         ),
-    ]);
+        ]);
 
     $rectorConfig
         ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
@@ -48,7 +39,7 @@ return static function (RectorConfig $rectorConfig): void {
             0,
             'attribute',
         ),
-    ]);
+        ]);
 
     $rectorConfig
         ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
@@ -57,7 +48,7 @@ return static function (RectorConfig $rectorConfig): void {
             0,
             'hours',
         ),
-    ]);
+        ]);
 
     $rectorConfig
         ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
@@ -66,13 +57,8 @@ return static function (RectorConfig $rectorConfig): void {
             0,
             'key',
         ),
-        new ArgumentAdder(
-            'Illuminate\Foundation\Http\FormRequest',
-            'validated',
-            1,
-            'default',
-        )
-    ]);
+            new ArgumentAdder('Illuminate\Foundation\Http\FormRequest', 'validated', 1, 'default',),
+        ]);
 
     $rectorConfig
         ->ruleWithConfiguration(ChangeMethodVisibilityRector::class, [new ChangeMethodVisibility(
@@ -80,7 +66,7 @@ return static function (RectorConfig $rectorConfig): void {
             'ignore',
             Visibility::PUBLIC
         ),
-    ]);
+        ]);
 
     $rectorConfig
         ->ruleWithConfiguration(RenameMethodRector::class, [
@@ -92,7 +78,11 @@ return static function (RectorConfig $rectorConfig): void {
 
             new MethodCallRename('Illuminate\Mail\Mailable', 'withSwiftMessage', 'withSymfonyMessage'),
 
-            new MethodCallRename('Illuminate\Notifications\Messages\MailMessage', 'withSwiftMessage', 'withSymfonyMessage'),
+            new MethodCallRename(
+                'Illuminate\Notifications\Messages\MailMessage',
+                'withSwiftMessage',
+                'withSymfonyMessage'
+            ),
 
             new MethodCallRename('Illuminate\Mail\Mailer', 'getSwiftMailer', 'getSymfonyTransport'),
 
