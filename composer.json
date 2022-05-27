@@ -10,12 +10,17 @@
         "rector/rector-src": "dev-main#28fb30f",
         "phpunit/phpunit": "^9.5",
 <<<<<<< HEAD
+<<<<<<< HEAD
         "phpstan/phpstan": "^1.6",
+=======
+        "phpstan/phpstan": "^1.7.2",
+>>>>>>> misc
         "symplify/phpstan-rules": "^10.2",
         "symplify/phpstan-extensions": "^10.2",
         "symplify/easy-coding-standard": "^10.2",
         "symplify/rule-doc-generator": "^10.2",
         "symplify/monorepo-builder": "^10.2",
+<<<<<<< HEAD
         "rector/phpstan-rules": "^0.4.8",
 =======
         "phpstan/phpstan": "^1.0",
@@ -24,11 +29,18 @@
         "symplify/easy-coding-standard": "^10.0",
         "symplify/rule-doc-generator": "^10.0",
         "symplify/monorepo-builder": "^10.0",
+=======
+>>>>>>> misc
         "rector/phpstan-rules": "^0.5.1",
 >>>>>>> cleanup
         "phpstan/extension-installer": "^1.1",
+<<<<<<< HEAD
         "phpstan/phpstan-webmozart-assert": "^1.0",
         "phpstan/phpstan-strict-rules": "^1.1",
+=======
+        "phpstan/phpstan-webmozart-assert": "^1.1",
+        "phpstan/phpstan-strict-rules": "^1.2",
+>>>>>>> misc
         "symplify/vendor-patches": "^10.2"
     },
     "autoload": {
