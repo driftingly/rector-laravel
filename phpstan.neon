@@ -13,23 +13,15 @@ parameters:
         - */Source/*
         - *Source/*
 
-    reportUnmatchedIgnoredErrors: false
+#    reportUnmatchedIgnoredErrors: false
 
     ignoreErrors:
-        # not on PHP 7.4 yet
-        - '#This property type might be inlined to PHP\. Do you have confidence it is correct\? Put it here#'
-        - '#expects class\-string, string given#'
-
         # false positive - fix in symplify
         -
             message: '#\$service\-\>call\("configure", \[\[ \.\.\. \]\]\) must be followed by exact array#'
             path: config/sets/laravel-static-to-injection.php
 
-        # should be resolved with getArgs() and new release of phpstan
-        - '#(.*?) expects array<PhpParser\\Node\\Arg\>, array<PhpParser\\Node\\Arg\|PhpParser\\Node\\VariadicPlaceholder\> given#'
-
         # false positive
-        - '#Method Rector\\Laravel\\Rector\\MethodCall\\FactoryApplyingStatesRector\:\:getStatesFromArgs\(\) should return array but returns array#'
         - '#Parameter \#1 \$value of static method PhpParser\\BuilderHelpers\:\:normalizeValue\(\) expects array\|bool\|float\|int\|PhpParser\\Node\\Expr\|string\|null, mixed given#'
 
         -
@@ -38,3 +30,5 @@ parameters:
 
         # rector co-variant
         - '#Parameter \#1 \$node \(PhpParser\\Node\\(.*?) of method Rector\\(.*?)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Core\\Contract\\Rector\\PhpRectorInterface\:\:refactor\(\)#'
+
+        - '#Parameter \#1 \$className of method Rector\\Core\\Reflection\\ReflectionResolver\:\:resolveMethodReflection\(\) expects class\-string, string given#'

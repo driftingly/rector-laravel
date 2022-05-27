@@ -147,7 +147,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return array<string>|null
+     * @return array{string, string}|null
      */
     private function resolveControllerFromAction(mixed $action): ?array
     {
