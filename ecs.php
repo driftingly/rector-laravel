@@ -16,9 +16,4 @@ return static function (ECSConfig $ecsConfig): void {
         // breaks annotated code - removed on symplify dev-main
         ReturnAssignmentFixer::class,
     ]);
-<<<<<<< HEAD
-
-    $ecsConfig->lineEnding("\n");
-=======
->>>>>>> cleanup
 };
