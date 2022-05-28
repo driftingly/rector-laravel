@@ -8,6 +8,7 @@ use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\Visibility;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
+use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
 # see https://laravel.com/docs/9.x/upgrade
@@ -62,7 +63,7 @@ return static function (RectorConfig $rectorConfig): void {
             0,
             'key',
         ),
-            new ArgumentAdder('Illuminate\Foundation\Http\FormRequest', 'validated', 1, 'default',),
+            new ArgumentAdder('Illuminate\Foundation\Http\FormRequest', 'validated', 1, 'default', ),
         ]);
 
     // https://github.com/laravel/framework/commit/84c78b9f5f3dad58f92161069e6482f7267ffdb6
