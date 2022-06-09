@@ -70,6 +70,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if ($node->isAbstract()) {
+            return null;
+        }
+
         if ($this->classAnalyzer->isAnonymousClass($node)) {
             return null;
         }
