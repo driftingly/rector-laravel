@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rector\Laravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
@@ -59,12 +60,13 @@ CODE_SAMPLE)]
             return null;
         }
 
-        $string = $node->args[1]->value;
+        $string = $node->getArgs()[1]
+            ->value;
         if (! $string instanceof String_) {
             return null;
         }
 
-        $node->args[1]->value = new Array_([new ArrayItem($string, new String_('uses'))]);
+        $node->args[1]->value = new Arg(new Array_([new ArrayItem($string, new String_('uses'))]));
 
         return $node;
     }
