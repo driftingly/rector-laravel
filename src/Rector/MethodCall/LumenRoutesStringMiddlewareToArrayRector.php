@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Scalar\String_;
 use Rector\Core\NodeManipulator\ArrayManipulator;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Laravel\NodeAnalyzer\LumenRouteRegisteringMethodAnalyzer;
@@ -20,8 +21,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class LumenRoutesStringMiddlewareToArrayRector extends AbstractRector
 {
     public function __construct(
-        private ArrayManipulator $arrayManipulator,
-        private LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer
+        private readonly ArrayManipulator $arrayManipulator,
+        private readonly LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer
     ) {
     }
 
@@ -58,19 +59,19 @@ CODE_SAMPLE)]
             return null;
         }
 
-        $attributes = $this->getRouterMethodAttributes($node);
-        if ($attributes === null) {
+        $array = $this->getRouterMethodAttributes($node);
+        if (! $array instanceof Array_) {
             return null;
         }
 
-        $middleware = $this->findItemInArrayByKey($attributes, 'middleware');
-        if ($middleware === null) {
+        $arrayItem = $this->findItemInArrayByKey($array, 'middleware');
+        if (! $arrayItem instanceof ArrayItem) {
             return null;
         }
 
         /** @var Node\Scalar\String_|Node\Expr\Array_ $middlewareValue */
-        $middlewareValue = $middleware->value;
-        if ($middlewareValue instanceof Node\Expr\Array_) {
+        $middlewareValue = $arrayItem->value;
+        if ($middlewareValue instanceof Array_) {
             return null;
         }
 
@@ -78,34 +79,34 @@ CODE_SAMPLE)]
         $middlewareString = $middlewareValue->value;
         $splitMiddleware = explode('|', $middlewareString);
 
-        $newMiddlewareArray = new Node\Expr\Array_([]);
-        foreach ($splitMiddleware as $item) {
-            $newMiddlewareArray->items[] = new ArrayItem(new Node\Scalar\String_($item));
+        $newMiddlewareArray = new Array_([]);
+        foreach ($splitMiddleware as $singleSplitMiddleware) {
+            $newMiddlewareArray->items[] = new ArrayItem(new String_($singleSplitMiddleware));
         }
 
         $this->replaceItemInArrayByKey(
-            $attributes,
-            new ArrayItem($newMiddlewareArray, new Node\Scalar\String_('middleware')),
+            $array,
+            new ArrayItem($newMiddlewareArray, new String_('middleware')),
             'middleware'
         );
 
         return $node;
     }
 
-    private function getRouterMethodAttributes(MethodCall $node): ?Node\Expr\Array_
+    private function getRouterMethodAttributes(MethodCall $methodCall): ?Array_
     {
         $attributes = null;
-        if ($this->lumenRouteRegisteringMethodAnalyzer->isRoutesRegisterGroup($node->name)) {
-            $attributes = $node->getArgs()[0]
+        if ($this->lumenRouteRegisteringMethodAnalyzer->isRoutesRegisterGroup($methodCall->name)) {
+            $attributes = $methodCall->getArgs()[0]
                 ->value;
         }
 
-        if ($this->lumenRouteRegisteringMethodAnalyzer->isRoutesRegisterRoute($node->name)) {
-            $attributes = $node->getArgs()[1]
+        if ($this->lumenRouteRegisteringMethodAnalyzer->isRoutesRegisterRoute($methodCall->name)) {
+            $attributes = $methodCall->getArgs()[1]
                 ->value;
         }
 
-        if (! $attributes instanceof Node\Expr\Array_) {
+        if (! $attributes instanceof Array_) {
             return null;
         }
 
@@ -130,7 +131,7 @@ CODE_SAMPLE)]
         return null;
     }
 
-    private function replaceItemInArrayByKey(Array_ $array, ArrayItem $newItem, string $keyName): void
+    private function replaceItemInArrayByKey(Array_ $array, ArrayItem $arrayItem, string $keyName): void
     {
         foreach ($array->items as $i => $item) {
             if ($item === null) {
@@ -143,7 +144,7 @@ CODE_SAMPLE)]
                 continue;
             }
 
-            $array->items[$i] = $newItem;
+            $array->items[$i] = $arrayItem;
         }
     }
 }
