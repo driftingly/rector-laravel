@@ -66,7 +66,7 @@ CODE_SAMPLE)]
             return null;
         }
 
-        $node->args[1]->value = new Arg(new Array_([new ArrayItem($string, new String_('uses'))]));
+        $node->args[1] = new Arg(new Array_([new ArrayItem($string, new String_('uses'))]));
 
         return $node;
     }
