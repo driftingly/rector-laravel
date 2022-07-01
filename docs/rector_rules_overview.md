@@ -302,7 +302,7 @@ Changes action in rule definitions from string to array notation.
 
 ```diff
 -$router->get('/user', 'UserController@get');
-+$router->post('/user', ['uses => 'UserController@get']);
++$router->get('/user', ['uses => 'UserController@get']);
 ```
 
 <br>

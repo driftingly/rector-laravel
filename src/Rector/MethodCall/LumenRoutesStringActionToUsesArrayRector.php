@@ -32,7 +32,7 @@ final class LumenRoutesStringActionToUsesArrayRector extends AbstractRector
 $router->get('/user', 'UserController@get');
 CODE_SAMPLE
             , <<<'CODE_SAMPLE'
-$router->post('/user', ['uses => 'UserController@get']);
+$router->get('/user', ['uses => 'UserController@get']);
 CODE_SAMPLE)]
         );
     }
