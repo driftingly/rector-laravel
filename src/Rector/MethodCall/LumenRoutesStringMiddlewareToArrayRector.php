@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\Laravel\Tests\Rector\MethodCall\RoutesStringMiddlewareToArrayRector\RoutesStringMiddlewareToArrayRectorTest
+ * @see \Rector\Laravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector\LumenRoutesStringMiddlewareToArrayRectorTest
  */
 final class LumenRoutesStringMiddlewareToArrayRector extends AbstractRector
 {
