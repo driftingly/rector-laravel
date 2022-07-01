@@ -59,14 +59,12 @@ CODE_SAMPLE)]
             return null;
         }
 
-        $string = $node->getArgs()[1]
-            ->value;
+        $string = $node->args[1]->value;
         if (! $string instanceof String_) {
             return null;
         }
 
-        $node->getArgs()[1]
-            ->value = new Array_([new ArrayItem($string, new String_('uses'))]);
+        $node->args[1]->value = new Array_([new ArrayItem($string, new String_('uses'))]);
 
         return $node;
     }
