@@ -1,4 +1,4 @@
-# 25 Rules Overview
+# 26 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -290,6 +290,19 @@ Change `app()` func calls to facade calls
 +        return \Illuminate\Support\Facades\App::get('translator')->trans('value');
      }
  }
+```
+
+<br>
+
+## LumenRoutesStringActionToUsesArrayRector
+
+Changes action in rule definitions from string to array notation.
+
+- class: [`Rector\Laravel\Rector\MethodCall\LumenRoutesStringActionToUsesArrayRector`](../src/Rector/MethodCall/LumenRoutesStringActionToUsesArrayRector.php)
+
+```diff
+-$router->get('/user', 'UserController@get');
++$router->post('/user', ['uses => 'UserController@get']);
 ```
 
 <br>
