@@ -71,7 +71,7 @@ CODE_SAMPLE)]
 
         /** @var Node\Scalar\String_|Node\Expr\Array_ $middlewareValue */
         $middlewareValue = $arrayItem->value;
-        if (!$middlewareValue instanceof String_) {
+        if (! $middlewareValue instanceof String_) {
             return null;
         }
 
