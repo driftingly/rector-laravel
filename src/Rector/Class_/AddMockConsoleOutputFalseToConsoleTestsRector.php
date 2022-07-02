@@ -14,6 +14,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
+use Rector\Core\Enum\ObjectReference;
 use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
@@ -113,7 +114,7 @@ CODE_SAMPLE
         if (! $setUpClassMethod instanceof ClassMethod) {
             $setUpClassMethod = new ClassMethod(MethodName::SET_UP);
             $setUpClassMethod->stmts = [
-                new Expression(new StaticCall(new Name('parent'), 'setUp')),
+                new Expression(new StaticCall(new Name(ObjectReference::PARENT), MethodName::SET_UP)),
                 new Expression($assign),
             ];
             $this->setUpMethodDecorator->decorate($setUpClassMethod);
