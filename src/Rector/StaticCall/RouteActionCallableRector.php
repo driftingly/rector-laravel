@@ -23,7 +23,7 @@ use Symplify\SmartFileSystem\SmartFileInfo;
 use Webmozart\Assert\Assert;
 
 /**
- * @see https://laravel.com/docs/8.x/upgrade#automatic-controller-namespace-prefixing
+ * @changelog https://laravel.com/docs/8.x/upgrade#automatic-controller-namespace-prefixing
  *
  * @see \Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\RouteActionCallableRectorTest
  */

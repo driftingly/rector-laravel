@@ -27,9 +27,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**
- * @see https://github.com/laravel/laravel/pull/5670
- * @see https://github.com/laravel/framework/pull/38868
- * @see https://wiki.php.net/rfc/nullsafe_operator
+ * @changelog https://github.com/laravel/laravel/pull/5670
+ * @changelog https://github.com/laravel/framework/pull/38868
+ * @changelog https://wiki.php.net/rfc/nullsafe_operator
  *
  * @see \Rector\Laravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest
  */

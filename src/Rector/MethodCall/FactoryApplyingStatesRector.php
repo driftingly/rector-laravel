@@ -16,8 +16,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**
- * @see https://laravel.com/docs/7.x/database-testing#creating-models
- * @see https://laravel.com/docs/8.x/database-testing#applying-states
+ * @changelog https://laravel.com/docs/7.x/database-testing#creating-models
+ * @changelog https://laravel.com/docs/8.x/database-testing#applying-states
  *
  * @see \Rector\Laravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\FactoryApplyingStatesRectorTest
  */

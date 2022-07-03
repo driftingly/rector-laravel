@@ -18,7 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see https://github.com/laravel/framework/pull/27276
+ * @changelog https://github.com/laravel/framework/pull/27276
  * @see \Rector\Laravel\Tests\Rector\StaticCall\RequestStaticValidateToInjectRector\RequestStaticValidateToInjectRectorTest
  */
 final class RequestStaticValidateToInjectRector extends AbstractRector

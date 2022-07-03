@@ -15,8 +15,8 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see https://github.com/laravel/framework/pull/36906
- * @see https://github.com/laravel/framework/pull/37352
+ * @changelog https://github.com/laravel/framework/pull/36906
+ * @changelog https://github.com/laravel/framework/pull/37352
  *
  * @see \Rector\Laravel\Tests\Rector\Class_\AnonymousMigrationsRector\AnonymousMigrationsRectorTest
  */
