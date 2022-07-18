@@ -9,7 +9,11 @@
     "require-dev": {
         "rector/rector-src": "dev-main",
         "phpunit/phpunit": "^9.5",
+<<<<<<< HEAD
         "phpstan/phpstan": "^1.8",
+=======
+        "phpstan/phpstan": "^1.8.2",
+>>>>>>> bump deps
         "symplify/phpstan-rules": "^11.0",
         "symplify/phpstan-extensions": "^11.0",
         "symplify/easy-coding-standard": "^11.0",
