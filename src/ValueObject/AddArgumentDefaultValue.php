@@ -8,14 +8,11 @@ use PHPStan\Type\ObjectType;
 
 final class AddArgumentDefaultValue
 {
-    /**
-     * @param mixed $defaultValue
-     */
     public function __construct(
         private readonly string $class,
         private readonly string $method,
         private readonly int $position,
-        private $defaultValue
+        private readonly mixed $defaultValue
     ) {
     }
 

@@ -69,7 +69,7 @@ CODE_SAMPLE
                 <<<'CODE_SAMPLE'
 Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
 CODE_SAMPLE
-            ,
+                ,
                 [
                     self::NAMESPACE => 'App\Http\Controllers',
                 ]
@@ -183,10 +183,7 @@ CODE_SAMPLE
         return 1;
     }
 
-    /**
-     * @param mixed $action
-     */
-    private function isActionString($action): bool
+    private function isActionString(mixed $action): bool
     {
         if (! is_string($action)) {
             return false;

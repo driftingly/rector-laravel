@@ -26,8 +26,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig
         ->ruleWithConfiguration(RenameMethodRector::class, [new MethodCallRename(
             'Illuminate\Auth\Access\Gate',
-                    # https://github.com/laravel/framework/commit/69de466ddc25966a0f6551f48acab1afa7bb9424
-                    'access',
+            # https://github.com/laravel/framework/commit/69de466ddc25966a0f6551f48acab1afa7bb9424
+            'access',
             'inspect'
         ),
             new MethodCallRename(

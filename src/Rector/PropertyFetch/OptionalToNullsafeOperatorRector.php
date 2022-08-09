@@ -75,7 +75,7 @@ $user?->id;
 // macro methods
 optional($user)->present()->getKey();
 CODE_SAMPLE
-              ,
+                    ,
                     [
                         self::EXCLUDE_METHODS => ['present'],
                     ]
