@@ -12,7 +12,7 @@ use Rector\NodeNameResolver\NodeNameResolver;
 final class StaticCallAnalyzer
 {
     public function __construct(
-        private NodeNameResolver $nodeNameResolver
+        private readonly NodeNameResolver $nodeNameResolver
     ) {
     }
 

@@ -183,10 +183,7 @@ CODE_SAMPLE
         return 1;
     }
 
-    /**
-     * @param mixed $action
-     */
-    private function isActionString($action): bool
+    private function isActionString(mixed $action): bool
     {
         if (! is_string($action)) {
             return false;
