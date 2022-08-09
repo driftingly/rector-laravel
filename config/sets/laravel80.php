@@ -27,7 +27,7 @@ return static function (RectorConfig $rectorConfig): void {
             0,
             'arguments',
             [], // TODO: Add argument without default value
-                    new ArrayType(new MixedType(), new MixedType())
+            new ArrayType(new MixedType(), new MixedType())
         ),
         ]);
 

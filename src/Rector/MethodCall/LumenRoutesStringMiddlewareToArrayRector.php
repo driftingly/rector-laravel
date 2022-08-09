@@ -34,7 +34,7 @@ final class LumenRoutesStringMiddlewareToArrayRector extends AbstractRector
 $router->get('/user', ['middleware => 'test']);
 $router->post('/user', ['middleware => 'test|authentication']);
 CODE_SAMPLE
-            , <<<'CODE_SAMPLE'
+                , <<<'CODE_SAMPLE'
 $router->get('/user', ['middleware => ['test']]);
 $router->post('/user', ['middleware => ['test', 'authentication']]);
 CODE_SAMPLE)]

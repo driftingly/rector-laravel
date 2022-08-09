@@ -69,7 +69,7 @@ CODE_SAMPLE
                 <<<'CODE_SAMPLE'
 Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
 CODE_SAMPLE
-            ,
+                ,
                 [
                     self::NAMESPACE => 'App\Http\Controllers',
                 ]
