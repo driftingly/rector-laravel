@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Rector\Laravel\NodeFactory;
 
+use PhpParser\Builder\Method;
+use PhpParser\Builder\Property;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -22,8 +24,6 @@ use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
-use Rector\PhpDocParser\ValueObject\NodeBuilder\MethodBuilder;
-use Rector\PhpDocParser\ValueObject\NodeBuilder\PropertyBuilder;
 
 final class ModelFactoryNodeFactory
 {
@@ -44,7 +44,7 @@ final class ModelFactoryNodeFactory
     {
         $class = new Class_($name . 'Factory');
         $class->extends = new FullyQualified('Illuminate\Database\Eloquent\Factories\Factory');
-        $propertyBuilder = new PropertyBuilder('model');
+        $propertyBuilder = new Property('model');
         $propertyBuilder->makeProtected();
         $propertyBuilder->setDefault($expr);
 
@@ -169,9 +169,9 @@ final class ModelFactoryNodeFactory
      */
     private function createPublicMethod(string $name, array $stmts): ClassMethod
     {
-        $methodBuilder = new MethodBuilder($name);
-        $methodBuilder->makePublic();
-        $methodBuilder->addStmts($stmts);
-        return $methodBuilder->getNode();
+        $method = new Method($name);
+        $method->makePublic();
+        $method->addStmts($stmts);
+        return $method->getNode();
     }
 }

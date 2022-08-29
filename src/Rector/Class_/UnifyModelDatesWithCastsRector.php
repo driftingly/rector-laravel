@@ -13,7 +13,6 @@ use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use Rector\Core\NodeManipulator\ClassInsertManipulator;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PhpDocParser\ValueObject\NodeBuilder\PropertyBuilder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -130,7 +129,7 @@ CODE_SAMPLE
 
     private function createCastsProperty(): Property
     {
-        $propertyBuilder = new PropertyBuilder('casts');
+        $propertyBuilder = new \PhpParser\Builder\Property('casts');
         $propertyBuilder->makeProtected();
         $propertyBuilder->setDefault([]);
 
