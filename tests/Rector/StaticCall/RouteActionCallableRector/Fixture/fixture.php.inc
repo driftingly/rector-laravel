@@ -16,6 +16,7 @@ Route::fallback('SomeController@index');
 Route::options('/users', 'SomeController@index');
 Route::middleware([])->options('/users', 'SomeController@index');
 Route::get('/users', ['as' => 'users.index', 'uses' => 'SomeController@index']);
+Route::get('/users', ['uses' => 'SomeController@index', 'as' => 'users.index']);
 
 ?>
 -----
@@ -36,6 +37,7 @@ Route::match(['GET', 'POST'], '/users', [\Rector\Laravel\Tests\Rector\StaticCall
 Route::fallback([\Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\Source\SomeController::class, 'index']);
 Route::options('/users', [\Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\Source\SomeController::class, 'index']);
 Route::middleware([])->options('/users', [\Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\Source\SomeController::class, 'index']);
+Route::get('/users', [\Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\Source\SomeController::class, 'index'])->name('users.index');
 Route::get('/users', [\Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\Source\SomeController::class, 'index'])->name('users.index');
 
 ?>
