@@ -19,9 +19,9 @@ use PhpParser\Node\Scalar;
 use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
 use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Util\MultiInstanceofChecker;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
-use Symplify\PackageBuilder\Php\TypeChecker;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -51,7 +51,7 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     private array $excludeMethods = [];
 
     public function __construct(
-        private readonly TypeChecker $typeChecker,
+        private MultiInstanceofChecker $multiInstanceofChecker,
         private readonly ArgsAnalyzer $argsAnalyzer
     ) {
     }
@@ -121,8 +121,9 @@ CODE_SAMPLE
 
         /** @var Arg $firstArg */
         $firstArg = $node->var->args[0];
+
         // skip if the first arg cannot be used as variable directly
-        if ($this->typeChecker->isInstanceOf($firstArg->value, self::SKIP_VALUE_TYPES)) {
+        if ($this->multiInstanceofChecker->isInstanceOf($firstArg->value, self::SKIP_VALUE_TYPES)) {
             return null;
         }
 
