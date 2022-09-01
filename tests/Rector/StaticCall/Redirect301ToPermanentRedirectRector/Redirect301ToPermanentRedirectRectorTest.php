@@ -17,10 +17,10 @@ final class Redirect301ToPermanentRedirectRectorTest extends AbstractRectorTestC
         $this->doTestFile($filePath);
     }
 
-        public function provideData(): Iterator
-        {
-            return $this->yieldFilePathsFromDirectory(__DIR__ . '/Fixture');
-        }
+    public function provideData(): Iterator
+    {
+        return $this->yieldFilePathsFromDirectory(__DIR__ . '/Fixture');
+    }
 
     public function provideConfigFilePath(): string
     {

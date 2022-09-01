@@ -17,10 +17,10 @@ final class AddParentBootToModelClassMethodRectorTest extends AbstractRectorTest
         $this->doTestFile($filePath);
     }
 
-        public function provideData(): Iterator
-        {
-            return $this->yieldFilePathsFromDirectory(__DIR__ . '/Fixture');
-        }
+    public function provideData(): Iterator
+    {
+        return $this->yieldFilePathsFromDirectory(__DIR__ . '/Fixture');
+    }
 
     public function provideConfigFilePath(): string
     {
