@@ -20,7 +20,6 @@ use Rector\Laravel\NodeFactory\RouterRegisterNodeAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Symplify\SmartFileSystem\SmartFileInfo;
 use Webmozart\Assert\Assert;
 
 /**
