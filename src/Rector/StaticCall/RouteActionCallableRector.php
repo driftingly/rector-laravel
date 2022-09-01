@@ -171,7 +171,7 @@ CODE_SAMPLE
         }
 
         [$controller, $method] = $segments;
-        $namespace = $this->getNamespace($this->file->getSmartFileInfo());
+        $namespace = $this->getNamespace($this->file->getFilePath());
         if (! str_starts_with($controller, '\\')) {
             $controller = $namespace . '\\' . $controller;
         }
@@ -208,9 +208,8 @@ CODE_SAMPLE
         return str_contains($action, '@');
     }
 
-    private function getNamespace(SmartFileInfo $fileInfo): string
+    private function getNamespace(string $filePath): string
     {
-        $realpath = $fileInfo->getRealPath();
-        return $this->routes[$realpath] ?? $this->namespace;
+        return $this->routes[$filePath] ?? $this->namespace;
     }
 }
