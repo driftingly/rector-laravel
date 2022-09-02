@@ -19,7 +19,7 @@ final class PropertyDeferToDeferrableProviderToRectorTest extends AbstractRector
 
     public function provideData(): Iterator
     {
-        return $this->yieldFilePathsFromDirectory(__DIR__ . '/Fixture');
+        return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
     public function provideConfigFilePath(): string
