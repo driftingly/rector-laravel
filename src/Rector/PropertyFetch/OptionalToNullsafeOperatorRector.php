@@ -51,7 +51,7 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     private array $excludeMethods = [];
 
     public function __construct(
-        private MultiInstanceofChecker $multiInstanceofChecker,
+        private readonly MultiInstanceofChecker $multiInstanceofChecker,
         private readonly ArgsAnalyzer $argsAnalyzer
     ) {
     }
