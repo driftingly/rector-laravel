@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\Fixture;
+namespace RectorLaravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\Fixture;
 
 use Illuminate\Support\Facades\Redirect;
 

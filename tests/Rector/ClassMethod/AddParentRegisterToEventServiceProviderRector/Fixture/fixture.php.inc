@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector\Fixture;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -15,7 +15,7 @@ class EventServiceProvider extends ServiceProvider
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector\Fixture;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 

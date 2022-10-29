@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\ValueObject;
+namespace RectorLaravel\ValueObject;
 
 use PHPStan\Type\ObjectType;
 

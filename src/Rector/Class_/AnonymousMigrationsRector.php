@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\Class_;
+namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
@@ -18,7 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://github.com/laravel/framework/pull/36906
  * @changelog https://github.com/laravel/framework/pull/37352
  *
- * @see \Rector\Laravel\Tests\Rector\Class_\AnonymousMigrationsRector\AnonymousMigrationsRectorTest
+ * @see \RectorLaravel\Tests\Rector\Class_\AnonymousMigrationsRector\AnonymousMigrationsRectorTest
  */
 final class AnonymousMigrationsRector extends AbstractRector
 {

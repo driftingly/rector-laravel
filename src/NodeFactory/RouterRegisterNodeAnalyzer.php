@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\NodeFactory;
+namespace RectorLaravel\NodeFactory;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;

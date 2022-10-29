@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\Class_;
+namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
@@ -20,7 +20,7 @@ use Webmozart\Assert\Assert;
 /**
  * @changelog https://github.com/laravel/framework/pull/32856
  *
- * @see \Rector\Laravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\UnifyModelDatesWithCastsRectorTest
+ * @see \RectorLaravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\UnifyModelDatesWithCastsRectorTest
  */
 final class UnifyModelDatesWithCastsRector extends AbstractRector
 {

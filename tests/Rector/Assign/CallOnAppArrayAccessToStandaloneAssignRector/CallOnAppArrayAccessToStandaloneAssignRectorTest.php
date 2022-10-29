@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
+namespace RectorLaravel\Tests\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

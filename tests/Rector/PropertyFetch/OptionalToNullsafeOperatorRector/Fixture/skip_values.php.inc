@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\Fixture;
+namespace RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\Fixture;
 
 $value = 1;
 optional($value)->something();
@@ -14,7 +14,7 @@ optional((object) ['foo' => 'bar'])->bar;
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\Fixture;
+namespace RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\Fixture;
 
 $value = 1;
 $value?->something();

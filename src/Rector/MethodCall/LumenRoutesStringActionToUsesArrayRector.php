@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\MethodCall;
+namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -11,12 +11,12 @@ use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Laravel\NodeAnalyzer\LumenRouteRegisteringMethodAnalyzer;
+use RectorLaravel\NodeAnalyzer\LumenRouteRegisteringMethodAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\Laravel\Tests\Rector\MethodCall\LumenRoutesStringActionToUsesArrayRector\LumenRoutesStringActionToUsesArrayRectorTest
+ * @see \RectorLaravel\Tests\Rector\MethodCall\LumenRoutesStringActionToUsesArrayRector\LumenRoutesStringActionToUsesArrayRectorTest
  */
 final class LumenRoutesStringActionToUsesArrayRector extends AbstractRector
 {

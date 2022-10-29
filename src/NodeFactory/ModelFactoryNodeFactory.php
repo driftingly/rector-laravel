@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\NodeFactory;
+namespace RectorLaravel\NodeFactory;
 
 use PhpParser\Builder\Method;
 use PhpParser\Builder\Property;

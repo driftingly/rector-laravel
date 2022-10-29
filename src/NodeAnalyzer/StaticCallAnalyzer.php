@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\NodeAnalyzer;
+namespace RectorLaravel\NodeAnalyzer;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +13,7 @@ class CastsPropertyNotExists extends Model
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 

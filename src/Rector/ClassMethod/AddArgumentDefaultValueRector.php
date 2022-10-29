@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\ClassMethod;
+namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\BuilderHelpers;
 use PhpParser\Node;
@@ -10,13 +10,13 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Laravel\ValueObject\AddArgumentDefaultValue;
+use RectorLaravel\ValueObject\AddArgumentDefaultValue;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**
- * @see \Rector\Laravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector\AddArgumentDefaultValueRectorTest
+ * @see \RectorLaravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector\AddArgumentDefaultValueRectorTest
  */
 final class AddArgumentDefaultValueRector extends AbstractRector implements ConfigurableRectorInterface
 {

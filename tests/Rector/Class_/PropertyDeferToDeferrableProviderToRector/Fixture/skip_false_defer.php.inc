@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\Class_\PropertyDeferToDeferrableProviderToRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\PropertyDeferToDeferrableProviderToRector\Fixture;
 
 use Illuminate\Support\ServiceProvider;
 

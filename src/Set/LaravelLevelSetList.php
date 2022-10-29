@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Set;
+namespace RectorLaravel\Set;
 
 use Rector\Set\Contract\SetListInterface;
 

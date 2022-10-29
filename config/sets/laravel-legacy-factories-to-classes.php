@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 
-use Rector\Laravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector;
-use Rector\Laravel\Rector\MethodCall\FactoryApplyingStatesRector;
-use Rector\Laravel\Rector\Namespace_\FactoryDefinitionRector;
+use RectorLaravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector;
+use RectorLaravel\Rector\MethodCall\FactoryApplyingStatesRector;
+use RectorLaravel\Rector\Namespace_\FactoryDefinitionRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://laravel.com/docs/7.x/database-testing#writing-factories

@@ -6,12 +6,12 @@ Adds default value for arguments in defined methods.
 
 :wrench: **configure it!**
 
-- class: [`Rector\Laravel\Rector\ClassMethod\AddArgumentDefaultValueRector`](../src/Rector/ClassMethod/AddArgumentDefaultValueRector.php)
+- class: [`RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector`](../src/Rector/ClassMethod/AddArgumentDefaultValueRector.php)
 
 ```php
 use Rector\Config\RectorConfig;
-use Rector\Laravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
-use Rector\Laravel\ValueObject\AddArgumentDefaultValue;
+use RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
+use RectorLaravel\ValueObject\AddArgumentDefaultValue;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(AddArgumentDefaultValueRector::class, [
@@ -40,7 +40,7 @@ return static function (RectorConfig $rectorConfig): void {
 
 Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
 
-- class: [`Rector\Laravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddGenericReturnTypeToRelationsRector.php)
+- class: [`RectorLaravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddGenericReturnTypeToRelationsRector.php)
 
 ```diff
  use App\Account;
@@ -63,7 +63,7 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
 
 Add new `$guard` argument to Illuminate\Auth\Events\Login
 
-- class: [`Rector\Laravel\Rector\New_\AddGuardToLoginEventRector`](../src/Rector/New_/AddGuardToLoginEventRector.php)
+- class: [`RectorLaravel\Rector\New_\AddGuardToLoginEventRector`](../src/Rector/New_/AddGuardToLoginEventRector.php)
 
 ```diff
  use Illuminate\Auth\Events\Login;
@@ -85,7 +85,7 @@ Add new `$guard` argument to Illuminate\Auth\Events\Login
 
 Add "$this->mockConsoleOutput = false"; to console tests that work with output content
 
-- class: [`Rector\Laravel\Rector\Class_\AddMockConsoleOutputFalseToConsoleTestsRector`](../src/Rector/Class_/AddMockConsoleOutputFalseToConsoleTestsRector.php)
+- class: [`RectorLaravel\Rector\Class_\AddMockConsoleOutputFalseToConsoleTestsRector`](../src/Rector/Class_/AddMockConsoleOutputFalseToConsoleTestsRector.php)
 
 ```diff
  use Illuminate\Support\Facades\Artisan;
@@ -113,7 +113,7 @@ Add "$this->mockConsoleOutput = false"; to console tests that work with output c
 
 Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Database\Eloquent\Model`
 
-- class: [`Rector\Laravel\Rector\ClassMethod\AddParentBootToModelClassMethodRector`](../src/Rector/ClassMethod/AddParentBootToModelClassMethodRector.php)
+- class: [`RectorLaravel\Rector\ClassMethod\AddParentBootToModelClassMethodRector`](../src/Rector/ClassMethod/AddParentBootToModelClassMethodRector.php)
 
 ```diff
  use Illuminate\Database\Eloquent\Model;
@@ -133,7 +133,7 @@ Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Data
 
 Add `parent::register();` call to `register()` class method in child of `Illuminate\Foundation\Support\Providers\EventServiceProvider`
 
-- class: [`Rector\Laravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector`](../src/Rector/ClassMethod/AddParentRegisterToEventServiceProviderRector.php)
+- class: [`RectorLaravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector`](../src/Rector/ClassMethod/AddParentRegisterToEventServiceProviderRector.php)
 
 ```diff
  use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -153,7 +153,7 @@ Add `parent::register();` call to `register()` class method in child of `Illumin
 
 Convert migrations to anonymous classes.
 
-- class: [`Rector\Laravel\Rector\Class_\AnonymousMigrationsRector`](../src/Rector/Class_/AnonymousMigrationsRector.php)
+- class: [`RectorLaravel\Rector\Class_\AnonymousMigrationsRector`](../src/Rector/Class_/AnonymousMigrationsRector.php)
 
 ```diff
  use Illuminate\Database\Migrations\Migration;
@@ -172,7 +172,7 @@ Convert migrations to anonymous classes.
 
 Replace magical call on `$this->app["something"]` to standalone type assign variable
 
-- class: [`Rector\Laravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector`](../src/Rector/Assign/CallOnAppArrayAccessToStandaloneAssignRector.php)
+- class: [`RectorLaravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector`](../src/Rector/Assign/CallOnAppArrayAccessToStandaloneAssignRector.php)
 
 ```diff
  class SomeClass
@@ -198,7 +198,7 @@ Replace magical call on `$this->app["something"]` to standalone type assign vari
 
 Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Database\Eloquent\Model`
 
-- class: [`Rector\Laravel\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector`](../src/Rector/MethodCall/ChangeQueryWhereDateValueWithCarbonRector.php)
+- class: [`RectorLaravel\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector`](../src/Rector/MethodCall/ChangeQueryWhereDateValueWithCarbonRector.php)
 
 ```diff
  use Illuminate\Database\Query\Builder;
@@ -221,7 +221,7 @@ Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Data
 
 Call the state methods directly instead of specify the name of state.
 
-- class: [`Rector\Laravel\Rector\MethodCall\FactoryApplyingStatesRector`](../src/Rector/MethodCall/FactoryApplyingStatesRector.php)
+- class: [`RectorLaravel\Rector\MethodCall\FactoryApplyingStatesRector`](../src/Rector/MethodCall/FactoryApplyingStatesRector.php)
 
 ```diff
 -$factory->state('delinquent');
@@ -236,7 +236,7 @@ Call the state methods directly instead of specify the name of state.
 
 Upgrade legacy factories to support classes.
 
-- class: [`Rector\Laravel\Rector\Namespace_\FactoryDefinitionRector`](../src/Rector/Namespace_/FactoryDefinitionRector.php)
+- class: [`RectorLaravel\Rector\Namespace_\FactoryDefinitionRector`](../src/Rector/Namespace_/FactoryDefinitionRector.php)
 
 ```diff
  use Faker\Generator as Faker;
@@ -266,7 +266,7 @@ Upgrade legacy factories to support classes.
 
 Use the static factory method instead of global factory function.
 
-- class: [`Rector\Laravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector`](../src/Rector/FuncCall/FactoryFuncCallToStaticCallRector.php)
+- class: [`RectorLaravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector`](../src/Rector/FuncCall/FactoryFuncCallToStaticCallRector.php)
 
 ```diff
 -factory(User::class);
@@ -279,7 +279,7 @@ Use the static factory method instead of global factory function.
 
 Change `app()` func calls to facade calls
 
-- class: [`Rector\Laravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector`](../src/Rector/FuncCall/HelperFuncCallToFacadeClassRector.php)
+- class: [`RectorLaravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector`](../src/Rector/FuncCall/HelperFuncCallToFacadeClassRector.php)
 
 ```diff
  class SomeClass
@@ -298,7 +298,7 @@ Change `app()` func calls to facade calls
 
 Changes action in rule definitions from string to array notation.
 
-- class: [`Rector\Laravel\Rector\MethodCall\LumenRoutesStringActionToUsesArrayRector`](../src/Rector/MethodCall/LumenRoutesStringActionToUsesArrayRector.php)
+- class: [`RectorLaravel\Rector\MethodCall\LumenRoutesStringActionToUsesArrayRector`](../src/Rector/MethodCall/LumenRoutesStringActionToUsesArrayRector.php)
 
 ```diff
 -$router->get('/user', 'UserController@get');
@@ -311,7 +311,7 @@ Changes action in rule definitions from string to array notation.
 
 Changes middlewares from rule definitions from string to array notation.
 
-- class: [`Rector\Laravel\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector`](../src/Rector/MethodCall/LumenRoutesStringMiddlewareToArrayRector.php)
+- class: [`RectorLaravel\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector`](../src/Rector/MethodCall/LumenRoutesStringMiddlewareToArrayRector.php)
 
 ```diff
 -$router->get('/user', ['middleware => 'test']);
@@ -326,7 +326,7 @@ Changes middlewares from rule definitions from string to array notation.
 
 Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Illuminate\Support\Facades\Cache
 
-- class: [`Rector\Laravel\Rector\StaticCall\MinutesToSecondsInCacheRector`](../src/Rector/StaticCall/MinutesToSecondsInCacheRector.php)
+- class: [`RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector`](../src/Rector/StaticCall/MinutesToSecondsInCacheRector.php)
 
 ```diff
  class SomeClass
@@ -347,11 +347,11 @@ Convert simple calls to optional helper to use the nullsafe operator
 
 :wrench: **configure it!**
 
-- class: [`Rector\Laravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector`](../src/Rector/PropertyFetch/OptionalToNullsafeOperatorRector.php)
+- class: [`RectorLaravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector`](../src/Rector/PropertyFetch/OptionalToNullsafeOperatorRector.php)
 
 ```php
 use Rector\Config\RectorConfig;
-use Rector\Laravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
+use RectorLaravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(OptionalToNullsafeOperatorRector::class, [
@@ -377,7 +377,7 @@ return static function (RectorConfig $rectorConfig): void {
 
 Change deprecated `$defer` = true; to `Illuminate\Contracts\Support\DeferrableProvider` interface
 
-- class: [`Rector\Laravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector`](../src/Rector/Class_/PropertyDeferToDeferrableProviderToRector.php)
+- class: [`RectorLaravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector`](../src/Rector/Class_/PropertyDeferToDeferrableProviderToRector.php)
 
 ```diff
  use Illuminate\Support\ServiceProvider;
@@ -399,7 +399,7 @@ Change deprecated `$defer` = true; to `Illuminate\Contracts\Support\DeferrablePr
 
 Change "redirect" call with 301 to "permanentRedirect"
 
-- class: [`Rector\Laravel\Rector\StaticCall\Redirect301ToPermanentRedirectRector`](../src/Rector/StaticCall/Redirect301ToPermanentRedirectRector.php)
+- class: [`RectorLaravel\Rector\StaticCall\Redirect301ToPermanentRedirectRector`](../src/Rector/StaticCall/Redirect301ToPermanentRedirectRector.php)
 
 ```diff
  class SomeClass
@@ -418,7 +418,7 @@ Change "redirect" call with 301 to "permanentRedirect"
 
 Replace `redirect()->back()` and `Redirect::back()` with `back()`
 
-- class: [`Rector\Laravel\Rector\MethodCall\RedirectBackToBackHelperRector`](../src/Rector/MethodCall/RedirectBackToBackHelperRector.php)
+- class: [`RectorLaravel\Rector\MethodCall\RedirectBackToBackHelperRector`](../src/Rector/MethodCall/RedirectBackToBackHelperRector.php)
 
 ```diff
  use Illuminate\Support\Facades\Redirect;
@@ -445,7 +445,7 @@ Replace `redirect()->back()` and `Redirect::back()` with `back()`
 
 Replace `redirect()->route("home")` and `Redirect::route("home")` with `to_route("home")`
 
-- class: [`Rector\Laravel\Rector\MethodCall\RedirectRouteToToRouteHelperRector`](../src/Rector/MethodCall/RedirectRouteToToRouteHelperRector.php)
+- class: [`RectorLaravel\Rector\MethodCall\RedirectRouteToToRouteHelperRector`](../src/Rector/MethodCall/RedirectRouteToToRouteHelperRector.php)
 
 ```diff
  use Illuminate\Support\Facades\Redirect;
@@ -472,7 +472,7 @@ Replace `redirect()->route("home")` and `Redirect::route("home")` with `to_route
 
 It will removes the dump data just like dd or dump functions from the code.`
 
-- class: [`Rector\Laravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector`](../src/Rector/FuncCall/RemoveDumpDataDeadCodeRector.php)
+- class: [`RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector`](../src/Rector/FuncCall/RemoveDumpDataDeadCodeRector.php)
 
 ```diff
  class MyController
@@ -497,7 +497,7 @@ It will removes the dump data just like dd or dump functions from the code.`
 
 Change static `validate()` method to `$request->validate()`
 
-- class: [`Rector\Laravel\Rector\StaticCall\RequestStaticValidateToInjectRector`](../src/Rector/StaticCall/RequestStaticValidateToInjectRector.php)
+- class: [`RectorLaravel\Rector\StaticCall\RequestStaticValidateToInjectRector`](../src/Rector/StaticCall/RequestStaticValidateToInjectRector.php)
 
 ```diff
  use Illuminate\Http\Request;
@@ -521,11 +521,11 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 
 :wrench: **configure it!**
 
-- class: [`Rector\Laravel\Rector\StaticCall\RouteActionCallableRector`](../src/Rector/StaticCall/RouteActionCallableRector.php)
+- class: [`RectorLaravel\Rector\StaticCall\RouteActionCallableRector`](../src/Rector/StaticCall/RouteActionCallableRector.php)
 
 ```php
 use Rector\Config\RectorConfig;
-use Rector\Laravel\Rector\StaticCall\RouteActionCallableRector;
+use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RouteActionCallableRector::class, [
@@ -547,7 +547,7 @@ return static function (RectorConfig $rectorConfig): void {
 
 Unify Model `$dates` property with `$casts`
 
-- class: [`Rector\Laravel\Rector\Class_\UnifyModelDatesWithCastsRector`](../src/Rector/Class_/UnifyModelDatesWithCastsRector.php)
+- class: [`RectorLaravel\Rector\Class_\UnifyModelDatesWithCastsRector`](../src/Rector/Class_/UnifyModelDatesWithCastsRector.php)
 
 ```diff
  use Illuminate\Database\Eloquent\Model;

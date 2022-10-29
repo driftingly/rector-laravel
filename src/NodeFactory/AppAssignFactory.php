@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\NodeFactory;
+namespace RectorLaravel\NodeFactory;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
@@ -11,7 +11,7 @@ use PhpParser\Node\Stmt\Expression;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
-use Rector\Laravel\ValueObject\ServiceNameTypeAndVariableName;
+use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
 
 final class AppAssignFactory
 {

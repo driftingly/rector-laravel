@@ -5,8 +5,8 @@ declare(strict_types=1);
 use PHPStan\Type\BooleanType;
 
 use Rector\Config\RectorConfig;
-use Rector\Laravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
-use Rector\Laravel\Rector\StaticCall\MinutesToSecondsInCacheRector;
+use RectorLaravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
+use RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;

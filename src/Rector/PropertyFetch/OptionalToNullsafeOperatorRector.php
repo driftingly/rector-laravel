@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\PropertyFetch;
+namespace RectorLaravel\Rector\PropertyFetch;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -31,7 +31,7 @@ use Webmozart\Assert\Assert;
  * @changelog https://github.com/laravel/framework/pull/38868
  * @changelog https://wiki.php.net/rfc/nullsafe_operator
  *
- * @see \Rector\Laravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest
+ * @see \RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest
  */
 final class OptionalToNullsafeOperatorRector extends AbstractRector implements MinPhpVersionInterface, AllowEmptyConfigurableRectorInterface
 {

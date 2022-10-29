@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\Assign;
+namespace RectorLaravel\Rector\Assign;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -12,14 +12,14 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Laravel\NodeFactory\AppAssignFactory;
-use Rector\Laravel\ValueObject\ServiceNameTypeAndVariableName;
+use RectorLaravel\NodeFactory\AppAssignFactory;
+use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\Laravel\Tests\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector\CallOnAppArrayAccessToStandaloneAssignRectorTest
+ * @see \RectorLaravel\Tests\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector\CallOnAppArrayAccessToStandaloneAssignRectorTest
  */
 final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 
-use Rector\Laravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
-use Rector\Laravel\Rector\StaticCall\RequestStaticValidateToInjectRector;
+use RectorLaravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
+use RectorLaravel\Rector\StaticCall\RequestStaticValidateToInjectRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\FuncCall\ArgumentFuncCallToMethodCallRector;
 use Rector\Transform\Rector\FuncCall\FuncCallToNewRector;

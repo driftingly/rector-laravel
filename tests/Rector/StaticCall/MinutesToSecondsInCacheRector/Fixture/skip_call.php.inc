@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\StaticCall\MinutesToSecondsInCacheRector\Fixture;
+namespace RectorLaravel\Tests\Rector\StaticCall\MinutesToSecondsInCacheRector\Fixture;
 
 use DateTime;
 

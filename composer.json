@@ -1,5 +1,5 @@
 {
-    "name": "rector/rector-laravel",
+    "name": "driftingly/rector-laravel",
     "type": "rector-extension",
     "license": "MIT",
     "description": "Rector upgrades rules for Laravel Framework",
@@ -7,7 +7,7 @@
         "php": ">=8.1"
     },
     "require-dev": {
-        "rector/rector-src": "dev-main",
+        "rector/rector": "^0.14",
         "phpunit/phpunit": "^9.5",
         "phpstan/phpstan": "^1.8.2",
         "symplify/phpstan-rules": "^11.0",
@@ -24,12 +24,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Rector\\Laravel\\": "src"
+            "RectorLaravel\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Rector\\Laravel\\Tests\\": "tests"
+            "RectorLaravel\\Tests\\": "tests"
         },
         "classmap": ["stubs"]
     },

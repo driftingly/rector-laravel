@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\RedirectRouteToToRouteHelperRector;
+namespace RectorLaravel\Tests\Rector\MethodCall\RedirectRouteToToRouteHelperRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

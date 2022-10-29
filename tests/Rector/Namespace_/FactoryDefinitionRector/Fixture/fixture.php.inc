@@ -1,8 +1,8 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
 
-use Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model;
+use RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model;
 
 $factory->define(Model::class, function ($faker) {
     return [
@@ -35,9 +35,9 @@ $factory->afterCreating(Model::class, function ($user, $faker) {
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
 
-use Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model;
+use RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model;
 class ModelFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 {
     protected $model = Model::class;
