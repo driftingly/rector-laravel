@@ -12,9 +12,9 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PostRector\Collector\NodesToAddCollector;
 use RectorLaravel\NodeFactory\AppAssignFactory;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
-use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

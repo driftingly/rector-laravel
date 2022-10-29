@@ -8,13 +8,13 @@ use PHPStan\Type\MixedType;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Config\RectorConfig;
-use RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
-use RectorLaravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
-use RectorLaravel\ValueObject\AddArgumentDefaultValue;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
+use RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
+use RectorLaravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
+use RectorLaravel\ValueObject\AddArgumentDefaultValue;
 
 # see https://laravel.com/docs/8.x/upgrade
 return static function (RectorConfig $rectorConfig): void {

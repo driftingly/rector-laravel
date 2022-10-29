@@ -8,15 +8,15 @@ use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\Visibility;
+use Rector\Removing\Rector\ClassMethod\ArgumentRemoverRector;
+use Rector\Removing\ValueObject\ArgumentRemover;
+use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
+use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 use RectorLaravel\Rector\Class_\AddMockConsoleOutputFalseToConsoleTestsRector;
 use RectorLaravel\Rector\ClassMethod\AddParentBootToModelClassMethodRector;
 use RectorLaravel\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector;
 use RectorLaravel\Rector\New_\AddGuardToLoginEventRector;
 use RectorLaravel\Rector\StaticCall\Redirect301ToPermanentRedirectRector;
-use Rector\Removing\Rector\ClassMethod\ArgumentRemoverRector;
-use Rector\Removing\ValueObject\ArgumentRemover;
-use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
-use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
 # see: https://laravel.com/docs/5.7/upgrade
 return static function (RectorConfig $rectorConfig): void {

@@ -5,12 +5,12 @@ declare(strict_types=1);
 use PHPStan\Type\BooleanType;
 
 use Rector\Config\RectorConfig;
-use RectorLaravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
-use RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration;
+use RectorLaravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
+use RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector;
 
 # https://laravel-news.com/laravel-5-8-deprecates-string-and-array-helpers
 # https://github.com/laravel/framework/pull/26898
