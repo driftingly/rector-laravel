@@ -24,6 +24,10 @@ parameters:
             message: '#Parameter \#1 \$array of function array_keys expects array, mixed given#'
 
         # rector co-variant
-        - '#Parameter \#1 \$node \(PhpParser\\Node\\(.*?) of method Rector\\(.*?)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Core\\Contract\\Rector\\PhpRectorInterface\:\:refactor\(\)#'
+        - '#Parameter \#1 \$node \(PhpParser\\Node\\(.*?) of method RectorLaravel\\(.*?)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Core\\Contract\\Rector\\PhpRectorInterface\:\:refactor\(\)#'
 
         - '#Parameter \#1 \$className of method Rector\\Core\\Reflection\\ReflectionResolver\:\:resolveMethodReflection\(\) expects class\-string, string given#'
+
+        -
+            message: '#Do not use chained method calls\. Put each on separated lines#'
+            path: config/*
