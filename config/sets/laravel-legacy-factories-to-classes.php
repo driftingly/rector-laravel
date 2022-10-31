@@ -9,6 +9,8 @@ use RectorLaravel\Rector\MethodCall\FactoryApplyingStatesRector;
 use RectorLaravel\Rector\Namespace_\FactoryDefinitionRector;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
+
     // https://laravel.com/docs/7.x/database-testing#writing-factories
     // https://laravel.com/docs/8.x/database-testing#defining-model-factories
     $rectorConfig->rule(FactoryDefinitionRector::class);

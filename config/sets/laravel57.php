@@ -20,6 +20,7 @@ use RectorLaravel\Rector\StaticCall\Redirect301ToPermanentRedirectRector;
 
 # see: https://laravel.com/docs/5.7/upgrade
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
     $rectorConfig
         ->ruleWithConfiguration(
             ChangeMethodVisibilityRector::class,

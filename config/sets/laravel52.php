@@ -10,6 +10,7 @@ use Rector\Transform\ValueObject\StringToClassConstant;
 
 # see: https://laravel.com/docs/5.2/upgrade
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
     $rectorConfig
         ->ruleWithConfiguration(RenameClassRector::class, [
             'Illuminate\Auth\Access\UnauthorizedException' => 'Illuminate\Auth\Access\AuthorizationException',

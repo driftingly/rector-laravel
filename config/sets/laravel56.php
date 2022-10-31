@@ -13,6 +13,7 @@ use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 # see: https://laravel.com/docs/5.6/upgrade
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
     $rectorConfig
         ->ruleWithConfiguration(RenameMethodRector::class, [new MethodCallRename(
             'Illuminate\Validation\ValidatesWhenResolvedTrait',

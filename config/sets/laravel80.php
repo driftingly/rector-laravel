@@ -18,6 +18,8 @@ use RectorLaravel\ValueObject\AddArgumentDefaultValue;
 
 # see https://laravel.com/docs/8.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
+
     # https://github.com/laravel/framework/commit/4d228d6e9dbcbd4d97c45665980d8b8c685b27e6
     $rectorConfig
         ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
