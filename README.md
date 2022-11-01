@@ -9,7 +9,7 @@ This package is a [Rector](https://github.com/rectorphp/rector) extension develo
 Install the `RectorLaravel` package as dependency:
 
 ```bash
-driftingly/rector-laravel --dev
+composer require driftingly/rector-laravel --dev
 ```
 
 ## Use Sets
