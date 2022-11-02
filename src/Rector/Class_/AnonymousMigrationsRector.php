@@ -84,6 +84,11 @@ CODE_SAMPLE
             'implements' => $node->implements,
             'stmts' => $node->stmts,
             'attrGroups' => $node->attrGroups,
-        ])));
+        ],
+        [
+            'startLine' => $node->getStartLine(),
+            'endLine' => $node->getEndLine(),
+        ]
+        )));
     }
 }
