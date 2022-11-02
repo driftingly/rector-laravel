@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

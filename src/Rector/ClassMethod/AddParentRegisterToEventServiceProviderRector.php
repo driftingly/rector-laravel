@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\ClassMethod;
+namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassLike;
@@ -10,14 +10,14 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Laravel\NodeAnalyzer\StaticCallAnalyzer;
+use RectorLaravel\NodeAnalyzer\StaticCallAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://laravel.com/docs/8.x/upgrade#the-event-service-provider-class
  *
- * @see \Rector\Laravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector\AddParentRegisterToEventServiceProviderRectorTest
+ * @see \RectorLaravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector\AddParentRegisterToEventServiceProviderRectorTest
  */
 final class AddParentRegisterToEventServiceProviderRector extends AbstractRector
 {

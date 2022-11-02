@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector;
+namespace RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

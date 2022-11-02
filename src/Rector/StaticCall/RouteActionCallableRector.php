@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\StaticCall;
+namespace RectorLaravel\Rector\StaticCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -16,8 +16,8 @@ use PHPStan\Reflection\Php\PhpMethodReflection;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\Reflection\ReflectionResolver;
-use Rector\Laravel\NodeFactory\RouterRegisterNodeAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use RectorLaravel\NodeFactory\RouterRegisterNodeAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -25,7 +25,7 @@ use Webmozart\Assert\Assert;
 /**
  * @changelog https://laravel.com/docs/8.x/upgrade#automatic-controller-namespace-prefixing
  *
- * @see \Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\RouteActionCallableRectorTest
+ * @see \RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\RouteActionCallableRectorTest
  */
 final class RouteActionCallableRector extends AbstractRector implements ConfigurableRectorInterface
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\StaticCall\Redirect301ToPermanentRedirectRector;
+namespace RectorLaravel\Tests\Rector\StaticCall\Redirect301ToPermanentRedirectRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

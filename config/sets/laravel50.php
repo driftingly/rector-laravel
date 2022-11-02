@@ -10,6 +10,8 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 
 # see: https://laravel.com/docs/5.0/upgrade
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
+
     # https://stackoverflow.com/a/24949656/1348344
     $rectorConfig
         ->ruleWithConfiguration(RenameClassRector::class, [

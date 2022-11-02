@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\Class_;
+namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Name\FullyQualified;
@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @changelog https://laravel.com/docs/5.8/upgrade#deferred-service-providers
  *
- * @see \Rector\Laravel\Tests\Rector\Class_\PropertyDeferToDeferrableProviderToRector\PropertyDeferToDeferrableProviderToRectorTest
+ * @see \RectorLaravel\Tests\Rector\Class_\PropertyDeferToDeferrableProviderToRector\PropertyDeferToDeferrableProviderToRectorTest
  */
 final class PropertyDeferToDeferrableProviderToRector extends AbstractRector
 {

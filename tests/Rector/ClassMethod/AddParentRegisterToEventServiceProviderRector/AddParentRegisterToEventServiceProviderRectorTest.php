@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

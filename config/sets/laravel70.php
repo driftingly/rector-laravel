@@ -15,6 +15,8 @@ use Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration;
 
 # see https://laravel.com/docs/7.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
+
     # https://github.com/laravel/framework/pull/30610/files
     $rectorConfig
         ->ruleWithConfiguration(AddParamTypeDeclarationRector::class, [

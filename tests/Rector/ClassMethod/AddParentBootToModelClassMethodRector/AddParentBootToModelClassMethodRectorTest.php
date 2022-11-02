@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddParentBootToModelClassMethodRector;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddParentBootToModelClassMethodRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

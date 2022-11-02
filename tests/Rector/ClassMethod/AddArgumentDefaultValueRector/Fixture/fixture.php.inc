@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector\Fixture;
 
 use Illuminate\Contracts\Events\Dispatcher;
 
@@ -16,7 +16,7 @@ class Fixture extends Dispatcher
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector\Fixture;
 
 use Illuminate\Contracts\Events\Dispatcher;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\Fixture;
 
 /** @var \Illuminate\Database\Eloquent\FactoryBuilder $factory */
 $factory->states([]);
@@ -12,7 +12,7 @@ $factory->states('premium', 'delinquent');
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\Fixture;
 
 /** @var \Illuminate\Database\Eloquent\FactoryBuilder $factory */
 $factory;

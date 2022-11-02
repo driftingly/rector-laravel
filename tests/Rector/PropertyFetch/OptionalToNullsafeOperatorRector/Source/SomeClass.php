@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\Source;
+namespace RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\Source;
 
 class SomeClass
 {

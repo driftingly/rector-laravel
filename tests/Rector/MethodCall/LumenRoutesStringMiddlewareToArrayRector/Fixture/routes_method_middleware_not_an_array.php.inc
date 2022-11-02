@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector\Fixture;
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 $router->get('/', ['uses' => 'HomeController@home', 'middleware' => 'auth']);
@@ -14,7 +14,7 @@ $router->patch('/', ['uses' => 'HomeController@home', 'middleware' => 'auth']);
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector\Fixture;
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 $router->get('/', ['uses' => 'HomeController@home', 'middleware' => ['auth']]);

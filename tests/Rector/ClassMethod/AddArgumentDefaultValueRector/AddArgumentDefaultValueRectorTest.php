@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

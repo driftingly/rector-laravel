@@ -13,6 +13,8 @@ use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
 # see https://laravel.com/docs/9.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
+
     // https://github.com/laravel/framework/commit/8f9ddea4481717943ed4ecff96d86b703c81a87d
     $rectorConfig
         ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(

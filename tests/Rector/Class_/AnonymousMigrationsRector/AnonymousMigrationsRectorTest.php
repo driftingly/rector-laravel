@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\Class_\AnonymousMigrationsRector;
+namespace RectorLaravel\Tests\Rector\Class_\AnonymousMigrationsRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

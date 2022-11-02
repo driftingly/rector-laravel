@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector;
+namespace RectorLaravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\New_\AddGuardToLoginEventRector\Fixture;
+namespace RectorLaravel\Tests\Rector\New_\AddGuardToLoginEventRector\Fixture;
 
 use Illuminate\Auth\Events\Login;
 

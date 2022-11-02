@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
+namespace RectorLaravel\Tests\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

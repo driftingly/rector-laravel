@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\Namespace_;
+namespace RectorLaravel\Rector\Namespace_;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -18,7 +18,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
 use Rector\Core\PhpParser\Node\CustomNode\FileWithoutNamespace;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Laravel\NodeFactory\ModelFactoryNodeFactory;
+use RectorLaravel\NodeFactory\ModelFactoryNodeFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -26,7 +26,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://laravel.com/docs/7.x/database-testing#writing-factories
  * @changelog https://laravel.com/docs/8.x/database-testing#defining-model-factories
  *
- * @see \Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\FactoryDefinitionRectorTest
+ * @see \RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\FactoryDefinitionRectorTest
  */
 final class FactoryDefinitionRector extends AbstractRector
 {

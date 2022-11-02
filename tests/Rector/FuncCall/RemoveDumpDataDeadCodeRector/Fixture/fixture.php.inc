@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\Fixture;
+namespace RectorLaravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\Fixture;
 
 class Fixture
 {
@@ -21,7 +21,7 @@ class Fixture
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\Fixture;
+namespace RectorLaravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\Fixture;
 
 class Fixture
 {

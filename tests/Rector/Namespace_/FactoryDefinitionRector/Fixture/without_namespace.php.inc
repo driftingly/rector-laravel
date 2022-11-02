@@ -2,7 +2,7 @@
 
 use App;
 
-$factory->define(Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model::class, function ($faker) {
+$factory->define(RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model::class, function ($faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
@@ -17,7 +17,7 @@ use App;
 
 class ModelFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 {
-    protected $model = Rector\Laravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model::class;
+    protected $model = RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model::class;
     public function definition()
     {
         return [

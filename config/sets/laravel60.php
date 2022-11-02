@@ -20,6 +20,8 @@ use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 # https://github.com/laravel/docs/pull/5531/files
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
+
     # https://github.com/laravel/framework/commit/67a38ba0fa2acfbd1f4af4bf7d462bb4419cc091
     $rectorConfig->rule(ParamTypeDeclarationRector::class);
 

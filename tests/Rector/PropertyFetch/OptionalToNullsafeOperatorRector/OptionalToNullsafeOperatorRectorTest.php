@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
+namespace RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

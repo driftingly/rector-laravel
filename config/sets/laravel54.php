@@ -13,6 +13,7 @@ use Rector\Transform\ValueObject\StringToClassConstant;
 # see: https://laravel.com/docs/5.4/upgrade
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
     $rectorConfig
         ->ruleWithConfiguration(StringToClassConstantRector::class, [new StringToClassConstant(
             'kernel.handled',

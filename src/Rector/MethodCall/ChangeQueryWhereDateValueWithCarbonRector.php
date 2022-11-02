@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\MethodCall;
+namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -22,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://github.com/laravel/framework/pull/25315
  * @changelog https://laracasts.com/discuss/channels/eloquent/laravel-eloquent-where-date-is-equal-or-smaller-than-datetime
  *
- * @see \Rector\Laravel\Tests\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector\ChangeQueryWhereDateValueWithCarbonRectorTest
+ * @see \RectorLaravel\Tests\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector\ChangeQueryWhereDateValueWithCarbonRectorTest
  */
 final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector
 {

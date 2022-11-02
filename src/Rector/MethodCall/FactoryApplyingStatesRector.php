@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\MethodCall;
+namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -19,7 +19,7 @@ use Webmozart\Assert\Assert;
  * @changelog https://laravel.com/docs/7.x/database-testing#creating-models
  * @changelog https://laravel.com/docs/8.x/database-testing#applying-states
  *
- * @see \Rector\Laravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\FactoryApplyingStatesRectorTest
+ * @see \RectorLaravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\FactoryApplyingStatesRectorTest
  */
 final class FactoryApplyingStatesRector extends AbstractRector
 {

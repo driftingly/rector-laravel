@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\Fixture;
+namespace RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\Fixture;
 
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +11,7 @@ Route::get('/users', 'SomeControllerNotExists@index');
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\Fixture;
+namespace RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\Fixture;
 
 use Illuminate\Support\Facades\Route;
 

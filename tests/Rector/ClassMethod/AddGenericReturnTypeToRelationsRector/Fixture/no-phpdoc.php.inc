@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,7 +19,7 @@ class User extends Model
 -----
 <?php
 
-namespace Rector\Laravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,7 +29,7 @@ class Account extends Model {}
 class User extends Model
 {
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Rector\Laravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\Fixture\Account>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\Fixture\Account>
      */
     public function accounts(): HasMany
     {

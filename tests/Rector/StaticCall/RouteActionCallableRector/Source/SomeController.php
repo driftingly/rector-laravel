@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\StaticCall\RouteActionCallableRector\Source;
+namespace RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\Source;
 
 class SomeController
 {

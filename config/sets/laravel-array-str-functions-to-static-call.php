@@ -11,6 +11,7 @@ use Rector\Transform\ValueObject\FuncCallToStaticCall;
 // @see https://laravel.com/docs/5.7/facades#facades-vs-dependency-injection
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/../config.php');
     $rectorConfig
         ->ruleWithConfiguration(
             FuncCallToStaticCallRector::class,

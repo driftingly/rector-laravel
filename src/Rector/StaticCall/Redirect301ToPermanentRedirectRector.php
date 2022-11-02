@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\StaticCall;
+namespace RectorLaravel\Rector\StaticCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://laravel.com/docs/5.7/upgrade
- * @see \Rector\Laravel\Tests\Rector\StaticCall\Redirect301ToPermanentRedirectRector\Redirect301ToPermanentRedirectRectorTest
+ * @see \RectorLaravel\Tests\Rector\StaticCall\Redirect301ToPermanentRedirectRector\Redirect301ToPermanentRedirectRectorTest
  */
 final class Redirect301ToPermanentRedirectRector extends AbstractRector
 {

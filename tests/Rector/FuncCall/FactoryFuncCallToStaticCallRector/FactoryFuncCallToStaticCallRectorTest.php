@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector;
+namespace RectorLaravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

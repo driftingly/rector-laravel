@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Laravel\Tests\Rector\Class_\AnonymousMigrationsRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\AnonymousMigrationsRector\Fixture;
 
 use Illuminate\Database\Migrations\Migration;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\Laravel\Rector\FuncCall;
+namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -14,7 +14,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://laravel.com/docs/8.x/helpers#method-app
  * @changelog https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  *
- * @see \Rector\Laravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector\HelperFuncCallToFacadeClassRectorTest
+ * @see \RectorLaravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector\HelperFuncCallToFacadeClassRectorTest
  */
 final class HelperFuncCallToFacadeClassRector extends AbstractRector
 {
