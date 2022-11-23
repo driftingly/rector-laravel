@@ -6,6 +6,8 @@ namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
@@ -44,15 +46,11 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
         $name = $node->name->name;
 
-        if (!str_starts_with($name, 'get')) {
+        if (!$this->isAccessor($name) && !$this->isMutator($name)) {
             return null;
         }
 
-        if (!str_ends_with($name, 'Attribute')) {
-            return null;
-        }
-
-        $newName = substr($name, strlen('get'));
+        $newName = substr($name, 3);
         $newName = substr($newName, 0, -strlen('Attribute'));
         $newName = lcfirst($newName);
 
@@ -60,6 +58,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
             return null;
         }
 
+        // Skip if the new name is already used
         /** @var ClassMethod $method */
         foreach ($parent->getMethods() as $method) {
             if ($this->isName($method, $newName)) {
@@ -67,31 +66,17 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
             }
         }
 
-        $newMethod = new ClassMethod(
-            new Identifier($newName),
-            [
-                'attrGroups' => $node->attrGroups,
-                'flags' => Class_::MODIFIER_PROTECTED,
-                'params' => [],
-                'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
-                'stmts' => [
-                    new Return_(
-                        new StaticCall(
-                            new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
-                            new Identifier('make'), [
-                                new Arg(
-                                    new Closure(['params' => $node->params, 'stmts' => $node->stmts]),
-                                    false,
-                                    false,
-                                    [],
-                                    new Identifier('get')
-                                )
-                            ]
-                        )
-                    )
-                ]
-            ]);
+        if ($this->isAccessor($name)) {
+            $newMethod = $this->refactorAccessor($newName, $node);
+        } else {
+            $newMethod = $this->refactorMutator($newName, $node);
+        }
 
+        if (!$newMethod) {
+            return null;
+        }
+
+        // Preserve docblock
         $docComment = $node->getDocComment();
 
         if ($docComment) {
@@ -115,14 +100,115 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
     {
         $classLike = $this->betterNodeFinder->findParentType($classMethod, ClassLike::class);
 
-        if (! $classLike instanceof ClassLike) {
+        if (!$classLike instanceof ClassLike) {
             return true;
         }
 
         if ($classLike instanceof Class_) {
-            return ! $this->isObjectType($classLike, new ObjectType('Illuminate\Database\Eloquent\Model'));
+            return !$this->isObjectType($classLike, new ObjectType('Illuminate\Database\Eloquent\Model'));
         }
 
         return false;
+    }
+
+    private function refactorAccessor(string $newName, ClassMethod $node): ClassMethod
+    {
+        return new ClassMethod(new Identifier($newName), [
+            'attrGroups' => $node->attrGroups,
+            'flags' => Class_::MODIFIER_PROTECTED,
+            'params' => [],
+            'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
+            'stmts' => [
+                new Return_(
+                    new StaticCall(
+                        new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
+                        new Identifier('make'), [
+                            new Arg(
+                                new Closure(['params' => $node->params, 'stmts' => $node->stmts]),
+                                false,
+                                false,
+                                [],
+                                new Identifier('get')
+                            )
+                        ]
+                    )
+                )
+            ]
+        ]);
+    }
+
+    private function refactorMutator(string $newName, ClassMethod $node): ClassMethod|null
+    {
+        // todo the correct assignment may not be the last one
+        $assignment = $this->betterNodeFinder->findLastInstanceOf($node->stmts, Assign::class);
+
+        if (!$assignment) {
+            return null;
+        }
+
+        /** @var ArrayDimFetch $arrayDimFetch */
+        $arrayDimFetch = $assignment->var;
+
+        if (!$arrayDimFetch instanceof \PhpParser\Node\Expr\ArrayDimFetch) {
+            return null;
+        }
+
+        $nameToSnakeCase = mb_strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1_', $newName));
+
+        if ($arrayDimFetch->dim->value !== $nameToSnakeCase) {
+            return null;
+        }
+
+        /** @var Node\Expr\PropertyFetch $arrayDimFetch */
+        $propertyFetch = $arrayDimFetch->var;
+
+        if (!$propertyFetch instanceof Node\Expr\PropertyFetch) {
+            return null;
+        }
+
+        if (!$this->isName($propertyFetch, 'attributes')) {
+            return null;
+        }
+
+        if (!$this->isName($propertyFetch->var, 'this')) {
+            return null;
+        }
+
+        $statements = [
+            new Return_($assignment->expr)
+        ];
+
+        return new ClassMethod(new Identifier($newName), [
+            'attrGroups' => $node->attrGroups,
+            'flags' => Class_::MODIFIER_PROTECTED,
+            'params' => [],
+            'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
+            'stmts' => [
+                new Return_(
+                    new StaticCall(
+                        new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
+                        new Identifier('make'), [
+                            new Arg(
+                                new Closure(['params' => $node->params, 'stmts' => $statements]),
+                                false,
+                                false,
+                                [],
+                                new Identifier('set')
+                            )
+                        ]
+                    )
+                )
+            ]
+        ]);
+    }
+
+    private function isAccessor(string $name): bool
+    {
+        return str_starts_with($name, 'get') && str_ends_with($name, 'Attribute');
+    }
+
+    private function isMutator(string $name): bool
+    {
+        return str_starts_with($name, 'set') && str_ends_with($name, 'Attribute');
     }
 }
