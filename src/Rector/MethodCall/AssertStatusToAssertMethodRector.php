@@ -151,7 +151,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $arg = $methodCall->args[0];
+        $arg = $methodCall->getArgs()[0];
         $argValue = $arg->value;
 
         if (! $argValue instanceof Node\Scalar\LNumber && ! $argValue instanceof Node\Expr\ClassConstFetch) {
@@ -168,15 +168,15 @@ CODE_SAMPLE
                 422 => 'assertUnprocessable',
                 default => null
             };
-        } elseif ($argValue instanceof Node\Expr\ClassConstFetch) {
-            if (! in_array($argValue->class->toString(), [
+        } else {
+            if (! in_array($this->getName($argValue->class), [
                 'Illuminate\Http\Response',
                 'Symfony\Component\HttpFoundation\Response'
-            ])) {
+            ], true)) {
                return null;
             }
 
-            $replacementMethod = match ($argValue->name->name) {
+            $replacementMethod = match ($this->getName($argValue->name)) {
                 'HTTP_OK' => 'assertOk',
                 'HTTP_NO_CONTENT' => 'assertNoContent',
                 'HTTP_UNAUTHORIZED' => 'assertUnauthorized',
