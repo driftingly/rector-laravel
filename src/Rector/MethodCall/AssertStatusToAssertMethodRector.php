@@ -29,31 +29,43 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
     public function testOk()
     {
         $this->get('/')->assertStatus(200);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_OK);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_OK);
     }
 
     public function testNoContent()
     {
         $this->get('/')->assertStatus(204);
-    }
-
-    public function testForbidden()
-    {
-        $this->get('/')->assertStatus(403);
-    }
-
-    public function testNotFound()
-    {
-        $this->get('/')->assertStatus(404);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_NO_CONTENT);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NO_CONTENT);
     }
 
     public function testUnauthorized()
     {
         $this->get('/')->assertStatus(401);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_UNAUTHORIZED);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function testForbidden()
+    {
+        $this->get('/')->assertStatus(403);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_FORBIDDEN);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
+    }
+
+    public function testNotFound()
+    {
+        $this->get('/')->assertStatus(404);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_NOT_FOUND);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
     }
 
     public function testUnprocessableEntity()
     {
         $this->get('/')->assertStatus(422);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }
 CODE_SAMPLE
@@ -64,30 +76,42 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
     public function testOk()
     {
         $this->get('/')->assertOk();
+        $this->get('/')->assertOk();
+        $this->get('/')->assertOk();
     }
 
     public function testNoContent()
     {
         $this->get('/')->assertNoContent();
+        $this->get('/')->assertNoContent();
+        $this->get('/')->assertNoContent();
+    }
+
+    public function testUnauthorized()
+    {
+        $this->get('/')->assertUnauthorized();
+        $this->get('/')->assertUnauthorized();
+        $this->get('/')->assertUnauthorized();
     }
 
     public function testForbidden()
     {
+        $this->get('/')->assertForbidden();
+        $this->get('/')->assertForbidden();
         $this->get('/')->assertForbidden();
     }
 
     public function testNotFound()
     {
         $this->get('/')->assertNotFound();
-    }
-
-    public function testUnauthorized()
-    {
-        $this->get('/')->assertUnauthorized();
+        $this->get('/')->assertNotFound();
+        $this->get('/')->assertNotFound();
     }
 
     public function testUnprocessableEntity()
     {
+        $this->get('/')->assertUnprocessable();
+        $this->get('/')->assertUnprocessable();
         $this->get('/')->assertUnprocessable();
     }
 }
