@@ -20,7 +20,7 @@ final class AssertStatusToAssertMethodRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Replace `$this->get(\'/\')->assertStatus(200)` with `$this->get(\'/\')->assertOk()`',
+            'Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \Illuminate\Testing\TestResponse)->assertOk()`',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
@@ -130,19 +130,38 @@ CODE_SAMPLE
         $arg = $methodCall->args[0];
         $argValue = $arg->value;
 
-        if (! $argValue instanceof Node\Scalar\LNumber) {
+        if (! $argValue instanceof Node\Scalar\LNumber && ! $argValue instanceof Node\Expr\ClassConstFetch) {
             return null;
         }
 
-        $replacementMethod = match ($argValue->value) {
-            200 => 'assertOk',
-            204 => 'assertNoContent',
-            401 => 'assertUnauthorized',
-            403 => 'assertForbidden',
-            404 => 'assertNotFound',
-            422 => 'assertUnprocessable',
-            default => null
-        };
+        if ($argValue instanceof Node\Scalar\LNumber) {
+            $replacementMethod = match ($argValue->value) {
+                200 => 'assertOk',
+                204 => 'assertNoContent',
+                401 => 'assertUnauthorized',
+                403 => 'assertForbidden',
+                404 => 'assertNotFound',
+                422 => 'assertUnprocessable',
+                default => null
+            };
+        } elseif ($argValue instanceof Node\Expr\ClassConstFetch) {
+            if (! in_array($argValue->class->toString(), [
+                'Illuminate\Http\Response',
+                'Symfony\Component\HttpFoundation\Response'
+            ])) {
+               return null;
+            }
+
+            $replacementMethod = match ($argValue->name->name) {
+                'HTTP_OK' => 'assertOk',
+                'HTTP_NO_CONTENT' => 'assertNoContent',
+                'HTTP_UNAUTHORIZED' => 'assertUnauthorized',
+                'HTTP_FORBIDDEN' => 'assertForbidden',
+                'HTTP_NOT_FOUND' => 'assertNotFound',
+                'HTTP_UNPROCESSABLE_ENTITY' => 'assertUnprocessable',
+                default => null
+            };
+        }
 
         if ($replacementMethod === null) {
             return null;
