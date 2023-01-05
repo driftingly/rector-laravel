@@ -11,9 +11,11 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
 use Rector\Core\NodeManipulator\ClassMethodManipulator;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -29,7 +31,8 @@ final class RequestStaticValidateToInjectRector extends AbstractRector
     private array $requestObjectTypes = [];
 
     public function __construct(
-        private readonly ClassMethodManipulator $classMethodManipulator
+        private readonly ClassMethodManipulator $classMethodManipulator,
+        private readonly ReflectionResolver $reflectionResolver
     ) {
         $this->requestObjectTypes = [new ObjectType('Illuminate\Http\Request'), new ObjectType('Request')];
     }
@@ -77,7 +80,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param StaticCall|FuncCall $node
+     * @param  StaticCall|FuncCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -118,6 +121,15 @@ CODE_SAMPLE
         $class = $this->betterNodeFinder->findParentType($node, Class_::class);
         if (! $class instanceof Class_) {
             return true;
+        }
+
+        $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
+        if ($classMethod instanceof ClassMethod) {
+            $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
+            if ($classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName() !== $class->namespacedName?->toString()
+            ) {
+                return true;
+            }
         }
 
         return ! $this->isName($node, 'request');
