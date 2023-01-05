@@ -32,7 +32,7 @@ final class RequestStaticValidateToInjectRector extends AbstractRector
 
     public function __construct(
         private readonly ClassMethodManipulator $classMethodManipulator,
-        private readonly ReflectionResolver     $reflectionResolver
+        private readonly ReflectionResolver $reflectionResolver
     ) {
         $this->requestObjectTypes = [new ObjectType('Illuminate\Http\Request'), new ObjectType('Request')];
     }
@@ -117,19 +117,21 @@ CODE_SAMPLE
         if ($node instanceof StaticCall) {
             return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);
         }
+
         $class = $this->betterNodeFinder->findParentType($node, Class_::class);
         if (! $class instanceof Class_) {
             return true;
         }
+
         $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
         if ($classMethod instanceof ClassMethod) {
             $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
-            if ($classMethodReflection !== null && $classMethodReflection->getPrototype()->getDeclaringClass()->getName(
-                ) !== $class->namespacedName->toString()) {
+            if ($classMethodReflection !== null
+                && $classMethodReflection->getPrototype()->getDeclaringClass()->getName() !== $class->namespacedName->toString()
+            ) {
                 return true;
             }
         }
-
 
         return ! $this->isName($node, 'request');
     }
