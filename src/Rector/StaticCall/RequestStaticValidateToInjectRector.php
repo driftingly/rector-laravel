@@ -126,8 +126,7 @@ CODE_SAMPLE
         $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
         if ($classMethod instanceof ClassMethod) {
             $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
-            if ($classMethodReflection !== null
-                && $classMethodReflection->getPrototype()->getDeclaringClass()->getName() !== $class->namespacedName->toString()
+            if ($classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName() !== $class->namespacedName?->toString()
             ) {
                 return true;
             }
