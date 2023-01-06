@@ -1,7 +1,7 @@
 <?php
 namespace RectorLaravel\Tests\Rector\ClassMethod\MigrateToSimplifiedAttributeRector\Fixture;
 
-class SomeModel extends Model
+class NotEloquentModel extends Model
 {
     public function getLastNameAttribute($value)
     {

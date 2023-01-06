@@ -1,5 +1,5 @@
 <?php
-class SomeModel
+class SomeOtherModel
 {
     public function getLastNameAttribute($value)
     {
