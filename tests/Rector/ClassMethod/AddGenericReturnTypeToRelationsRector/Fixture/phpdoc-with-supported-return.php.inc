@@ -10,7 +10,7 @@ class Account extends Model {}
 class User extends Model
 {
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function accounts(): HasMany
     {

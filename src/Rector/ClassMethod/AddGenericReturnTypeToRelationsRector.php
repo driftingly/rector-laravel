@@ -19,12 +19,19 @@ use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /** @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorTest */
 class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
+    public function __construct(
+        private readonly TypeComparator $typeComparator
+    )
+    {
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -108,11 +115,10 @@ CODE_SAMPLE
 
         // Don't update an existing return type if it differs from the native return type (thus the one without generics).
         // E.g. we only add generics to an existing return type, but don't change the type itself.
-        // Only works if the type in the PHPDoc is fully qualified.
         if (
             $node->getDocComment() !== null &&
             $phpDocInfo->hasByName('return') &&
-            !$phpDocInfo->getReturnType()->equals(new ObjectType($methodReturnTypeName))
+            !$this->typeComparator->arePhpParserAndPhpStanPhpDocTypesEqual($methodReturnType, $phpDocInfo->getReturnTagValue()->type, $node)
         ) {
             return null;
         }
