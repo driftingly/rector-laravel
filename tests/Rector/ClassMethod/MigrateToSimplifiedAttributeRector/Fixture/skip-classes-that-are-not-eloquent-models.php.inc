@@ -8,3 +8,4 @@ class SomeModel extends Model
         return ucfirst($value);
     }
 }
+?>

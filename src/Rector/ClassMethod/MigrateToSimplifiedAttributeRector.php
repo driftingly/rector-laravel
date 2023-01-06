@@ -9,6 +9,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
@@ -149,7 +150,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         /** @var ArrayDimFetch $arrayDimFetch */
         $arrayDimFetch = $assignment->var;
 
-        if (!$arrayDimFetch instanceof \PhpParser\Node\Expr\ArrayDimFetch) {
+        if (!$arrayDimFetch instanceof ArrayDimFetch) {
             return null;
         }
 
@@ -159,10 +160,10 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
             return null;
         }
 
-        /** @var Node\Expr\PropertyFetch $arrayDimFetch */
+        /** @var PropertyFetch $arrayDimFetch */
         $propertyFetch = $arrayDimFetch->var;
 
-        if (!$propertyFetch instanceof Node\Expr\PropertyFetch) {
+        if (!$propertyFetch instanceof PropertyFetch) {
             return null;
         }
 
