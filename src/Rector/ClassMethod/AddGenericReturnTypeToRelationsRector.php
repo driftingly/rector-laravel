@@ -106,8 +106,14 @@ CODE_SAMPLE
             return null;
         }
 
-        // Return, if already has return type
-        if ($node->getDocComment() !== null && $phpDocInfo->hasByName('return')) {
+        // Don't update an existing return type if it differs from the native return type (thus the one without generics).
+        // E.g. we only add generics to an existing return type, but don't change the type itself.
+        // Only works if the type in the PHPDoc is fully qualified.
+        if (
+            $node->getDocComment() !== null &&
+            $phpDocInfo->hasByName('return') &&
+            !$phpDocInfo->getReturnType()->equals(new ObjectType($methodReturnTypeName))
+        ) {
             return null;
         }
 
@@ -132,15 +138,20 @@ CODE_SAMPLE
             return null;
         }
 
-        $phpDocInfo->addTagValueNode(
-            new ReturnTagValueNode(
-                new GenericTypeNode(
-                    new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-                    [new FullyQualifiedIdentifierTypeNode($relatedClass)],
-                ),
-                ''
-            )
+        $genericTypeNode = new GenericTypeNode(
+            new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
+            [new FullyQualifiedIdentifierTypeNode($relatedClass)],
         );
+
+        // Update or add return tag
+        if ($phpDocInfo->hasByName('return')) {
+            $phpDocInfo->getReturnTagValue()->type = $genericTypeNode;
+        } else {
+            $phpDocInfo->addTagValueNode(new ReturnTagValueNode(
+                $genericTypeNode,
+                ''
+            ));
+        }
 
         return $node;
     }
