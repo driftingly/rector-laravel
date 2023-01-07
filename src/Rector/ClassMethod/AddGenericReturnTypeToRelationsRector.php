@@ -116,8 +116,7 @@ CODE_SAMPLE
         // Don't update an existing return type if it differs from the native return type (thus the one without generics).
         // E.g. we only add generics to an existing return type, but don't change the type itself.
         if (
-            $node->getDocComment() !== null &&
-            $phpDocInfo->hasByName('return') &&
+            $phpDocInfo->getReturnTagValue() !== null &&
             !$this->typeComparator->arePhpParserAndPhpStanPhpDocTypesEqual($methodReturnType, $phpDocInfo->getReturnTagValue()->type, $node)
         ) {
             return null;
@@ -150,7 +149,7 @@ CODE_SAMPLE
         );
 
         // Update or add return tag
-        if ($phpDocInfo->hasByName('return')) {
+        if ($phpDocInfo->getReturnTagValue() !== null) {
             $phpDocInfo->getReturnTagValue()->type = $genericTypeNode;
         } else {
             $phpDocInfo->addTagValueNode(new ReturnTagValueNode(
