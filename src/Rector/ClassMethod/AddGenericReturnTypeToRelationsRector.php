@@ -16,7 +16,6 @@ use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\ObjectType;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
@@ -107,10 +106,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
-        if (! $phpDocInfo instanceof PhpDocInfo) {
-            return null;
-        }
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
 
         // Don't update an existing return type if it differs from the native return type (thus the one without generics).
         // E.g. we only add generics to an existing return type, but don't change the type itself.
