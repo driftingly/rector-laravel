@@ -28,8 +28,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
     public function __construct(
         private readonly TypeComparator $typeComparator
-    )
-    {
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -117,7 +116,12 @@ CODE_SAMPLE
         // E.g. we only add generics to an existing return type, but don't change the type itself.
         if (
             $phpDocInfo->getReturnTagValue() !== null &&
-            !$this->typeComparator->arePhpParserAndPhpStanPhpDocTypesEqual($methodReturnType, $phpDocInfo->getReturnTagValue()->type, $node)
+            ! $this->typeComparator->arePhpParserAndPhpStanPhpDocTypesEqual(
+                $methodReturnType,
+                $phpDocInfo->getReturnTagValue()
+                    ->type,
+                $node
+            )
         ) {
             return null;
         }
@@ -150,12 +154,10 @@ CODE_SAMPLE
 
         // Update or add return tag
         if ($phpDocInfo->getReturnTagValue() !== null) {
-            $phpDocInfo->getReturnTagValue()->type = $genericTypeNode;
+            $phpDocInfo->getReturnTagValue()
+                ->type = $genericTypeNode;
         } else {
-            $phpDocInfo->addTagValueNode(new ReturnTagValueNode(
-                $genericTypeNode,
-                ''
-            ));
+            $phpDocInfo->addTagValueNode(new ReturnTagValueNode($genericTypeNode, ''));
         }
 
         return $node;
