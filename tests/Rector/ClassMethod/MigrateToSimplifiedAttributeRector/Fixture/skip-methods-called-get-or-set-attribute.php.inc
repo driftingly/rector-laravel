@@ -5,4 +5,9 @@ class SomeModel extends \Illuminate\Database\Eloquent\Model
     {
         return ucfirst($value);
     }
+
+    public function setAttribute($value)
+    {
+        return ucfirst($value);
+    }
 }

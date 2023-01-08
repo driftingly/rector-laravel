@@ -24,6 +24,7 @@ use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /** @see \RectorLaravel\Tests\Rector\ClassMethod\MigrateToSimplifiedAttributeRector\MigrateToSimplifiedAttributeRectorTest */
@@ -108,9 +109,43 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition(
-            'Migrates the accessors to the new syntax.', []
-        );
+        return new RuleDefinition('Migrate to the new Model attributes syntax', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    public function getFirstNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+
+    public function setFirstNameAttribute($value)
+    {
+        $this->attributes['first_name'] = strtolower($value);
+        $this->attributes['first_name_upper'] = strtoupper($value);
+    }
+}
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected function firstName(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: function ($value) {
+            return ucfirst($value);
+        }, set: function ($value) {
+            return ['first_name' => strtolower($value), 'first_name_upper' => strtoupper($value)];
+        });
+    }
+}
+CODE_SAMPLE
+            ),
+        ]);
     }
 
     private function shouldSkipNode(ClassMethod $classMethod): bool

@@ -6,6 +6,11 @@ class SomeModel extends \Illuminate\Database\Eloquent\Model
         return ucfirst($value);
     }
 
+    public function setLastNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+
     public function lastName()
     {
         return 'some value';
