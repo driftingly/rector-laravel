@@ -6,13 +6,16 @@ namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -140,44 +143,32 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
     private function refactorMutator(string $newName, ClassMethod $node): ClassMethod|null
     {
-        // todo the correct assignment may not be the last one
-        $assignment = $this->betterNodeFinder->findLastInstanceOf($node->stmts, Assign::class);
+        // todo mutating mutators and accessors together
+        $assignments = $this->betterNodeFinder->findInstancesOf($node->stmts, [Assign::class]);
 
-        if (!$assignment) {
-            return null;
+        $assignmentStatements = [];
+        /** @var Assign $assignment */
+        foreach ($assignments as $assignment) {
+            $statement = $this->getAssignmentStatement($assignment);
+
+            if ($statement) {
+                $assignmentStatements[] = $statement;
+            }
         }
 
-        /** @var ArrayDimFetch $arrayDimFetch */
-        $arrayDimFetch = $assignment->var;
+        $statements = array_filter($node->stmts, function (Stmt $statement) use ($assignments) {
+            if (!$statement->expr instanceof Assign) {
+                return true;
+            }
 
-        if (!$arrayDimFetch instanceof ArrayDimFetch) {
-            return null;
+            return !$this->isAttributesAssignment($statement->expr);
+        });
+
+        if (count($assignmentStatements) === 1) {
+            $statements[] = new Return_($assignmentStatements[0]->value);
+        } else {
+            $statements[] = new Return_(new Array_($assignmentStatements));
         }
-
-        $nameToSnakeCase = mb_strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1_', $newName));
-
-        if ($arrayDimFetch->dim->value !== $nameToSnakeCase) {
-            return null;
-        }
-
-        /** @var PropertyFetch $arrayDimFetch */
-        $propertyFetch = $arrayDimFetch->var;
-
-        if (!$propertyFetch instanceof PropertyFetch) {
-            return null;
-        }
-
-        if (!$this->isName($propertyFetch, 'attributes')) {
-            return null;
-        }
-
-        if (!$this->isName($propertyFetch->var, 'this')) {
-            return null;
-        }
-
-        $statements = [
-            new Return_($assignment->expr)
-        ];
 
         return new ClassMethod(new Identifier($newName), [
             'attrGroups' => $node->attrGroups,
@@ -211,5 +202,44 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
     private function isMutator(string $name): bool
     {
         return str_starts_with($name, 'set') && str_ends_with($name, 'Attribute');
+    }
+
+    private function getAssignmentStatement(Assign $assignment): ?ArrayItem
+    {
+        /** @var ArrayDimFetch $arrayDimFetch */
+        $arrayDimFetch = $assignment->var;
+
+        if (!$this->isAttributesAssignment($assignment)) {
+            return null;
+        }
+
+        return new ArrayItem($assignment->expr, $arrayDimFetch->dim);
+    }
+
+    private function isAttributesAssignment(Assign $assignment): bool
+    {
+        /** @var ArrayDimFetch $arrayDimFetch */
+        $arrayDimFetch = $assignment->var;
+
+        if (!$arrayDimFetch instanceof ArrayDimFetch) {
+            return false;
+        }
+
+        /** @var PropertyFetch $arrayDimFetch */
+        $propertyFetch = $arrayDimFetch->var;
+
+        if (!$propertyFetch instanceof PropertyFetch) {
+            return false;
+        }
+
+        if (!$this->isName($propertyFetch, 'attributes')) {
+            return false;
+        }
+
+        if (!$this->isName($propertyFetch->var, 'this')) {
+            return false;
+        }
+
+        return true;
     }
 }
