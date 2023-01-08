@@ -22,8 +22,6 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
-use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -47,24 +45,24 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
             return null;
         }
 
-        $parentClass = $node->getAttribute(AttributeKey::PARENT_NODE);
-
         $nodeName = $node->name->name;
 
-        if (!$this->isAccessor($nodeName) && !$this->isMutator($nodeName)) {
+        if (! $this->isAccessor($nodeName) && ! $this->isMutator($nodeName)) {
             return null;
         }
 
         $attributeName = $this->parseAttributeName($nodeName);
 
-        if (empty($attributeName)) {
+        if ($attributeName === '') {
             return null;
         }
 
+        /** @var ClassLike $parentClass */
+        $parentClass = $this->betterNodeFinder->findParentType($node, ClassLike::class);
+
         // Skip if the new attribute name is already used
-        /** @var ClassMethod $method */
-        foreach ($parentClass->getMethods() as $method) {
-            if ($this->isName($method, $attributeName)) {
+        foreach ($parentClass->getMethods() as $classMethod) {
+            if ($this->isName($classMethod, $attributeName)) {
                 return null;
             }
         }
@@ -88,7 +86,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
         if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod) {
             $newNode = $this->createAccessorAndMutator($accessor, $mutator, $attributeName);
-        } else if ($accessor instanceof ClassMethod) {
+        } elseif ($accessor instanceof ClassMethod) {
             $newNode = $this->createAccessor($attributeName, $node);
         } else {
             $newNode = $this->createMutator($attributeName, $node);
@@ -97,16 +95,13 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         // Preserve docblock
         $docComment = $node->getDocComment();
 
-        if ($docComment) {
+        if ($docComment !== null) {
             $newNode->setDocComment($docComment);
         }
 
         return $newNode;
     }
 
-    /**
-     * @throws PoorDocumentationException
-     */
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Migrate to the new Model attributes syntax', [
@@ -152,31 +147,34 @@ CODE_SAMPLE
     {
         $classLike = $this->betterNodeFinder->findParentType($classMethod, ClassLike::class);
 
-        if (!$classLike instanceof ClassLike) {
+        if (! $classLike instanceof ClassLike) {
             return true;
         }
 
         if ($classLike instanceof Class_) {
-            return !$this->isObjectType($classLike, new ObjectType('Illuminate\Database\Eloquent\Model'));
+            return ! $this->isObjectType($classLike, new ObjectType('Illuminate\Database\Eloquent\Model'));
         }
 
         return false;
     }
 
-    private function createAccessor(string $attributeName, ClassMethod $node): ClassMethod
+    private function createAccessor(string $attributeName, ClassMethod $classMethod): ClassMethod
     {
-        return $this->createAttributeClassMethod($attributeName, $node, $node->stmts, 'get');
+        return $this->createAttributeClassMethod($attributeName, $classMethod, $classMethod->stmts, 'get');
     }
 
-    private function createMutator(string $attributeName, ClassMethod $node): ClassMethod
+    private function createMutator(string $attributeName, ClassMethod $classMethod): ClassMethod
     {
-        $statements = $this->getMutatorStatements($node);
+        $statements = $this->getMutatorStatements($classMethod);
 
-        return $this->createAttributeClassMethod($attributeName, $node, $statements, 'set');
+        return $this->createAttributeClassMethod($attributeName, $classMethod, $statements, 'set');
     }
 
-    private function createAccessorAndMutator(ClassMethod $accessor, ClassMethod $mutator, string $attributeName): ClassMethod
-    {
+    private function createAccessorAndMutator(
+        ClassMethod $accessor,
+        ClassMethod $mutator,
+        string $attributeName
+    ): ClassMethod {
         return new ClassMethod(new Identifier($attributeName), [
             'attrGroups' => [],
             'flags' => Class_::MODIFIER_PROTECTED,
@@ -186,32 +184,43 @@ CODE_SAMPLE
                 new Return_(
                     new StaticCall(
                         new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
-                        new Identifier('make'), [
+                        new Identifier('make'),
+                        [
                             new Arg(
-                                new Closure(['params' => $accessor->params, 'stmts' => $accessor->stmts]),
+                                new Closure([
+                                    'params' => $accessor->params,
+                                    'stmts' => $accessor->stmts,
+                                ]),
                                 false,
                                 false,
                                 [],
                                 new Identifier('get')
                             ),
                             new Arg(
-                                new Closure(['params' => $mutator->params, 'stmts' => $this->getMutatorStatements($mutator)]),
+                                new Closure([
+                                    'params' => $mutator->params,
+                                    'stmts' => $this->getMutatorStatements($mutator),
+                                ]),
                                 false,
                                 false,
                                 [],
                                 new Identifier('set')
-                            )
+                            ),
                         ]
                     )
-                )
-            ]
+                ),
+            ],
         ]);
     }
 
-    private function createAttributeClassMethod(string $attributeName, ClassMethod $node, array $statements, string $identifierName): ClassMethod
-    {
+    private function createAttributeClassMethod(
+        string $attributeName,
+        ClassMethod $classMethod,
+        array $statements,
+        string $identifierName
+    ): ClassMethod {
         return new ClassMethod(new Identifier($attributeName), [
-            'attrGroups' => $node->attrGroups,
+            'attrGroups' => $classMethod->attrGroups,
             'flags' => Class_::MODIFIER_PROTECTED,
             'params' => [],
             'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
@@ -219,18 +228,22 @@ CODE_SAMPLE
                 new Return_(
                     new StaticCall(
                         new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
-                        new Identifier('make'), [
+                        new Identifier('make'),
+                        [
                             new Arg(
-                                new Closure(['params' => $node->params, 'stmts' => $statements]),
+                                new Closure([
+                                    'params' => $classMethod->params,
+                                    'stmts' => $statements,
+                                ]),
                                 false,
                                 false,
                                 [],
                                 new Identifier($identifierName)
-                            )
+                            ),
                         ]
                     )
-                )
-            ]
+                ),
+            ],
         ]);
     }
 
@@ -244,24 +257,22 @@ CODE_SAMPLE
         return str_starts_with($nodeName, 'set') && str_ends_with($nodeName, 'Attribute');
     }
 
-    private function findPossibleAccessor(mixed $parent, $attributeName): ?ClassMethod
+    private function findPossibleAccessor(ClassLike $classLike, string $attributeName): ?ClassMethod
     {
-        /** @var ClassMethod $method */
-        foreach ($parent->getMethods() as $method) {
-            if ($method->name->toString() === "get" . ucfirst($attributeName) . "Attribute") {
-                return $method;
+        foreach ($classLike->getMethods() as $classMethod) {
+            if ($classMethod->name->toString() === 'get' . ucfirst($attributeName) . 'Attribute') {
+                return $classMethod;
             }
         }
 
         return null;
     }
 
-    private function findPossibleMutator(mixed $parent, $attributeName): ?ClassMethod
+    private function findPossibleMutator(ClassLike $classLike, string $attributeName): ?ClassMethod
     {
-        /** @var ClassMethod $method */
-        foreach ($parent->getMethods() as $method) {
-            if ($method->name->toString() === "set" . ucfirst($attributeName) . "Attribute") {
-                return $method;
+        foreach ($classLike->getMethods() as $classMethod) {
+            if ($classMethod->name->toString() === 'set' . ucfirst($attributeName) . 'Attribute') {
+                return $classMethod;
             }
         }
 
@@ -269,19 +280,18 @@ CODE_SAMPLE
     }
 
     /**
-     * @param ClassMethod $node
      * @return Stmt[]
      */
-    private function getMutatorStatements(ClassMethod $node): array
+    private function getMutatorStatements(ClassMethod $classMethod): array
     {
-        $assignments = $this->betterNodeFinder->findInstancesOf($node->stmts, [Assign::class]);
+        $assignments = $this->betterNodeFinder->findInstancesOf($classMethod->stmts, [Assign::class]);
 
         // Get all statements that are assignments to attributes
         // updated for the new syntax
         $attributesAssignmentStatements = [];
         /** @var Assign $assignment */
         foreach ($assignments as $assignment) {
-            if (!$this->isAttributesAssignment($assignment)) {
+            if (! $this->isAttributesAssignment($assignment)) {
                 continue;
             }
 
@@ -289,12 +299,12 @@ CODE_SAMPLE
         }
 
         // Get all statements that are not assignments to attributes
-        $statements = array_filter($node->stmts, function (Stmt $statement) use ($assignments) {
-            if (!$statement->expr instanceof Assign) {
+        $statements = array_filter($classMethod->stmts, function (Stmt $stmt) use ($assignments) {
+            if (! $stmt->expr instanceof Assign) {
                 return true;
             }
 
-            return !$this->isAttributesAssignment($statement->expr);
+            return ! $this->isAttributesAssignment($stmt->expr);
         });
 
         // Append the updated attributes assignment statements
@@ -303,31 +313,25 @@ CODE_SAMPLE
         return $statements;
     }
 
-    private function isAttributesAssignment(Assign $assignment): bool
+    private function isAttributesAssignment(Assign $assign): bool
     {
-        /** @var ArrayDimFetch $arrayDimFetch */
-        $arrayDimFetch = $assignment->var;
+        $arrayDimFetch = $assign->var;
 
-        if (!$arrayDimFetch instanceof ArrayDimFetch) {
+        if (! $arrayDimFetch instanceof ArrayDimFetch) {
             return false;
         }
 
-        /** @var PropertyFetch $arrayDimFetch */
         $propertyFetch = $arrayDimFetch->var;
 
-        if (!$propertyFetch instanceof PropertyFetch) {
+        if (! $propertyFetch instanceof PropertyFetch) {
             return false;
         }
 
-        if (!$this->isName($propertyFetch, 'attributes')) {
+        if (! $this->isName($propertyFetch, 'attributes')) {
             return false;
         }
 
-        if (!$this->isName($propertyFetch->var, 'this')) {
-            return false;
-        }
-
-        return true;
+        return $this->isName($propertyFetch->var, 'this');
     }
 
     private function parseAttributeName(string $nodeName): string

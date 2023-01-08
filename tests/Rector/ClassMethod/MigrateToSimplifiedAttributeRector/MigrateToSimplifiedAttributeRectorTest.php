@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\Tests\Rector\ClassMethod\MigrateToSimplifiedAttributeRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class MigrateToSimplifiedAttributeTest extends AbstractRectorTestCase
+class MigrateToSimplifiedAttributeRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
