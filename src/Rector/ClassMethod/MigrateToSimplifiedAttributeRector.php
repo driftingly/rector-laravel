@@ -71,13 +71,27 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         }
 
         if ($this->isAccessor($name)) {
-            $newMethod = $this->refactorAccessor($newName, $node);
+            $mutator = $this->findMutator($parent, $newName);
+            $accessor = $node;
         } else {
-            $newMethod = $this->refactorMutator($newName, $node);
+            $accessor = $this->findAccessor($parent, $newName);
+            $mutator = $node;
         }
 
-        if (!$newMethod) {
+        // This means we have both an accessor and a mutator
+        // So we generate the new method where the accessor is
+        // and remove the mutator
+        if ($accessor && $mutator && $this->isMutator($name)) {
+            $this->removeNode($mutator);
             return null;
+        }
+
+        if ($accessor && $mutator) {
+            $newMethod = $this->createAccessorAndMutator($accessor, $mutator, $newName);
+        } else if ($accessor) {
+            $newMethod = $this->createAccessor($newName, $node);
+        } else {
+            $newMethod = $this->createMutator($newName, $node);
         }
 
         // Preserve docblock
@@ -115,10 +129,22 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         return false;
     }
 
-    private function refactorAccessor(string $newName, ClassMethod $node): ClassMethod
+    private function createAccessor(string $newName, ClassMethod $node): ClassMethod
+    {
+        return $this->createSimplifiedAttributeMethod($newName, $node, $node->stmts, 'get');
+    }
+
+    private function createMutator(string $newName, ClassMethod $node): ClassMethod
+    {
+        $statements = $this->getMutatorStatements($node);
+
+        return $this->createSimplifiedAttributeMethod($newName, $node, $statements, 'set');
+    }
+
+    private function createAccessorAndMutator(ClassMethod $accessor, ClassMethod $mutator, string $newName): ClassMethod
     {
         return new ClassMethod(new Identifier($newName), [
-            'attrGroups' => $node->attrGroups,
+            'attrGroups' => [],
             'flags' => Class_::MODIFIER_PROTECTED,
             'params' => [],
             'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
@@ -128,11 +154,18 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
                         new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
                         new Identifier('make'), [
                             new Arg(
-                                new Closure(['params' => $node->params, 'stmts' => $node->stmts]),
+                                new Closure(['params' => $accessor->params, 'stmts' => $accessor->stmts]),
                                 false,
                                 false,
                                 [],
                                 new Identifier('get')
+                            ),
+                            new Arg(
+                                new Closure(['params' => $mutator->params, 'stmts' => $this->getMutatorStatements($mutator)]),
+                                false,
+                                false,
+                                [],
+                                new Identifier('set')
                             )
                         ]
                     )
@@ -141,35 +174,8 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         ]);
     }
 
-    private function refactorMutator(string $newName, ClassMethod $node): ClassMethod|null
+    private function createSimplifiedAttributeMethod(string $newName, ClassMethod $node, array $statements, string $identifierName): ClassMethod
     {
-        // todo mutating mutators and accessors together
-        $assignments = $this->betterNodeFinder->findInstancesOf($node->stmts, [Assign::class]);
-
-        $assignmentStatements = [];
-        /** @var Assign $assignment */
-        foreach ($assignments as $assignment) {
-            $statement = $this->getAssignmentStatement($assignment);
-
-            if ($statement) {
-                $assignmentStatements[] = $statement;
-            }
-        }
-
-        $statements = array_filter($node->stmts, function (Stmt $statement) use ($assignments) {
-            if (!$statement->expr instanceof Assign) {
-                return true;
-            }
-
-            return !$this->isAttributesAssignment($statement->expr);
-        });
-
-        if (count($assignmentStatements) === 1) {
-            $statements[] = new Return_($assignmentStatements[0]->value);
-        } else {
-            $statements[] = new Return_(new Array_($assignmentStatements));
-        }
-
         return new ClassMethod(new Identifier($newName), [
             'attrGroups' => $node->attrGroups,
             'flags' => Class_::MODIFIER_PROTECTED,
@@ -185,7 +191,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
                                 false,
                                 false,
                                 [],
-                                new Identifier('set')
+                                new Identifier($identifierName)
                             )
                         ]
                     )
@@ -241,5 +247,59 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         }
 
         return true;
+    }
+
+    private function findMutator(mixed $parent, $newName): ?ClassMethod
+    {
+        /** @var ClassMethod $method */
+        foreach ($parent->getMethods() as $method) {
+            if ($method->name->toString() === "set".ucfirst($newName)."Attribute") {
+                return $method;
+            }
+        }
+
+        return null;
+    }
+
+    private function findAccessor(mixed $parent, $newName): ?ClassMethod
+    {
+        /** @var ClassMethod $method */
+        foreach ($parent->getMethods() as $method) {
+            if ($method->name->toString() === "get".ucfirst($newName)."Attribute") {
+                return $method;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param ClassMethod $node
+     * @return Stmt[]
+     */
+    private function getMutatorStatements(ClassMethod $node): array
+    {
+        $assignments = $this->betterNodeFinder->findInstancesOf($node->stmts, [Assign::class]);
+
+        $assignmentStatements = [];
+        /** @var Assign $assignment */
+        foreach ($assignments as $assignment) {
+            $statement = $this->getAssignmentStatement($assignment);
+
+            if ($statement) {
+                $assignmentStatements[] = $statement;
+            }
+        }
+
+        $statements = array_filter($node->stmts, function (Stmt $statement) use ($assignments) {
+            if (!$statement->expr instanceof Assign) {
+                return true;
+            }
+
+            return !$this->isAttributesAssignment($statement->expr);
+        });
+
+        $statements[] = new Return_(new Array_($assignmentStatements));
+        return $statements;
     }
 }
