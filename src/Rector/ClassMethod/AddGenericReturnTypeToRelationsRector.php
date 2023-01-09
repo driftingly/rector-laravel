@@ -122,18 +122,8 @@ CODE_SAMPLE
             return null;
         }
 
-        $returnStatement = $this->betterNodeFinder->findFirstInFunctionLikeScoped(
-            $node,
-            fn (Node $subNode): bool => $subNode instanceof Return_
-        );
-
-        if (! $returnStatement instanceof Return_) {
-            return null;
-        }
-
-        $relationMethodCall = $this->betterNodeFinder->findFirstInstanceOf($returnStatement, MethodCall::class);
-
-        if (! $relationMethodCall instanceof MethodCall) {
+        $relationMethodCall = $this->getRelationMethodCall($node);
+        if ($relationMethodCall === null) {
             return null;
         }
 
@@ -161,6 +151,42 @@ CODE_SAMPLE
 
     private function getRelatedModelClassFromMethodCall(MethodCall $methodCall): ?string
     {
+        $argType = $this->getType($methodCall->getArgs()[0]->value);
+
+        if ($argType instanceof ConstantStringType) {
+            return $argType->getValue();
+        }
+
+        if (! $argType instanceof GenericClassStringType) {
+            return null;
+        }
+
+        $modelType = $argType->getGenericType();
+
+        if (! $modelType instanceof ObjectType) {
+            return null;
+        }
+
+        return $modelType->getClassName();
+    }
+
+    private function getRelationMethodCall(ClassMethod $node): ?MethodCall
+    {
+        $returnStatement = $this->betterNodeFinder->findFirstInFunctionLikeScoped(
+            $node,
+            fn (Node $subNode): bool => $subNode instanceof Return_
+        );
+
+        if (! $returnStatement instanceof Return_) {
+            return null;
+        }
+
+        $methodCall = $this->betterNodeFinder->findFirstInstanceOf($returnStatement, MethodCall::class);
+
+        if (! $methodCall instanceof MethodCall) {
+            return null;
+        }
+
         $methodName = $methodCall->name;
 
         if (! $methodName instanceof Identifier) {
@@ -181,23 +207,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $argType = $this->getType($methodCall->getArgs()[0]->value);
-
-        if ($argType instanceof ConstantStringType) {
-            return $argType->getValue();
-        }
-
-        if (! $argType instanceof GenericClassStringType) {
-            return null;
-        }
-
-        $modelType = $argType->getGenericType();
-
-        if (! $modelType instanceof ObjectType) {
-            return null;
-        }
-
-        return $modelType->getClassName();
+        return $methodCall;
     }
 
     private function shouldSkipNode(ClassMethod $classMethod): bool
