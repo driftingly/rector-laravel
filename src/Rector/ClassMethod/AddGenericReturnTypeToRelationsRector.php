@@ -16,6 +16,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Core\Rector\AbstractScopeAwareRector;
@@ -124,12 +125,11 @@ CODE_SAMPLE
         // Don't update an existing return type if it differs from the native return type (thus the one without generics).
         // E.g. we only add generics to an existing return type, but don't change the type itself.
         if (
-            $phpDocInfo->getReturnTagValue() !== null &&
-            ! $this->typeComparator->arePhpParserAndPhpStanPhpDocTypesEqual(
+            $phpDocInfo->getReturnTagValue() !== null
+            && ! $this->areNativeTypeAndPhpDocReturnTypeEqual(
+                $node,
                 $methodReturnType,
                 $phpDocInfo->getReturnTagValue()
-                    ->type,
-                $node
             )
         ) {
             return null;
@@ -147,6 +147,20 @@ CODE_SAMPLE
         }
 
         $classForChildGeneric = $this->getClassForChildGeneric($scope, $relationMethodCall);
+
+        // Don't update the docblock if return type already contains the correct generics. This avoids overwriting
+        // non-FQCN with our fully qualified ones.
+        if (
+            $phpDocInfo->getReturnTagValue() !== null
+            && $this->areGenericTypesEqual(
+                $node,
+                $phpDocInfo->getReturnTagValue(),
+                $relatedClass,
+                $classForChildGeneric
+            )
+        ) {
+            return null;
+        }
 
         $genericTypeNode = new GenericTypeNode(
             new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
@@ -227,6 +241,69 @@ CODE_SAMPLE
         $classReflection = $scope->getClassReflection();
 
         return $classReflection?->getName();
+    }
+
+    private function areNativeTypeAndPhpDocReturnTypeEqual(
+        ClassMethod $node,
+        Node $methodReturnType,
+        ReturnTagValueNode $returnTagValueNode
+    ): bool {
+        $phpDocPHPStanType = $this->staticTypeMapper->mapPHPStanPhpDocTypeNodeToPHPStanType(
+            $returnTagValueNode->type,
+            $node
+        );
+
+        $phpDocPHPStanTypeWithoutGenerics = $phpDocPHPStanType;
+        if ($phpDocPHPStanType instanceof GenericObjectType) {
+            $phpDocPHPStanTypeWithoutGenerics = new ObjectType($phpDocPHPStanType->getClassName());
+        }
+
+        $methodReturnTypePHPStanType = $this->staticTypeMapper->mapPhpParserNodePHPStanType($methodReturnType);
+
+        return $this->typeComparator->areTypesEqual(
+            $methodReturnTypePHPStanType,
+            $phpDocPHPStanTypeWithoutGenerics,
+        );
+    }
+
+    private function areGenericTypesEqual(
+        Node $node,
+        ReturnTagValueNode $returnTagValueNode,
+        string $relatedClass,
+        ?string $classForChildGeneric
+    ): bool {
+        $phpDocPHPStanType = $this->staticTypeMapper->mapPHPStanPhpDocTypeNodeToPHPStanType(
+            $returnTagValueNode->type,
+            $node
+        );
+
+        if (! $phpDocPHPStanType instanceof GenericObjectType) {
+            return false;
+        }
+
+        $phpDocTypes = $phpDocPHPStanType->getTypes();
+        if (count($phpDocTypes) === 0) {
+            return false;
+        }
+
+        if (! $this->typeComparator->areTypesEqual($phpDocTypes[0], new ObjectType($relatedClass))) {
+            return false;
+        }
+
+        $phpDocHasChildGeneric = count($phpDocTypes) === 2;
+        if ($classForChildGeneric === null && ! $phpDocHasChildGeneric) {
+            return true;
+        }
+
+        if ($classForChildGeneric === null || ! $phpDocHasChildGeneric) {
+            return false;
+        }
+
+        if (! $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForChildGeneric))) {
+            return false;
+        }
+
+        return true;
     }
 
     private function shouldSkipNode(ClassMethod $classMethod): bool
