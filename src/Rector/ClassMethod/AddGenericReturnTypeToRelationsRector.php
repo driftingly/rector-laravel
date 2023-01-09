@@ -25,6 +25,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /** @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorTest */
 class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
+    private const RELATION_METHODS = [
+        'hasOne', 'hasOneThrough', 'morphOne',
+        'belongsTo', 'morphTo',
+        'hasMany', 'hasManyThrough', 'morphMany',
+        'belongsToMany', 'morphToMany', 'morphedByMany',
+    ];
+
     public function __construct(
         private readonly TypeComparator $typeComparator
     ) {
@@ -194,12 +201,7 @@ CODE_SAMPLE
         }
 
         // Called method should be one of the Laravel's relation methods
-        if (! in_array($methodName->name, [
-            'hasOne', 'hasOneThrough', 'morphOne',
-            'belongsTo', 'morphTo',
-            'hasMany', 'hasManyThrough', 'morphMany',
-            'belongsToMany', 'morphToMany', 'morphedByMany',
-        ], true)) {
+        if (! $this->doesMethodHasName($methodCall, self::RELATION_METHODS)) {
             return null;
         }
 
@@ -227,5 +229,18 @@ CODE_SAMPLE
         }
 
         return false;
+    }
+
+    /**
+     * @param array<string> $methodNames
+     */
+    private function doesMethodHasName(MethodCall $methodCall, array $methodNames): bool
+    {
+        $methodName = $methodCall->name;
+
+        if (! $methodName instanceof Identifier) {
+            return false;
+        }
+        return in_array($methodName->name, $methodNames, true);
     }
 }
