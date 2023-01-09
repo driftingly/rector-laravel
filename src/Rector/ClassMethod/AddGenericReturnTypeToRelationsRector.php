@@ -11,26 +11,31 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
+use PHPStan\Analyser\Scope;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractScopeAwareRector;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /** @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorTest */
-class AddGenericReturnTypeToRelationsRector extends AbstractRector
+class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
 {
+    // Relation methods which are supported by this Rector.
     private const RELATION_METHODS = [
         'hasOne', 'hasOneThrough', 'morphOne',
         'belongsTo', 'morphTo',
         'hasMany', 'hasManyThrough', 'morphMany',
         'belongsToMany', 'morphToMany', 'morphedByMany',
     ];
+
+    // Relation methods which need the class as TChildModel.
+    private const RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
 
     public function __construct(
         private readonly TypeComparator $typeComparator
@@ -85,11 +90,12 @@ CODE_SAMPLE
         return [ClassMethod::class];
     }
 
-    /**
-     * @param ClassMethod $node
-     */
-    public function refactor(Node $node): ?Node
+    public function refactorWithScope(Node $node, Scope $scope): ?Node
     {
+        if (! $node instanceof ClassMethod) {
+            return null;
+        }
+
         if ($this->shouldSkipNode($node)) {
             return null;
         }
@@ -140,9 +146,11 @@ CODE_SAMPLE
             return null;
         }
 
+        $classForChildGeneric = $this->getClassForChildGeneric($scope, $relationMethodCall);
+
         $genericTypeNode = new GenericTypeNode(
             new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-            [new FullyQualifiedIdentifierTypeNode($relatedClass)],
+            $this->getGenericTypes($relatedClass, $classForChildGeneric),
         );
 
         // Update or add return tag
@@ -194,12 +202,6 @@ CODE_SAMPLE
             return null;
         }
 
-        $methodName = $methodCall->name;
-
-        if (! $methodName instanceof Identifier) {
-            return null;
-        }
-
         // Called method should be one of the Laravel's relation methods
         if (! $this->doesMethodHasName($methodCall, self::RELATION_METHODS)) {
             return null;
@@ -210,6 +212,21 @@ CODE_SAMPLE
         }
 
         return $methodCall;
+    }
+
+    /**
+     * We need the current class for generics which need a TChildModel. This is the case by for example the BelongsTo
+     * relation.
+     */
+    private function getClassForChildGeneric(Scope $scope, MethodCall $methodCall): ?string
+    {
+        if (! $this->doesMethodHasName($methodCall, self::RELATION_WITH_CHILD_METHODS)) {
+            return null;
+        }
+
+        $classReflection = $scope->getClassReflection();
+
+        return $classReflection?->getName();
     }
 
     private function shouldSkipNode(ClassMethod $classMethod): bool
@@ -242,5 +259,19 @@ CODE_SAMPLE
             return false;
         }
         return in_array($methodName->name, $methodNames, true);
+    }
+
+    /**
+     * @return FullyQualifiedIdentifierTypeNode[]
+     */
+    private function getGenericTypes(string $relatedClass, ?string $childClass): array
+    {
+        $generics = [new FullyQualifiedIdentifierTypeNode($relatedClass)];
+
+        if ($childClass !== null) {
+            $generics[] = new FullyQualifiedIdentifierTypeNode($childClass);
+        }
+
+        return $generics;
     }
 }
