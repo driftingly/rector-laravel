@@ -19,6 +19,7 @@ use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
@@ -58,7 +59,10 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         }
 
         /** @var ClassLike $parentClass */
-        $parentClass = $this->betterNodeFinder->findParentType($node, ClassLike::class);
+        $parentClass = $this->betterNodeFinder->findParentType(
+            $node,
+            ClassLike::class
+        );
 
         // Skip if the new attribute name is already used
         foreach ($parentClass->getMethods() as $classMethod) {
@@ -79,7 +83,9 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         // So we generate the new method where the accessor
         // is placed on the model and remove the mutator,
         // so we don't run the refactoring twice
-        if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator($nodeName)) {
+        if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator(
+            $nodeName
+        )) {
             $this->removeNode($mutator);
             return null;
         }
@@ -213,10 +219,13 @@ CODE_SAMPLE
         ]);
     }
 
+    /**
+     * @param array<Stmt>|null $statements
+     */
     private function createAttributeClassMethod(
         string $attributeName,
         ClassMethod $classMethod,
-        array $statements,
+        ?array $statements,
         string $identifierName
     ): ClassMethod {
         return new ClassMethod(new Identifier($attributeName), [
@@ -284,7 +293,7 @@ CODE_SAMPLE
      */
     private function getMutatorStatements(ClassMethod $classMethod): array
     {
-        $assignments = $this->betterNodeFinder->findInstancesOf($classMethod->stmts, [Assign::class]);
+        $assignments = $this->betterNodeFinder->findInstancesOf($classMethod->stmts ?? [], [Assign::class]);
 
         // Get all statements that are assignments to attributes
         // updated for the new syntax
@@ -295,20 +304,32 @@ CODE_SAMPLE
                 continue;
             }
 
-            $attributesAssignmentStatements[] = new ArrayItem($assignment->expr, $assignment->var->dim);
+            /** @var ArrayDimFetch $assignmentVar */
+            $assignmentVar = $assignment->var;
+
+            $attributesAssignmentStatements[] = new ArrayItem($assignment->expr, $assignmentVar->dim);
         }
 
         // Get all statements that are not assignments to attributes
-        $statements = array_filter($classMethod->stmts, function (Stmt $stmt) use ($assignments) {
-            if (! $stmt->expr instanceof Assign) {
-                return true;
-            }
+        $statements = array_filter(
+            $classMethod->stmts ?? [],
+            function (Stmt $stmt) {
+                if (! $stmt instanceof Expression) {
+                    return true;
+                }
 
-            return ! $this->isAttributesAssignment($stmt->expr);
-        });
+                if (! $stmt->expr instanceof Assign) {
+                    return true;
+                }
+
+                return ! $this->isAttributesAssignment($stmt->expr);
+            }
+        );
 
         // Append the updated attributes assignment statements
-        $statements[] = new Return_(new Array_($attributesAssignmentStatements));
+        $statements[] = new Return_(new Array_(
+            $attributesAssignmentStatements
+        ));
 
         return $statements;
     }
