@@ -564,3 +564,18 @@ Unify Model `$dates` property with `$casts`
 ```
 
 <br>
+
+## UseFullNameForFacadeAliasesRector
+
+Use full facade names instead of aliases.
+
+- class: [`RectorLaravel\Rector\Use_\UseFullNameForFacadeAliasesRector`](../src/Rector/Use_/UseFullNameForFacadeAliasesRector.php)
+
+```diff
+-use DB;
+-use Auth;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Auth;
+```
+
+<br>

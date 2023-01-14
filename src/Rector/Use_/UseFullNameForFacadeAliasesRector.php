@@ -12,56 +12,13 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Use_\UseFQDNForFacadeAliasesRector\UseFQDNForFacadeAliasesRectorTest
+ * @see \RectorLaravel\Tests\Rector\Use_\UseFullNameForFacadeAliasesRector\UseFullNameForFacadeAliasesRectorTest
  */
 final class UseFullNameForFacadeAliasesRector extends AbstractRector
 {
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition(
-            'Use full facade names instead of aliases.',
-            [
-                new CodeSample(
-                    <<<'CODE_SAMPLE'
-use DB;
-use Auth;
-CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-CODE_SAMPLE
-                ),
-            ]
-        );
-    }
-
     /**
-     * @return array<class-string<Node>>
+     * @var array<string, string>
      */
-    public function getNodeTypes(): array
-    {
-        return [Use_::class];
-    }
-
-    /**
-     * @param Use_ $node
-     */
-    public function refactor(Node $node): ?Node
-    {
-        if ($node->uses === []) {
-            return null;
-        }
-
-        if (!$this->isNames($node->uses[0]->name, array_keys($this->laravelFacades))) {
-            return null;
-        }
-
-        $node->uses[0]->name = new Name($this->laravelFacades[$node->uses[0]->name->toString()]);
-
-        return $node;
-    }
-
     private array $laravelFacades = [
         'App' => 'Illuminate\Support\Facades\App',
         'Arr' => 'Illuminate\Support\Arr',
@@ -99,4 +56,50 @@ CODE_SAMPLE
         'Validator' => 'Illuminate\Support\Facades\Validator',
         'View' => 'Illuminate\Support\Facades\View',
     ];
+
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition(
+            'Use full facade names instead of aliases.',
+            [
+                new CodeSample(
+                    <<<'CODE_SAMPLE'
+use DB;
+use Auth;
+CODE_SAMPLE
+                    ,
+                    <<<'CODE_SAMPLE'
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+CODE_SAMPLE
+                ),
+            ]
+        );
+    }
+
+    /**
+     * @return array<class-string<Node>>
+     */
+    public function getNodeTypes(): array
+    {
+        return [Use_::class];
+    }
+
+    /**
+     * @param Use_ $node
+     */
+    public function refactor(Node $node): ?Node
+    {
+        if ($node->uses === []) {
+            return null;
+        }
+
+        if (! $this->isNames($node->uses[0]->name, array_keys($this->laravelFacades))) {
+            return null;
+        }
+
+        $node->uses[0]->name = new Name($this->laravelFacades[$node->uses[0]->name->toString()]);
+
+        return $node;
+    }
 }
