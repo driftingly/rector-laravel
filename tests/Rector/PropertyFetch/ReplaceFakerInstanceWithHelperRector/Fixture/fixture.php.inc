@@ -6,6 +6,7 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
+            'natme' => $this->faker->randomEnum(SomeEnum::class),
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
         ];

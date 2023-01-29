@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\PropertyFetch;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
@@ -70,6 +71,13 @@ CODE_SAMPLE
         if ($this->shouldSkipNode($node)) {
             return null;
         }
+
+//        // skip $this->faker->randomEnum
+//        $previousNode = $this->betterNodeFinder->findFirstPreviousOfTypes($node, [MethodCall::class]);
+//
+//        if ($previousNode !== null && $this->isName($previousNode->name, 'randomEnum')) {
+//            return null;
+//        }
 
         return $this->nodeFactory->createFuncCall('fake');
     }
