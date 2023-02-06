@@ -18,12 +18,18 @@ use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /** @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorTest */
 class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
+    public function __construct(
+        private readonly TypeComparator $typeComparator
+    ) {
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -102,8 +108,17 @@ CODE_SAMPLE
 
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
 
-        // Return, if already has return type
-        if ($node->getDocComment() !== null && $phpDocInfo->hasByName('return')) {
+        // Don't update an existing return type if it differs from the native return type (thus the one without generics).
+        // E.g. we only add generics to an existing return type, but don't change the type itself.
+        if (
+            $phpDocInfo->getReturnTagValue() !== null &&
+            ! $this->typeComparator->arePhpParserAndPhpStanPhpDocTypesEqual(
+                $methodReturnType,
+                $phpDocInfo->getReturnTagValue()
+                    ->type,
+                $node
+            )
+        ) {
             return null;
         }
 
@@ -128,15 +143,18 @@ CODE_SAMPLE
             return null;
         }
 
-        $phpDocInfo->addTagValueNode(
-            new ReturnTagValueNode(
-                new GenericTypeNode(
-                    new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-                    [new FullyQualifiedIdentifierTypeNode($relatedClass)],
-                ),
-                ''
-            )
+        $genericTypeNode = new GenericTypeNode(
+            new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
+            [new FullyQualifiedIdentifierTypeNode($relatedClass)],
         );
+
+        // Update or add return tag
+        if ($phpDocInfo->getReturnTagValue() !== null) {
+            $phpDocInfo->getReturnTagValue()
+                ->type = $genericTypeNode;
+        } else {
+            $phpDocInfo->addTagValueNode(new ReturnTagValueNode($genericTypeNode, ''));
+        }
 
         return $node;
     }
