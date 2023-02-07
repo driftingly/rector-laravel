@@ -6,10 +6,13 @@ on:
         branches:
             - main
 
-env:
-    # see https://github.com/composer/composer/issues/9368#issuecomment-718112361
-    COMPOSER_ROOT_VERSION: "dev-main"
-
 jobs:
     code_analysis:
         uses: rectorphp/reusable-workflows/.github/workflows/code_analysis.yaml@main
+
+    rector:
+        # run only on main repository, not on the forks without access
+        if: github.repository == 'driftingly/rector-laravel'
+
+        # see https://github.com/rectorphp/reusable-workflows
+        uses: rectorphp/reusable-workflows/.github/workflows/rector.yaml@main
