@@ -136,7 +136,7 @@ CODE_SAMPLE
         }
 
         $relationMethodCall = $this->getRelationMethodCall($node);
-        if (!$relationMethodCall instanceof MethodCall) {
+        if (! $relationMethodCall instanceof MethodCall) {
             return null;
         }
 
