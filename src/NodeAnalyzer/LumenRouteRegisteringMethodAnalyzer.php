@@ -19,9 +19,9 @@ final class LumenRouteRegisteringMethodAnalyzer
     ) {
     }
 
-    public function isLumenRoutingClass(MethodCall $methodCall): bool
+    public function isLumenRoutingClass(MethodCall $node): bool
     {
-        return $this->nodeTypeResolver->isObjectType($methodCall->var, new ObjectType('Laravel\Lumen\Routing\Router'));
+        return $this->nodeTypeResolver->isObjectType($node->var, new ObjectType('Laravel\Lumen\Routing\Router'));
     }
 
     public function isRoutesRegisterGroup(Identifier|Expr $name): bool
