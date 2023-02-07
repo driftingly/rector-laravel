@@ -12,7 +12,7 @@ jobs:
 
     rector:
         # run only on PR's from branches on main repository (from core contributors), not on the forks or PR's from forks.
-        if: github.event.pull_request.head.repo.full_name == github.repository
+        if: github.event.pull_request.head.repo.full_name == github.repository && github.repository == 'driftingly/rector-laravel'
 
         # see https://github.com/rectorphp/reusable-workflows
         uses: rectorphp/reusable-workflows/.github/workflows/rector.yaml@main
