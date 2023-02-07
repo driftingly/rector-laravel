@@ -136,7 +136,7 @@ CODE_SAMPLE
         }
 
         $relationMethodCall = $this->getRelationMethodCall($node);
-        if ($relationMethodCall === null) {
+        if (!$relationMethodCall instanceof MethodCall) {
             return null;
         }
 
@@ -199,18 +199,18 @@ CODE_SAMPLE
         return $modelType->getClassName();
     }
 
-    private function getRelationMethodCall(ClassMethod $node): ?MethodCall
+    private function getRelationMethodCall(ClassMethod $classMethod): ?MethodCall
     {
-        $returnStatement = $this->betterNodeFinder->findFirstInFunctionLikeScoped(
-            $node,
+        $node = $this->betterNodeFinder->findFirstInFunctionLikeScoped(
+            $classMethod,
             fn (Node $subNode): bool => $subNode instanceof Return_
         );
 
-        if (! $returnStatement instanceof Return_) {
+        if (! $node instanceof Return_) {
             return null;
         }
 
-        $methodCall = $this->betterNodeFinder->findFirstInstanceOf($returnStatement, MethodCall::class);
+        $methodCall = $this->betterNodeFinder->findFirstInstanceOf($node, MethodCall::class);
 
         if (! $methodCall instanceof MethodCall) {
             return null;
@@ -244,13 +244,13 @@ CODE_SAMPLE
     }
 
     private function areNativeTypeAndPhpDocReturnTypeEqual(
-        ClassMethod $node,
-        Node $methodReturnType,
+        ClassMethod $classMethod,
+        Node $node,
         ReturnTagValueNode $returnTagValueNode
     ): bool {
         $phpDocPHPStanType = $this->staticTypeMapper->mapPHPStanPhpDocTypeNodeToPHPStanType(
             $returnTagValueNode->type,
-            $node
+            $classMethod
         );
 
         $phpDocPHPStanTypeWithoutGenerics = $phpDocPHPStanType;
@@ -258,7 +258,7 @@ CODE_SAMPLE
             $phpDocPHPStanTypeWithoutGenerics = new ObjectType($phpDocPHPStanType->getClassName());
         }
 
-        $methodReturnTypePHPStanType = $this->staticTypeMapper->mapPhpParserNodePHPStanType($methodReturnType);
+        $methodReturnTypePHPStanType = $this->staticTypeMapper->mapPhpParserNodePHPStanType($node);
 
         return $this->typeComparator->areTypesEqual(
             $methodReturnTypePHPStanType,
@@ -282,7 +282,7 @@ CODE_SAMPLE
         }
 
         $phpDocTypes = $phpDocPHPStanType->getTypes();
-        if (count($phpDocTypes) === 0) {
+        if ($phpDocTypes === []) {
             return false;
         }
 
@@ -298,12 +298,7 @@ CODE_SAMPLE
         if ($classForChildGeneric === null || ! $phpDocHasChildGeneric) {
             return false;
         }
-
-        if (! $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForChildGeneric))) {
-            return false;
-        }
-
-        return true;
+        return $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForChildGeneric));
     }
 
     private function shouldSkipNode(ClassMethod $classMethod): bool
