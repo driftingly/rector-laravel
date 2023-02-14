@@ -1,4 +1,4 @@
-# 25 Rules Overview
+# 26 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -318,6 +318,38 @@ Changes middlewares from rule definitions from string to array notation.
 -$router->post('/user', ['middleware => 'test|authentication']);
 +$router->get('/user', ['middleware => ['test']]);
 +$router->post('/user', ['middleware => ['test', 'authentication']]);
+```
+
+<br>
+
+## MigrateToSimplifiedAttributeRector
+
+Migrate to the new Model attributes syntax
+
+- class: [`RectorLaravel\Rector\ClassMethod\MigrateToSimplifiedAttributeRector`](../src/Rector/ClassMethod/MigrateToSimplifiedAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+
+ class User extends Model
+ {
+-    public function getFirstNameAttribute($value)
++    protected function firstName(): \Illuminate\Database\Eloquent\Casts\Attribute
+     {
+-        return ucfirst($value);
+-    }
+-
+-    public function setFirstNameAttribute($value)
+-    {
+-        $this->attributes['first_name'] = strtolower($value);
+-        $this->attributes['first_name_upper'] = strtoupper($value);
++        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: function ($value) {
++            return ucfirst($value);
++        }, set: function ($value) {
++            return ['first_name' => strtolower($value), 'first_name_upper' => strtoupper($value)];
++        });
+     }
+ }
 ```
 
 <br>
