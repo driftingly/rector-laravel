@@ -8,5 +8,5 @@ use RectorLaravel\Set\LaravelLevelSetList;
 use RectorLaravel\Set\LaravelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->sets([LaravelSetList::LARAVEL_10, LaravelLevelSetList::UP_TO_LARAVEL_90]);
+    $rectorConfig->sets([LaravelSetList::LARAVEL_100, LaravelLevelSetList::UP_TO_LARAVEL_90]);
 };

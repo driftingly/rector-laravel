@@ -81,7 +81,7 @@ final class LaravelSetList implements SetListInterface
     /**
      * @var string
      */
-    final public const LARAVEL_10 = __DIR__ . '/../../config/sets/laravel10.php';
+    final public const LARAVEL_100 = __DIR__ . '/../../config/sets/laravel100.php';
 
     /**
      * @var string
