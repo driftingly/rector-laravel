@@ -12,7 +12,6 @@ use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
-use Rector\TypeDeclaration\Rector\FunctionLike\ParamTypeDeclarationRector;
 use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
@@ -22,16 +21,14 @@ use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
-    # https://github.com/laravel/framework/commit/67a38ba0fa2acfbd1f4af4bf7d462bb4419cc091
-    $rectorConfig->rule(ParamTypeDeclarationRector::class);
-
     $rectorConfig
-        ->ruleWithConfiguration(RenameMethodRector::class, [new MethodCallRename(
-            'Illuminate\Auth\Access\Gate',
-            # https://github.com/laravel/framework/commit/69de466ddc25966a0f6551f48acab1afa7bb9424
-            'access',
-            'inspect'
-        ),
+        ->ruleWithConfiguration(RenameMethodRector::class, [
+            new MethodCallRename(
+                'Illuminate\Auth\Access\Gate',
+                # https://github.com/laravel/framework/commit/69de466ddc25966a0f6551f48acab1afa7bb9424
+                'access',
+                'inspect'
+            ),
             new MethodCallRename(
                 'Illuminate\Support\Facades\Lang',
                 # https://github.com/laravel/framework/commit/efbe23c4116f86846ad6edc0d95cd56f4175a446
@@ -64,11 +61,12 @@ return static function (RectorConfig $rectorConfig): void {
         ]);
 
     $rectorConfig
-        ->ruleWithConfiguration(ChangeMethodVisibilityRector::class, [new ChangeMethodVisibility(
-            'Illuminate\Foundation\Http\FormRequest',
-            'validationData',
-            Visibility::PUBLIC
-        ),
+        ->ruleWithConfiguration(ChangeMethodVisibilityRector::class, [
+            new ChangeMethodVisibility(
+                'Illuminate\Foundation\Http\FormRequest',
+                'validationData',
+                Visibility::PUBLIC
+            ),
         ]);
 
     $rectorConfig
