@@ -59,10 +59,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         }
 
         /** @var ClassLike $parentClass */
-        $parentClass = $this->betterNodeFinder->findParentType(
-            $node,
-            ClassLike::class
-        );
+        $parentClass = $this->betterNodeFinder->findParentType($node, ClassLike::class);
 
         // Skip if the new attribute name is already used
         foreach ($parentClass->getMethods() as $classMethod) {
@@ -83,9 +80,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         // So we generate the new method where the accessor
         // is placed on the model and remove the mutator,
         // so we don't run the refactoring twice
-        if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator(
-            $nodeName
-        )) {
+        if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator($nodeName)) {
             $this->removeNode($mutator);
             return null;
         }
@@ -327,9 +322,7 @@ CODE_SAMPLE
         );
 
         // Append the updated attributes assignment statements
-        $statements[] = new Return_(new Array_(
-            $attributesAssignmentStatements
-        ));
+        $statements[] = new Return_(new Array_($attributesAssignmentStatements));
 
         return $statements;
     }

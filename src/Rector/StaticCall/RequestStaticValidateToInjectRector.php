@@ -13,7 +13,6 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
-use Rector\Core\NodeManipulator\ClassMethodManipulator;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -31,7 +30,6 @@ final class RequestStaticValidateToInjectRector extends AbstractRector
     private array $requestObjectTypes = [];
 
     public function __construct(
-        private readonly ClassMethodManipulator $classMethodManipulator,
         private readonly ReflectionResolver $reflectionResolver
     ) {
         $this->requestObjectTypes = [new ObjectType('Illuminate\Http\Request'), new ObjectType('Request')];
@@ -88,28 +86,27 @@ CODE_SAMPLE
             return null;
         }
 
-        $requestName = $this->classMethodManipulator->addMethodParameterIfMissing(
-            $node,
-            new ObjectType('Illuminate\Http\Request'),
-            ['request', 'httpRequest']
-        );
+        $requestParam = $this->addRequestParameterIfMissing($node, new ObjectType('Illuminate\Http\Request'));
 
-        $variable = new Variable($requestName);
+        if ($requestParam === null) {
+            return null;
+        }
 
         $methodName = $this->getName($node->name);
+
         if ($methodName === null) {
             return null;
         }
 
         if ($node instanceof FuncCall) {
             if ($node->args === []) {
-                return $variable;
+                return $requestParam->var;
             }
 
             $methodName = 'input';
         }
 
-        return new MethodCall($variable, new Identifier($methodName), $node->args);
+        return new MethodCall($requestParam->var, new Identifier($methodName), $node->args);
     }
 
     private function shouldSkip(StaticCall|FuncCall $node): bool
@@ -133,5 +130,28 @@ CODE_SAMPLE
         }
 
         return ! $this->isName($node, 'request');
+    }
+
+    private function addRequestParameterIfMissing(Node $node, ObjectType $objectType): ?Node\Param
+    {
+        $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
+
+        if (! $classMethod instanceof ClassMethod) {
+            return null;
+        }
+
+        foreach ($classMethod->params as $paramNode) {
+            if (! $this->nodeTypeResolver->isObjectType($paramNode, $objectType)) {
+                continue;
+            }
+
+            return $paramNode;
+        }
+
+        $classMethod->params[] = $paramNode = new Node\Param(new Variable(
+            'request'
+        ), null, new Node\Name\FullyQualified($objectType->getClassName()));
+
+        return $paramNode;
     }
 }
