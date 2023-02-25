@@ -1,0 +1,29 @@
+{
+    "name": "driftingly/rector-laravel",
+    "type": "rector-extension",
+    "license": "MIT",
+    "description": "Rector upgrades rules for Laravel Framework",
+    "require": {
+        "php": "^7.2 || 8.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "RectorLaravel\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RectorLaravel\\Tests\\": "tests"
+        },
+        "classmap": ["stubs"]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "cweagans/composer-patches": true,
+            "rector/extension-installer": true,
+            "phpstan/extension-installer": true
+        }
+    }
+}

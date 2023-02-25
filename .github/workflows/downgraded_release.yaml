@@ -1,0 +1,52 @@
+name: Downgraded Release
+
+# https://tomasvotruba.com/blog/how-to-release-php-81-and-72-package-in-the-same-repository/
+# https://github.com/TomasVotruba/cognitive-complexity/blob/main/.github/workflows/downgraded_release.yaml
+# https://github.com/symplify/config-transformer/blob/main/.github/workflows/downgraded_release.yaml
+
+on:
+    push:
+        tags:
+            - '*'
+
+jobs:
+    downgrade_release:
+        runs-on: ubuntu-latest
+
+        steps:
+            -
+                uses: "actions/checkout@v3"
+
+            -
+                uses: "shivammathur/setup-php@v2"
+                with:
+                    php-version: 8.1
+                    coverage: none
+
+            -   uses: "ramsey/composer-install@v2"
+
+            # downgrade /src to PHP 7.2
+            -   run: vendor/bin/rector process src --config build/rector-downgrade-php-72.php --ansi
+            -   run: vendor/bin/ecs check src --fix --ansi
+
+            # copy PHP 7.2 composer
+            -   run: cp build/composer-php-72.json composer.json
+
+            # clear the dev files
+            -   run: rm -rf build .github tests stubs easy-ci.php ecs.php phpstan.neon phpunit.xml
+
+            # setup git user
+            -
+                run: |
+                    git config user.email "action@github.com"
+                    git config user.name "GitHub Action"
+
+            # publish to the same repository with a new tag
+            -
+                name: "Tag Downgraded Code"
+                run: |
+                    git commit -a -m "release PHP 7.2 downgraded ${GITHUB_REF#refs/tags/}"
+
+                    # force push tag, so there is only 1 version
+                    git tag "${GITHUB_REF#refs/tags/}" --force
+                    git push origin "${GITHUB_REF#refs/tags/}" --force
