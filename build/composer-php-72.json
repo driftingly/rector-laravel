@@ -12,9 +12,6 @@
         }
     },
     "autoload-dev": {
-        "psr-4": {
-            "RectorLaravel\\Tests\\": "tests"
-        },
         "classmap": ["stubs"]
     },
     "minimum-stability": "dev",
