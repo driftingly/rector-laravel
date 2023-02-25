@@ -15,12 +15,5 @@
         "classmap": ["stubs"]
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "allow-plugins": {
-            "cweagans/composer-patches": true,
-            "rector/extension-installer": true,
-            "phpstan/extension-installer": true
-        }
-    }
+    "prefer-stable": true
 }
