@@ -4,11 +4,11 @@
     "license": "MIT",
     "description": "Rector upgrades rules for Laravel Framework",
     "require": {
-        "php": ">=8.1"
+        "php": ">=8.1",
+        "rector/rector": "^0.15.12"
     },
     "require-dev": {
-        "rector/rector": "^0.14.7",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^10.0",
         "phpstan/phpstan": "^1.8.2",
         "symplify/phpstan-rules": "^11.0",
         "symplify/phpstan-extensions": "^11.0",
