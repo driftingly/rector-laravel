@@ -72,23 +72,24 @@ CODE_SAMPLE
             return null;
         }
 
-//        // skip $this->faker->randomEnum
-//        $previousNode = $this->betterNodeFinder->findFirstPreviousOfTypes($node, [MethodCall::class]);
-//
-//        if ($previousNode !== null && $this->isName($previousNode->name, 'randomEnum')) {
-//            return null;
-//        }
-
         return $this->nodeFactory->createFuncCall('fake');
     }
 
     private function shouldSkipNode(PropertyFetch $propertyFetch): bool
     {
-        if (! $this->nodeNameResolver->isName($propertyFetch->var, 'this')) {
+        if (! $this->isName($propertyFetch->var, 'this')) {
             return true;
         }
 
-        if (! $this->nodeNameResolver->isName($propertyFetch->name, 'faker')) {
+        if (! $this->isName($propertyFetch->name, 'faker')) {
+            return true;
+        }
+
+        // The randomEnum() method is a special case where the faker instance is used
+        // see https://github.com/spatie/laravel-enum#faker-provider
+        $parent = $propertyFetch->getAttribute('parent');
+
+        if ($parent instanceof MethodCall && $this->isName($parent->name, 'randomEnum')) {
             return true;
         }
 

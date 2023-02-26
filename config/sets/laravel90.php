@@ -66,7 +66,7 @@ return static function (RectorConfig $rectorConfig): void {
             0,
             'key',
         ),
-            new ArgumentAdder('Illuminate\Foundation\Http\FormRequest', 'validated', 1, 'default',),
+            new ArgumentAdder('Illuminate\Foundation\Http\FormRequest', 'validated', 1, 'default'),
         ]);
 
     // https://github.com/laravel/framework/commit/84c78b9f5f3dad58f92161069e6482f7267ffdb6
