@@ -5,6 +5,7 @@ composer.lock
 .idea/
 
 .phpunit.result.cache
+.phpunit.cache
 
 # often customized locally - example on Github is just fine
 rector-recipe.php
