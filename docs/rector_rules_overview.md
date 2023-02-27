@@ -1,4 +1,4 @@
-# 26 Rules Overview
+# 27 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -519,6 +519,29 @@ It will removes the dump data just like dd or dump functions from the code.`
      {
 -        dump('test');
          return true;
+     }
+ }
+```
+
+<br>
+
+## ReplaceFakerInstanceWithHelperRector
+
+Replace `$this->faker` with the `fake()` helper function in Factories
+
+- class: [`RectorLaravel\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector`](../src/Rector/PropertyFetch/ReplaceFakerInstanceWithHelperRector.php)
+
+```diff
+ class UserFactory extends Factory
+ {
+     public function definition()
+     {
+         return [
+-            'name' => $this->faker->name,
+-            'email' => $this->faker->unique()->safeEmail,
++            'name' => fake()->name,
++            'email' => fake()->unique()->safeEmail,
+         ];
      }
  }
 ```
