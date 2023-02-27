@@ -8,11 +8,29 @@ use PHPStan\Type\ObjectType;
 
 final class TypeToTimeMethodAndPosition
 {
-    public function __construct(
-        private readonly string $type,
-        private readonly string $methodName,
-        private readonly int $position
-    ) {
+    /**
+     * @readonly
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @readonly
+     * @var string
+     */
+    private $methodName;
+
+    /**
+     * @readonly
+     * @var int
+     */
+    private $position;
+
+    public function __construct(string $type, string $methodName, int $position)
+    {
+        $this->type = $type;
+        $this->methodName = $methodName;
+        $this->position = $position;
     }
 
     public function getObjectType(): ObjectType

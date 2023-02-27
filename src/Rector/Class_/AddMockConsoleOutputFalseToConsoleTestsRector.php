@@ -31,11 +31,32 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddMockConsoleOutputFalseToConsoleTestsRector extends AbstractRector
 {
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
+     */
+    private $propertyFetchAnalyzer;
+
+    /**
+     * @readonly
+     * @var \Rector\PHPUnit\NodeAnalyzer\SetUpMethodDecorator
+     */
+    private $setUpMethodDecorator;
+
+    /**
+     * @readonly
+     * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
+     */
+    private $visibilityManipulator;
+
     public function __construct(
-        private readonly PropertyFetchAnalyzer $propertyFetchAnalyzer,
-        private readonly SetUpMethodDecorator $setUpMethodDecorator,
-        private readonly VisibilityManipulator $visibilityManipulator
+        PropertyFetchAnalyzer $propertyFetchAnalyzer,
+        SetUpMethodDecorator $setUpMethodDecorator,
+        VisibilityManipulator $visibilityManipulator
     ) {
+        $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
+        $this->setUpMethodDecorator = $setUpMethodDecorator;
+        $this->visibilityManipulator = $visibilityManipulator;
     }
 
     public function getRuleDefinition(): RuleDefinition

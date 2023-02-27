@@ -26,12 +26,24 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
     /**
      * @var ServiceNameTypeAndVariableName[]
      */
-    private array $serviceNameTypeAndVariableNames = [];
+    private $serviceNameTypeAndVariableNames = [];
 
-    public function __construct(
-        private readonly AppAssignFactory $appAssignFactory,
-        private readonly NodesToAddCollector $nodesToAddCollector,
-    ) {
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeFactory\AppAssignFactory
+     */
+    private $appAssignFactory;
+
+    /**
+     * @readonly
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
+     */
+    private $nodesToAddCollector;
+
+    public function __construct(AppAssignFactory $appAssignFactory, NodesToAddCollector $nodesToAddCollector)
+    {
+        $this->appAssignFactory = $appAssignFactory;
+        $this->nodesToAddCollector = $nodesToAddCollector;
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',
             'Illuminate\Validation\Factory',

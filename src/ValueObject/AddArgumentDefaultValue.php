@@ -8,12 +8,39 @@ use PHPStan\Type\ObjectType;
 
 final class AddArgumentDefaultValue
 {
-    public function __construct(
-        private readonly string $class,
-        private readonly string $method,
-        private readonly int $position,
-        private readonly mixed $defaultValue
-    ) {
+    /**
+     * @readonly
+     * @var string
+     */
+    private $class;
+
+    /**
+     * @readonly
+     * @var string
+     */
+    private $method;
+
+    /**
+     * @readonly
+     * @var int
+     */
+    private $position;
+
+    /**
+     * @readonly
+     * @var mixed
+     */
+    private $defaultValue;
+
+    /**
+     * @param mixed $defaultValue
+     */
+    public function __construct(string $class, string $method, int $position, $defaultValue)
+    {
+        $this->class = $class;
+        $this->method = $method;
+        $this->position = $position;
+        $this->defaultValue = $defaultValue;
     }
 
     public function getObjectType(): ObjectType
@@ -31,7 +58,10 @@ final class AddArgumentDefaultValue
         return $this->position;
     }
 
-    public function getDefaultValue(): mixed
+    /**
+     * @return mixed
+     */
+    public function getDefaultValue()
     {
         return $this->defaultValue;
     }
