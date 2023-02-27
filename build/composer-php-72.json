@@ -1,0 +1,19 @@
+{
+    "name": "driftingly/rector-laravel",
+    "type": "rector-extension",
+    "license": "MIT",
+    "description": "Rector upgrades rules for Laravel Framework",
+    "require": {
+        "php": "^7.2 || ^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "RectorLaravel\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "classmap": ["stubs"]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
