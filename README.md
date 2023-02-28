@@ -22,7 +22,7 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
-        LaravelSetList::LARAVEL_90
+        LaravelSetList::LARAVEL_100
     ]);
 };
 ```
