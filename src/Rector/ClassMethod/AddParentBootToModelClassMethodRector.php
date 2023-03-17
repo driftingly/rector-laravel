@@ -26,9 +26,15 @@ final class AddParentBootToModelClassMethodRector extends AbstractRector
      */
     private const BOOT = 'boot';
 
-    public function __construct(
-        private readonly StaticCallAnalyzer $staticCallAnalyzer
-    ) {
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeAnalyzer\StaticCallAnalyzer
+     */
+    private $staticCallAnalyzer;
+
+    public function __construct(StaticCallAnalyzer $staticCallAnalyzer)
+    {
+        $this->staticCallAnalyzer = $staticCallAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition

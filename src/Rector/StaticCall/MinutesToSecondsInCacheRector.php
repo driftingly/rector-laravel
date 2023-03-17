@@ -42,7 +42,7 @@ final class MinutesToSecondsInCacheRector extends AbstractRector
     /**
      * @var TypeToTimeMethodAndPosition[]
      */
-    private array $typeToTimeMethodsAndPositions = [];
+    private $typeToTimeMethodsAndPositions = [];
 
     public function __construct()
     {
@@ -133,11 +133,12 @@ CODE_SAMPLE
         return $node;
     }
 
-    private function processArgumentOnPosition(
-        StaticCall | MethodCall $node,
-        Expr $argExpr,
-        int $argumentPosition
-    ): StaticCall | MethodCall | null {
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall $node
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|null
+     */
+    private function processArgumentOnPosition($node, Expr $argExpr, int $argumentPosition)
+    {
         if (! $this->nodeTypeResolver->isNumberType($argExpr)) {
             return null;
         }
