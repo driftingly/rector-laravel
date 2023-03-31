@@ -10,6 +10,8 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
@@ -88,7 +90,7 @@ CODE_SAMPLE
 
         $requestParam = $this->addRequestParameterIfMissing($node, new ObjectType('Illuminate\Http\Request'));
 
-        if ($requestParam === null) {
+        if (! $requestParam instanceof Param) {
             return null;
         }
 
@@ -123,8 +125,9 @@ CODE_SAMPLE
         $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
         if ($classMethod instanceof ClassMethod) {
             $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
-            if ($classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName() !== $class->namespacedName?->toString()
-            ) {
+            $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
+            $classNamespaceName = $class->namespacedName?->toString();
+            if ($classMethodNamespaceName !== $classNamespaceName) {
                 return true;
             }
         }
@@ -132,7 +135,7 @@ CODE_SAMPLE
         return ! $this->isName($node, 'request');
     }
 
-    private function addRequestParameterIfMissing(Node $node, ObjectType $objectType): ?Node\Param
+    private function addRequestParameterIfMissing(Node $node, ObjectType $objectType): ?Param
     {
         $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
 
@@ -148,9 +151,9 @@ CODE_SAMPLE
             return $paramNode;
         }
 
-        $classMethod->params[] = $paramNode = new Node\Param(new Variable(
+        $classMethod->params[] = $paramNode = new Param(new Variable(
             'request'
-        ), null, new Node\Name\FullyQualified($objectType->getClassName()));
+        ), null, new FullyQualified($objectType->getClassName()));
 
         return $paramNode;
     }

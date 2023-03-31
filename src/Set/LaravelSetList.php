@@ -81,6 +81,11 @@ final class LaravelSetList implements SetListInterface
     /**
      * @var string
      */
+    final public const LARAVEL_100 = __DIR__ . '/../../config/sets/laravel100.php';
+
+    /**
+     * @var string
+     */
     final public const LARAVEL_STATIC_TO_INJECTION = __DIR__ . '/../../config/sets/laravel-static-to-injection.php';
 
     /**
@@ -97,4 +102,9 @@ final class LaravelSetList implements SetListInterface
      * @var string
      */
     final public const LARAVEL_LEGACY_FACTORIES_TO_CLASSES = __DIR__ . '/../../config/sets/laravel-legacy-factories-to-classes.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_FACADE_ALIASES_TO_FULL_NAMES = __DIR__ . '/../../config/sets/laravel-facade-aliases-to-full-names.php';
 }
