@@ -128,8 +128,28 @@ CODE_SAMPLE
             $segments[1],
         ]);
 
-        if (is_array($argValue)) {
-            return new MethodCall($node, 'name', [new Arg(new String_($argValue['as']))]);
+        if (is_array($argValue) && isset($argValue['as'])) {
+            $node = new MethodCall($node, 'name', [new Arg(new String_($argValue['as']))]);
+        }
+
+        if (
+            is_array($argValue)
+            && isset($argValue['middleware'])
+            && (is_string($argValue['middleware']) || is_array($argValue['middleware']))
+        ) {
+            if (is_string($argValue['middleware'])) {
+                $argument = new String_($argValue['middleware']);
+            } else {
+                $argument = new Node\Expr\Array_(array_map(
+                    static fn ($value) => new Node\Expr\ArrayItem(new String_($value)),
+                    $argValue['middleware']
+                ));
+            }
+            $node = new MethodCall(
+                $node,
+                'middleware',
+                [new Arg($argument)]
+            );
         }
 
         return $node;
@@ -152,6 +172,8 @@ CODE_SAMPLE
     }
 
     /**
+     * @param mixed $action
+     *
      * @return array{string, string}|null
      */
     private function resolveControllerFromAction(mixed $action): ?array
@@ -201,7 +223,7 @@ CODE_SAMPLE
             $keys = array_keys($action);
             sort($keys);
 
-            return $keys === ['as', 'uses'];
+            return in_array('uses', $keys, true) && empty(array_diff($keys, ['as', 'middleware', 'uses']));
         }
 
         return str_contains($action, '@');
