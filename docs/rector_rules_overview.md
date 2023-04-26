@@ -217,6 +217,36 @@ Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Data
 
 <br>
 
+## DatabaseExpressionCastsToMethodCallRector
+
+Convert DB Expression string casts to `getValue()` method calls.
+
+- class: [`RectorLaravel\Rector\Cast\DatabaseExpressionCastsToMethodCallRector`](../src/Rector/Cast/DatabaseExpressionCastsToMethodCallRector.php)
+
+```diff
+ use Illuminate\Support\Facades\DB;
+
+-$string = (string) DB::raw('select 1');
++$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
+## DatabaseExpressionToStringToMethodCallRector
+
+Convert DB Expression `__toString()` calls to `getValue()` method calls.
+
+- class: [`RectorLaravel\Rector\MethodCall\DatabaseExpressionToStringToMethodCallRector`](../src/Rector/MethodCall/DatabaseExpressionToStringToMethodCallRector.php)
+
+```diff
+ use Illuminate\Support\Facades\DB;
+
+-$string = DB::raw('select 1')->__toString();
++$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
 ## FactoryApplyingStatesRector
 
 Call the state methods directly instead of specify the name of state.
