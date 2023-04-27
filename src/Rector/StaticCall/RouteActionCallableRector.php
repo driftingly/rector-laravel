@@ -223,7 +223,7 @@ CODE_SAMPLE
             $keys = array_keys($action);
             sort($keys);
 
-            return in_array('uses', $keys, true) && empty(array_diff($keys, ['as', 'middleware', 'uses']));
+            return in_array('uses', $keys, true) && array_diff($keys, ['as', 'middleware', 'uses']) === [];
         }
 
         return str_contains($action, '@');
