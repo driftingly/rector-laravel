@@ -18,7 +18,7 @@ Route::get('/users', ['middleware' => ['auth', 'throttle:20,1'], 'uses' => 'Some
 Route::get('/users', ['middleware' => ['auth', 'throttle:20,1'], 'as' => 'users.index', 'uses' => 'SomeController@index']);
 
 ?>
-    -----
+-----
 <?php
 
 namespace RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\Fixture;

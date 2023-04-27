@@ -8,7 +8,7 @@ Route::get('/users', ['uses' => 'SomeController@index']);
 Route::get('/users', ['uses' => 'SomeController@index']);
 
 ?>
-    -----
+-----
 <?php
 
 namespace RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\Fixture;
