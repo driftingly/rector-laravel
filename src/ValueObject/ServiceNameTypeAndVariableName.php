@@ -6,11 +6,29 @@ namespace RectorLaravel\ValueObject;
 
 final class ServiceNameTypeAndVariableName
 {
-    public function __construct(
-        private readonly string $serviceName,
-        private readonly string $type,
-        private readonly string $variableName
-    ) {
+    /**
+     * @readonly
+     * @var string
+     */
+    private $serviceName;
+
+    /**
+     * @readonly
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @readonly
+     * @var string
+     */
+    private $variableName;
+
+    public function __construct(string $serviceName, string $type, string $variableName)
+    {
+        $this->serviceName = $serviceName;
+        $this->type = $type;
+        $this->variableName = $variableName;
     }
 
     public function getServiceName(): string

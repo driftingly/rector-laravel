@@ -6,10 +6,8 @@ namespace RectorLaravel\Rector\StaticCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\Php\PhpMethodReflection;
@@ -32,29 +30,46 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
     /**
      * @var string
      */
-    final public const ROUTES = 'routes';
+    public const ROUTES = 'routes';
 
     /**
      * @var string
      */
-    final public const NAMESPACE = 'namespace';
+    public const NAMESPACE = 'namespace';
 
     /**
      * @var string
      */
     private const DEFAULT_NAMESPACE = 'App\Http\Controllers';
 
-    private string $namespace = self::DEFAULT_NAMESPACE;
+    /**
+     * @var string
+     */
+    private $namespace = self::DEFAULT_NAMESPACE;
 
     /**
      * @var array<string, string>
      */
-    private array $routes = [];
+    private $routes = [];
+
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeFactory\RouterRegisterNodeAnalyzer
+     */
+    private $routerRegisterNodeAnalyzer;
 
     public function __construct(
-        private readonly ReflectionResolver $reflectionResolver,
-        private readonly RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer
+        ReflectionResolver $reflectionResolver,
+        RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer
     ) {
+        $this->reflectionResolver = $reflectionResolver;
+        $this->routerRegisterNodeAnalyzer = $routerRegisterNodeAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -141,15 +156,13 @@ CODE_SAMPLE
                 $argument = new String_($argValue['middleware']);
             } else {
                 $argument = new Node\Expr\Array_(array_map(
-                    static fn ($value) => new Node\Expr\ArrayItem(new String_($value)),
+                    static function ($value) {
+                        return new Node\Expr\ArrayItem(new String_($value));
+                    },
                     $argValue['middleware']
                 ));
             }
-            $node = new MethodCall(
-                $node,
-                'middleware',
-                [new Arg($argument)]
-            );
+            $node = new MethodCall($node, 'middleware', [new Arg($argument)]);
         }
 
         return $node;
@@ -176,7 +189,7 @@ CODE_SAMPLE
      *
      * @return array{string, string}|null
      */
-    private function resolveControllerFromAction(mixed $action): ?array
+    private function resolveControllerFromAction($action): ?array
     {
         if (! $this->isActionString($action)) {
             return null;
@@ -193,14 +206,17 @@ CODE_SAMPLE
 
         [$controller, $method] = $segments;
         $namespace = $this->getNamespace($this->file->getFilePath());
-        if (! str_starts_with($controller, '\\')) {
+        if (strncmp($controller, '\\', strlen('\\')) !== 0) {
             $controller = $namespace . '\\' . $controller;
         }
 
         return [$controller, $method];
     }
 
-    private function getActionPosition(Identifier|Expr $name): int
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    private function getActionPosition($name): int
     {
         if ($this->routerRegisterNodeAnalyzer->isRegisterFallback($name)) {
             return 0;
@@ -213,7 +229,10 @@ CODE_SAMPLE
         return 1;
     }
 
-    private function isActionString(mixed $action): bool
+    /**
+     * @param mixed $action
+     */
+    private function isActionString($action): bool
     {
         if (! is_string($action)) {
             if (! is_array($action)) {
@@ -226,7 +245,7 @@ CODE_SAMPLE
             return in_array('uses', $keys, true) && array_diff($keys, ['as', 'middleware', 'uses']) === [];
         }
 
-        return str_contains($action, '@');
+        return strpos($action, '@') !== false;
     }
 
     private function getNamespace(string $filePath): string

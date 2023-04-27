@@ -29,11 +29,17 @@ final class RequestStaticValidateToInjectRector extends AbstractRector
     /**
      * @var ObjectType[]
      */
-    private array $requestObjectTypes = [];
+    private $requestObjectTypes = [];
 
-    public function __construct(
-        private readonly ReflectionResolver $reflectionResolver
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+
+    public function __construct(ReflectionResolver $reflectionResolver)
+    {
+        $this->reflectionResolver = $reflectionResolver;
         $this->requestObjectTypes = [new ObjectType('Illuminate\Http\Request'), new ObjectType('Request')];
     }
 
@@ -111,7 +117,10 @@ CODE_SAMPLE
         return new MethodCall($requestParam->var, new Identifier($methodName), $node->args);
     }
 
-    private function shouldSkip(StaticCall|FuncCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\FuncCall $node
+     */
+    private function shouldSkip($node): bool
     {
         if ($node instanceof StaticCall) {
             return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);
@@ -125,8 +134,8 @@ CODE_SAMPLE
         $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
         if ($classMethod instanceof ClassMethod) {
             $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
-            $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
-            $classNamespaceName = $class->namespacedName?->toString();
+            $classMethodNamespaceName = ($getDeclaringClass = ($getPrototype = ($classMethodReflection2 = $classMethodReflection) ? $classMethodReflection2->getPrototype() : null) ? $getPrototype->getDeclaringClass() : null) ? $getDeclaringClass->getName() : null;
+            $classNamespaceName = ($classNamespacedName = $class->namespacedName) ? $classNamespacedName->toString() : null;
             if ($classMethodNamespaceName !== $classNamespaceName) {
                 return true;
             }

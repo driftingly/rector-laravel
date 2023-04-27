@@ -147,7 +147,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($methodCall->getArgs()) <> 1) {
+        if (count($methodCall->getArgs()) !== 1) {
             return null;
         }
 
@@ -159,32 +159,60 @@ CODE_SAMPLE
         }
 
         if ($argValue instanceof Node\Scalar\LNumber) {
-            $replacementMethod = match ($argValue->value) {
-                200 => 'assertOk',
-                204 => 'assertNoContent',
-                401 => 'assertUnauthorized',
-                403 => 'assertForbidden',
-                404 => 'assertNotFound',
-                422 => 'assertUnprocessable',
-                default => null
-            };
+            switch ($argValue->value) {
+                case 200:
+                    $replacementMethod = 'assertOk';
+                    break;
+                case 204:
+                    $replacementMethod = 'assertNoContent';
+                    break;
+                case 401:
+                    $replacementMethod = 'assertUnauthorized';
+                    break;
+                case 403:
+                    $replacementMethod = 'assertForbidden';
+                    break;
+                case 404:
+                    $replacementMethod = 'assertNotFound';
+                    break;
+                case 422:
+                    $replacementMethod = 'assertUnprocessable';
+                    break;
+                default:
+                    $replacementMethod = null;
+                    break;
+            }
         } else {
             if (! in_array($this->getName($argValue->class), [
                 'Illuminate\Http\Response',
-                'Symfony\Component\HttpFoundation\Response'
+                'Symfony\Component\HttpFoundation\Response',
             ], true)) {
-               return null;
+                return null;
             }
 
-            $replacementMethod = match ($this->getName($argValue->name)) {
-                'HTTP_OK' => 'assertOk',
-                'HTTP_NO_CONTENT' => 'assertNoContent',
-                'HTTP_UNAUTHORIZED' => 'assertUnauthorized',
-                'HTTP_FORBIDDEN' => 'assertForbidden',
-                'HTTP_NOT_FOUND' => 'assertNotFound',
-                'HTTP_UNPROCESSABLE_ENTITY' => 'assertUnprocessable',
-                default => null
-            };
+            switch ($this->getName($argValue->name)) {
+                case 'HTTP_OK':
+                    $replacementMethod = 'assertOk';
+                    break;
+                case 'HTTP_NO_CONTENT':
+                    $replacementMethod = 'assertNoContent';
+                    break;
+                case 'HTTP_UNAUTHORIZED':
+                    $replacementMethod = 'assertUnauthorized';
+                    break;
+                case 'HTTP_FORBIDDEN':
+                    $replacementMethod = 'assertForbidden';
+                    break;
+                case 'HTTP_NOT_FOUND':
+                    $replacementMethod = 'assertNotFound';
+                    break;
+                case 'HTTP_UNPROCESSABLE_ENTITY':
+                    $replacementMethod = 'assertUnprocessable';
+                    break;
+                default:
+                    $replacementMethod = null;
+                    break;
+            }
         }
 
         if ($replacementMethod === null) {

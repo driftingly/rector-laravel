@@ -26,9 +26,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector
 {
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
+     */
+    private $nodesToAddCollector;
+
+    public function __construct(NodesToAddCollector $nodesToAddCollector)
+    {
+        $this->nodesToAddCollector = $nodesToAddCollector;
     }
 
     public function getRuleDefinition(): RuleDefinition

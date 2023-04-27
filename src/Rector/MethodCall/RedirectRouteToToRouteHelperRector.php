@@ -21,9 +21,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class RedirectRouteToToRouteHelperRector extends AbstractRector
 {
-    public function __construct(
-        private readonly FluentChainMethodCallNodeAnalyzer $fluentChainMethodCallNodeAnalyzer,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Defluent\NodeAnalyzer\FluentChainMethodCallNodeAnalyzer
+     */
+    private $fluentChainMethodCallNodeAnalyzer;
+
+    public function __construct(FluentChainMethodCallNodeAnalyzer $fluentChainMethodCallNodeAnalyzer)
+    {
+        $this->fluentChainMethodCallNodeAnalyzer = $fluentChainMethodCallNodeAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition

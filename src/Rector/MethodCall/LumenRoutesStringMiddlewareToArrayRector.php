@@ -20,24 +20,41 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LumenRoutesStringMiddlewareToArrayRector extends AbstractRector
 {
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeManipulator\ArrayManipulator
+     */
+    private $arrayManipulator;
+
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeAnalyzer\LumenRouteRegisteringMethodAnalyzer
+     */
+    private $lumenRouteRegisteringMethodAnalyzer;
+
     public function __construct(
-        private readonly ArrayManipulator $arrayManipulator,
-        private readonly LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer
+        ArrayManipulator $arrayManipulator,
+        LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer
     ) {
+        $this->arrayManipulator = $arrayManipulator;
+        $this->lumenRouteRegisteringMethodAnalyzer = $lumenRouteRegisteringMethodAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Changes middlewares from rule definitions from string to array notation.',
-            [new CodeSample(<<<'CODE_SAMPLE'
+            [new CodeSample(
+                <<<'CODE_SAMPLE'
 $router->get('/user', ['middleware => 'test']);
 $router->post('/user', ['middleware => 'test|authentication']);
 CODE_SAMPLE
-                , <<<'CODE_SAMPLE'
+                ,
+                <<<'CODE_SAMPLE'
 $router->get('/user', ['middleware => ['test']]);
 $router->post('/user', ['middleware => ['test', 'authentication']]);
-CODE_SAMPLE)]
+CODE_SAMPLE
+            )]
         );
     }
 
