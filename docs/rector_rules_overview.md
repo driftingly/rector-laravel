@@ -1,4 +1,4 @@
-# 27 Rules Overview
+# 28 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -188,6 +188,29 @@ Replace magical call on `$this->app["something"]` to standalone type assign vari
 +        /** @var \Illuminate\Validation\Factory $validationFactory */
 +        $validationFactory = $this->app['validator'];
 +        $validator = $validationFactory->make('...');
+     }
+ }
+```
+
+<br>
+
+## CashierStripeOptionsToStripeRector
+
+Renames the Billable `stripeOptions()` to `stripe().`
+
+- class: [`RectorLaravel\Rector\Class_\CashierStripeOptionsToStripeRector`](../src/Rector/Class_/CashierStripeOptionsToStripeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+ use Laravel\Cashier\Billable;
+
+ class User extends Model
+ {
+     use Billable;
+
+-    public function stripeOptions(array $options = []) {
++    public function stripe(array $options = []) {
+         return [];
      }
  }
 ```

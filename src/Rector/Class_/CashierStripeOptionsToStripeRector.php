@@ -66,12 +66,6 @@ CODE_SAMPLE
         return [Class_::class];
     }
 
-    /**
-     * @param Class_ $node
-     * @param Scope $scope
-     *
-     * @return Node|null
-     */
     public function refactorWithScope(Node $node, Scope $scope): ?Node
     {
         if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
@@ -82,6 +76,7 @@ CODE_SAMPLE
             return null;
         }
 
+        /** @var Class_ $node */
         $stripeOptionsMethod = $node->getMethod('stripeOptions');
 
         if (! $stripeOptionsMethod instanceof ClassMethod) {
