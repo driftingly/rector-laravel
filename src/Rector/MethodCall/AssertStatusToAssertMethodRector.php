@@ -67,6 +67,27 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
         $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
+
+    public function testGone()
+    {
+        $this->get('/')->assertStatus(410);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_GONE);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_GONE);
+    }
+
+    public function testInternalServerError()
+    {
+        $this->get('/')->assertStatus(500);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    public function testServiceUnavailable()
+    {
+        $this->get('/')->assertStatus(503);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_SERVICE_UNAVAILABLE);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_SERVICE_UNAVAILABLE);
+    }
 }
 CODE_SAMPLE
                     ,
@@ -113,6 +134,27 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
         $this->get('/')->assertUnprocessable();
         $this->get('/')->assertUnprocessable();
         $this->get('/')->assertUnprocessable();
+    }
+
+    public function testGone()
+    {
+        $this->get('/')->assertGone();
+        $this->get('/')->assertGone();
+        $this->get('/')->assertGone();
+    }
+
+    public function testInternalServerError()
+    {
+        $this->get('/')->assertInternalServerError();
+        $this->get('/')->assertInternalServerError();
+        $this->get('/')->assertInternalServerError();
+    }
+
+    public function testServiceUnavailable()
+    {
+        $this->get('/')->asserServiceUnavailable();
+        $this->get('/')->asserServiceUnavailable();
+        $this->get('/')->asserServiceUnavailable();
     }
 }
 CODE_SAMPLE
@@ -165,7 +207,10 @@ CODE_SAMPLE
                 401 => 'assertUnauthorized',
                 403 => 'assertForbidden',
                 404 => 'assertNotFound',
+                410 => 'assertGone',
                 422 => 'assertUnprocessable',
+                500 => 'assertInternalServerError',
+                503 => 'assertServiceUnavailable',
                 default => null
             };
         } else {
@@ -182,7 +227,10 @@ CODE_SAMPLE
                 'HTTP_UNAUTHORIZED' => 'assertUnauthorized',
                 'HTTP_FORBIDDEN' => 'assertForbidden',
                 'HTTP_NOT_FOUND' => 'assertNotFound',
+                'HTTP_GONE' => 'assertGone',
                 'HTTP_UNPROCESSABLE_ENTITY' => 'assertUnprocessable',
+                'HTTP_INTERNAL_SERVER_ERROR' => 'assertInternalServerError',
+                'HTTP_SERVICE_UNAVAILABLE' => 'assertServiceUnavailable',
                 default => null
             };
         }
