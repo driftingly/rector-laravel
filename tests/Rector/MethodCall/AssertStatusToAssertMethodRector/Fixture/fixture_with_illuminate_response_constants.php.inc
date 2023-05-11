@@ -33,6 +33,21 @@ class FixtureWithIlluminateTest
     {
         $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
+
+    public function testGone(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_GONE);
+    }
+
+    public function testInternalServerError(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    public function testServiceUnavailable(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_SERVICE_UNAVAILABLE);
+    }
 }
 
 ?>
@@ -71,6 +86,21 @@ class FixtureWithIlluminateTest
     public function testUnprocessableEntity(\Illuminate\Testing\TestResponse $response)
     {
         $response->assertUnprocessable();
+    }
+
+    public function testGone(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertGone();
+    }
+
+    public function testInternalServerError(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertInternalServerError();
+    }
+
+    public function testServiceUnavailable(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertServiceUnavailable();
     }
 }
 

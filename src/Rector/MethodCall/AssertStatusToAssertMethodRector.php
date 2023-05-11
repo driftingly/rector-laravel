@@ -165,7 +165,10 @@ CODE_SAMPLE
                 401 => 'assertUnauthorized',
                 403 => 'assertForbidden',
                 404 => 'assertNotFound',
+                410 => 'assertGone',
                 422 => 'assertUnprocessable',
+                500 => 'assertInternalServerError',
+                503 => 'assertServiceUnavailable',
                 default => null
             };
         } else {
@@ -182,7 +185,10 @@ CODE_SAMPLE
                 'HTTP_UNAUTHORIZED' => 'assertUnauthorized',
                 'HTTP_FORBIDDEN' => 'assertForbidden',
                 'HTTP_NOT_FOUND' => 'assertNotFound',
+                'HTTP_GONE' => 'assertGone',
                 'HTTP_UNPROCESSABLE_ENTITY' => 'assertUnprocessable',
+                'HTTP_INTERNAL_SERVER_ERROR' => 'assertInternalServerError',
+                'HTTP_SERVICE_UNAVAILABLE' => 'assertServiceUnavailable',
                 default => null
             };
         }
