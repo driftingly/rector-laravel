@@ -67,6 +67,27 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
         $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
+
+    public function testGone()
+    {
+        $this->get('/')->assertStatus(410);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_GONE);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_GONE);
+    }
+
+    public function testInternalServerError()
+    {
+        $this->get('/')->assertStatus(500);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    public function testServiceUnavailable()
+    {
+        $this->get('/')->assertStatus(503);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_SERVICE_UNAVAILABLE);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_SERVICE_UNAVAILABLE);
+    }
 }
 CODE_SAMPLE
                     ,
@@ -113,6 +134,27 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
         $this->get('/')->assertUnprocessable();
         $this->get('/')->assertUnprocessable();
         $this->get('/')->assertUnprocessable();
+    }
+
+    public function testGone()
+    {
+        $this->get('/')->assertGone();
+        $this->get('/')->assertGone();
+        $this->get('/')->assertGone();
+    }
+
+    public function testInternalServerError()
+    {
+        $this->get('/')->assertInternalServerError();
+        $this->get('/')->assertInternalServerError();
+        $this->get('/')->assertInternalServerError();
+    }
+
+    public function testServiceUnavailable()
+    {
+        $this->get('/')->asserServiceUnavailable();
+        $this->get('/')->asserServiceUnavailable();
+        $this->get('/')->asserServiceUnavailable();
     }
 }
 CODE_SAMPLE
