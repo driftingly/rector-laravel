@@ -9,6 +9,9 @@ use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * @see \RectorLaravel\Tests\Rector\Empty_\EmptyToBlankAndFilledFuncRector\EmptyToBlankAndFilledFuncRectorTest
+ */
 class EmptyToBlankAndFilledFuncRector extends AbstractRector
 {
 
@@ -42,9 +45,11 @@ CODE_SAMPLE
             }
             $method = 'filled';
             $args = [$node->expr->expr];
-        } else {
+        } else if ($node instanceof Empty_) {
             $method = 'blank';
             $args = [$node->expr];
+        } else {
+            return null;
         }
 
         return $this->nodeFactory->createFuncCall($method, $args);
