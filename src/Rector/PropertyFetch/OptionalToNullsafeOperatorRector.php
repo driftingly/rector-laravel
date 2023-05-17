@@ -38,7 +38,7 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     /**
      * @var string
      */
-    final public const EXCLUDE_METHODS = 'exclude_methods';
+    public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var array<class-string<Expr>>
@@ -48,12 +48,24 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     /**
      * @var string[]
      */
-    private array $excludeMethods = [];
+    private $excludeMethods = [];
 
-    public function __construct(
-        private readonly MultiInstanceofChecker $multiInstanceofChecker,
-        private readonly ArgsAnalyzer $argsAnalyzer
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Core\Util\MultiInstanceofChecker
+     */
+    private $multiInstanceofChecker;
+
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
+     */
+    private $argsAnalyzer;
+
+    public function __construct(MultiInstanceofChecker $multiInstanceofChecker, ArgsAnalyzer $argsAnalyzer)
+    {
+        $this->multiInstanceofChecker = $multiInstanceofChecker;
+        $this->argsAnalyzer = $argsAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition

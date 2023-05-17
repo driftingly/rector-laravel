@@ -204,18 +204,38 @@ CODE_SAMPLE
         }
 
         if ($argValue instanceof LNumber) {
-            $replacementMethod = match ($argValue->value) {
-                200 => 'assertOk',
-                204 => 'assertNoContent',
-                401 => 'assertUnauthorized',
-                403 => 'assertForbidden',
-                404 => 'assertNotFound',
-                410 => 'assertGone',
-                422 => 'assertUnprocessable',
-                500 => 'assertInternalServerError',
-                503 => 'assertServiceUnavailable',
-                default => null
-            };
+            switch ($argValue->value) {
+                case 200:
+                    $replacementMethod = 'assertOk';
+                    break;
+                case 204:
+                    $replacementMethod = 'assertNoContent';
+                    break;
+                case 401:
+                    $replacementMethod = 'assertUnauthorized';
+                    break;
+                case 403:
+                    $replacementMethod = 'assertForbidden';
+                    break;
+                case 404:
+                    $replacementMethod = 'assertNotFound';
+                    break;
+                case 410:
+                    $replacementMethod = 'assertGone';
+                    break;
+                case 422:
+                    $replacementMethod = 'assertUnprocessable';
+                    break;
+                case 500:
+                    $replacementMethod = 'assertInternalServerError';
+                    break;
+                case 503:
+                    $replacementMethod = 'assertServiceUnavailable';
+                    break;
+                default:
+                    $replacementMethod = null;
+                    break;
+            }
         } else {
             if (! in_array($this->getName($argValue->class), [
                 'Illuminate\Http\Response',
@@ -224,18 +244,38 @@ CODE_SAMPLE
                 return null;
             }
 
-            $replacementMethod = match ($this->getName($argValue->name)) {
-                'HTTP_OK' => 'assertOk',
-                'HTTP_NO_CONTENT' => 'assertNoContent',
-                'HTTP_UNAUTHORIZED' => 'assertUnauthorized',
-                'HTTP_FORBIDDEN' => 'assertForbidden',
-                'HTTP_NOT_FOUND' => 'assertNotFound',
-                'HTTP_GONE' => 'assertGone',
-                'HTTP_UNPROCESSABLE_ENTITY' => 'assertUnprocessable',
-                'HTTP_INTERNAL_SERVER_ERROR' => 'assertInternalServerError',
-                'HTTP_SERVICE_UNAVAILABLE' => 'assertServiceUnavailable',
-                default => null
-            };
+            switch ($this->getName($argValue->name)) {
+                case 'HTTP_OK':
+                    $replacementMethod = 'assertOk';
+                    break;
+                case 'HTTP_NO_CONTENT':
+                    $replacementMethod = 'assertNoContent';
+                    break;
+                case 'HTTP_UNAUTHORIZED':
+                    $replacementMethod = 'assertUnauthorized';
+                    break;
+                case 'HTTP_FORBIDDEN':
+                    $replacementMethod = 'assertForbidden';
+                    break;
+                case 'HTTP_NOT_FOUND':
+                    $replacementMethod = 'assertNotFound';
+                    break;
+                case 'HTTP_GONE':
+                    $replacementMethod = 'assertGone';
+                    break;
+                case 'HTTP_UNPROCESSABLE_ENTITY':
+                    $replacementMethod = 'assertUnprocessable';
+                    break;
+                case 'HTTP_INTERNAL_SERVER_ERROR':
+                    $replacementMethod = 'assertInternalServerError';
+                    break;
+                case 'HTTP_SERVICE_UNAVAILABLE':
+                    $replacementMethod = 'assertServiceUnavailable';
+                    break;
+                default:
+                    $replacementMethod = null;
+                    break;
+            }
         }
 
         if ($replacementMethod === null) {
