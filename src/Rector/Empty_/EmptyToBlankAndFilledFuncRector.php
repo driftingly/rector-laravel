@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\Rector\Empty_;
 
 use PhpParser\Node;
@@ -14,22 +16,25 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class EmptyToBlankAndFilledFuncRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Replace use of the unsafe empty() function with Laravel\'s safer blank() & filled() functions.', [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
+        return new RuleDefinition(
+            'Replace use of the unsafe empty() function with Laravel\'s safer blank() & filled() functions.',
+            [
+                new CodeSample(
+                    <<<'CODE_SAMPLE'
 empty([]);
 !empty([]);
 CODE_SAMPLE
-                ,
-                <<<'CODE_SAMPLE'
+                    ,
+                    <<<'CODE_SAMPLE'
 blank([]);
 filled([]);
 CODE_SAMPLE
-            ),
-        ]);
+                ),
+
+            ]
+        );
     }
 
     public function getNodeTypes(): array
@@ -45,7 +50,7 @@ CODE_SAMPLE
             }
             $method = 'filled';
             $args = [$node->expr->expr];
-        } else if ($node instanceof Empty_) {
+        } elseif ($node instanceof Empty_) {
             $method = 'blank';
             $args = [$node->expr];
         } else {

@@ -6,6 +6,7 @@ namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\BuilderHelpers;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
@@ -93,7 +94,7 @@ CODE_SAMPLE
             $position = $addedArgument->getPosition();
             $param = $node->params[$position];
 
-            if ($param->default !== null) {
+            if ($param->default instanceof Expr) {
                 continue;
             }
 

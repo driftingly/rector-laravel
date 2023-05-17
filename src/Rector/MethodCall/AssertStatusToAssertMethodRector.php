@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\LNumber;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -189,18 +192,18 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($methodCall->getArgs()) <> 1) {
+        if (count($methodCall->getArgs()) !== 1) {
             return null;
         }
 
         $arg = $methodCall->getArgs()[0];
         $argValue = $arg->value;
 
-        if (! $argValue instanceof Node\Scalar\LNumber && ! $argValue instanceof Node\Expr\ClassConstFetch) {
+        if (! $argValue instanceof LNumber && ! $argValue instanceof ClassConstFetch) {
             return null;
         }
 
-        if ($argValue instanceof Node\Scalar\LNumber) {
+        if ($argValue instanceof LNumber) {
             $replacementMethod = match ($argValue->value) {
                 200 => 'assertOk',
                 204 => 'assertNoContent',
@@ -216,9 +219,9 @@ CODE_SAMPLE
         } else {
             if (! in_array($this->getName($argValue->class), [
                 'Illuminate\Http\Response',
-                'Symfony\Component\HttpFoundation\Response'
+                'Symfony\Component\HttpFoundation\Response',
             ], true)) {
-               return null;
+                return null;
             }
 
             $replacementMethod = match ($this->getName($argValue->name)) {
@@ -239,7 +242,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $methodCall->name = new Node\Identifier($replacementMethod);
+        $methodCall->name = new Identifier($replacementMethod);
         $methodCall->args = [];
 
         return $methodCall;
