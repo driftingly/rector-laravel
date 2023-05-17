@@ -122,10 +122,7 @@ CODE_SAMPLE
             $parentNode->var->name = new Name('to_route');
             $parentNode->var->args = $methodCall->getArgs();
         } else {
-            return new Node\Expr\FuncCall(
-                new Node\Name('to_route'),
-                $methodCall->getArgs()
-            );
+            return new FuncCall(new Name('to_route'), $methodCall->getArgs());
         }
 
         return $parentNode;

@@ -122,10 +122,7 @@ CODE_SAMPLE
             $parentNode->var->name = new Name('back');
             $parentNode->var->args = $methodCall->getArgs();
         } else {
-            return new Node\Expr\FuncCall(
-                new Node\Name('back'),
-                $methodCall->getArgs()
-            );
+            return new FuncCall(new Name('back'), $methodCall->getArgs());
         }
 
         return $parentNode;
