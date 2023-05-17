@@ -90,7 +90,7 @@ CODE_SAMPLE
         return $this->updateRedirectStaticCall($node);
     }
 
-    private function updateRedirectHelperCall(MethodCall $methodCall): ?MethodCall
+    private function updateRedirectHelperCall(MethodCall $methodCall): MethodCall|FuncCall|null
     {
         if (! $this->isName($methodCall->name, 'route')) {
             return null;
@@ -115,10 +115,18 @@ CODE_SAMPLE
             return null;
         }
 
-        $this->removeNode($methodCall);
+        $childElement = $methodCall->getAttribute('parent');
 
-        $parentNode->var->name = new Name('to_route');
-        $parentNode->var->args = $methodCall->getArgs();
+        if ($childElement instanceof MethodCall) {
+            $this->removeNode($methodCall);
+            $parentNode->var->name = new Name('to_route');
+            $parentNode->var->args = $methodCall->getArgs();
+        } else {
+            return new Node\Expr\FuncCall(
+                new Node\Name('to_route'),
+                $methodCall->getArgs()
+            );
+        }
 
         return $parentNode;
     }
