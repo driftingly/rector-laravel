@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector\F
 
 use Illuminate\Support\Facades\Redirect;
 
-class Fixture
+class FixtureWithoutWith
 {
     public function store()
     {
@@ -25,7 +25,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector\F
 
 use Illuminate\Support\Facades\Redirect;
 
-class Fixture
+class FixtureWithoutWith
 {
     public function store()
     {

@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\RedirectRouteToToRouteHelperRect
 
 use Illuminate\Support\Facades\Redirect;
 
-class WithoutWithFixture
+class FixtureWithoutWith
 {
     public function store()
     {
@@ -25,7 +25,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\RedirectRouteToToRouteHelperRect
 
 use Illuminate\Support\Facades\Redirect;
 
-class WithoutWithFixture
+class FixtureWithoutWith
 {
     public function store()
     {
