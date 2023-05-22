@@ -33,6 +33,21 @@ class FixtureTest
     {
         $response->assertStatus(422);
     }
+
+    public function testGone(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertStatus(410);
+    }
+
+    public function testInternalServerError(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertStatus(500);
+    }
+
+    public function testServiceUnavailable(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertStatus(503);
+    }
 }
 
 ?>
@@ -71,6 +86,21 @@ class FixtureTest
     public function testUnprocessableEntity(\Illuminate\Testing\TestResponse $response)
     {
         $response->assertUnprocessable();
+    }
+
+    public function testGone(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertGone();
+    }
+
+    public function testInternalServerError(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertInternalServerError();
+    }
+
+    public function testServiceUnavailable(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertServiceUnavailable();
     }
 }
 

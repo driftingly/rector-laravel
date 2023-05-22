@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\MethodCall\AssertStatusToAssertMethodRector;
+namespace RectorLaravel\Tests\Rector\Empty_\EmptyToBlankAndFilledFuncRector;
 
 use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class AssertStatusToAssertMethodTest extends AbstractRectorTestCase
+final class EmptyToBlankAndFilledFuncRectorTest extends AbstractRectorTestCase
 {
-    /**
-     * @dataProvider provideData()
-     */
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

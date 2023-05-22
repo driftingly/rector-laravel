@@ -7,6 +7,8 @@ namespace RectorLaravel\Rector\StaticCall;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
@@ -140,16 +142,12 @@ CODE_SAMPLE
             if (is_string($argValue['middleware'])) {
                 $argument = new String_($argValue['middleware']);
             } else {
-                $argument = new Node\Expr\Array_(array_map(
-                    static fn ($value) => new Node\Expr\ArrayItem(new String_($value)),
+                $argument = new Array_(array_map(
+                    static fn ($value) => new ArrayItem(new String_($value)),
                     $argValue['middleware']
                 ));
             }
-            $node = new MethodCall(
-                $node,
-                'middleware',
-                [new Arg($argument)]
-            );
+            $node = new MethodCall($node, 'middleware', [new Arg($argument)]);
         }
 
         return $node;
@@ -172,8 +170,6 @@ CODE_SAMPLE
     }
 
     /**
-     * @param mixed $action
-     *
      * @return array{string, string}|null
      */
     private function resolveControllerFromAction(mixed $action): ?array

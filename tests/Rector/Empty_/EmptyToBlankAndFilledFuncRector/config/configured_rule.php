@@ -3,11 +3,10 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-
-use RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector;
+use RectorLaravel\Rector\Empty_\EmptyToBlankAndFilledFuncRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../../../config/config.php');
 
-    $rectorConfig->rule(AssertStatusToAssertMethodRector::class);
+    $rectorConfig->rule(EmptyToBlankAndFilledFuncRector::class);
 };
