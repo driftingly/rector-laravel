@@ -11,7 +11,6 @@ use Rector\Transform\ValueObject\FuncCallToStaticCall;
 // @see https://laravel.com/docs/5.7/facades#facades-vs-dependency-injection
 
 return static function (RectorConfig $rectorConfig): void {
-
     $rectorConfig->import(__DIR__ . '/../config.php');
 
     $internalFunctions = get_defined_functions()['internal'];
@@ -64,7 +63,7 @@ return static function (RectorConfig $rectorConfig): void {
                     new FuncCallToStaticCall('studly_case', 'Illuminate\Support\Str', 'studly'),
                     new FuncCallToStaticCall('title_case', 'Illuminate\Support\Str', 'title'),
                 ],
-                fn($function) => ! in_array($function->getOldFuncName(), $internalFunctions)
+                fn ($function) => ! in_array($function->getOldFuncName(), $internalFunctions, true)
             )
         );
 };
