@@ -115,7 +115,7 @@ CODE_SAMPLE)]
     private function findItemInArrayByKey(Array_ $array, string $keyName): ?ArrayItem
     {
         foreach ($array->items as $i => $item) {
-            if ($item === null) {
+            if (!$item instanceof ArrayItem) {
                 continue;
             }
             if (! $this->arrayManipulator->hasKeyName($item, $keyName)) {
@@ -133,7 +133,7 @@ CODE_SAMPLE)]
     private function replaceItemInArrayByKey(Array_ $array, ArrayItem $arrayItem, string $keyName): void
     {
         foreach ($array->items as $i => $item) {
-            if ($item === null) {
+            if (!$item instanceof ArrayItem) {
                 continue;
             }
             if (! $this->arrayManipulator->hasKeyName($item, $keyName)) {

@@ -125,7 +125,7 @@ final class ModelFactoryNodeFactory
                     return null;
                 }
 
-                if ($node->expr === null) {
+                if (!$node->expr instanceof Expr) {
                     return null;
                 }
 
