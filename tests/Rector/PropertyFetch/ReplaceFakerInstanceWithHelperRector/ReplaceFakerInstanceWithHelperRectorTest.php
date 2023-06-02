@@ -16,7 +16,7 @@ final class ReplaceFakerInstanceWithHelperRectorTest extends AbstractRectorTestC
         $this->doTestFile($filePath);
     }
 
-    public function provideData(): Iterator
+    public static function provideData(): Iterator
     {
         return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
