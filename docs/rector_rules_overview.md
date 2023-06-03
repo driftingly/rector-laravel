@@ -168,6 +168,27 @@ Convert migrations to anonymous classes.
 
 <br>
 
+## AssertStatusToAssertMethodRector
+
+Change `assertStatus($statusCode)` to the equivalent method `assertOk()` for example.
+
+- class: [`RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector`](../src/Rector/MethodCall/AssertStatusToAssertMethodRector.php)
+
+```diff
+ use Illuminate\Foundation\Testing\TestCase;
+
+ final class SomeTest extends TestCase
+ {
+     public function test(): void
+     {
+-        $this->get('/')->assertStatus(200);
++        $this->get('/')->assertOk();
+     }
+ }
+```
+
+<br>
+
 ## CallOnAppArrayAccessToStandaloneAssignRector
 
 Replace magical call on `$this->app["something"]` to standalone type assign variable
@@ -243,6 +264,21 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
+## EmptyToBlankAndFilledFuncRector
+
+Convert `empty()` calls to `blank()` and `!empty()` calls to `filled()`.
+
+- class: [`RectorLaravel\Rector\FuncCall\EmptyToBlankAndFilledFuncRector`](../src/Rector/FuncCall/EmptyToBlankAndFilledFuncRector.php)
+
+```diff
+-$empty = empty($value);
++$empty = blank($value);
+-$notEmpty = !empty($value);
++$notEmpty = filled($value);
 ```
 
 <br>
