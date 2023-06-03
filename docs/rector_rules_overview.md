@@ -422,6 +422,25 @@ Change `!blank()` func calls to `filled()` func calls and vice versa.
 
 <br>
 
+## NowFuncWithStartOfDayMethodCallToTodayFuncRector
+
+Changes the user of `now()->startOfDay()` to be replaced with `today()`.
+
+- class: [`RectorLaravel\Rector\FuncCall\NowFuncWithStartOfDayMethodCallToTodayFuncRector`](../src/Rector/FuncCall/NowFuncWithStartOfDayMethodCallToTodayFuncRector.php)
+
+```diff
+class SomeClass
+{
+    public function run()
+    {
+-       now()->startOfDay();
++       today();
+    }
+}
+```
+
+<br>
+
 ## OptionalToNullsafeOperatorRector
 
 Convert simple calls to optional helper to use the nullsafe operator
