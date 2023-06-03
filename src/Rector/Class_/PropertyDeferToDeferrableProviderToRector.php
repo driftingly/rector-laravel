@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
@@ -88,7 +89,7 @@ CODE_SAMPLE
             }
 
             $onlyProperty = $property->props[0];
-            if ($onlyProperty->default === null) {
+            if (! $onlyProperty->default instanceof Expr) {
                 return null;
             }
 
