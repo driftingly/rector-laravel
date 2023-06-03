@@ -64,6 +64,13 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
         $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
     }
 
+    public function testMethodNotAllowed()
+    {
+        $this->get('/')->assertStatus(405);
+        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_METHOD_NOT_ALLOWED);
+    }
+
     public function testUnprocessableEntity()
     {
         $this->get('/')->assertStatus(422);
@@ -130,6 +137,13 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
         $this->get('/')->assertNotFound();
         $this->get('/')->assertNotFound();
         $this->get('/')->assertNotFound();
+    }
+
+    public function testMethodNotAllowed()
+    {
+        $this->get('/')->assertMethodNotAllowed();
+        $this->get('/')->assertMethodNotAllowed();
+        $this->get('/')->assertMethodNotAllowed();
     }
 
     public function testUnprocessableEntity()
@@ -210,6 +224,7 @@ CODE_SAMPLE
                 401 => 'assertUnauthorized',
                 403 => 'assertForbidden',
                 404 => 'assertNotFound',
+                405 => 'assertMethodNotAllowed',
                 410 => 'assertGone',
                 422 => 'assertUnprocessable',
                 500 => 'assertInternalServerError',
@@ -230,6 +245,7 @@ CODE_SAMPLE
                 'HTTP_UNAUTHORIZED' => 'assertUnauthorized',
                 'HTTP_FORBIDDEN' => 'assertForbidden',
                 'HTTP_NOT_FOUND' => 'assertNotFound',
+                'HTTP_METHOD_NOT_ALLOWED' => 'assertMethodNotAllowed',
                 'HTTP_GONE' => 'assertGone',
                 'HTTP_UNPROCESSABLE_ENTITY' => 'assertUnprocessable',
                 'HTTP_INTERNAL_SERVER_ERROR' => 'assertInternalServerError',

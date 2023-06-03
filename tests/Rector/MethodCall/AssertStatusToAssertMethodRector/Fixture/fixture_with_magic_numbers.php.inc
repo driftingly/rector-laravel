@@ -24,6 +24,11 @@ class FixtureTest
         $response->assertStatus(404);
     }
 
+    public function testMethodNotAllowed(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertStatus(405);
+    }
+
     public function testUnauthorized(\Illuminate\Testing\TestResponse $response)
     {
         $response->assertStatus(401);
@@ -76,6 +81,11 @@ class FixtureTest
     public function testNotFound(\Illuminate\Testing\TestResponse $response)
     {
         $response->assertNotFound();
+    }
+
+    public function testMethodNotAllowed(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertMethodNotAllowed();
     }
 
     public function testUnauthorized(\Illuminate\Testing\TestResponse $response)
