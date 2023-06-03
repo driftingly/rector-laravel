@@ -403,6 +403,25 @@ Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Ill
 
 <br>
 
+## NotFilledBlankFuncCallToBlankFilledFuncCallRector
+
+Change `!blank()` func calls to `filled()` func calls and vice versa.
+
+- class: [`RectorLaravel\Rector\FuncCall\NotFilledBlankFuncCallToBlankFilledFuncCallRector`](../src/Rector/FuncCall/NotFilledBlankFuncCallToBlankFilledFuncCallRector.php)
+
+```diff
+ class SomeClass
+ {
+     public function run()
+     {
+-        return !blank($value);
++        return filled($value);
+     }
+ }
+```
+
+<br>
+
 ## NowFuncWithStartOfDayMethodCallToTodayFuncRector
 
 Changes the user of `now()->startOfDay()` to be replaced with `today()`.
