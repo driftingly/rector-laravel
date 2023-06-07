@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -19,7 +22,8 @@ class NowFuncWithStartOfDayMethodCallToTodayFuncRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_SAMPLE'
 $now = now()->startOfDay();
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                 <<<'CODE_SAMPLE'
 $now = today();
 CODE_SAMPLE
@@ -35,7 +39,7 @@ CODE_SAMPLE
     /**
      * @param MethodCall $node
      */
-    public function refactor(Node $node): ?Node\Expr\FuncCall
+    public function refactor(Node $node): ?FuncCall
     {
         if (! $this->isName($node->name, 'startOfDay')) {
             return null;
