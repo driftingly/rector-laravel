@@ -23,7 +23,7 @@ class NowFuncWithStartOfDayMethodCallToTodayFuncRector extends AbstractRector
                 <<<'CODE_SAMPLE'
 $now = now()->startOfDay();
 CODE_SAMPLE
-,
+                ,
                 <<<'CODE_SAMPLE'
 $now = today();
 CODE_SAMPLE
