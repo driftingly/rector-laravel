@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\ClassMethod;
 
+use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
@@ -96,7 +97,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         // Preserve docblock
         $docComment = $node->getDocComment();
 
-        if ($docComment !== null) {
+        if ($docComment instanceof Doc) {
             $newNode->setDocComment($docComment);
         }
 

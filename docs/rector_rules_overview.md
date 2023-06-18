@@ -168,6 +168,27 @@ Convert migrations to anonymous classes.
 
 <br>
 
+## AssertStatusToAssertMethodRector
+
+Change `assertStatus($statusCode)` to the equivalent method `assertOk()` for example.
+
+- class: [`RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector`](../src/Rector/MethodCall/AssertStatusToAssertMethodRector.php)
+
+```diff
+ use Illuminate\Foundation\Testing\TestCase;
+
+ final class SomeTest extends TestCase
+ {
+     public function test(): void
+     {
+-        $this->get('/')->assertStatus(200);
++        $this->get('/')->assertOk();
+     }
+ }
+```
+
+<br>
+
 ## CallOnAppArrayAccessToStandaloneAssignRector
 
 Replace magical call on `$this->app["something"]` to standalone type assign variable
@@ -266,6 +287,21 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
+## EmptyToBlankAndFilledFuncRector
+
+Convert `empty()` calls to `blank()` and `!empty()` calls to `filled()`.
+
+- class: [`RectorLaravel\Rector\FuncCall\EmptyToBlankAndFilledFuncRector`](../src/Rector/FuncCall/EmptyToBlankAndFilledFuncRector.php)
+
+```diff
+-$empty = empty($value);
++$empty = blank($value);
+-$notEmpty = !empty($value);
++$notEmpty = filled($value);
 ```
 
 <br>
@@ -422,6 +458,44 @@ Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Ill
 +        Illuminate\Support\Facades\Cache::put('key', 'value', 60 * 60);
      }
  }
+```
+
+<br>
+
+## NotFilledBlankFuncCallToBlankFilledFuncCallRector
+
+Change `!blank()` func calls to `filled()` func calls and vice versa.
+
+- class: [`RectorLaravel\Rector\FuncCall\NotFilledBlankFuncCallToBlankFilledFuncCallRector`](../src/Rector/FuncCall/NotFilledBlankFuncCallToBlankFilledFuncCallRector.php)
+
+```diff
+ class SomeClass
+ {
+     public function run()
+     {
+-        return !blank($value);
++        return filled($value);
+     }
+ }
+```
+
+<br>
+
+## NowFuncWithStartOfDayMethodCallToTodayFuncRector
+
+Changes the user of `now()->startOfDay()` to be replaced with `today()`.
+
+- class: [`RectorLaravel\Rector\FuncCall\NowFuncWithStartOfDayMethodCallToTodayFuncRector`](../src/Rector/FuncCall/NowFuncWithStartOfDayMethodCallToTodayFuncRector.php)
+
+```diff
+class SomeClass
+{
+    public function run()
+    {
+-       now()->startOfDay();
++       today();
+    }
+}
 ```
 
 <br>

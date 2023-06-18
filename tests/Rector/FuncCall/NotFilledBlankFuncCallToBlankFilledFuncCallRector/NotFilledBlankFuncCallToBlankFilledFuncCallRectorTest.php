@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector;
+namespace RectorLaravel\Tests\Rector\FuncCall\NotFilledBlankFuncCallToBlankFilledFuncCallRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class ReplaceFakerInstanceWithHelperRectorTest extends AbstractRectorTestCase
+final class NotFilledBlankFuncCallToBlankFilledFuncCallRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('provideData')]
     public function test(string $filePath): void

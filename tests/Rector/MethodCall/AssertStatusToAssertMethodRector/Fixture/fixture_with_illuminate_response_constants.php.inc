@@ -24,6 +24,11 @@ class FixtureWithIlluminateTest
         $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
     }
 
+    public function testMethodNotAllowed(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_METHOD_NOT_ALLOWED);
+    }
+
     public function testUnauthorized(\Illuminate\Testing\TestResponse $response)
     {
         $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNAUTHORIZED);
@@ -76,6 +81,11 @@ class FixtureWithIlluminateTest
     public function testNotFound(\Illuminate\Testing\TestResponse $response)
     {
         $response->assertNotFound();
+    }
+
+    public function testMethodNotAllowed(\Illuminate\Testing\TestResponse $response)
+    {
+        $response->assertMethodNotAllowed();
     }
 
     public function testUnauthorized(\Illuminate\Testing\TestResponse $response)

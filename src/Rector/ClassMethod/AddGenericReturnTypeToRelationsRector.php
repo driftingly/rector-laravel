@@ -125,7 +125,7 @@ CODE_SAMPLE
         // Don't update an existing return type if it differs from the native return type (thus the one without generics).
         // E.g. we only add generics to an existing return type, but don't change the type itself.
         if (
-            $phpDocInfo->getReturnTagValue() !== null
+            $phpDocInfo->getReturnTagValue() instanceof ReturnTagValueNode
             && ! $this->areNativeTypeAndPhpDocReturnTypeEqual(
                 $node,
                 $methodReturnType,
@@ -151,7 +151,7 @@ CODE_SAMPLE
         // Don't update the docblock if return type already contains the correct generics. This avoids overwriting
         // non-FQCN with our fully qualified ones.
         if (
-            $phpDocInfo->getReturnTagValue() !== null
+            $phpDocInfo->getReturnTagValue() instanceof ReturnTagValueNode
             && $this->areGenericTypesEqual(
                 $node,
                 $phpDocInfo->getReturnTagValue(),
@@ -168,7 +168,7 @@ CODE_SAMPLE
         );
 
         // Update or add return tag
-        if ($phpDocInfo->getReturnTagValue() !== null) {
+        if ($phpDocInfo->getReturnTagValue() instanceof ReturnTagValueNode) {
             $phpDocInfo->getReturnTagValue()
                 ->type = $genericTypeNode;
         } else {
