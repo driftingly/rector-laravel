@@ -47,43 +47,43 @@ CODE_SAMPLE,
             return null;
         }
 
-        $functionCall = array_filter([$node->left, $node->right], function ($node) {
+        /** @var Expr\FuncCall|null $functionCall */
+        $functionCall = array_values(array_filter([$node->left, $node->right], function ($node) {
             return $node instanceof Expr\FuncCall && $this->isName($node, 'substr');
-        });
+        }))[0] ?? null;
 
-        if ($functionCall === []) {
+        if ($functionCall === null) {
             return null;
         }
 
-        $functionCall = reset($functionCall);
-
-        $otherNode = array_filter([$node->left, $node->right], static function ($node) use ($functionCall) {
+        /** @var Expr $otherNode */
+        $otherNode = array_values(array_filter([$node->left, $node->right], static function ($node) use ($functionCall) {
             return $node !== $functionCall;
-        });
-
-        $otherNode = reset($otherNode);
+        }))[0] ?? null;
 
         // get the function call second argument value
-        if (count($functionCall->args) < 2) {
+        if (count($functionCall->getArgs()) < 2) {
             return null;
         }
 
-        $secondArgument = $this->valueResolver->getValue($functionCall->args[1]->value);
+        $secondArgument = $this->valueResolver->getValue($functionCall->getArgs()[1]->value);
 
         if (!is_int($secondArgument)) {
             return null;
         }
 
-        if ($secondArgument < 0 && isset($functionCall->args[2])) {
+        if ($secondArgument < 0 && isset($functionCall->getArgs()[2])) {
             return null;
         }
 
-        if (!$methodName = $this->getStaticMethodName($secondArgument)) {
+        $methodName = $this->getStaticMethodName($secondArgument);
+
+        if ($methodName === null) {
             return null;
         }
 
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Str', $methodName, [
-            $functionCall->args[0]->value,
+            $functionCall->getArgs()[0]->value,
             $otherNode,
         ]);
     }
