@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\Rector\Expr\SubStrToStartsWithOrEndsWithStaticMethodCallRector;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\BinaryOp\Equal;
+use PhpParser\Node\Expr\BinaryOp\Identical;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -14,7 +19,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Use Str::startsWith() or Str::endsWith() instead of substr() === $str', [
@@ -23,12 +27,14 @@ class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 if (substr($str, 0, 3) === 'foo') {
     // do something
 }
-CODE_SAMPLE,
+CODE_SAMPLE
+                ,
                 <<<'CODE_SAMPLE'
 if (Str::startsWith($str, 'foo')) {
     // do something
 }
-CODE_SAMPLE,
+CODE_SAMPLE
+                ,
             ),
         ]);
     }
@@ -43,23 +49,26 @@ CODE_SAMPLE,
      */
     public function refactor(Node $node): ?StaticCall
     {
-        if (!$node instanceof Expr\BinaryOp\Identical && !$node instanceof Expr\BinaryOp\Equal) {
+        if (! $node instanceof Identical && ! $node instanceof Equal) {
             return null;
         }
 
         /** @var Expr\FuncCall|null $functionCall */
-        $functionCall = array_values(array_filter([$node->left, $node->right], function ($node) {
-            return $node instanceof Expr\FuncCall && $this->isName($node, 'substr');
-        }))[0] ?? null;
+        $functionCall = array_values(
+            array_filter([$node->left, $node->right], fn ($node) => $node instanceof FuncCall && $this->isName(
+                $node,
+                'substr'
+            ))
+        )[0] ?? null;
 
-        if ($functionCall === null) {
+        if (! $functionCall instanceof FuncCall) {
             return null;
         }
 
         /** @var Expr $otherNode */
-        $otherNode = array_values(array_filter([$node->left, $node->right], static function ($node) use ($functionCall) {
-            return $node !== $functionCall;
-        }))[0] ?? null;
+        $otherNode = array_values(
+            array_filter([$node->left, $node->right], static fn ($node) => $node !== $functionCall)
+        )[0] ?? null;
 
         // get the function call second argument value
         if (count($functionCall->getArgs()) < 2) {
@@ -68,7 +77,7 @@ CODE_SAMPLE,
 
         $secondArgument = $this->valueResolver->getValue($functionCall->getArgs()[1]->value);
 
-        if (!is_int($secondArgument)) {
+        if (! is_int($secondArgument)) {
             return null;
         }
 
@@ -83,7 +92,8 @@ CODE_SAMPLE,
         }
 
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Str', $methodName, [
-            $functionCall->getArgs()[0]->value,
+            $functionCall->getArgs()[0]
+->value,
             $otherNode,
         ]);
     }

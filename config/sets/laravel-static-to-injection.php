@@ -5,12 +5,12 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 
 use Rector\Renaming\Rector\Name\RenameClassRector;
-use Rector\Transform\Rector\FuncCall\ArgumentFuncCallToMethodCallRector;
 use Rector\Transform\Rector\FuncCall\FuncCallToNewRector;
 use Rector\Transform\Rector\StaticCall\StaticCallToMethodCallRector;
 use Rector\Transform\ValueObject\ArgumentFuncCallToMethodCall;
 use Rector\Transform\ValueObject\ArrayFuncCallToMethodCall;
 use Rector\Transform\ValueObject\StaticCallToMethodCall;
+use RectorLaravel\Rector\FuncCall\ArgumentFuncCallToMethodCallRector;
 use RectorLaravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
 use RectorLaravel\Rector\StaticCall\RequestStaticValidateToInjectRector;
 
