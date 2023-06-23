@@ -849,6 +849,19 @@ return static function (RectorConfig $rectorConfig): void {
 
 <br>
 
+## SubStrToStartsWithOrEndsWithStaticMethodCallRector
+
+Change `substr()` to `startsWith()` or `endsWith()` static method call where applicable.
+
+- class: [`RectorLaravel\Rector\FuncCall\SubStrToStartsWithOrEndsWithStaticMethodCallRector`](../src/Rector/Expr/SubStrToStartsWithOrEndsWithStaticMethodCallRector/SubStrToStartsWithOrEndsWithStaticMethodCallRector.php)
+
+```diff
+-$string = substr($string, 0, 5) === 'foo';
++$string = Str::startsWith($string, 'foo');
+```
+
+<br>
+
 ## UnifyModelDatesWithCastsRector
 
 Unify Model `$dates` property with `$casts`
