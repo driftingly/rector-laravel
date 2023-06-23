@@ -28,13 +28,13 @@ if (substr($str, 0, 3) === 'foo') {
     // do something
 }
 CODE_SAMPLE
-,
+                ,
                 <<<'CODE_SAMPLE'
 if (Str::startsWith($str, 'foo')) {
     // do something
 }
 CODE_SAMPLE
-,
+                ,
             ),
         ]);
     }
