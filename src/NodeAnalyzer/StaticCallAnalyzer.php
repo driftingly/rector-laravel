@@ -11,9 +11,15 @@ use Rector\NodeNameResolver\NodeNameResolver;
 
 final class StaticCallAnalyzer
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     public function isParentCallNamed(Node $node, string $desiredMethodName): bool

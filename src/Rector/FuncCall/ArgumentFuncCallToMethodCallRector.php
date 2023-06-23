@@ -34,13 +34,34 @@ final class ArgumentFuncCallToMethodCallRector extends AbstractRector implements
     /**
      * @var ArgumentFuncCallToMethodCallInterface[]
      */
-    private array $argumentFuncCallToMethodCalls = [];
+    private $argumentFuncCallToMethodCalls = [];
+
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\TypeAnalyzer\ArrayTypeAnalyzer
+     */
+    private $arrayTypeAnalyzer;
+
+    /**
+     * @readonly
+     * @var \Rector\Naming\Naming\PropertyNaming
+     */
+    private $propertyNaming;
+
+    /**
+     * @readonly
+     * @var \Rector\PostRector\Collector\PropertyToAddCollector
+     */
+    private $propertyToAddCollector;
 
     public function __construct(
-        private readonly ArrayTypeAnalyzer $arrayTypeAnalyzer,
-        private readonly PropertyNaming $propertyNaming,
-        private readonly PropertyToAddCollector $propertyToAddCollector
+        ArrayTypeAnalyzer $arrayTypeAnalyzer,
+        PropertyNaming $propertyNaming,
+        PropertyToAddCollector $propertyToAddCollector
     ) {
+        $this->arrayTypeAnalyzer = $arrayTypeAnalyzer;
+        $this->propertyNaming = $propertyNaming;
+        $this->propertyToAddCollector = $propertyToAddCollector;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -206,10 +227,13 @@ CODE_SAMPLE
         );
     }
 
+    /**
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch
+     */
     private function refactorEmptyFuncCallArgs(
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
         PropertyFetch $propertyFetch
-    ): MethodCall | PropertyFetch {
+    ) {
         if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
             $methodName = $argumentFuncCallToMethodCall->getMethodIfNoArgs();
             return new MethodCall($propertyFetch, $methodName);

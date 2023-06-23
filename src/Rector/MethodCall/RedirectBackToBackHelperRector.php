@@ -21,9 +21,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class RedirectBackToBackHelperRector extends AbstractRector
 {
-    public function __construct(
-        private readonly FluentChainMethodCallNodeAnalyzer $fluentChainMethodCallNodeAnalyzer,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Defluent\NodeAnalyzer\FluentChainMethodCallNodeAnalyzer
+     */
+    private $fluentChainMethodCallNodeAnalyzer;
+
+    public function __construct(FluentChainMethodCallNodeAnalyzer $fluentChainMethodCallNodeAnalyzer)
+    {
+        $this->fluentChainMethodCallNodeAnalyzer = $fluentChainMethodCallNodeAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -90,7 +96,10 @@ CODE_SAMPLE
         return $this->updateRedirectStaticCall($node);
     }
 
-    private function updateRedirectHelperCall(MethodCall $methodCall): MethodCall|FuncCall|null
+    /**
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\FuncCall|null
+     */
+    private function updateRedirectHelperCall(MethodCall $methodCall)
     {
         if (! $this->isName($methodCall->name, 'back')) {
             return null;
