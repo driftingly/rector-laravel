@@ -22,6 +22,7 @@ use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -41,7 +42,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
     /**
      * @param ClassMethod $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|int|null
     {
         if ($this->shouldSkipNode($node)) {
             return null;
@@ -82,8 +83,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         // is placed on the model and remove the mutator,
         // so we don't run the refactoring twice
         if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator($nodeName)) {
-            $this->removeNode($mutator);
-            return null;
+            return NodeTraverser::REMOVE_NODE;
         }
 
         if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod) {
