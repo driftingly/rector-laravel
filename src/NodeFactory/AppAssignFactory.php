@@ -50,6 +50,5 @@ final class AppAssignFactory
         );
 
         $phpDocInfo->addTagValueNode($varTagValueNode);
-        $phpDocInfo->makeSingleLined();
     }
 }
