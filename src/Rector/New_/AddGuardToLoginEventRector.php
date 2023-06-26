@@ -10,8 +10,8 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -23,10 +23,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddGuardToLoginEventRector extends AbstractRector
 {
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector,
-    ) {
-    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -68,29 +64,37 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [New_::class];
+        return [Expression::class];
     }
 
     /**
-     * @param New_ $node
+     * @param Expression $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?array
     {
-        if (! $this->isName($node->class, 'Illuminate\Auth\Events\Login')) {
+        $newNode = $this->getNewNode($node);
+
+        if (! $newNode instanceof New_) {
             return null;
         }
 
-        if (count($node->args) === 3) {
+        if (! $this->isName($newNode->class, 'Illuminate\Auth\Events\Login')) {
+            return null;
+        }
+
+        if (count($newNode->args) === 3) {
             return null;
         }
 
         $guardVariable = new Variable('guard');
         $assign = $this->createGuardAssign($guardVariable);
-        $this->nodesToAddCollector->addNodeBeforeNode($assign, $node);
 
-        $node->args = array_merge([new Arg($guardVariable)], $node->args);
+        $newNode->args = array_merge([new Arg($guardVariable)], $newNode->args);
 
-        return $node;
+        return [
+            new Expression($assign),
+            $node,
+        ];
     }
 
     private function createGuardAssign(Variable $guardVariable): Assign
@@ -98,5 +102,18 @@ CODE_SAMPLE
         $string = new String_('auth.defaults.guard');
 
         return new Assign($guardVariable, $this->nodeFactory->createFuncCall('config', [$string]));
+    }
+
+    private function getNewNode(Expression $node): New_|null
+    {
+        if ($node->expr instanceof Assign && $node->expr->expr instanceof New_) {
+            return $node->expr->expr;
+        }
+
+        if ($node->expr instanceof New_) {
+            return $node->expr;
+        }
+
+        return null;
     }
 }
