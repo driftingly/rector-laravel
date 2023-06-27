@@ -1,4 +1,4 @@
-# 27 Rules Overview
+# 34 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -9,9 +9,13 @@ Adds default value for arguments in defined methods.
 - class: [`RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector`](../src/Rector/ClassMethod/AddArgumentDefaultValueRector.php)
 
 ```php
-use Rector\Config\RectorConfig;
+<?php
+
+declare(strict_types=1);
+
 use RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
 use RectorLaravel\ValueObject\AddArgumentDefaultValue;
+use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(AddArgumentDefaultValueRector::class, [
@@ -168,21 +172,164 @@ Convert migrations to anonymous classes.
 
 <br>
 
+## ArgumentFuncCallToMethodCallRector
+
+Move help facade-like function calls to constructor injection
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\FuncCall\ArgumentFuncCallToMethodCallRector`](../src/Rector/FuncCall/ArgumentFuncCallToMethodCallRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use RectorLaravel\Rector\FuncCall\ArgumentFuncCallToMethodCallRector;
+use RectorLaravel\ValueObject\ArgumentFuncCallToMethodCall;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->ruleWithConfiguration(ArgumentFuncCallToMethodCallRector::class, [
+        new ArgumentFuncCallToMethodCall('view', 'Illuminate\Contracts\View\Factory', 'make'),
+    ]);
+};
+```
+
+↓
+
+```diff
+ class SomeController
+ {
++    /**
++     * @var \Illuminate\Contracts\View\Factory
++     */
++    private $viewFactory;
++
++    public function __construct(\Illuminate\Contracts\View\Factory $viewFactory)
++    {
++        $this->viewFactory = $viewFactory;
++    }
++
+     public function action()
+     {
+-        $template = view('template.blade');
+-        $viewFactory = view();
++        $template = $this->viewFactory->make('template.blade');
++        $viewFactory = $this->viewFactory;
+     }
+ }
+```
+
+<br>
+
 ## AssertStatusToAssertMethodRector
 
-Change `assertStatus($statusCode)` to the equivalent method `assertOk()` for example.
+Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \Illuminate\Testing\TestResponse)->assertOk()`
 
 - class: [`RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector`](../src/Rector/MethodCall/AssertStatusToAssertMethodRector.php)
 
 ```diff
- use Illuminate\Foundation\Testing\TestCase;
-
- final class SomeTest extends TestCase
+ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
  {
-     public function test(): void
+     public function testOk()
      {
 -        $this->get('/')->assertStatus(200);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_OK);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_OK);
 +        $this->get('/')->assertOk();
++        $this->get('/')->assertOk();
++        $this->get('/')->assertOk();
+     }
+
+     public function testNoContent()
+     {
+-        $this->get('/')->assertStatus(204);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_NO_CONTENT);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NO_CONTENT);
++        $this->get('/')->assertNoContent();
++        $this->get('/')->assertNoContent();
++        $this->get('/')->assertNoContent();
+     }
+
+     public function testUnauthorized()
+     {
+-        $this->get('/')->assertStatus(401);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_UNAUTHORIZED);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNAUTHORIZED);
++        $this->get('/')->assertUnauthorized();
++        $this->get('/')->assertUnauthorized();
++        $this->get('/')->assertUnauthorized();
+     }
+
+     public function testForbidden()
+     {
+-        $this->get('/')->assertStatus(403);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_FORBIDDEN);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
++        $this->get('/')->assertForbidden();
++        $this->get('/')->assertForbidden();
++        $this->get('/')->assertForbidden();
+     }
+
+     public function testNotFound()
+     {
+-        $this->get('/')->assertStatus(404);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_NOT_FOUND);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
++        $this->get('/')->assertNotFound();
++        $this->get('/')->assertNotFound();
++        $this->get('/')->assertNotFound();
+     }
+
+     public function testMethodNotAllowed()
+     {
+-        $this->get('/')->assertStatus(405);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_METHOD_NOT_ALLOWED);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_METHOD_NOT_ALLOWED);
++        $this->get('/')->assertMethodNotAllowed();
++        $this->get('/')->assertMethodNotAllowed();
++        $this->get('/')->assertMethodNotAllowed();
+     }
+
+     public function testUnprocessableEntity()
+     {
+-        $this->get('/')->assertStatus(422);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY);
++        $this->get('/')->assertUnprocessable();
++        $this->get('/')->assertUnprocessable();
++        $this->get('/')->assertUnprocessable();
+     }
+
+     public function testGone()
+     {
+-        $this->get('/')->assertStatus(410);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_GONE);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_GONE);
++        $this->get('/')->assertGone();
++        $this->get('/')->assertGone();
++        $this->get('/')->assertGone();
+     }
+
+     public function testInternalServerError()
+     {
+-        $this->get('/')->assertStatus(500);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
++        $this->get('/')->assertInternalServerError();
++        $this->get('/')->assertInternalServerError();
++        $this->get('/')->assertInternalServerError();
+     }
+
+     public function testServiceUnavailable()
+     {
+-        $this->get('/')->assertStatus(503);
+-        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_SERVICE_UNAVAILABLE);
+-        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_SERVICE_UNAVAILABLE);
++        $this->get('/')->asserServiceUnavailable();
++        $this->get('/')->asserServiceUnavailable();
++        $this->get('/')->asserServiceUnavailable();
      }
  }
 ```
@@ -270,15 +417,15 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 ## EmptyToBlankAndFilledFuncRector
 
-Convert `empty()` calls to `blank()` and `!empty()` calls to `filled()`.
+Replace use of the unsafe `empty()` function with Laravel's safer `blank()` & `filled()` functions.
 
-- class: [`RectorLaravel\Rector\FuncCall\EmptyToBlankAndFilledFuncRector`](../src/Rector/FuncCall/EmptyToBlankAndFilledFuncRector.php)
+- class: [`RectorLaravel\Rector\Empty_\EmptyToBlankAndFilledFuncRector`](../src/Rector/Empty_/EmptyToBlankAndFilledFuncRector.php)
 
 ```diff
--$empty = empty($value);
-+$empty = blank($value);
--$notEmpty = !empty($value);
-+$notEmpty = filled($value);
+-empty([]);
+-!empty([]);
++blank([]);
++filled([]);
 ```
 
 <br>
@@ -441,38 +588,28 @@ Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Ill
 
 ## NotFilledBlankFuncCallToBlankFilledFuncCallRector
 
-Change `!blank()` func calls to `filled()` func calls and vice versa.
+Swap the use of NotBooleans used with `filled()` and `blank()` to the correct helper.
 
 - class: [`RectorLaravel\Rector\FuncCall\NotFilledBlankFuncCallToBlankFilledFuncCallRector`](../src/Rector/FuncCall/NotFilledBlankFuncCallToBlankFilledFuncCallRector.php)
 
 ```diff
- class SomeClass
- {
-     public function run()
-     {
--        return !blank($value);
-+        return filled($value);
-     }
- }
+-!filled([]);
+-!blank([]);
++blank([]);
++filled([]);
 ```
 
 <br>
 
 ## NowFuncWithStartOfDayMethodCallToTodayFuncRector
 
-Changes the user of `now()->startOfDay()` to be replaced with `today()`.
+Use `today()` instead of `now()->startOfDay()`
 
 - class: [`RectorLaravel\Rector\FuncCall\NowFuncWithStartOfDayMethodCallToTodayFuncRector`](../src/Rector/FuncCall/NowFuncWithStartOfDayMethodCallToTodayFuncRector.php)
 
 ```diff
-class SomeClass
-{
-    public function run()
-    {
--       now()->startOfDay();
-+       today();
-    }
-}
+-$now = now()->startOfDay();
++$now = today();
 ```
 
 <br>
@@ -486,12 +623,18 @@ Convert simple calls to optional helper to use the nullsafe operator
 - class: [`RectorLaravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector`](../src/Rector/PropertyFetch/OptionalToNullsafeOperatorRector.php)
 
 ```php
-use Rector\Config\RectorConfig;
+<?php
+
+declare(strict_types=1);
+
 use RectorLaravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
+use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(OptionalToNullsafeOperatorRector::class, [
-        OptionalToNullsafeOperatorRector::EXCLUDE_METHODS => ['present'],
+        OptionalToNullsafeOperatorRector::EXCLUDE_METHODS => [
+            'present',
+        ],
     ]);
 };
 ```
@@ -683,8 +826,12 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 - class: [`RectorLaravel\Rector\StaticCall\RouteActionCallableRector`](../src/Rector/StaticCall/RouteActionCallableRector.php)
 
 ```php
-use Rector\Config\RectorConfig;
+<?php
+
+declare(strict_types=1);
+
 use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
+use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RouteActionCallableRector::class, [
@@ -698,6 +845,19 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
 -Route::get('/users', 'UserController@index');
 +Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
+```
+
+<br>
+
+## SubStrToStartsWithOrEndsWithStaticMethodCallRector
+
+Change `substr()` to `startsWith()` or `endsWith()` static method call where applicable.
+
+- class: [`RectorLaravel\Rector\FuncCall\SubStrToStartsWithOrEndsWithStaticMethodCallRector`](../src/Rector/Expr/SubStrToStartsWithOrEndsWithStaticMethodCallRector/SubStrToStartsWithOrEndsWithStaticMethodCallRector.php)
+
+```diff
+-$string = substr($string, 0, 5) === 'foo';
++$string = Str::startsWith($string, 'foo');
 ```
 
 <br>

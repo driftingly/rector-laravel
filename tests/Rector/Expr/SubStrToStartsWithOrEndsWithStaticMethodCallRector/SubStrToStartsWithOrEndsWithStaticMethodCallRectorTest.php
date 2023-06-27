@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\MethodCall\AssertStatusToAssertMethodRector;
+namespace RectorLaravel\Tests\Rector\Expr\SubStrToStartsWithOrEndsWithStaticMethodCallRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class AssertStatusToAssertMethodTest extends AbstractRectorTestCase
+final class SubStrToStartsWithOrEndsWithStaticMethodCallRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('provideData')]
     public function test(string $filePath): void

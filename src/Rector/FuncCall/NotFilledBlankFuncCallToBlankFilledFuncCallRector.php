@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\BooleanNot;
+use PhpParser\Node\Expr\FuncCall;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -13,7 +16,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class NotFilledBlankFuncCallToBlankFilledFuncCallRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -43,9 +45,9 @@ CODE_SAMPLE
     /**
      * @param BooleanNot $node
      */
-    public function refactor(Node $node): ?Node\Expr\FuncCall
+    public function refactor(Node $node): ?FuncCall
     {
-        if (! $node->expr instanceof Node\Expr\FuncCall) {
+        if (! $node->expr instanceof FuncCall) {
             return null;
         }
 
