@@ -10,9 +10,9 @@ use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
 use RectorLaravel\NodeFactory\AppAssignFactory;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -30,7 +30,6 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 
     public function __construct(
         private readonly AppAssignFactory $appAssignFactory,
-        private readonly NodesToAddCollector $nodesToAddCollector,
     ) {
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',
@@ -44,19 +43,23 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [Assign::class];
+        return [Expression::class];
     }
 
     /**
-     * @param Assign $node
+     * @param Expression $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|array|null
     {
-        if (! $node->expr instanceof MethodCall) {
+        if (! $node->expr instanceof Assign) {
             return null;
         }
 
-        $methodCall = $node->expr;
+        if (! $node->expr->expr instanceof MethodCall) {
+            return null;
+        }
+
+        $methodCall = $node->expr->expr;
         if (! $methodCall->var instanceof ArrayDimFetch) {
             return null;
         }
@@ -85,10 +88,15 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
                 $methodCall->var
             );
 
-            $this->nodesToAddCollector->addNodeBeforeNode($assignExpression, $node);
             $methodCall->var = new Variable($serviceNameTypeAndVariableName->getVariableName());
 
-            return $node;
+            // the nop is a workaround because the docs of the first node are somehow stripped away
+            // this will add a newline but the docs will be preserved
+            return [
+                new Node\Stmt\Nop(),
+                $assignExpression,
+                $node,
+            ];
         }
 
         return null;
