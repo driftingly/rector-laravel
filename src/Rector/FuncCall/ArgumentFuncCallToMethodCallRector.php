@@ -184,11 +184,7 @@ CODE_SAMPLE
             throw new ShouldNotHappenException();
         }
 
-        return $this->nodeFactory->createMethodCall(
-            $expr,
-            $methodName,
-            $node->args
-        );
+        return $this->nodeFactory->createMethodCall($expr, $methodName, $node->args);
     }
 
     private function refactorArrayFunctionToMethodCall(
