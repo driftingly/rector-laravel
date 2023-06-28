@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\TypeAnalyzer\ArrayTypeAnalyzer;
 use Rector\Transform\NodeAnalyzer\FuncCallStaticCallToMethodCallAnalyzer;
@@ -173,13 +174,19 @@ CODE_SAMPLE
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
         MethodCall|PropertyFetch|Variable $expr
     ): MethodCall|PropertyFetch|Variable {
-        if ($argumentFuncCallToMethodCall->getMethodIfArgs() === null) {
+        if ($node->args === []) {
             return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $expr);
+        }
+
+        $methodName = $argumentFuncCallToMethodCall->getMethodIfArgs();
+
+        if (! is_string($methodName)) {
+            throw new ShouldNotHappenException();
         }
 
         return $this->nodeFactory->createMethodCall(
             $expr,
-            $argumentFuncCallToMethodCall->getMethodIfArgs(),
+            $methodName,
             $node->args
         );
     }
