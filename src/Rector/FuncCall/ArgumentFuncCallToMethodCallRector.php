@@ -127,11 +127,7 @@ CODE_SAMPLE
 
                         $hasChanged = true;
 
-                        return $this->refactorFuncCallToMethodCall(
-                            $node,
-                            $argumentFuncCallToMethodCall,
-                            $expr
-                        );
+                        return $this->refactorFuncCallToMethodCall($node, $argumentFuncCallToMethodCall, $expr);
                     }
 
                     if ($argumentFuncCallToMethodCall instanceof ArrayFuncCallToMethodCall) {
@@ -172,7 +168,7 @@ CODE_SAMPLE
         $this->argumentFuncCallToMethodCalls = $configuration;
     }
 
-    function refactorFuncCallToMethodCall(
+    public function refactorFuncCallToMethodCall(
         FuncCall $node,
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
         MethodCall|PropertyFetch|Variable $expr
@@ -213,10 +209,7 @@ CODE_SAMPLE
         MethodCall|PropertyFetch|Variable $expr
     ): MethodCall | PropertyFetch | Variable {
         if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
-            return $this->nodeFactory->createMethodCall(
-                $expr,
-                $argumentFuncCallToMethodCall->getMethodIfNoArgs()
-            );
+            return $this->nodeFactory->createMethodCall($expr, $argumentFuncCallToMethodCall->getMethodIfNoArgs());
         }
 
         return $expr;

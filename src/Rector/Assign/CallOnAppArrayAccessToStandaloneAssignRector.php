@@ -92,11 +92,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 
             // the nop is a workaround because the docs of the first node are somehow stripped away
             // this will add a newline but the docs will be preserved
-            return [
-                new Node\Stmt\Nop(),
-                $assignExpression,
-                $node,
-            ];
+            return [new Node\Stmt\Nop(), $assignExpression, $node];
         }
 
         return null;

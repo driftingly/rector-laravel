@@ -23,7 +23,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddGuardToLoginEventRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -91,10 +90,7 @@ CODE_SAMPLE
 
         $newNode->args = array_merge([new Arg($guardVariable)], $newNode->args);
 
-        return [
-            new Expression($assign),
-            $node,
-        ];
+        return [new Expression($assign), $node];
     }
 
     private function createGuardAssign(Variable $guardVariable): Assign

@@ -26,7 +26,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -92,10 +91,7 @@ CODE_SAMPLE
             $dateTimeVariable = new Variable('dateTime');
             $assign = new Assign($dateTimeVariable, $expr);
 
-            $nodes = [
-                new Expression($assign),
-                $node,
-            ];
+            $nodes = [new Expression($assign), $node];
 
             if (! $node->expr->args[2] instanceof Arg) {
                 return $nodes;
@@ -125,10 +121,7 @@ CODE_SAMPLE
             // 2. add "whereTime()" time call
             $whereTimeMethodCall = $this->createWhereTimeMethodCall($node->expr, $dateTimeVariable);
 
-            return [
-                $node,
-                new Expression($whereTimeMethodCall),
-            ];
+            return [$node, new Expression($whereTimeMethodCall)];
         }
 
         return null;
