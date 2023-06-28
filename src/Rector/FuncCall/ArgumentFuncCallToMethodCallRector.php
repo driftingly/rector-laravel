@@ -9,16 +9,11 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Naming\Naming\PropertyNaming;
-use Rector\Naming\ValueObject\ExpectedName;
 use Rector\NodeTypeResolver\TypeAnalyzer\ArrayTypeAnalyzer;
-use Rector\PostRector\Collector\PropertyToAddCollector;
-use Rector\PostRector\ValueObject\PropertyMetadata;
-use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
+use Rector\Transform\NodeAnalyzer\FuncCallStaticCallToMethodCallAnalyzer;
 use RectorLaravel\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface;
 use RectorLaravel\ValueObject\ArgumentFuncCallToMethodCall;
 use RectorLaravel\ValueObject\ArrayFuncCallToMethodCall;
@@ -38,8 +33,7 @@ final class ArgumentFuncCallToMethodCallRector extends AbstractRector implements
 
     public function __construct(
         private readonly ArrayTypeAnalyzer $arrayTypeAnalyzer,
-        private readonly PropertyNaming $propertyNaming,
-        private readonly PropertyToAddCollector $propertyToAddCollector
+        private readonly FuncCallStaticCallToMethodCallAnalyzer $funcCallStaticCallToMethodCallAnalyzer
     ) {
     }
 
@@ -89,33 +83,71 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [FuncCall::class];
+        return [Class_::class];
     }
 
     /**
-     * @param FuncCall $node
+     * @param Class_ $node
      */
     public function refactor(Node $node): ?Node
     {
-        if ($this->shouldSkipFuncCall($node)) {
-            return null;
-        }
+        $hasChanged = false;
+        $class = $node;
 
-        /** @var Class_ $classLike */
-        $classLike = $this->betterNodeFinder->findParentType($node, Class_::class);
-
-        foreach ($this->argumentFuncCallToMethodCalls as $argumentFuncCallToMethodCall) {
-            if (! $this->isName($node, $argumentFuncCallToMethodCall->getFunction())) {
+        foreach ($node->getMethods() as $classMethod) {
+            if ($classMethod->isStatic()) {
                 continue;
             }
 
-            if ($argumentFuncCallToMethodCall instanceof ArgumentFuncCallToMethodCall) {
-                return $this->refactorFuncCallToMethodCall($argumentFuncCallToMethodCall, $classLike, $node);
+            if ($classMethod->isAbstract()) {
+                continue;
             }
 
-            if ($argumentFuncCallToMethodCall instanceof ArrayFuncCallToMethodCall) {
-                return $this->refactorArrayFunctionToMethodCall($argumentFuncCallToMethodCall, $node, $classLike);
-            }
+            $this->traverseNodesWithCallable($classMethod, function (Node $node) use (
+                $class,
+                $classMethod,
+                &$hasChanged
+            ): ?Node {
+                if (! $node instanceof FuncCall) {
+                    return null;
+                }
+
+                foreach ($this->argumentFuncCallToMethodCalls as $argumentFuncCallToMethodCall) {
+                    if (! $this->isName($node->name, $argumentFuncCallToMethodCall->getFunction())) {
+                        continue;
+                    }
+
+                    $propertyFetch = $this->funcCallStaticCallToMethodCallAnalyzer->matchTypeProvidingExpr(
+                        $class,
+                        $classMethod,
+                        new ObjectType($argumentFuncCallToMethodCall->getClass()),
+                    );
+
+                    $hasChanged = true;
+
+                    if ($argumentFuncCallToMethodCall instanceof ArgumentFuncCallToMethodCall) {
+                        return $this->refactorFuncCallToMethodCall(
+                            $node,
+                            $argumentFuncCallToMethodCall,
+                            $propertyFetch
+                        );
+                    }
+
+                    if ($argumentFuncCallToMethodCall instanceof ArrayFuncCallToMethodCall) {
+                        return $this->refactorArrayFunctionToMethodCall(
+                            $node,
+                            $argumentFuncCallToMethodCall,
+                            $propertyFetch
+                        );
+                    }
+                }
+
+                return null;
+            });
+        }
+
+        if ($hasChanged) {
+            return $node;
         }
 
         return null;
@@ -131,108 +163,23 @@ CODE_SAMPLE
         $this->argumentFuncCallToMethodCalls = $configuration;
     }
 
-    private function shouldSkipFuncCall(FuncCall $funcCall): bool
-    {
-        // we can inject only in injectable class method  context
-        /** @var ClassMethod|null $classMethod */
-        $classMethod = $this->betterNodeFinder->findParentType($funcCall, ClassMethod::class);
-        if (! $classMethod instanceof ClassMethod) {
-            return true;
-        }
-
-        return $classMethod->isStatic();
-    }
-
-    /**
-     * @return MethodCall|PropertyFetch|null
-     */
-    private function refactorFuncCallToMethodCall(
-        ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        Class_ $class,
-        FuncCall $funcCall
-    ): ?Node {
-        $fullyQualifiedObjectType = new FullyQualifiedObjectType($argumentFuncCallToMethodCall->getClass());
-        $expectedName = $this->propertyNaming->getExpectedNameFromType($fullyQualifiedObjectType);
-
-        if (! $expectedName instanceof ExpectedName) {
-            throw new ShouldNotHappenException();
-        }
-
-        $propertyMetadata = new PropertyMetadata(
-            $expectedName->getName(),
-            $fullyQualifiedObjectType,
-            Class_::MODIFIER_PRIVATE
-        );
-        $this->propertyToAddCollector->addPropertyToClass($class, $propertyMetadata);
-
-        $propertyFetchNode = $this->nodeFactory->createPropertyFetch('this', $expectedName->getName());
-
-        if ($funcCall->args === []) {
-            return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $propertyFetchNode);
-        }
-
-        if ($this->isFunctionToMethodCallWithArgs($funcCall, $argumentFuncCallToMethodCall)) {
-            $methodName = $argumentFuncCallToMethodCall->getMethodIfArgs();
-            if (! is_string($methodName)) {
-                throw new ShouldNotHappenException();
-            }
-
-            return new MethodCall($propertyFetchNode, $methodName, $funcCall->args);
-        }
-
-        return null;
-    }
-
-    /**
-     * @return PropertyFetch|MethodCall|null
-     */
-    private function refactorArrayFunctionToMethodCall(
-        ArrayFuncCallToMethodCall $arrayFuncCallToMethodCall,
-        FuncCall $funcCall,
-        Class_ $class
-    ): ?Node {
-        $propertyName = $this->propertyNaming->fqnToVariableName($arrayFuncCallToMethodCall->getClass());
-        $propertyFetch = $this->nodeFactory->createPropertyFetch('this', $propertyName);
-
-        $fullyQualifiedObjectType = new FullyQualifiedObjectType($arrayFuncCallToMethodCall->getClass());
-
-        $propertyMetadata = new PropertyMetadata($propertyName, $fullyQualifiedObjectType, Class_::MODIFIER_PRIVATE);
-        $this->propertyToAddCollector->addPropertyToClass($class, $propertyMetadata);
-
-        return $this->createMethodCallArrayFunctionToMethodCall(
-            $funcCall,
-            $arrayFuncCallToMethodCall,
-            $propertyFetch
-        );
-    }
-
-    private function refactorEmptyFuncCallArgs(
+    function refactorFuncCallToMethodCall(
+        FuncCall $node,
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
         PropertyFetch $propertyFetch
-    ): MethodCall | PropertyFetch {
-        if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
-            $methodName = $argumentFuncCallToMethodCall->getMethodIfNoArgs();
-            return new MethodCall($propertyFetch, $methodName);
+    ): MethodCall|PropertyFetch {
+        if ($node->args === []) {
+            return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $propertyFetch);
         }
 
-        return $propertyFetch;
+        return $this->nodeFactory->createMethodCall(
+            $propertyFetch,
+            $argumentFuncCallToMethodCall->getMethodIfArgs(),
+            $node->args
+        );
     }
 
-    private function isFunctionToMethodCallWithArgs(
-        FuncCall $funcCall,
-        ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall
-    ): bool {
-        if ($argumentFuncCallToMethodCall->getMethodIfArgs() === null) {
-            return false;
-        }
-
-        return count($funcCall->args) >= 1;
-    }
-
-    /**
-     * @return PropertyFetch|MethodCall|null
-     */
-    private function createMethodCallArrayFunctionToMethodCall(
+    private function refactorArrayFunctionToMethodCall(
         FuncCall $funcCall,
         ArrayFuncCallToMethodCall $arrayFuncCallToMethodCall,
         PropertyFetch $propertyFetch
@@ -250,5 +197,19 @@ CODE_SAMPLE
         }
 
         return new MethodCall($propertyFetch, $arrayFuncCallToMethodCall->getNonArrayMethod(), $funcCall->getArgs());
+    }
+
+    private function refactorEmptyFuncCallArgs(
+        ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
+        PropertyFetch $propertyFetch
+    ): MethodCall | PropertyFetch {
+        if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
+            return $this->nodeFactory->createMethodCall(
+                $propertyFetch,
+                $argumentFuncCallToMethodCall->getMethodIfNoArgs()
+            );
+        }
+
+        return $propertyFetch;
     }
 }
