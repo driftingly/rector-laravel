@@ -70,7 +70,7 @@ CODE_SAMPLE
     /**
      * @param Expression $node
      */
-    public function refactor(Node $node): ?array
+    public function refactor(Node $node): Node|array|int|null
     {
         $newNode = $this->getNewNode($node);
 

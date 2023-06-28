@@ -42,7 +42,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
     /**
      * @param ClassMethod $node
      */
-    public function refactor(Node $node): Node|int|null
+    public function refactor(Node $node): Node|array|int|null
     {
         if ($this->shouldSkipNode($node)) {
             return null;

@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
@@ -117,27 +118,35 @@ CODE_SAMPLE
                         continue;
                     }
 
-                    $propertyFetch = $this->funcCallStaticCallToMethodCallAnalyzer->matchTypeProvidingExpr(
-                        $class,
-                        $classMethod,
-                        new ObjectType($argumentFuncCallToMethodCall->getClass()),
-                    );
-
-                    $hasChanged = true;
-
                     if ($argumentFuncCallToMethodCall instanceof ArgumentFuncCallToMethodCall) {
+                        $expr = $this->funcCallStaticCallToMethodCallAnalyzer->matchTypeProvidingExpr(
+                            $class,
+                            $classMethod,
+                            new ObjectType($argumentFuncCallToMethodCall->getClass()),
+                        );
+
+                        $hasChanged = true;
+
                         return $this->refactorFuncCallToMethodCall(
                             $node,
                             $argumentFuncCallToMethodCall,
-                            $propertyFetch
+                            $expr
                         );
                     }
 
                     if ($argumentFuncCallToMethodCall instanceof ArrayFuncCallToMethodCall) {
+                        $expr = $this->funcCallStaticCallToMethodCallAnalyzer->matchTypeProvidingExpr(
+                            $class,
+                            $classMethod,
+                            new ObjectType($argumentFuncCallToMethodCall->getClass()),
+                        );
+
+                        $hasChanged = true;
+
                         return $this->refactorArrayFunctionToMethodCall(
                             $node,
                             $argumentFuncCallToMethodCall,
-                            $propertyFetch
+                            $expr
                         );
                     }
                 }
@@ -166,14 +175,14 @@ CODE_SAMPLE
     function refactorFuncCallToMethodCall(
         FuncCall $node,
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        PropertyFetch $propertyFetch
-    ): MethodCall|PropertyFetch {
-        if ($node->args === []) {
-            return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $propertyFetch);
+        MethodCall|PropertyFetch|Variable $expr
+    ): MethodCall|PropertyFetch|Variable {
+        if ($argumentFuncCallToMethodCall->getMethodIfArgs() === null) {
+            return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $expr);
         }
 
         return $this->nodeFactory->createMethodCall(
-            $propertyFetch,
+            $expr,
             $argumentFuncCallToMethodCall->getMethodIfArgs(),
             $node->args
         );
@@ -182,34 +191,34 @@ CODE_SAMPLE
     private function refactorArrayFunctionToMethodCall(
         FuncCall $funcCall,
         ArrayFuncCallToMethodCall $arrayFuncCallToMethodCall,
-        PropertyFetch $propertyFetch
+        MethodCall|PropertyFetch|Variable $expr
     ): ?Node {
         if ($funcCall->getArgs() === []) {
-            return $propertyFetch;
+            return $expr;
         }
 
         if ($this->arrayTypeAnalyzer->isArrayType($funcCall->getArgs()[0]->value)) {
-            return new MethodCall($propertyFetch, $arrayFuncCallToMethodCall->getArrayMethod(), $funcCall->getArgs());
+            return new MethodCall($expr, $arrayFuncCallToMethodCall->getArrayMethod(), $funcCall->getArgs());
         }
 
         if ($arrayFuncCallToMethodCall->getNonArrayMethod() === '') {
             return null;
         }
 
-        return new MethodCall($propertyFetch, $arrayFuncCallToMethodCall->getNonArrayMethod(), $funcCall->getArgs());
+        return new MethodCall($expr, $arrayFuncCallToMethodCall->getNonArrayMethod(), $funcCall->getArgs());
     }
 
     private function refactorEmptyFuncCallArgs(
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        PropertyFetch $propertyFetch
-    ): MethodCall | PropertyFetch {
+        MethodCall|PropertyFetch|Variable $expr
+    ): MethodCall | PropertyFetch | Variable {
         if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
             return $this->nodeFactory->createMethodCall(
-                $propertyFetch,
+                $expr,
                 $argumentFuncCallToMethodCall->getMethodIfNoArgs()
             );
         }
 
-        return $propertyFetch;
+        return $expr;
     }
 }
