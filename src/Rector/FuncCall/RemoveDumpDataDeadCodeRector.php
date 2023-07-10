@@ -7,8 +7,8 @@ namespace RectorLaravel\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\NodeTraverser;
 use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -65,25 +65,22 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [FuncCall::class];
+        return [Expression::class];
     }
 
     /**
-     * @param FuncCall $node
+     * @param Expression $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): int|Node|array|null
     {
-        if (! $this->isNames($node->name, ['dd', 'dump'])) {
+        if (! $node->expr instanceof FuncCall) {
             return null;
         }
 
-        $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
-        if (! $parentNode instanceof Expression) {
+        if (! $this->isNames($node->expr->name, ['dd', 'dump'])) {
             return null;
         }
 
-        $this->removeNode($node);
-
-        return null;
+        return NodeTraverser::REMOVE_NODE;
     }
 }

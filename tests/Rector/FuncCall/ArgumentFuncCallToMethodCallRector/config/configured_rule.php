@@ -10,6 +10,7 @@ use RectorLaravel\ValueObject\ArrayFuncCallToMethodCall;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig
         ->ruleWithConfiguration(ArgumentFuncCallToMethodCallRector::class, [
+            new ArgumentFuncCallToMethodCall('auth', 'Illuminate\Contracts\Auth\Guard'),
             new ArgumentFuncCallToMethodCall('view', 'Illuminate\Contracts\View\Factory', 'make'),
             new ArgumentFuncCallToMethodCall('route', 'Illuminate\Routing\UrlGenerator', 'route'),
             new ArgumentFuncCallToMethodCall('back', 'Illuminate\Routing\Redirector', 'back', 'back'),
