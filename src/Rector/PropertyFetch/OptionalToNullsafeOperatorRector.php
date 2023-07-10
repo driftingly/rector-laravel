@@ -17,7 +17,6 @@ use PhpParser\Node\Expr\NullsafePropertyFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar;
 use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
-use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\Util\MultiInstanceofChecker;
 use Rector\Core\ValueObject\PhpVersion;
@@ -52,7 +51,6 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
 
     public function __construct(
         private readonly MultiInstanceofChecker $multiInstanceofChecker,
-        private readonly ArgsAnalyzer $argsAnalyzer
     ) {
     }
 
@@ -110,7 +108,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $this->argsAnalyzer->isArgInstanceInArgsPosition($node->var->args, 0)) {
+        if (! isset($node->var->args[0])) {
             return null;
         }
 

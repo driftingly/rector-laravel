@@ -34,7 +34,10 @@ class SomeFixture
 
     public function run()
     {
-        /** @var \Illuminate\Validation\Factory $validationFactory */
+
+        /**
+         * @var \Illuminate\Validation\Factory $validationFactory
+         */
         $validationFactory = $this->app['validator'];
         $validator = $validationFactory->make('...');
     }

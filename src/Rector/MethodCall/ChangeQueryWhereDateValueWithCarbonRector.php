@@ -12,9 +12,9 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -26,11 +26,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector
 {
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector,
-    ) {
-    }
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -72,15 +67,19 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [MethodCall::class];
+        return [Expression::class];
     }
 
     /**
-     * @param MethodCall $node
+     * @param Expression $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|array|int|null
     {
-        $expr = $this->matchWhereDateThirdArgValue($node);
+        if (! $node->expr instanceof MethodCall) {
+            return null;
+        }
+
+        $expr = $this->matchWhereDateThirdArgValue($node->expr);
         if (! $expr instanceof Expr) {
             return null;
         }
@@ -91,35 +90,38 @@ CODE_SAMPLE
             // 1. extract assign
             $dateTimeVariable = new Variable('dateTime');
             $assign = new Assign($dateTimeVariable, $expr);
-            $this->nodesToAddCollector->addNodeBeforeNode($assign, $node);
 
-            if (! $node->args[2] instanceof Arg) {
-                return null;
+            $nodes = [new Expression($assign), $node];
+
+            if (! $node->expr->args[2] instanceof Arg) {
+                return $nodes;
             }
 
-            $node->args[2]->value = $dateTimeVariable;
-            if (! $node->args[1] instanceof Arg) {
-                return null;
+            $node->expr->args[2]->value = $dateTimeVariable;
+            if (! $node->expr->args[1] instanceof Arg) {
+                return $nodes;
             }
 
             // update assign ">" → ">="
-            $this->changeCompareSignExpr($node->args[1]);
+            $this->changeCompareSignExpr($node->expr->args[1]);
 
             // 2. add "whereTime()" time call
-            $whereTimeMethodCall = $this->createWhereTimeMethodCall($node, $dateTimeVariable);
-            $this->nodesToAddCollector->addNodeAfterNode($whereTimeMethodCall, $node);
+            $whereTimeMethodCall = $this->createWhereTimeMethodCall($node->expr, $dateTimeVariable);
 
-            return $node;
+            $nodes[] = new Expression($whereTimeMethodCall);
+
+            return $nodes;
         }
 
-        if ($expr instanceof Variable && $node->args[1] instanceof Arg) {
+        if ($expr instanceof Variable && $node->expr->args[1] instanceof Arg) {
             $dateTimeVariable = $expr;
 
-            $this->changeCompareSignExpr($node->args[1]);
+            $this->changeCompareSignExpr($node->expr->args[1]);
 
             // 2. add "whereTime()" time call
-            $whereTimeMethodCall = $this->createWhereTimeMethodCall($node, $dateTimeVariable);
-            $this->nodesToAddCollector->addNodeAfterNode($whereTimeMethodCall, $node);
+            $whereTimeMethodCall = $this->createWhereTimeMethodCall($node->expr, $dateTimeVariable);
+
+            return [$node, new Expression($whereTimeMethodCall)];
         }
 
         return null;
