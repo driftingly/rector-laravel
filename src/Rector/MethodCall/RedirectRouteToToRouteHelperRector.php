@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Defluent\NodeAnalyzer\FluentChainMethodCallNodeAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -21,11 +21,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class RedirectRouteToToRouteHelperRector extends AbstractRector
 {
-    public function __construct(
-        private readonly FluentChainMethodCallNodeAnalyzer $fluentChainMethodCallNodeAnalyzer,
-    ) {
-    }
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -96,7 +91,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $rootExpr = $this->fluentChainMethodCallNodeAnalyzer->resolveRootExpr($methodCall);
+        $rootExpr = $this->resolveRootExpr($methodCall);
         $parentNode = $rootExpr->getAttribute(AttributeKey::PARENT_NODE);
 
         if (! $parentNode instanceof MethodCall) {
@@ -118,9 +113,10 @@ CODE_SAMPLE
         $childElement = $methodCall->getAttribute('parent');
 
         if ($childElement instanceof MethodCall) {
-            $this->removeNode($methodCall);
             $parentNode->var->name = new Name('to_route');
             $parentNode->var->args = $methodCall->getArgs();
+            unset($childElement->var);
+            $childElement->var = $parentNode->var;
         } else {
             return new FuncCall(new Name('to_route'), $methodCall->getArgs());
         }
@@ -139,5 +135,16 @@ CODE_SAMPLE
         }
 
         return new FuncCall(new Name('to_route'), $staticCall->args);
+    }
+
+    private function resolveRootExpr(MethodCall $methodCall): Expr | Name
+    {
+        $callerNode = $methodCall->var;
+
+        while ($callerNode instanceof MethodCall || $callerNode instanceof StaticCall) {
+            $callerNode = $callerNode instanceof StaticCall ? $callerNode->class : $callerNode->var;
+        }
+
+        return $callerNode;
     }
 }

@@ -72,7 +72,7 @@ CODE_SAMPLE
     /**
      * @param Class_ $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node)
     {
         if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;
@@ -123,7 +123,8 @@ CODE_SAMPLE
             );
         }
 
-        $this->nodeRemover->removeNode($datesProperty);
+        unset($node->stmts[array_search($datesProperty, $node->stmts, true)]);
+
         return null;
     }
 

@@ -7,12 +7,12 @@ use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\FuncCall\FuncCallToNewRector;
 use Rector\Transform\Rector\StaticCall\StaticCallToMethodCallRector;
-use Rector\Transform\ValueObject\ArgumentFuncCallToMethodCall;
-use Rector\Transform\ValueObject\ArrayFuncCallToMethodCall;
 use Rector\Transform\ValueObject\StaticCallToMethodCall;
 use RectorLaravel\Rector\FuncCall\ArgumentFuncCallToMethodCallRector;
 use RectorLaravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
 use RectorLaravel\Rector\StaticCall\RequestStaticValidateToInjectRector;
+use RectorLaravel\ValueObject\ArgumentFuncCallToMethodCall;
+use RectorLaravel\ValueObject\ArrayFuncCallToMethodCall;
 
 /**
  * @see https://www.freecodecamp.org/news/moving-away-from-magic-or-why-i-dont-want-to-use-laravel-anymore-2ce098c979bd/
