@@ -58,17 +58,6 @@ return static function (RectorConfig $rectorConfig): void {
         ),
         ]);
 
-    // https://github.com/laravel/framework/commit/8b40e8b7cba2fbf8337dfc05e3c6a62ae457e889
-    $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
-            'Illuminate\Foundation\Http\FormRequest',
-            'validated',
-            0,
-            'key',
-        ),
-            new ArgumentAdder('Illuminate\Foundation\Http\FormRequest', 'validated', 1, 'default'),
-        ]);
-
     // https://github.com/laravel/framework/commit/84c78b9f5f3dad58f92161069e6482f7267ffdb6
     $rectorConfig
         ->ruleWithConfiguration(ChangeMethodVisibilityRector::class, [new ChangeMethodVisibility(
