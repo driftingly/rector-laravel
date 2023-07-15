@@ -88,6 +88,8 @@ CODE_SAMPLE
                 return null;
             }
 
+            // The randomEnum() method is a special case where the faker instance is used
+            // see https://github.com/spatie/laravel-enum#faker-provider
             if ($this->isName($node->name, 'randomEnum')) {
                 return null;
             }
