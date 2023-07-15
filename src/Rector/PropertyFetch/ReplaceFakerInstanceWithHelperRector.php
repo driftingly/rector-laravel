@@ -7,10 +7,9 @@ namespace RectorLaravel\Rector\PropertyFetch;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassLike;
-use PHPStan\Type\ObjectType;
+use PHPStan\Reflection\ClassReflection;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,6 +18,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceFakerInstanceWithHelperRector extends AbstractRector
 {
+    public function __construct(private readonly ReflectionResolver $reflectionResolver) {}
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -93,14 +94,14 @@ CODE_SAMPLE
             return true;
         }
 
-        $classLike = $this->betterNodeFinder->findParentType($propertyFetch, ClassLike::class);
+        $classReflection = $this->reflectionResolver->resolveClassReflection($propertyFetch);
 
-        if (! $classLike instanceof ClassLike) {
+        if (! $classReflection instanceof ClassReflection) {
             return true;
         }
 
-        if ($classLike instanceof Class_) {
-            return ! $this->isObjectType($classLike, new ObjectType('Illuminate\Database\Eloquent\Factories\Factory'));
+        if (! $classReflection->isSubclassOf('Illuminate\Database\Eloquent\Factories\Factory')) {
+            return true;
         }
 
         return false;

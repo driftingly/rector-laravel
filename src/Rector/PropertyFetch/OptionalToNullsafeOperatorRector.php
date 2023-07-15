@@ -18,7 +18,6 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar;
 use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Util\MultiInstanceofChecker;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -48,11 +47,6 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
      * @var string[]
      */
     private array $excludeMethods = [];
-
-    public function __construct(
-        private readonly MultiInstanceofChecker $multiInstanceofChecker,
-    ) {
-    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -121,7 +115,7 @@ CODE_SAMPLE
         $firstArg = $node->var->args[0];
 
         // skip if the first arg cannot be used as variable directly
-        if ($this->multiInstanceofChecker->isInstanceOf($firstArg->value, self::SKIP_VALUE_TYPES)) {
+        if ($this->shouldSkipFirstArg($firstArg->value)) {
             return null;
         }
 
@@ -154,5 +148,16 @@ CODE_SAMPLE
         return isset($funcCall->args[1]) && $funcCall->args[1] instanceof Arg && ! $this->valueResolver->isNull(
             $funcCall->args[1]->value
         );
+    }
+
+    private function shouldSkipFirstArg(Expr $value): bool
+    {
+        foreach (self::SKIP_VALUE_TYPES as $type) {
+            if ($value instanceof $type) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\Node;
-use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use PHPStan\Type\ObjectType;
+use PHPStan\Reflection\ClassReflection;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
 use RectorLaravel\NodeAnalyzer\StaticCallAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -27,7 +27,8 @@ final class AddParentRegisterToEventServiceProviderRector extends AbstractRector
     private const REGISTER = 'register';
 
     public function __construct(
-        private readonly StaticCallAnalyzer $staticCallAnalyzer
+        private readonly StaticCallAnalyzer $staticCallAnalyzer,
+        private readonly ReflectionResolver $reflectionResolver,
     ) {
     }
 
@@ -78,15 +79,13 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        $classLike = $this->betterNodeFinder->findParentType($node, ClassLike::class);
-        if (! $classLike instanceof ClassLike) {
+        $classReflection = $this->reflectionResolver->resolveClassReflection($node);
+
+        if (! $classReflection instanceof ClassReflection) {
             return null;
         }
 
-        if (! $this->isObjectType(
-            $classLike,
-            new ObjectType('Illuminate\Foundation\Support\Providers\EventServiceProvider')
-        )) {
+        if (! $classReflection->isSubclassOf('Illuminate\Foundation\Support\Providers\EventServiceProvider')) {
             return null;
         }
 
