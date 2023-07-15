@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -118,16 +117,5 @@ CODE_SAMPLE
         }
 
         return new FuncCall(new Name('back'), $staticCall->args);
-    }
-
-    private function resolveRootExpr(MethodCall $methodCall): Expr | Name
-    {
-        $callerNode = $methodCall->var;
-
-        while ($callerNode instanceof MethodCall || $callerNode instanceof StaticCall) {
-            $callerNode = $callerNode instanceof StaticCall ? $callerNode->class : $callerNode->var;
-        }
-
-        return $callerNode;
     }
 }
