@@ -19,7 +19,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceFakerInstanceWithHelperRector extends AbstractRector
 {
-    public function __construct(private readonly ReflectionResolver $reflectionResolver) {}
+    public function __construct(
+        private readonly ReflectionResolver $reflectionResolver
+    ) {
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

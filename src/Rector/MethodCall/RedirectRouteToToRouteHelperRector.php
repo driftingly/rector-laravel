@@ -83,7 +83,7 @@ CODE_SAMPLE
         return $this->updateRedirectStaticCall($node);
     }
 
-    private function updateRedirectHelperCall(MethodCall $methodCall): MethodCall|FuncCall|null
+    private function updateRedirectHelperCall(MethodCall $methodCall): ?FuncCall
     {
         if (! $this->isName($methodCall->name, 'route')) {
             return null;
