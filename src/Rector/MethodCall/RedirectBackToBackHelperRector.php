@@ -11,7 +11,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -85,43 +84,27 @@ CODE_SAMPLE
         return $this->updateRedirectStaticCall($node);
     }
 
-    private function updateRedirectHelperCall(MethodCall $methodCall): MethodCall|FuncCall|null
+    private function updateRedirectHelperCall(MethodCall $methodCall): FuncCall|null
     {
         if (! $this->isName($methodCall->name, 'back')) {
             return null;
         }
 
-        $rootExpr = $this->resolveRootExpr($methodCall);
-        $parentNode = $rootExpr->getAttribute(AttributeKey::PARENT_NODE);
-
-        if (! $parentNode instanceof MethodCall) {
+        if (! $methodCall->var instanceof FuncCall) {
             return null;
         }
 
-        if (! $parentNode->var instanceof FuncCall) {
+        if ($methodCall->var->getArgs() !== []) {
             return null;
         }
 
-        if ($parentNode->var->getArgs() !== []) {
+        if (! $this->isName($methodCall->var->name, 'redirect')) {
             return null;
         }
 
-        if (! $this->isName($parentNode->var->name, 'redirect')) {
-            return null;
-        }
-
-        $childElement = $methodCall->getAttribute('parent');
-
-        if ($childElement instanceof MethodCall) {
-            $parentNode->var->name = new Name('back');
-            $parentNode->var->args = $methodCall->getArgs();
-            unset($childElement->var);
-            $childElement->var = $parentNode->var;
-        } else {
-            return new FuncCall(new Name('back'), $methodCall->getArgs());
-        }
-
-        return $parentNode;
+        $methodCall->var->name = new Name('back');
+        $methodCall->var->args = $methodCall->getArgs();
+        return $methodCall->var;
     }
 
     private function updateRedirectStaticCall(StaticCall $staticCall): ?FuncCall
