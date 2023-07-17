@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\StaticCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\Error;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -12,8 +15,10 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\Reflection\ReflectionResolver;
@@ -76,23 +81,107 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [StaticCall::class, FuncCall::class];
+        return [ClassMethod::class];
     }
 
     /**
-     * @param  StaticCall|FuncCall  $node
+     * @param ClassMethod $node
      */
     public function refactor(Node $node): ?Node
     {
-        if ($this->shouldSkip($node)) {
+        $classReflection = $this->reflectionResolver->resolveClassReflection($node);
+
+        if (! $classReflection instanceof ClassReflection || ! $classReflection->isClass()) {
             return null;
         }
 
-        $requestParam = $this->addRequestParameterIfMissing($node, new ObjectType('Illuminate\Http\Request'));
+        foreach ((array) $node->stmts as $stmt) {
+            $staticFuncCall = $this->findRequestUsage($stmt);
 
-        if (! $requestParam instanceof Param) {
-            return null;
+            if ($staticFuncCall === null) {
+                continue;
+            }
+
+            if ($this->shouldSkip($node, $staticFuncCall, $classReflection->getName())) {
+                continue;
+            }
+
+            $result = $this->createMethodCallFromStaticCallOrFuncCall($node, $staticFuncCall);
+
+            if ($result === null) {
+                continue;
+            }
+
+            /** @var Expression $stmt */
+            $this->replace($stmt, $result);
         }
+
+        return $node;
+    }
+
+    private function replace(Expression $stmt, Error|MethodCall|Variable $result): void
+    {
+        if ($result instanceof MethodCall) {
+            if ($stmt->expr instanceof Assign) {
+                $stmt->expr->expr = $result;
+            } else {
+                $stmt->expr = $result;
+            }
+        }
+
+        if ($result instanceof Variable) {
+            if ($stmt->expr instanceof Assign) {
+                if ($stmt->expr->expr instanceof MethodCall) {
+                    $stmt->expr->expr->var = $result;
+                } else {
+                    $stmt->expr->expr = $result;
+                }
+            } elseif ($stmt->expr instanceof MethodCall) {
+                $stmt->expr->var = $result;
+            } else {
+                $stmt->expr = $result;
+            }
+        }
+    }
+
+    private function shouldSkip(ClassMethod $classMethod, StaticCall|FuncCall $node, string $className): bool
+    {
+        if ($node instanceof StaticCall) {
+            return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);
+        }
+
+        $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
+        $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
+
+        if ($classMethodNamespaceName !== $className) {
+            return true;
+        }
+
+        return ! $this->isName($node, 'request');
+    }
+
+    private function addRequestParameterIfMissing(ClassMethod $classMethod, ObjectType $objectType): Param
+    {
+        foreach ($classMethod->params as $paramNode) {
+            if (! $this->nodeTypeResolver->isObjectType($paramNode, $objectType)) {
+                continue;
+            }
+
+            return $paramNode;
+        }
+
+        $classMethod->params[] = $paramNode = new Param(new Variable(
+            'request'
+        ), null, new FullyQualified($objectType->getClassName()));
+
+        return $paramNode;
+    }
+
+    private function createMethodCallFromStaticCallOrFuncCall(
+        ClassMethod $classMethod,
+        StaticCall|FuncCall $node
+    ): Variable|MethodCall|Error|null {
+        $requestParam = $this->addRequestParameterIfMissing($classMethod, new ObjectType('Illuminate\Http\Request'));
 
         $methodName = $this->getName($node->name);
 
@@ -111,50 +200,29 @@ CODE_SAMPLE
         return new MethodCall($requestParam->var, new Identifier($methodName), $node->args);
     }
 
-    private function shouldSkip(StaticCall|FuncCall $node): bool
+    private function findRequestUsage(Stmt $stmt): StaticCall|FuncCall|null
     {
-        if ($node instanceof StaticCall) {
-            return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);
-        }
-
-        $class = $this->betterNodeFinder->findParentType($node, Class_::class);
-        if (! $class instanceof Class_) {
-            return true;
-        }
-
-        $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
-        if ($classMethod instanceof ClassMethod) {
-            $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
-            $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
-            $classNamespaceName = $class->namespacedName?->toString();
-            if ($classMethodNamespaceName !== $classNamespaceName) {
-                return true;
-            }
-        }
-
-        return ! $this->isName($node, 'request');
-    }
-
-    private function addRequestParameterIfMissing(Node $node, ObjectType $objectType): ?Param
-    {
-        $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
-
-        if (! $classMethod instanceof ClassMethod) {
+        if (! $stmt instanceof Expression) {
             return null;
         }
 
-        foreach ($classMethod->params as $paramNode) {
-            if (! $this->nodeTypeResolver->isObjectType($paramNode, $objectType)) {
-                continue;
-            }
-
-            return $paramNode;
+        if ($stmt->expr instanceof Assign) {
+            return $this->findStaticCallOrFuncCall($stmt->expr->expr);
         }
 
-        $classMethod->params[] = $paramNode = new Param(new Variable(
-            'request'
-        ), null, new FullyQualified($objectType->getClassName()));
+        return $this->findStaticCallOrFuncCall($stmt->expr);
+    }
 
-        return $paramNode;
+    private function findStaticCallOrFuncCall(Expr $staticFuncCall): FuncCall|StaticCall|null
+    {
+        if ($staticFuncCall instanceof FuncCall || $staticFuncCall instanceof StaticCall) {
+            return $staticFuncCall;
+        }
+
+        if ($staticFuncCall instanceof MethodCall && $staticFuncCall->var instanceof FuncCall) {
+            return $staticFuncCall->var;
+        }
+
+        return null;
     }
 }
