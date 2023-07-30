@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\StaticCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\Error;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -15,9 +12,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Expression;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
@@ -95,56 +90,41 @@ CODE_SAMPLE
             return null;
         }
 
-        foreach ((array) $node->stmts as $stmt) {
-            $staticFuncCall = $this->findRequestUsage($stmt);
-
-            if ($staticFuncCall === null) {
-                continue;
+        $this->traverseNodesWithCallable((array) $node->stmts, function (Node $subNode) use (
+            $node,
+            $classReflection
+        ): ?Node {
+            if (! $subNode instanceof StaticCall && ! $subNode instanceof FuncCall) {
+                return null;
             }
 
-            if ($this->shouldSkip($node, $staticFuncCall, $classReflection->getName())) {
-                continue;
+            if ($this->shouldSkip($node, $subNode, $classReflection->getName())) {
+                return null;
             }
 
-            $result = $this->createMethodCallFromStaticCallOrFuncCall($node, $staticFuncCall);
+            $requestParam = $this->addRequestParameterIfMissing($node, new ObjectType('Illuminate\Http\Request'));
 
-            if ($result === null) {
-                continue;
+            $methodName = $this->getName($subNode->name);
+
+            if ($methodName === null) {
+                return null;
             }
 
-            /** @var Expression $stmt */
-            $this->replace($stmt, $result);
-        }
-
-        return $node;
-    }
-
-    private function replace(Expression $stmt, Error|MethodCall|Variable $result): void
-    {
-        if ($result instanceof MethodCall) {
-            if ($stmt->expr instanceof Assign) {
-                $stmt->expr->expr = $result;
-            } else {
-                $stmt->expr = $result;
-            }
-        }
-
-        if ($result instanceof Variable) {
-            if ($stmt->expr instanceof Assign) {
-                if ($stmt->expr->expr instanceof MethodCall) {
-                    $stmt->expr->expr->var = $result;
-                } else {
-                    $stmt->expr->expr = $result;
+            if ($subNode instanceof FuncCall) {
+                if ($subNode->args === []) {
+                    return $requestParam->var;
                 }
-            } elseif ($stmt->expr instanceof MethodCall) {
-                $stmt->expr->var = $result;
-            } else {
-                $stmt->expr = $result;
+
+                $methodName = 'input';
             }
-        }
+
+            return new MethodCall($requestParam->var, new Identifier($methodName), $subNode->args);
+        });
+
+        return null;
     }
 
-    private function shouldSkip(ClassMethod $classMethod, StaticCall|FuncCall $node, string $className): bool
+    private function shouldSkip(ClassMethod $classMethod, Node $node, string $className): bool
     {
         if ($node instanceof StaticCall) {
             return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);
@@ -152,7 +132,6 @@ CODE_SAMPLE
 
         $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
         $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
-
         if ($classMethodNamespaceName !== $className) {
             return true;
         }
@@ -175,54 +154,5 @@ CODE_SAMPLE
         ), null, new FullyQualified($objectType->getClassName()));
 
         return $paramNode;
-    }
-
-    private function createMethodCallFromStaticCallOrFuncCall(
-        ClassMethod $classMethod,
-        StaticCall|FuncCall $node
-    ): Variable|MethodCall|Error|null {
-        $requestParam = $this->addRequestParameterIfMissing($classMethod, new ObjectType('Illuminate\Http\Request'));
-
-        $methodName = $this->getName($node->name);
-
-        if ($methodName === null) {
-            return null;
-        }
-
-        if ($node instanceof FuncCall) {
-            if ($node->args === []) {
-                return $requestParam->var;
-            }
-
-            $methodName = 'input';
-        }
-
-        return new MethodCall($requestParam->var, new Identifier($methodName), $node->args);
-    }
-
-    private function findRequestUsage(Stmt $stmt): StaticCall|FuncCall|null
-    {
-        if (! $stmt instanceof Expression) {
-            return null;
-        }
-
-        if ($stmt->expr instanceof Assign) {
-            return $this->findStaticCallOrFuncCall($stmt->expr->expr);
-        }
-
-        return $this->findStaticCallOrFuncCall($stmt->expr);
-    }
-
-    private function findStaticCallOrFuncCall(Expr $staticFuncCall): FuncCall|StaticCall|null
-    {
-        if ($staticFuncCall instanceof FuncCall || $staticFuncCall instanceof StaticCall) {
-            return $staticFuncCall;
-        }
-
-        if ($staticFuncCall instanceof MethodCall && $staticFuncCall->var instanceof FuncCall) {
-            return $staticFuncCall->var;
-        }
-
-        return null;
     }
 }
