@@ -13,9 +13,10 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractScopeAwareRector;
 use Rector\Core\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -24,7 +25,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://github.com/laravel/framework/pull/27276
  * @see \RectorLaravel\Tests\Rector\StaticCall\RequestStaticValidateToInjectRector\RequestStaticValidateToInjectRectorTest
  */
-final class RequestStaticValidateToInjectRector extends AbstractRector
+final class RequestStaticValidateToInjectRector extends AbstractScopeAwareRector
 {
     /**
      * @var ObjectType[]
@@ -79,26 +80,15 @@ CODE_SAMPLE
         return [ClassMethod::class];
     }
 
-    /**
-     * @param ClassMethod $node
-     */
-    public function refactor(Node $node): ?Node
+    public function refactorWithScope(Node $node, Scope $scope): ?Node
     {
-        $classReflection = $this->reflectionResolver->resolveClassReflection($node);
-
-        if (! $classReflection instanceof ClassReflection || ! $classReflection->isClass()) {
-            return null;
-        }
-
-        $this->traverseNodesWithCallable((array) $node->stmts, function (Node $subNode) use (
-            $node,
-            $classReflection
-        ): ?Node {
+        /** @var ClassMethod $node */
+        $this->traverseNodesWithCallable((array) $node->stmts, function (Node $subNode) use ($node, $scope): ?Node {
             if (! $subNode instanceof StaticCall && ! $subNode instanceof FuncCall) {
                 return null;
             }
 
-            if ($this->shouldSkip($node, $subNode, $classReflection->getName())) {
+            if ($this->shouldSkip($node, $subNode, $scope)) {
                 return null;
             }
 
@@ -124,15 +114,24 @@ CODE_SAMPLE
         return null;
     }
 
-    private function shouldSkip(ClassMethod $classMethod, Node $node, string $className): bool
+    private function shouldSkip(ClassMethod $classMethod, StaticCall|FuncCall $node, Scope $scope): bool
     {
+        $classReflection = $scope->getClassReflection();
+
+        if (! $classReflection instanceof ClassReflection || ! $classReflection->isClass()) {
+            return true;
+        }
+
         if ($node instanceof StaticCall) {
             return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);
         }
 
-        $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
+        $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod(
+            $classMethod,
+            $scope
+        );
         $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
-        if ($classMethodNamespaceName !== $className) {
+        if ($classMethodNamespaceName !== $classReflection->getName()) {
             return true;
         }
 
