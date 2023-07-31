@@ -8,6 +8,8 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
+            'another_name' => $this->faker->name(),
+            'another_email' => $this->faker->unique()->safeEmail(),
         ];
     }
 }
@@ -23,6 +25,8 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name,
             'email' => fake()->unique()->safeEmail,
+            'another_name' => fake()->name(),
+            'another_email' => fake()->unique()->safeEmail(),
         ];
     }
 }
