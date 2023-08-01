@@ -1,4 +1,4 @@
-# 34 Rules Overview
+# 36 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -849,15 +849,30 @@ return static function (RectorConfig $rectorConfig): void {
 
 <br>
 
-## SubStrToStartsWithOrEndsWithStaticMethodCallRector
+## SleepFuncToSleepStaticCallRector
 
-Change `substr()` to `startsWith()` or `endsWith()` static method call where applicable.
+Use `Sleep::sleep()` and `Sleep::usleep()` instead of the `sleep()` and `usleep()` function.
 
-- class: [`RectorLaravel\Rector\FuncCall\SubStrToStartsWithOrEndsWithStaticMethodCallRector`](../src/Rector/Expr/SubStrToStartsWithOrEndsWithStaticMethodCallRector/SubStrToStartsWithOrEndsWithStaticMethodCallRector.php)
+- class: [`RectorLaravel\Rector\FuncCall\SleepFuncToSleepStaticCallRector`](../src/Rector/FuncCall/SleepFuncToSleepStaticCallRector.php)
 
 ```diff
--$string = substr($string, 0, 5) === 'foo';
-+$string = Str::startsWith($string, 'foo');
+-sleep(5);
++\Illuminate\Support\Sleep::sleep(5);
+```
+
+<br>
+
+## SubStrToStartsWithOrEndsWithStaticMethodCallRector
+
+Use `Str::startsWith()` or `Str::endsWith()` instead of `substr()` === `$str`
+
+- class: [`RectorLaravel\Rector\Expr\SubStrToStartsWithOrEndsWithStaticMethodCallRector\SubStrToStartsWithOrEndsWithStaticMethodCallRector`](../src/Rector/Expr/SubStrToStartsWithOrEndsWithStaticMethodCallRector/SubStrToStartsWithOrEndsWithStaticMethodCallRector.php)
+
+```diff
+-if (substr($str, 0, 3) === 'foo') {
++if (Str::startsWith($str, 'foo')) {
+     // do something
+ }
 ```
 
 <br>
