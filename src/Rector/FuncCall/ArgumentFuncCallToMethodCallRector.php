@@ -7,8 +7,6 @@ namespace RectorLaravel\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
@@ -29,14 +27,28 @@ use Webmozart\Assert\Assert;
 final class ArgumentFuncCallToMethodCallRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\TypeAnalyzer\ArrayTypeAnalyzer
+     */
+    private $arrayTypeAnalyzer;
+
+    /**
+     * @readonly
+     * @var \Rector\Transform\NodeAnalyzer\FuncCallStaticCallToMethodCallAnalyzer
+     */
+    private $funcCallStaticCallToMethodCallAnalyzer;
+
+    /**
      * @var ArgumentFuncCallToMethodCallInterface[]
      */
-    private array $argumentFuncCallToMethodCalls = [];
+    private $argumentFuncCallToMethodCalls = [];
 
     public function __construct(
-        private readonly ArrayTypeAnalyzer $arrayTypeAnalyzer,
-        private readonly FuncCallStaticCallToMethodCallAnalyzer $funcCallStaticCallToMethodCallAnalyzer
+        ArrayTypeAnalyzer $arrayTypeAnalyzer,
+        FuncCallStaticCallToMethodCallAnalyzer $funcCallStaticCallToMethodCallAnalyzer
     ) {
+        $this->arrayTypeAnalyzer = $arrayTypeAnalyzer;
+        $this->funcCallStaticCallToMethodCallAnalyzer = $funcCallStaticCallToMethodCallAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -123,7 +135,7 @@ CODE_SAMPLE
                         $expr = $this->funcCallStaticCallToMethodCallAnalyzer->matchTypeProvidingExpr(
                             $class,
                             $classMethod,
-                            new ObjectType($argumentFuncCallToMethodCall->getClass()),
+                            new ObjectType($argumentFuncCallToMethodCall->getClass())
                         );
 
                         $hasChanged = true;
@@ -135,7 +147,7 @@ CODE_SAMPLE
                         $expr = $this->funcCallStaticCallToMethodCallAnalyzer->matchTypeProvidingExpr(
                             $class,
                             $classMethod,
-                            new ObjectType($argumentFuncCallToMethodCall->getClass()),
+                            new ObjectType($argumentFuncCallToMethodCall->getClass())
                         );
 
                         $hasChanged = true;
@@ -169,11 +181,15 @@ CODE_SAMPLE
         $this->argumentFuncCallToMethodCalls = $configuration;
     }
 
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable $expr
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable
+     */
     public function refactorFuncCallToMethodCall(
         FuncCall $node,
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        MethodCall|PropertyFetch|Variable $expr
-    ): MethodCall|PropertyFetch|Variable {
+        $expr
+    ) {
         if ($node->args === []) {
             return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $expr);
         }
@@ -187,10 +203,13 @@ CODE_SAMPLE
         return $this->nodeFactory->createMethodCall($expr, $methodName, $node->args);
     }
 
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable $expr
+     */
     private function refactorArrayFunctionToMethodCall(
         FuncCall $funcCall,
         ArrayFuncCallToMethodCall $arrayFuncCallToMethodCall,
-        MethodCall|PropertyFetch|Variable $expr
+        $expr
     ): ?Node {
         if ($funcCall->getArgs() === []) {
             return $expr;
@@ -207,10 +226,12 @@ CODE_SAMPLE
         return new MethodCall($expr, $arrayFuncCallToMethodCall->getNonArrayMethod(), $funcCall->getArgs());
     }
 
-    private function refactorEmptyFuncCallArgs(
-        ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        MethodCall|PropertyFetch|Variable $expr
-    ): MethodCall | PropertyFetch | Variable {
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable $expr
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable
+     */
+    private function refactorEmptyFuncCallArgs(ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall, $expr)
+    {
         if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
             return $this->nodeFactory->createMethodCall($expr, $argumentFuncCallToMethodCall->getMethodIfNoArgs());
         }

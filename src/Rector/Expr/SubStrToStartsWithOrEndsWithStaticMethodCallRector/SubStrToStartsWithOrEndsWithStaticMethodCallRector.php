@@ -22,20 +22,16 @@ class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Use Str::startsWith() or Str::endsWith() instead of substr() === $str', [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
+            new CodeSample(<<<'CODE_SAMPLE'
 if (substr($str, 0, 3) === 'foo') {
     // do something
 }
 CODE_SAMPLE
-                ,
-                <<<'CODE_SAMPLE'
+, <<<'CODE_SAMPLE'
 if (Str::startsWith($str, 'foo')) {
     // do something
 }
-CODE_SAMPLE
-                ,
-            ),
+CODE_SAMPLE),
         ]);
     }
 
@@ -55,10 +51,9 @@ CODE_SAMPLE
 
         /** @var Expr\FuncCall|null $functionCall */
         $functionCall = array_values(
-            array_filter([$node->left, $node->right], fn ($node) => $node instanceof FuncCall && $this->isName(
-                $node,
-                'substr'
-            ))
+            array_filter([$node->left, $node->right], function ($node) {
+                return $node instanceof FuncCall && $this->isName($node, 'substr');
+            })
         )[0] ?? null;
 
         if (! $functionCall instanceof FuncCall) {
@@ -67,7 +62,9 @@ CODE_SAMPLE
 
         /** @var Expr $otherNode */
         $otherNode = array_values(
-            array_filter([$node->left, $node->right], static fn ($node) => $node !== $functionCall)
+            array_filter([$node->left, $node->right], static function ($node) use ($functionCall) {
+                return $node !== $functionCall;
+            })
         )[0] ?? null;
 
         // get the function call second argument value
