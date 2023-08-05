@@ -7,5 +7,5 @@ use RectorLaravel\Set\Packages\Cashier\CashierLevelSetList;
 use RectorLaravel\Set\Packages\Cashier\CashierSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->sets([CashierSetList::LARAVEL_CASHIER_140, CashierLevelSetList::UP_TO_LARAVEL_CASHIER_13]);
+    $rectorConfig->sets([CashierSetList::LARAVEL_CASHIER_140, CashierLevelSetList::UP_TO_LARAVEL_CASHIER_130]);
 };
