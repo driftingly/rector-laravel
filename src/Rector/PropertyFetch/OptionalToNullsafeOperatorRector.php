@@ -16,10 +16,8 @@ use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\NullsafePropertyFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar;
-use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
-use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Util\MultiInstanceofChecker;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -33,7 +31,7 @@ use Webmozart\Assert\Assert;
  *
  * @see \RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest
  */
-final class OptionalToNullsafeOperatorRector extends AbstractRector implements MinPhpVersionInterface, AllowEmptyConfigurableRectorInterface
+final class OptionalToNullsafeOperatorRector extends AbstractRector implements MinPhpVersionInterface, ConfigurableRectorInterface
 {
     /**
      * @var string
@@ -49,12 +47,6 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
      * @var string[]
      */
     private array $excludeMethods = [];
-
-    public function __construct(
-        private readonly MultiInstanceofChecker $multiInstanceofChecker,
-        private readonly ArgsAnalyzer $argsAnalyzer
-    ) {
-    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -110,7 +102,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $this->argsAnalyzer->isArgInstanceInArgsPosition($node->var->args, 0)) {
+        if (! isset($node->var->args[0])) {
             return null;
         }
 
@@ -123,7 +115,7 @@ CODE_SAMPLE
         $firstArg = $node->var->args[0];
 
         // skip if the first arg cannot be used as variable directly
-        if ($this->multiInstanceofChecker->isInstanceOf($firstArg->value, self::SKIP_VALUE_TYPES)) {
+        if ($this->shouldSkipFirstArg($firstArg->value)) {
             return null;
         }
 
@@ -156,5 +148,16 @@ CODE_SAMPLE
         return isset($funcCall->args[1]) && $funcCall->args[1] instanceof Arg && ! $this->valueResolver->isNull(
             $funcCall->args[1]->value
         );
+    }
+
+    private function shouldSkipFirstArg(Expr $value): bool
+    {
+        foreach (self::SKIP_VALUE_TYPES as $type) {
+            if ($value instanceof $type) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

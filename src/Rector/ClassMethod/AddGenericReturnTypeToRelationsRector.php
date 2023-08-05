@@ -7,13 +7,12 @@ namespace RectorLaravel\Rector\ClassMethod;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -97,7 +96,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($this->shouldSkipNode($node)) {
+        if ($this->shouldSkipNode($node, $scope)) {
             return null;
         }
 
@@ -301,20 +300,20 @@ CODE_SAMPLE
         return $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForChildGeneric));
     }
 
-    private function shouldSkipNode(ClassMethod $classMethod): bool
+    private function shouldSkipNode(ClassMethod $classMethod, Scope $scope): bool
     {
         if ($classMethod->stmts === null) {
             return true;
         }
 
-        $classLike = $this->betterNodeFinder->findParentType($classMethod, ClassLike::class);
+        $classReflection = $scope->getClassReflection();
 
-        if (! $classLike instanceof ClassLike) {
+        if (! $classReflection instanceof ClassReflection || $classReflection->isAnonymous()) {
             return true;
         }
 
-        if ($classLike instanceof Class_) {
-            return ! $this->isObjectType($classLike, new ObjectType('Illuminate\Database\Eloquent\Model'));
+        if (! $classReflection->isTrait() && ! $classReflection->isSubclassOf('Illuminate\Database\Eloquent\Model')) {
+            return true;
         }
 
         return false;

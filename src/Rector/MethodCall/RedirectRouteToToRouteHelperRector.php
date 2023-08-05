@@ -10,8 +10,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Defluent\NodeAnalyzer\FluentChainMethodCallNodeAnalyzer;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,11 +19,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class RedirectRouteToToRouteHelperRector extends AbstractRector
 {
-    public function __construct(
-        private readonly FluentChainMethodCallNodeAnalyzer $fluentChainMethodCallNodeAnalyzer,
-    ) {
-    }
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -90,42 +83,27 @@ CODE_SAMPLE
         return $this->updateRedirectStaticCall($node);
     }
 
-    private function updateRedirectHelperCall(MethodCall $methodCall): MethodCall|FuncCall|null
+    private function updateRedirectHelperCall(MethodCall $methodCall): ?FuncCall
     {
         if (! $this->isName($methodCall->name, 'route')) {
             return null;
         }
 
-        $rootExpr = $this->fluentChainMethodCallNodeAnalyzer->resolveRootExpr($methodCall);
-        $parentNode = $rootExpr->getAttribute(AttributeKey::PARENT_NODE);
-
-        if (! $parentNode instanceof MethodCall) {
+        if (! $methodCall->var instanceof FuncCall) {
             return null;
         }
 
-        if (! $parentNode->var instanceof FuncCall) {
+        if ($methodCall->var->getArgs() !== []) {
             return null;
         }
 
-        if ($parentNode->var->getArgs() !== []) {
+        if (! $this->isName($methodCall->var->name, 'redirect')) {
             return null;
         }
 
-        if (! $this->isName($parentNode->var->name, 'redirect')) {
-            return null;
-        }
-
-        $childElement = $methodCall->getAttribute('parent');
-
-        if ($childElement instanceof MethodCall) {
-            $this->removeNode($methodCall);
-            $parentNode->var->name = new Name('to_route');
-            $parentNode->var->args = $methodCall->getArgs();
-        } else {
-            return new FuncCall(new Name('to_route'), $methodCall->getArgs());
-        }
-
-        return $parentNode;
+        $methodCall->var->name = new Name('to_route');
+        $methodCall->var->args = $methodCall->getArgs();
+        return $methodCall->var;
     }
 
     private function updateRedirectStaticCall(StaticCall $staticCall): ?FuncCall

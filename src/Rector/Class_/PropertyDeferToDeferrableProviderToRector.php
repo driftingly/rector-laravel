@@ -74,7 +74,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $this->removeNode($deferProperty);
+        unset($node->stmts[array_search($deferProperty, $node->stmts, true)]);
 
         $node->implements[] = new FullyQualified('Illuminate\Contracts\Support\DeferrableProvider');
 

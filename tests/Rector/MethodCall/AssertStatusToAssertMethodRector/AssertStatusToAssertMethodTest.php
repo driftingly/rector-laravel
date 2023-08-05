@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace RectorLaravel\Tests\Rector\MethodCall\AssertStatusToAssertMethodRector;
 
 use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 final class AssertStatusToAssertMethodTest extends AbstractRectorTestCase
 {
-    /**
-     * @dataProvider provideData()
-     */
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

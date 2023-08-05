@@ -12,10 +12,11 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractScopeAwareRector;
 use Rector\Core\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -24,7 +25,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://github.com/laravel/framework/pull/27276
  * @see \RectorLaravel\Tests\Rector\StaticCall\RequestStaticValidateToInjectRector\RequestStaticValidateToInjectRectorTest
  */
-final class RequestStaticValidateToInjectRector extends AbstractRector
+final class RequestStaticValidateToInjectRector extends AbstractScopeAwareRector
 {
     /**
      * @var ObjectType[]
@@ -76,73 +77,69 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [StaticCall::class, FuncCall::class];
+        return [ClassMethod::class];
     }
 
-    /**
-     * @param  StaticCall|FuncCall  $node
-     */
-    public function refactor(Node $node): ?Node
+    public function refactorWithScope(Node $node, Scope $scope): ?Node
     {
-        if ($this->shouldSkip($node)) {
-            return null;
-        }
-
-        $requestParam = $this->addRequestParameterIfMissing($node, new ObjectType('Illuminate\Http\Request'));
-
-        if (! $requestParam instanceof Param) {
-            return null;
-        }
-
-        $methodName = $this->getName($node->name);
-
-        if ($methodName === null) {
-            return null;
-        }
-
-        if ($node instanceof FuncCall) {
-            if ($node->args === []) {
-                return $requestParam->var;
+        /** @var ClassMethod $node */
+        $this->traverseNodesWithCallable((array) $node->stmts, function (Node $subNode) use ($node, $scope): ?Node {
+            if (! $subNode instanceof StaticCall && ! $subNode instanceof FuncCall) {
+                return null;
             }
 
-            $methodName = 'input';
-        }
+            if ($this->shouldSkip($node, $subNode, $scope)) {
+                return null;
+            }
 
-        return new MethodCall($requestParam->var, new Identifier($methodName), $node->args);
+            $requestParam = $this->addRequestParameterIfMissing($node, new ObjectType('Illuminate\Http\Request'));
+
+            $methodName = $this->getName($subNode->name);
+
+            if ($methodName === null) {
+                return null;
+            }
+
+            if ($subNode instanceof FuncCall) {
+                if ($subNode->args === []) {
+                    return $requestParam->var;
+                }
+
+                $methodName = 'input';
+            }
+
+            return new MethodCall($requestParam->var, new Identifier($methodName), $subNode->args);
+        });
+
+        return null;
     }
 
-    private function shouldSkip(StaticCall|FuncCall $node): bool
+    private function shouldSkip(ClassMethod $classMethod, StaticCall|FuncCall $node, Scope $scope): bool
     {
+        $classReflection = $scope->getClassReflection();
+
+        if (! $classReflection instanceof ClassReflection || ! $classReflection->isClass()) {
+            return true;
+        }
+
         if ($node instanceof StaticCall) {
             return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);
         }
 
-        $class = $this->betterNodeFinder->findParentType($node, Class_::class);
-        if (! $class instanceof Class_) {
+        $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod(
+            $classMethod,
+            $scope
+        );
+        $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
+        if ($classMethodNamespaceName !== $classReflection->getName()) {
             return true;
-        }
-
-        $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
-        if ($classMethod instanceof ClassMethod) {
-            $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod($classMethod);
-            $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
-            $classNamespaceName = $class->namespacedName?->toString();
-            if ($classMethodNamespaceName !== $classNamespaceName) {
-                return true;
-            }
         }
 
         return ! $this->isName($node, 'request');
     }
 
-    private function addRequestParameterIfMissing(Node $node, ObjectType $objectType): ?Param
+    private function addRequestParameterIfMissing(ClassMethod $classMethod, ObjectType $objectType): Param
     {
-        $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
-
-        if (! $classMethod instanceof ClassMethod) {
-            return null;
-        }
-
         foreach ($classMethod->params as $paramNode) {
             if (! $this->nodeTypeResolver->isObjectType($paramNode, $objectType)) {
                 continue;

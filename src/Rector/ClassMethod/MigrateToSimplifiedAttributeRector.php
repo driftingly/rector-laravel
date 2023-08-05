@@ -18,10 +18,10 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -35,73 +35,39 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [ClassMethod::class];
+        return [Class_::class];
     }
 
     /**
-     * @param ClassMethod $node
+     * @param Class_ $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|array|int|null
     {
-        if ($this->shouldSkipNode($node)) {
+        if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;
         }
 
-        $nodeName = $node->name->name;
+        $classMethods = $node->getMethods();
 
-        if (! $this->isAccessor($nodeName) && ! $this->isMutator($nodeName)) {
-            return null;
-        }
+        foreach ($node->stmts as $key => $stmt) {
+            if (! $stmt instanceof ClassMethod) {
+                continue;
+            }
 
-        $attributeName = $this->parseAttributeName($nodeName);
+            $newNode = $this->refactorClassMethod($stmt, $classMethods);
 
-        if ($attributeName === '') {
-            return null;
-        }
+            if ($newNode === null) {
+                continue;
+            }
 
-        /** @var ClassLike $parentClass */
-        $parentClass = $this->betterNodeFinder->findParentType($node, ClassLike::class);
-
-        // Skip if the new attribute name is already used
-        foreach ($parentClass->getMethods() as $classMethod) {
-            if ($this->isName($classMethod, $attributeName)) {
-                return null;
+            if ($newNode instanceof ClassMethod) {
+                $node->stmts[$key] = $newNode;
+            } elseif ($newNode === NodeTraverser::REMOVE_NODE) {
+                unset($node->stmts[$key]);
             }
         }
 
-        if ($this->isAccessor($nodeName)) {
-            $mutator = $this->findPossibleMutator($parentClass, $attributeName);
-            $accessor = $node;
-        } else {
-            $accessor = $this->findPossibleAccessor($parentClass, $attributeName);
-            $mutator = $node;
-        }
-
-        // This means we have both an accessor and a mutator
-        // So we generate the new method where the accessor
-        // is placed on the model and remove the mutator,
-        // so we don't run the refactoring twice
-        if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator($nodeName)) {
-            $this->removeNode($mutator);
-            return null;
-        }
-
-        if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod) {
-            $newNode = $this->createAccessorAndMutator($accessor, $mutator, $attributeName);
-        } elseif ($accessor instanceof ClassMethod) {
-            $newNode = $this->createAccessor($attributeName, $node);
-        } else {
-            $newNode = $this->createMutator($attributeName, $node);
-        }
-
-        // Preserve docblock
-        $docComment = $node->getDocComment();
-
-        if ($docComment instanceof Doc) {
-            $newNode->setDocComment($docComment);
-        }
-
-        return $newNode;
+        return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -145,19 +111,62 @@ CODE_SAMPLE
         ]);
     }
 
-    private function shouldSkipNode(ClassMethod $classMethod): bool
+    /**
+     * @param ClassMethod[] $allClassMethods
+     */
+    private function refactorClassMethod(ClassMethod $classMethod, array $allClassMethods): ClassMethod|int|null
     {
-        $classLike = $this->betterNodeFinder->findParentType($classMethod, ClassLike::class);
+        $nodeName = $classMethod->name->name;
 
-        if (! $classLike instanceof ClassLike) {
-            return true;
+        if (! $this->isAccessor($nodeName) && ! $this->isMutator($nodeName)) {
+            return null;
         }
 
-        if ($classLike instanceof Class_) {
-            return ! $this->isObjectType($classLike, new ObjectType('Illuminate\Database\Eloquent\Model'));
+        $attributeName = $this->parseAttributeName($nodeName);
+
+        if ($attributeName === '') {
+            return null;
         }
 
-        return false;
+        // Skip if the new attribute name is already used
+        foreach ($allClassMethods as $method) {
+            if ($this->isName($method, $attributeName)) {
+                return null;
+            }
+        }
+
+        if ($this->isAccessor($nodeName)) {
+            $mutator = $this->findPossibleMutator($allClassMethods, $attributeName);
+            $accessor = $classMethod;
+        } else {
+            $accessor = $this->findPossibleAccessor($allClassMethods, $attributeName);
+            $mutator = $classMethod;
+        }
+
+        // This means we have both an accessor and a mutator
+        // So we generate the new method where the accessor
+        // is placed on the model and remove the mutator,
+        // so we don't run the refactoring twice
+        if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator($nodeName)) {
+            return NodeTraverser::REMOVE_NODE;
+        }
+
+        if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod) {
+            $newNode = $this->createAccessorAndMutator($accessor, $mutator, $attributeName);
+        } elseif ($accessor instanceof ClassMethod) {
+            $newNode = $this->createAccessor($attributeName, $classMethod);
+        } else {
+            $newNode = $this->createMutator($attributeName, $classMethod);
+        }
+
+        // Preserve docblock
+        $docComment = $classMethod->getDocComment();
+
+        if ($docComment instanceof Doc) {
+            $newNode->setDocComment($docComment);
+        }
+
+        return $newNode;
     }
 
     private function createAccessor(string $attributeName, ClassMethod $classMethod): ClassMethod
@@ -262,9 +271,12 @@ CODE_SAMPLE
         return str_starts_with($nodeName, 'set') && str_ends_with($nodeName, 'Attribute');
     }
 
-    private function findPossibleAccessor(ClassLike $classLike, string $attributeName): ?ClassMethod
+    /**
+     * @param ClassMethod[] $allClassMethods
+     */
+    private function findPossibleAccessor(array $allClassMethods, string $attributeName): ?ClassMethod
     {
-        foreach ($classLike->getMethods() as $classMethod) {
+        foreach ($allClassMethods as $classMethod) {
             if ($classMethod->name->toString() === 'get' . ucfirst($attributeName) . 'Attribute') {
                 return $classMethod;
             }
@@ -273,9 +285,12 @@ CODE_SAMPLE
         return null;
     }
 
-    private function findPossibleMutator(ClassLike $classLike, string $attributeName): ?ClassMethod
+    /**
+     * @param ClassMethod[] $allClassMethods
+     */
+    private function findPossibleMutator(array $allClassMethods, string $attributeName): ?ClassMethod
     {
-        foreach ($classLike->getMethods() as $classMethod) {
+        foreach ($allClassMethods as $classMethod) {
             if ($classMethod->name->toString() === 'set' . ucfirst($attributeName) . 'Attribute') {
                 return $classMethod;
             }
