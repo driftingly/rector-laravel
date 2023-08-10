@@ -68,8 +68,9 @@ CODE_SAMPLE
 
     /**
      * @param Expression $node
+     * @return \PhpParser\Node|mixed[]|int|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node)
     {
         $newNode = $this->getNewNode($node);
 
@@ -100,7 +101,7 @@ CODE_SAMPLE
         return new Assign($guardVariable, $this->nodeFactory->createFuncCall('config', [$string]));
     }
 
-    private function getNewNode(Expression $node): New_|null
+    private function getNewNode(Expression $node): ?\PhpParser\Node\Expr\New_
     {
         if ($node->expr instanceof Assign && $node->expr->expr instanceof New_) {
             return $node->expr->expr;
