@@ -9,7 +9,6 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
-use Rector\Core\NodeManipulator\ArrayManipulator;
 use Rector\Core\Rector\AbstractRector;
 use RectorLaravel\NodeAnalyzer\LumenRouteRegisteringMethodAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -21,7 +20,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class LumenRoutesStringMiddlewareToArrayRector extends AbstractRector
 {
     public function __construct(
-        private readonly ArrayManipulator $arrayManipulator,
         private readonly LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer
     ) {
     }
@@ -118,7 +116,7 @@ CODE_SAMPLE)]
             if (! $item instanceof ArrayItem) {
                 continue;
             }
-            if (! $this->arrayManipulator->hasKeyName($item, $keyName)) {
+            if (! $this->hasKeyName($item, $keyName)) {
                 continue;
             }
             $foundArrayItem = $array->items[$i];
@@ -136,7 +134,7 @@ CODE_SAMPLE)]
             if (! $item instanceof ArrayItem) {
                 continue;
             }
-            if (! $this->arrayManipulator->hasKeyName($item, $keyName)) {
+            if (! $this->hasKeyName($item, $keyName)) {
                 continue;
             }
             if (! $array->items[$i] instanceof ArrayItem) {
@@ -145,5 +143,14 @@ CODE_SAMPLE)]
 
             $array->items[$i] = $arrayItem;
         }
+    }
+
+    private function hasKeyName(ArrayItem $arrayItem, string $name): bool
+    {
+        if (! $arrayItem->key instanceof String_) {
+            return false;
+        }
+
+        return $arrayItem->key->value === $name;
     }
 }
