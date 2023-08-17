@@ -7,7 +7,7 @@ use Rector\Config\RectorConfig;
 use Rector\Core\NonPhpFile\Rector\RenameClassNonPhpRector;
 
 return static function (RectorConfig $rectorConfig): void {
-    $services = $rectorConfig->services();
+    $services = $rectorConfig->singleton(ServiceType::class);
 
     $services->defaults()
         ->public()
