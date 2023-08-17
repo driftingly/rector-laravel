@@ -23,11 +23,11 @@ class SleepFuncToSleepStaticCallRector extends AbstractRector
                     <<<'CODE_SAMPLE'
 sleep(5);
 CODE_SAMPLE
-,
+                    ,
                     <<<'CODE_SAMPLE'
 \Illuminate\Support\Sleep::sleep(5);
 CODE_SAMPLE
-,
+                    ,
                 ),
             ]
         );
