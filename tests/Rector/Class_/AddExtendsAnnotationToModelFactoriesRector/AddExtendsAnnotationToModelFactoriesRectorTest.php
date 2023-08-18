@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\Class_\MoveFactoryModelPropertyToExtendsAnnotationRector;
+namespace RectorLaravel\Tests\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class MoveFactoryModelPropertyToExtendsAnnotationRectorTest extends AbstractRectorTestCase
+final class AddExtendsAnnotationToModelFactoriesRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('provideData')]
     public function test(string $filePath): void

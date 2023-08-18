@@ -20,11 +20,11 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see https://github.com/laravel/framework/pull/39169
- * @see https://github.com/laravel/framework/pull/39310
- * @see \RectorLaravel\Tests\Rector\Class_\MoveFactoryModelPropertyToExtendsAnnotationRector\MoveFactoryModelPropertyToExtendsAnnotationRectorTest
+ * @changelog https://github.com/laravel/framework/pull/39169
+ *
+ * @see \RectorLaravel\Tests\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector\AddExtendsAnnotationToModelFactoriesRectorTest
  */
-final class MoveFactoryModelPropertyToExtendsAnnotationRector extends AbstractRector
+final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
 {
     private const EXTENDS_TAG_NAME = '@extends';
 
@@ -32,7 +32,7 @@ final class MoveFactoryModelPropertyToExtendsAnnotationRector extends AbstractRe
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Removes the $model property and adds @extends annotation to Factories.', [
+        return new RuleDefinition('Adds the @extends annotation to Factories.', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -52,6 +52,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class UserFactory extends Factory
 {
+    protected $model = \App\Models\User::class;
 }
 CODE_SAMPLE
             ),
@@ -75,7 +76,7 @@ CODE_SAMPLE
             return null;
         }
 
-        foreach ($node->stmts as $index => $stmt) {
+        foreach ($node->stmts as $stmt) {
             if (! $stmt instanceof Property) {
                 continue;
             }
@@ -84,9 +85,7 @@ CODE_SAMPLE
                 continue;
             }
 
-            $this->addExtendsPhpDocTag($stmt, $node);
-
-            unset($node->stmts[$index]);
+            $this->addExtendsPhpDocTag($node, $stmt);
 
             break;
         }
@@ -94,7 +93,7 @@ CODE_SAMPLE
         return $node;
     }
 
-    public function addExtendsPhpDocTag(Property $property, Node $node): void
+    public function addExtendsPhpDocTag(Node $node, Property $property): void
     {
         if ($property->props === []) {
             return;

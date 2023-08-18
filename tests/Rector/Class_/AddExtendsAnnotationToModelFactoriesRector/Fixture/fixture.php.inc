@@ -1,19 +1,19 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\MoveFactoryModelPropertyToExtendsAnnotationRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector\Fixture;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
 {
-    protected $model = 'App\Models\User';
+    protected $model = \App\Models\User::class;
 }
 
 ?>
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\MoveFactoryModelPropertyToExtendsAnnotationRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector\Fixture;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class UserFactory extends Factory
 {
+    protected $model = \App\Models\User::class;
 }
 
 ?>
