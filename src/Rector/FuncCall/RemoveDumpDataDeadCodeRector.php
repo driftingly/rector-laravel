@@ -70,8 +70,9 @@ CODE_SAMPLE
 
     /**
      * @param Expression $node
+     * @return int|\PhpParser\Node|mixed[]|null
      */
-    public function refactor(Node $node): int|Node|array|null
+    public function refactor(Node $node)
     {
         if (! $node->expr instanceof FuncCall) {
             return null;

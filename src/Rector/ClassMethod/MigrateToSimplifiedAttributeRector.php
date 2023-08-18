@@ -40,8 +40,9 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
     /**
      * @param Class_ $node
+     * @return \PhpParser\Node|mixed[]|int|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node)
     {
         if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;
@@ -113,8 +114,9 @@ CODE_SAMPLE
 
     /**
      * @param ClassMethod[] $allClassMethods
+     * @return \PhpParser\Node\Stmt\ClassMethod|int|null
      */
-    private function refactorClassMethod(ClassMethod $classMethod, array $allClassMethods): ClassMethod|int|null
+    private function refactorClassMethod(ClassMethod $classMethod, array $allClassMethods)
     {
         $nodeName = $classMethod->name->name;
 
@@ -263,12 +265,20 @@ CODE_SAMPLE
 
     private function isAccessor(string $nodeName): bool
     {
-        return str_starts_with($nodeName, 'get') && str_ends_with($nodeName, 'Attribute');
+        return strncmp($nodeName, 'get', strlen('get')) === 0 && substr_compare(
+            $nodeName,
+            'Attribute',
+            -strlen('Attribute')
+        ) === 0;
     }
 
     private function isMutator(string $nodeName): bool
     {
-        return str_starts_with($nodeName, 'set') && str_ends_with($nodeName, 'Attribute');
+        return strncmp($nodeName, 'set', strlen('set')) === 0 && substr_compare(
+            $nodeName,
+            'Attribute',
+            -strlen('Attribute')
+        ) === 0;
     }
 
     /**
