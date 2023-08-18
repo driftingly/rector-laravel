@@ -12,6 +12,7 @@ use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
+use RectorLaravel\Rector\Class_\MoveFactoryModelPropertyToExtendsAnnotationRector;
 use RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
 use RectorLaravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
 use RectorLaravel\ValueObject\AddArgumentDefaultValue;
@@ -41,6 +42,10 @@ return static function (RectorConfig $rectorConfig): void {
 
     # https://github.com/laravel/framework/commit/f1289515b27e93248c09f04e3011bb7ce21b2737
     $rectorConfig->rule(AddParentRegisterToEventServiceProviderRector::class);
+
+    // https://github.com/laravel/framework/pull/39169
+    // https://github.com/laravel/framework/pull/39310
+    $rectorConfig->rule(MoveFactoryModelPropertyToExtendsAnnotationRector::class);
 
     $rectorConfig
         ->ruleWithConfiguration(RenamePropertyRector::class, [                # https://github.com/laravel/framework/pull/32092/files

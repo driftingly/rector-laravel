@@ -1,4 +1,4 @@
-# 37 Rules Overview
+# 38 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -604,6 +604,26 @@ Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Ill
 -        Illuminate\Support\Facades\Cache::put('key', 'value', 60);
 +        Illuminate\Support\Facades\Cache::put('key', 'value', 60 * 60);
      }
+ }
+```
+
+<br>
+
+## MoveFactoryModelPropertyToExtendsAnnotationRector
+
+Removes the `$model` property and adds `@extends` annotation to Factories.
+
+- class: [`RectorLaravel\Rector\Class_\MoveFactoryModelPropertyToExtendsAnnotationRector`](../src/Rector/Class_/MoveFactoryModelPropertyToExtendsAnnotationRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Factories\Factory;
+
++/**
++ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
++ */
+ class UserFactory extends Factory
+ {
+-    protected $model = \App\Models\User::class;
  }
 ```
 
