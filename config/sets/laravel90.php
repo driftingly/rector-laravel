@@ -10,6 +10,7 @@ use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
+use RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector;
 use RectorLaravel\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector;
 
 # see https://laravel.com/docs/9.x/upgrade
@@ -69,6 +70,9 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/commit/7746337149a7ffd6b4a862d9bd54593cf3520708
     $rectorConfig->rule(ReplaceFakerInstanceWithHelperRector::class);
+
+    // https://github.com/laravel/framework/pull/39169
+    $rectorConfig->rule(AddExtendsAnnotationToModelFactoriesRector::class);
 
     $rectorConfig
         ->ruleWithConfiguration(RenameMethodRector::class, [

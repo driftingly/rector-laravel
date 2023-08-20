@@ -1,4 +1,4 @@
-# 37 Rules Overview
+# 39 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -35,6 +35,26 @@ return static function (RectorConfig $rectorConfig): void {
 +    public function someMethod($value = false)
      {
      }
+ }
+```
+
+<br>
+
+## AddExtendsAnnotationToModelFactoriesRector
+
+Adds the `@extends` annotation to Factories.
+
+- class: [`RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector`](../src/Rector/Class_/AddExtendsAnnotationToModelFactoriesRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Factories\Factory;
+
++/**
++ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
++ */
+ class UserFactory extends Factory
+ {
+     protected $model = \App\Models\User::class;
  }
 ```
 
@@ -790,6 +810,23 @@ It will removes the dump data just like dd or dump functions from the code.`
 -        dump('test');
          return true;
      }
+ }
+```
+
+<br>
+
+## RemoveModelPropertyFromFactoriesRector
+
+Removes the `$model` property from Factories.
+
+- class: [`RectorLaravel\Rector\Class_\RemoveModelPropertyFromFactoriesRector`](../src/Rector/Class_/RemoveModelPropertyFromFactoriesRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Factories\Factory;
+
+ class UserFactory extends Factory
+ {
+-    protected $model = \App\Models\User::class;
  }
 ```
 
