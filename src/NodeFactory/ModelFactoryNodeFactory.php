@@ -32,12 +32,40 @@ final class ModelFactoryNodeFactory
      */
     private const THIS = 'this';
 
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\NodeFactory
+     */
+    private $nodeFactory;
+
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+
+    /**
+     * @readonly
+     * @var \Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser
+     */
+    private $simpleCallableNodeTraverser;
+
     public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly NodeFactory $nodeFactory,
-        private readonly ValueResolver $valueResolver,
-        private readonly SimpleCallableNodeTraverser $simpleCallableNodeTraverser
+        NodeNameResolver $nodeNameResolver,
+        NodeFactory $nodeFactory,
+        ValueResolver $valueResolver,
+        SimpleCallableNodeTraverser $simpleCallableNodeTraverser
     ) {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodeFactory = $nodeFactory;
+        $this->valueResolver = $valueResolver;
+        $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
     }
 
     public function createEmptyFactory(string $name, Expr $expr): Class_
