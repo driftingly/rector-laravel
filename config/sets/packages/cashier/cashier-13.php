@@ -9,7 +9,7 @@ use RectorLaravel\Rector\Class_\CashierStripeOptionsToStripeRector;
 
 # see https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md#upgrading-to-130-from-12x
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->import(__DIR__ . '/../config.php');
+    $rectorConfig->import(__DIR__ . '/../../../config.php');
 
     $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
         new MethodCallRename('Laravel\Cashier\Billable', 'subscribedToPlan', 'subscribedToPrice'),
