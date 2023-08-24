@@ -8,7 +8,7 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 
 # see https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md#upgrading-to-140-from-13x
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->import(__DIR__ . '/../config.php');
+    $rectorConfig->import(__DIR__ . '/../../../config.php');
 
     $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
         new MethodCallRename('Laravel\Cashier\Billable', 'removePaymentMethod', 'deletePaymentMethod'),
