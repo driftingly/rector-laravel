@@ -10,7 +10,7 @@ if (class_exists('Illuminate\Database\Eloquent\Builder')) {
 
 class Builder extends QueryBuilder
 {
-    public function publicMethodBelongsToEloquentQueryBuilder()
+    public function publicMethodBelongsToEloquentQueryBuilder(): void
     {
     }
 }

@@ -9,12 +9,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Identifier;
 use Rector\Core\Rector\AbstractRector;
 use ReflectionException;
 use ReflectionMethod;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * @see \RectorLaravel\Tests\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector\EloquentMagicMethodToQueryBuilderRectorTest
+ */
 final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
@@ -44,22 +48,31 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  StaticCall  $node
+     * @param  StaticCall $node
      */
     public function refactor(Node $node): ?Node
     {
         $resolvedType = $this->nodeTypeResolver->getType($node->class);
 
         // like for variables, example "$namespace"
+        // @phpstan-ignore-next-line
         if (! method_exists($resolvedType, 'getClassName')) {
             return null;
         }
 
-        $className = $resolvedType->getClassName();
+        $className = (string) $resolvedType->getClassName();
         $originalClassName = $this->getName($node->class); // like "self" or "App\Models\User"
+
+        if (is_null($originalClassName)) {
+            return null;
+        }
 
         // does not extend Eloquent Model
         if (! is_subclass_of($className, Model::class)) {
+            return null;
+        }
+
+        if (! $node->name instanceof Identifier) {
             return null;
         }
 

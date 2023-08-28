@@ -11,7 +11,7 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 final class User extends Model
 {
-    public static function staticMethodBelongsToModel()
+    public static function staticMethodBelongsToModel(): void
     {
     }
 }
