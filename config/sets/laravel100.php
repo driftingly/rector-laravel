@@ -31,8 +31,6 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig
         ->ruleWithConfiguration(RenameMethodRector::class, [
-            // https://github.com/laravel/framework/pull/41136/files
-            new MethodCallRename('Illuminate\Database\Eloquent\Relations\Relation', 'getBaseQuery', 'toBase'),
             // https://github.com/laravel/framework/pull/42591/files
             new MethodCallRename('Illuminate\Support\Facades\Bus', 'dispatchNow', 'dispatchSync'),
         ]);
