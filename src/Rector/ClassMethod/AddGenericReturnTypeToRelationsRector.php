@@ -18,6 +18,7 @@ use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
+use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Core\Rector\AbstractScopeAwareRector;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -38,7 +39,8 @@ class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
     private const RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
 
     public function __construct(
-        private readonly TypeComparator $typeComparator
+        private readonly TypeComparator $typeComparator,
+        private readonly DocBlockUpdater $docBlockUpdater,
     ) {
     }
 
@@ -173,6 +175,8 @@ CODE_SAMPLE
         } else {
             $phpDocInfo->addTagValueNode(new ReturnTagValueNode($genericTypeNode, ''));
         }
+
+        $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
 
         return $node;
     }
