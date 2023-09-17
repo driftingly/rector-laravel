@@ -1,4 +1,4 @@
-# 39 Rules Overview
+# 40 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -454,6 +454,26 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
+## EloquentWhereRelationTypeHintingParameterRector
+
+Add type hinting to where relation has methods e.g. whereHas, orWhereHas, whereDoesntHave, orWhereDoesntHave, whereHasMorph, orWhereHasMorph, whereDoesntHaveMorph, orWhereDoesntHaveMorph
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector`](../src/Rector/MethodCall/EloquentWhereRelationTypeHintingParameterRector.php)
+
+```diff
+-User::whereHas('posts', function ($query) {
++User::whereHas('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+     $query->where('is_published', true);
+ });
+
+-$query->whereHas('posts', function ($query) {
++$query->whereHas('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+     $query->where('is_published', true);
+ });
 ```
 
 <br>
