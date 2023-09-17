@@ -50,49 +50,49 @@ CODE_SAMPLE
         return [Node\Expr\MethodCall::class, Node\Expr\StaticCall::class];
     }
 
-    /**
-     * @param Node\Expr\MethodCall|Node\Expr\StaticCall $node
-     * @return Node\Expr\MethodCall|Node\Expr\StaticCall|null
-     */
     public function refactor(Node $node): ?Node
     {
-        if ($this->isWhereHasClosureOrArrowFunction($node)) {
-            $this->changeClosureParamType($node);
+        if (! $node instanceof Node\Expr\MethodCall && ! $node instanceof Node\Expr\StaticCall) {
+            return null;
         }
 
-        return $node;
+        if ($this->isWhereRelationMethodWithClosureOrArrowFunction($node)) {
+            $this->changeClosureParamType($node);
+
+            return $node;
+        }
+
+        return null;
     }
 
-    private function isWhereHasClosureOrArrowFunction(Node $node): bool
-    {
+    private function isWhereRelationMethodWithClosureOrArrowFunction(
+        Node\Expr\MethodCall|Node\Expr\StaticCall $node
+    ): bool {
         if (! $this->expectedObjectTypeAndMethodCall($node)) {
             return false;
         }
 
-        if (! isset($node->args[1])) {
-            return false;
-        }
-
-        if (! $node->args[1]->value instanceof Node\Expr\Closure && ! $node->args[1]->value instanceof Node\Expr\ArrowFunction) {
+        if (
+            ! ($node->getArgs()[1]->value ?? null) instanceof Node\Expr\Closure &&
+            ! ($node->getArgs()[1]->value ?? null) instanceof Node\Expr\ArrowFunction
+        ) {
             return false;
         }
 
         return true;
     }
 
-    /**
-     * @param Node\Expr\MethodCall|Node\Expr\StaticCall $node
-     */
-    private function changeClosureParamType(Node $node): void
+    private function changeClosureParamType(Node\Expr\MethodCall|Node\Expr\StaticCall $node): void
     {
+        /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
         $closure = $node->getArgs()[1]
 ->value;
 
-        if (! isset($closure->params[0])) {
+        if (! isset($closure->getParams()[0])) {
             return;
         }
 
-        $param = $closure->params[0];
+        $param = $closure->getParams()[0];
 
         if ($param->type instanceof Node\Name) {
             return;
@@ -101,7 +101,7 @@ CODE_SAMPLE
         $param->type = new Node\Name\FullyQualified('Illuminate\Contracts\Database\Eloquent\Builder');
     }
 
-    private function expectedObjectTypeAndMethodCall(Node $node): bool
+    private function expectedObjectTypeAndMethodCall(Node\Expr\MethodCall|Node\Expr\StaticCall $node): bool
     {
         return ($node instanceof Node\Expr\MethodCall && $this->isObjectType(
             $node->var,
