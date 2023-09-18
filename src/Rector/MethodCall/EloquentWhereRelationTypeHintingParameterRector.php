@@ -18,7 +18,7 @@ class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Add type hinting to where relation has methods e.g. whereHas, orWhereHas, whereDoesntHave, orWhereDoesntHave, whereHasMorph, orWhereHasMorph, whereDoesntHaveMorph, orWhereDoesntHaveMorph',
+            'Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `whereDoesntHave`, `orWhereDoesntHave`, `whereHasMorph`, `orWhereHasMorph`, `whereDoesntHaveMorph`, `orWhereDoesntHaveMorph`',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
@@ -32,11 +32,11 @@ $query->whereHas('posts', function ($query) {
 CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
-User::whereHas('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
-$query->whereHas('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 CODE_SAMPLE
@@ -72,9 +72,20 @@ CODE_SAMPLE
             return false;
         }
 
+        // Morph methods have the closure in the 3rd position, others use the 2nd.
+        $position = $this->isNames(
+                $node->name,
+                [
+                    'whereHasMorph',
+                    'orWhereHasMorph',
+                    'whereDoesntHaveMorph',
+                    'orWhereDoesntHaveMorph',
+                ]
+            ) ? 2 : 1;
+
         if (
-            ! ($node->getArgs()[1]->value ?? null) instanceof Node\Expr\Closure &&
-            ! ($node->getArgs()[1]->value ?? null) instanceof Node\Expr\ArrowFunction
+            ! ($node->getArgs()[$position]->value ?? null) instanceof Node\Expr\Closure &&
+            ! ($node->getArgs()[$position]->value ?? null) instanceof Node\Expr\ArrowFunction
         ) {
             return false;
         }
@@ -84,8 +95,19 @@ CODE_SAMPLE
 
     private function changeClosureParamType(Node\Expr\MethodCall|Node\Expr\StaticCall $node): void
     {
+        // Morph methods have the closure in the 3rd position, others use the 2nd.
+        $position = $this->isNames(
+                $node->name,
+                [
+                    'whereHasMorph',
+                    'orWhereHasMorph',
+                    'whereDoesntHaveMorph',
+                    'orWhereDoesntHaveMorph',
+                ]
+            ) ? 2 : 1;
+        
         /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
-        $closure = $node->getArgs()[1]
+        $closure = $node->getArgs()[$position]
 ->value;
 
         if (! isset($closure->getParams()[0])) {
@@ -98,31 +120,22 @@ CODE_SAMPLE
             return;
         }
 
-        $param->type = new Node\Name\FullyQualified('Illuminate\Contracts\Database\Eloquent\Builder');
+        $param->type = new Node\Name\FullyQualified('Illuminate\Contracts\Database\Query\Builder');
     }
 
     private function expectedObjectTypeAndMethodCall(Node\Expr\MethodCall|Node\Expr\StaticCall $node): bool
     {
-        return ($node instanceof Node\Expr\MethodCall && $this->isObjectType(
-            $node->var,
-            new ObjectType('Illuminate\Database\Eloquent\Builder')
-        ) && $this->isNames(
-            $node->name,
-            [
-                'whereHas',
-                'orWhereHas',
-                'whereDoesntHave',
-                'orWhereDoesntHave',
-                'whereHasMorph',
-                'orWhereHasMorph',
-                'whereDoesntHaveMorph',
-                'orWhereDoesntHaveMorph',
-            ]
-        )) ||
-            ($node instanceof Node\Expr\StaticCall && $this->isObjectType(
-                $node->class,
-                new ObjectType('Illuminate\Database\Eloquent\Model')
-            ) && $this->isNames(
+        return match (true) {
+            $node instanceof Node\Expr\MethodCall && $this->isObjectType(
+                    $node->var,
+                    new ObjectType('Illuminate\Contracts\Database\Query\Builder')
+                ) => true,
+            $node instanceof Node\Expr\StaticCall && $this->isObjectType(
+                    $node->class,
+                    new ObjectType('Illuminate\Database\Eloquent\Model')
+                ) => true,
+            default => false,
+        } && $this->isNames(
                 $node->name,
                 [
                     'whereHas',
@@ -134,6 +147,6 @@ CODE_SAMPLE
                     'whereDoesntHaveMorph',
                     'orWhereDoesntHaveMorph',
                 ]
-            ));
+            );
     }
 }
