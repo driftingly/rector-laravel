@@ -74,14 +74,9 @@ CODE_SAMPLE
 
         // Morph methods have the closure in the 3rd position, others use the 2nd.
         $position = $this->isNames(
-                $node->name,
-                [
-                    'whereHasMorph',
-                    'orWhereHasMorph',
-                    'whereDoesntHaveMorph',
-                    'orWhereDoesntHaveMorph',
-                ]
-            ) ? 2 : 1;
+            $node->name,
+            ['whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph']
+        ) ? 2 : 1;
 
         if (
             ! ($node->getArgs()[$position]->value ?? null) instanceof Node\Expr\Closure &&
@@ -97,15 +92,10 @@ CODE_SAMPLE
     {
         // Morph methods have the closure in the 3rd position, others use the 2nd.
         $position = $this->isNames(
-                $node->name,
-                [
-                    'whereHasMorph',
-                    'orWhereHasMorph',
-                    'whereDoesntHaveMorph',
-                    'orWhereDoesntHaveMorph',
-                ]
-            ) ? 2 : 1;
-        
+            $node->name,
+            ['whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph']
+        ) ? 2 : 1;
+
         /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
         $closure = $node->getArgs()[$position]
 ->value;
@@ -127,26 +117,26 @@ CODE_SAMPLE
     {
         return match (true) {
             $node instanceof Node\Expr\MethodCall && $this->isObjectType(
-                    $node->var,
-                    new ObjectType('Illuminate\Contracts\Database\Query\Builder')
-                ) => true,
+                $node->var,
+                new ObjectType('Illuminate\Contracts\Database\Query\Builder')
+            ) => true,
             $node instanceof Node\Expr\StaticCall && $this->isObjectType(
-                    $node->class,
-                    new ObjectType('Illuminate\Database\Eloquent\Model')
-                ) => true,
+                $node->class,
+                new ObjectType('Illuminate\Database\Eloquent\Model')
+            ) => true,
             default => false,
         } && $this->isNames(
-                $node->name,
-                [
-                    'whereHas',
-                    'orWhereHas',
-                    'whereDoesntHave',
-                    'orWhereDoesntHave',
-                    'whereHasMorph',
-                    'orWhereHasMorph',
-                    'whereDoesntHaveMorph',
-                    'orWhereDoesntHaveMorph',
-                ]
-            );
+            $node->name,
+            [
+                'whereHas',
+                'orWhereHas',
+                'whereDoesntHave',
+                'orWhereDoesntHave',
+                'whereHasMorph',
+                'orWhereHasMorph',
+                'whereDoesntHaveMorph',
+                'orWhereDoesntHaveMorph',
+            ]
+        );
     }
 }

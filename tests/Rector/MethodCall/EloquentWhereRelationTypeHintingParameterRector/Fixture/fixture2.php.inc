@@ -2,7 +2,7 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Fixture;
 
-/** @var \Illuminate\Database\Eloquent\Builder $query */
+/** @var \Illuminate\Contracts\Database\Query\Builder $query */
 $query->whereHas('posts', fn ($query) =>
     $query->where('is_published', true)
 );
@@ -13,8 +13,8 @@ $query->whereHas('posts', fn ($query) =>
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Fixture;
 
-/** @var \Illuminate\Database\Eloquent\Builder $query */
-$query->whereHas('posts', fn (\Illuminate\Contracts\Database\Eloquent\Builder $query) =>
+/** @var \Illuminate\Contracts\Database\Query\Builder $query */
+$query->whereHas('posts', fn (\Illuminate\Contracts\Database\Query\Builder $query) =>
     $query->where('is_published', true)
 );
 

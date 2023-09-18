@@ -22,7 +22,7 @@ class User extends \Illuminate\Database\Eloquent\Model
 
 }
 
-User::whereHas('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 

@@ -2,7 +2,7 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Fixture;
 
-/** @var \Illuminate\Database\Eloquent\Builder $query */
+/** @var \Illuminate\Contracts\Database\Query\Builder $query */
 $query->whereHas('posts', function ($query) {
     $query->where('is_published', true);
 });
@@ -19,19 +19,19 @@ $query->orWhereDoesntHave('posts', function ($query) {
     $query->where('is_published', true);
 });
 
-$query->whereHasMorph('posts', function ($query) {
+$query->whereHasMorph('posts', [], function ($query) {
     $query->where('is_published', true);
 });
 
-$query->orWhereHasMorph('posts', function ($query) {
+$query->orWhereHasMorph('posts', [], function ($query) {
     $query->where('is_published', true);
 });
 
-$query->whereDoesntHaveMorph('posts', function ($query) {
+$query->whereDoesntHaveMorph('posts', [], function ($query) {
     $query->where('is_published', true);
 });
 
-$query->orWhereDoesntHaveMorph('posts', function ($query) {
+$query->orWhereDoesntHaveMorph('posts', [], function ($query) {
     $query->where('is_published', true);
 });
 
@@ -41,36 +41,36 @@ $query->orWhereDoesntHaveMorph('posts', function ($query) {
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Fixture;
 
-/** @var \Illuminate\Database\Eloquent\Builder $query */
-$query->whereHas('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+/** @var \Illuminate\Contracts\Database\Query\Builder $query */
+$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
-$query->orWhereHas('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+$query->orWhereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
-$query->whereDoesntHave('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+$query->whereDoesntHave('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
-$query->orWhereDoesntHave('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+$query->orWhereDoesntHave('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
-$query->whereHasMorph('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+$query->whereHasMorph('posts', [], function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
-$query->orWhereHasMorph('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+$query->orWhereHasMorph('posts', [], function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
-$query->whereDoesntHaveMorph('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+$query->whereDoesntHaveMorph('posts', [], function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
-$query->orWhereDoesntHaveMorph('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+$query->orWhereDoesntHaveMorph('posts', [], function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
