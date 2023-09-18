@@ -24,6 +24,6 @@ parameters:
             message: '#Parameter \#1 \$array of function array_keys expects array, mixed given#'
 
         # rector co-variant
-        - '#Parameter \#1 \$node \(PhpParser\\Node\\(.*?) of method RectorLaravel\\(.*?)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Core\\Contract\\Rector\\PhpRectorInterface\:\:refactor\(\)#'
+        - '#Parameter \#1 \$node (.*?) of method RectorLaravel\\(.*?)\:\:(refactor|refactorWithScope)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Core\\Contract\\Rector\\RectorInterface\:\:refactor\(\)#'
 
         - '#Parameter \#1 \$className of method Rector\\Core\\Reflection\\ReflectionResolver\:\:resolveMethodReflection\(\) expects class\-string, string given#'
