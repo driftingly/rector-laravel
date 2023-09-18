@@ -194,7 +194,7 @@ Convert migrations to anonymous classes.
 
 ## AppEnvironmentComparisonToParameterRector
 
-Replace `$app->environment() === 'local'` with `$app->environment('local'])`
+Replace `$app->environment() === 'local'` with `$app->environment('local')`
 
 - class: [`RectorLaravel\Rector\Expr\AppEnvironmentComparisonToParameterRector`](../src/Rector/Expr/AppEnvironmentComparisonToParameterRector.php)
 
