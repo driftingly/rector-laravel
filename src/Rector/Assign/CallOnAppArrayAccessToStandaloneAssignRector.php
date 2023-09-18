@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
+use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Core\Rector\AbstractRector;
 use RectorLaravel\NodeFactory\AppAssignFactory;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
@@ -30,6 +31,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 
     public function __construct(
         private readonly AppAssignFactory $appAssignFactory,
+        private readonly DocBlockUpdater $docBlockUpdater,
     ) {
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',
@@ -87,6 +89,8 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
                 $serviceNameTypeAndVariableName,
                 $methodCall->var
             );
+
+            $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($assignExpression);
 
             $methodCall->var = new Variable($serviceNameTypeAndVariableName->getVariableName());
 

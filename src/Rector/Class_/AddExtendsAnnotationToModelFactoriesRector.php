@@ -15,6 +15,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
+use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -29,6 +30,11 @@ final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
     private const EXTENDS_TAG_NAME = '@extends';
 
     private const FACTORY_CLASS_NAME = 'Illuminate\Database\Eloquent\Factories\Factory';
+
+    public function __construct(
+        private readonly DocBlockUpdater $docBlockUpdater,
+    ) {
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -86,6 +92,8 @@ CODE_SAMPLE
             }
 
             $this->addExtendsPhpDocTag($node, $stmt);
+
+            $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
 
             break;
         }
