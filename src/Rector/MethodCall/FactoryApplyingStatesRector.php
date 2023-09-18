@@ -84,6 +84,8 @@ CODE_SAMPLE
             return (array) $this->valueResolver->getValue($args[0]->value);
         }
 
-        return array_map(fn ($arg) => $arg instanceof Arg ? $this->valueResolver->getValue($arg->value) : null, $args);
+        return array_map(function ($arg) {
+            return $arg instanceof Arg ? $this->valueResolver->getValue($arg->value) : null;
+        }, $args);
     }
 }

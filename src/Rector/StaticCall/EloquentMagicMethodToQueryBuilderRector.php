@@ -23,19 +23,23 @@ final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.', [
+        return new RuleDefinition(
+            'The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.',
+            [
             new CodeSample(
                 <<<'CODE_SAMPLE'
 use App\Models\User;
 
 $user = User::find(1);
-CODE_SAMPLE,
+CODE_SAMPLE
+                ,
                 <<<'CODE_SAMPLE'
 use App\Models\User;
 
 $user = User::query()->find(1);
 CODE_SAMPLE
             ),
+        
         ]);
     }
 
@@ -63,7 +67,7 @@ CODE_SAMPLE
         $className = (string) $resolvedType->getClassName();
         $originalClassName = $this->getName($node->class); // like "self" or "App\Models\User"
 
-        if (is_null($originalClassName)) {
+        if ($originalClassName === null) {
             return null;
         }
 
@@ -84,7 +88,8 @@ CODE_SAMPLE
         }
 
         // if method belongs to Eloquent Query Builder or Query Builder
-        if (! ($this->isPublicMethod(EloquentQueryBuilder::class, $methodName) ||
+        if (! (
+            $this->isPublicMethod(EloquentQueryBuilder::class, $methodName) ||
             $this->isPublicMethod(QueryBuilder::class, $methodName)
         )) {
             return null;

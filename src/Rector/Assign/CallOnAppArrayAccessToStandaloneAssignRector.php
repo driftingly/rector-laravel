@@ -25,14 +25,26 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 {
     /**
+     * @readonly
+     * @var \RectorLaravel\NodeFactory\AppAssignFactory
+     */
+    private $appAssignFactory;
+
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+
+    /**
      * @var ServiceNameTypeAndVariableName[]
      */
-    private array $serviceNameTypeAndVariableNames = [];
+    private $serviceNameTypeAndVariableNames = [];
 
-    public function __construct(
-        private readonly AppAssignFactory $appAssignFactory,
-        private readonly DocBlockUpdater $docBlockUpdater,
-    ) {
+    public function __construct(AppAssignFactory $appAssignFactory, DocBlockUpdater $docBlockUpdater)
+    {
+        $this->appAssignFactory = $appAssignFactory;
+        $this->docBlockUpdater = $docBlockUpdater;
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',
             'Illuminate\Validation\Factory',
@@ -50,8 +62,9 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 
     /**
      * @param Expression $node
+     * @return \PhpParser\Node|mixed[]|int|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node)
     {
         if (! $node->expr instanceof Assign) {
             return null;

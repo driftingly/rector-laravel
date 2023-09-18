@@ -22,7 +22,7 @@ final class Redirect301ToPermanentRedirectRector extends AbstractRector
     /**
      * @var ObjectType[]
      */
-    private array $routerObjectTypes = [];
+    private $routerObjectTypes = [];
 
     public function __construct()
     {

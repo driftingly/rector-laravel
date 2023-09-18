@@ -4,23 +4,36 @@ declare(strict_types=1);
 
 namespace RectorLaravel\NodeFactory;
 
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 
 final class RouterRegisterNodeAnalyzer
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly NodeTypeResolver $nodeTypeResolver
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\NodeTypeResolver
+     */
+    private $nodeTypeResolver;
+
+    public function __construct(NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodeTypeResolver = $nodeTypeResolver;
     }
 
-    public function isRegisterMethodStaticCall(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    public function isRegisterMethodStaticCall($node): bool
     {
         if (! $this->isRegisterName($node->name)) {
             return false;
@@ -39,7 +52,10 @@ final class RouterRegisterNodeAnalyzer
         );
     }
 
-    public function isRegisterName(Identifier|Expr $name): bool
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    public function isRegisterName($name): bool
     {
         if ($this->isRegisterAnyVerb($name)) {
             return true;
@@ -56,22 +72,34 @@ final class RouterRegisterNodeAnalyzer
         return $this->isRegisterFallback($name);
     }
 
-    public function isRegisterMultipleVerbs(Identifier|Expr $name): bool
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    public function isRegisterMultipleVerbs($name): bool
     {
         return $this->nodeNameResolver->isName($name, 'match');
     }
 
-    public function isRegisterAllVerbs(Identifier|Expr $name): bool
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    public function isRegisterAllVerbs($name): bool
     {
         return $this->nodeNameResolver->isName($name, 'any');
     }
 
-    public function isRegisterAnyVerb(Identifier|Expr $name): bool
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    public function isRegisterAnyVerb($name): bool
     {
         return $this->nodeNameResolver->isNames($name, ['delete', 'get', 'options', 'patch', 'post', 'put']);
     }
 
-    public function isRegisterFallback(Identifier|Expr $name): bool
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    public function isRegisterFallback($name): bool
     {
         return $this->nodeNameResolver->isName($name, 'fallback');
     }
