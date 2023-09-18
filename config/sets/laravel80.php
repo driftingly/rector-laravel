@@ -60,7 +60,5 @@ return static function (RectorConfig $rectorConfig): void {
             new MethodCallRename('Illuminate\Contracts\Queue\ShouldQueue', 'timeoutAt', 'retryUntil'),
             # https://github.com/laravel/framework/commit/f9374fa5fb0450721fb2f90e96adef9d409b112c
             new MethodCallRename('Illuminate\Testing\TestResponse', 'decodeResponseJson', 'json'),
-            # https://github.com/laravel/framework/commit/fd662d4699776a94e7ead2a42e82c340363fc5a6
-            new MethodCallRename('Illuminate\Testing\TestResponse', 'assertExactJson', 'assertSimilarJson'),
         ]);
 };
