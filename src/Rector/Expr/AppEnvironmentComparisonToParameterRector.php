@@ -21,7 +21,7 @@ class AppEnvironmentComparisonToParameterRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Replace `$app->environment() === \'local\'` with `$app->environment(\'local\'])`',
+            'Replace `$app->environment() === \'local\'` with `$app->environment(\'local\')`',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
