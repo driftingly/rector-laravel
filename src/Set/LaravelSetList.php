@@ -107,4 +107,9 @@ final class LaravelSetList implements SetListInterface
      * @var string
      */
     final public const LARAVEL_FACADE_ALIASES_TO_FULL_NAMES = __DIR__ . '/../../config/sets/laravel-facade-aliases-to-full-names.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER = __DIR__ . '/../../config/sets/laravel-eloquent-magic-method-to-query-builder.php';
 }

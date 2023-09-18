@@ -1,4 +1,4 @@
-# 39 Rules Overview
+# 40 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -454,6 +454,21 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
+## EloquentMagicMethodToQueryBuilderRector
+
+Transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.
+
+- class: [`RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector`](../src/Rector/StaticCall/EloquentMagicMethodToQueryBuilderRector.php)
+
+```diff
+-User::find(1);
+-User::where('email', 'test@test.com')->first();
++User::query()->find(1);
++User::query()->where('email', 'test@test.com')->first();
 ```
 
 <br>
