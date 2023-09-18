@@ -1,4 +1,4 @@
-# 40 Rules Overview
+# 41 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -460,15 +460,30 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 ## EloquentMagicMethodToQueryBuilderRector
 
-Transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.
+The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.
 
 - class: [`RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector`](../src/Rector/StaticCall/EloquentMagicMethodToQueryBuilderRector.php)
 
 ```diff
--User::find(1);
--User::where('email', 'test@test.com')->first();
-+User::query()->find(1);
-+User::query()->where('email', 'test@test.com')->first();
+ use App\Models\User;
+
+-$user = User::find(1);
++$user = User::query()->find(1);
+```
+
+<br>
+
+## EloquentWhereTypeHintClosureParameterRector
+
+Change typehint of closure parameter in where method of Eloquent Builder
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector`](../src/Rector/MethodCall/EloquentWhereTypeHintClosureParameterRector.php)
+
+```diff
+-$query->where(function ($query) {
++$query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+     $query->where('id', 1);
+ });
 ```
 
 <br>
