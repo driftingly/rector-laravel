@@ -1,4 +1,4 @@
-# 40 Rules Overview
+# 41 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -969,6 +969,33 @@ Unify Model `$dates` property with `$casts`
      ];
 -
 -    protected $dates = ['birthday'];
+ }
+```
+
+<br>
+
+## UseComponentPropertyWithinCommandsRector
+
+Use `$this->components` property within commands
+
+- class: [`RectorLaravel\Rector\MethodCall\UseComponentPropertyWithinCommandsRector`](../src/Rector/MethodCall/UseComponentPropertyWithinCommandsRector.php)
+
+```diff
+ use Illuminate\Console\Command;
+
+ class CommandWithComponents extends Command
+ {
+     public function handle()
+     {
+-        $this->ask('What is your name?');
+-        $this->line('A line!');
+-        $this->info('Info!');
+-        $this->error('Error!');
++        $this->components->ask('What is your name?');
++        $this->components->line('A line!');
++        $this->components->info('Info!');
++        $this->components->error('Error!');
+     }
  }
 ```
 
