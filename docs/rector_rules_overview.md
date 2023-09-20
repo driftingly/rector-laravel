@@ -1,4 +1,4 @@
-# 40 Rules Overview
+# 41 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -469,6 +469,24 @@ Transform certain magic method calls on Eloquent Models into corresponding Query
 -User::where('email', 'test@test.com')->first();
 +User::query()->find(1);
 +User::query()->where('email', 'test@test.com')->first();
+
+<br>
+
+## EloquentOrderByToLatestOrOldestRector
+
+Changes `orderBy()` to `latest()` or `oldest()`
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector`](../src/Rector/MethodCall/EloquentOrderByToLatestOrOldestRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Builder;
+
+-$builder->orderBy('created_at');
+-$builder->orderBy('created_at', 'desc');
+-$builder->orderBy('deleted_at');
++$builder->latest();
++$builder->oldest();
++$builder->latest('deleted_at');
 ```
 
 <br>
