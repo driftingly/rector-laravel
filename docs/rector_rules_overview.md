@@ -192,6 +192,19 @@ Convert migrations to anonymous classes.
 
 <br>
 
+## AppEnvironmentComparisonToParameterRector
+
+Replace `$app->environment() === 'local'` with `$app->environment('local')`
+
+- class: [`RectorLaravel\Rector\Expr\AppEnvironmentComparisonToParameterRector`](../src/Rector/Expr/AppEnvironmentComparisonToParameterRector.php)
+
+```diff
+-$app->environment() === 'production';
++$app->environment('production');
+```
+
+<br>
+
 ## ArgumentFuncCallToMethodCallRector
 
 Move help facade-like function calls to constructor injection
@@ -483,6 +496,27 @@ Change typehint of closure parameter in where method of Eloquent Builder
 -$query->where(function ($query) {
 +$query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
      $query->where('id', 1);
+ });
+```
+
+<br>
+
+
+## EloquentWhereRelationTypeHintingParameterRector
+
+Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `whereDoesntHave`, `orWhereDoesntHave`, `whereHasMorph`, `orWhereHasMorph`, `whereDoesntHaveMorph`, `orWhereDoesntHaveMorph`
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector`](../src/Rector/MethodCall/EloquentWhereRelationTypeHintingParameterRector.php)
+
+```diff
+-User::whereHas('posts', function ($query) {
++User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
+     $query->where('is_published', true);
+ });
+
+-$query->whereHas('posts', function ($query) {
++$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
+     $query->where('is_published', true);
  });
 ```
 
@@ -984,6 +1018,33 @@ Unify Model `$dates` property with `$casts`
      ];
 -
 -    protected $dates = ['birthday'];
+ }
+```
+
+<br>
+
+## UseComponentPropertyWithinCommandsRector
+
+Use `$this->components` property within commands
+
+- class: [`RectorLaravel\Rector\MethodCall\UseComponentPropertyWithinCommandsRector`](../src/Rector/MethodCall/UseComponentPropertyWithinCommandsRector.php)
+
+```diff
+ use Illuminate\Console\Command;
+
+ class CommandWithComponents extends Command
+ {
+     public function handle()
+     {
+-        $this->ask('What is your name?');
+-        $this->line('A line!');
+-        $this->info('Info!');
+-        $this->error('Error!');
++        $this->components->ask('What is your name?');
++        $this->components->line('A line!');
++        $this->components->info('Info!');
++        $this->components->error('Error!');
+     }
  }
 ```
 
