@@ -1,4 +1,4 @@
-# 40 Rules Overview
+# 41 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -460,15 +460,35 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 ## EloquentMagicMethodToQueryBuilderRector
 
-Transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.
+The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.
 
 - class: [`RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector`](../src/Rector/StaticCall/EloquentMagicMethodToQueryBuilderRector.php)
 
 ```diff
--User::find(1);
--User::where('email', 'test@test.com')->first();
-+User::query()->find(1);
-+User::query()->where('email', 'test@test.com')->first();
+ use App\Models\User;
+
+-$user = User::find(1);
++$user = User::query()->find(1);
+```
+
+<br>
+
+## EloquentWhereRelationTypeHintingParameterRector
+
+Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `whereDoesntHave`, `orWhereDoesntHave`, `whereHasMorph`, `orWhereHasMorph`, `whereDoesntHaveMorph`, `orWhereDoesntHaveMorph`
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector`](../src/Rector/MethodCall/EloquentWhereRelationTypeHintingParameterRector.php)
+
+```diff
+-User::whereHas('posts', function ($query) {
++User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
+     $query->where('is_published', true);
+ });
+
+-$query->whereHas('posts', function ($query) {
++$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
+     $query->where('is_published', true);
+ });
 ```
 
 <br>
