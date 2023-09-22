@@ -1,4 +1,4 @@
-# 41 Rules Overview
+# 45 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -478,10 +478,11 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 - class: [`RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector`](../src/Rector/StaticCall/EloquentMagicMethodToQueryBuilderRector.php)
 
 ```diff
--User::find(1);
--User::where('email', 'test@test.com')->first();
-+User::query()->find(1);
-+User::query()->where('email', 'test@test.com')->first();
+ use App\Models\User;
+
+-$user = User::find(1);
++$user = User::query()->find(1);
+```
 
 <br>
 
@@ -500,30 +501,9 @@ Changes `orderBy()` to `latest()` or `oldest()`
 +$builder->latest();
 +$builder->oldest();
 +$builder->latest('deleted_at');
-
- use App\Models\User;
-
--$user = User::find(1);
-+$user = User::query()->find(1);
 ```
 
 <br>
-
-## EloquentWhereTypeHintClosureParameterRector
-
-Change typehint of closure parameter in where method of Eloquent Builder
-
-- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector`](../src/Rector/MethodCall/EloquentWhereTypeHintClosureParameterRector.php)
-
-```diff
--$query->where(function ($query) {
-+$query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
-     $query->where('id', 1);
- });
-```
-
-<br>
-
 
 ## EloquentWhereRelationTypeHintingParameterRector
 
@@ -540,6 +520,21 @@ Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `w
 -$query->whereHas('posts', function ($query) {
 +$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
+ });
+```
+
+<br>
+
+## EloquentWhereTypeHintClosureParameterRector
+
+Change typehint of closure parameter in where method of Eloquent Builder
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector`](../src/Rector/MethodCall/EloquentWhereTypeHintClosureParameterRector.php)
+
+```diff
+-$query->where(function ($query) {
++$query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+     $query->where('id', 1);
  });
 ```
 

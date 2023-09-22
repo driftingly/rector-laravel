@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -35,7 +37,7 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [Node\Stmt\Expression::class];
+        return [Expression::class];
     }
 
     /**
@@ -43,7 +45,7 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $node->expr instanceof Node\Expr\FuncCall) {
+        if (! $node->expr instanceof FuncCall) {
             return null;
         }
 

@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -35,7 +40,7 @@ class CommandWithComponents extends Command
     }
 }
 CODE_SAMPLE
-,
+                ,
                 <<<'CODE_SAMPLE'
 use Illuminate\Console\Command;
 
@@ -50,7 +55,7 @@ class CommandWithComponents extends Command
     }
 }
 CODE_SAMPLE
-,
+                ,
             ),
         ]);
     }
@@ -65,7 +70,7 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if ($node->extends === null) {
+        if (! $node->extends instanceof Name) {
             return null;
         }
 
@@ -84,17 +89,17 @@ CODE_SAMPLE
         return $node;
     }
 
-    private function refactorClassMethod(ClassMethod $method): ClassMethod
+    private function refactorClassMethod(ClassMethod $classMethod): ClassMethod
     {
-        if ($method->stmts === null) {
-            return $method;
+        if ($classMethod->stmts === null) {
+            return $classMethod;
         }
 
-        foreach ($method->stmts as $stmt) {
-            if (! $stmt instanceof Node\Stmt\Expression) {
+        foreach ($classMethod->stmts as $stmt) {
+            if (! $stmt instanceof Expression) {
                 continue;
             }
-            if (! $stmt->expr instanceof Node\Expr\MethodCall) {
+            if (! $stmt->expr instanceof MethodCall) {
                 continue;
             }
 
@@ -117,9 +122,9 @@ CODE_SAMPLE
             }
 
             $stmt->expr->var =
-                new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), 'components');
+                new PropertyFetch(new Variable('this'), 'components');
         }
 
-        return $method;
+        return $classMethod;
     }
 }

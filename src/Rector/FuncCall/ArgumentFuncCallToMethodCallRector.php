@@ -170,21 +170,21 @@ CODE_SAMPLE
     }
 
     public function refactorFuncCallToMethodCall(
-        FuncCall $node,
+        FuncCall $funcCall,
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
         MethodCall|PropertyFetch|Variable $expr
     ): MethodCall|PropertyFetch|Variable {
-        if ($node->args === []) {
+        if ($funcCall->args === []) {
             return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $expr);
         }
 
-        $methodName = $argumentFuncCallToMethodCall->getMethodIfArgs();
+        $methodIfArgs = $argumentFuncCallToMethodCall->getMethodIfArgs();
 
-        if (! is_string($methodName)) {
+        if (! is_string($methodIfArgs)) {
             throw new ShouldNotHappenException();
         }
 
-        return $this->nodeFactory->createMethodCall($expr, $methodName, $node->args);
+        return $this->nodeFactory->createMethodCall($expr, $methodIfArgs, $funcCall->args);
     }
 
     private function refactorArrayFunctionToMethodCall(

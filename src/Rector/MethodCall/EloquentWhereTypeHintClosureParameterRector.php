@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\ArrowFunction;
+use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -40,12 +46,12 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [Node\Expr\MethodCall::class, Node\Expr\StaticCall::class];
+        return [MethodCall::class, StaticCall::class];
     }
 
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof Node\Expr\MethodCall && ! $node instanceof Node\Expr\StaticCall) {
+        if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
             return null;
         }
 
@@ -58,24 +64,16 @@ CODE_SAMPLE
         return null;
     }
 
-    private function isWhereMethodWithClosureOrArrowFunction(
-        Node\Expr\MethodCall|Node\Expr\StaticCall $node
-    ): bool {
+    private function isWhereMethodWithClosureOrArrowFunction(MethodCall|StaticCall $node): bool
+    {
         if (! $this->expectedObjectTypeAndMethodCall($node)) {
             return false;
         }
-
-        if (
-            ! ($node->getArgs()[0]->value ?? null) instanceof Node\Expr\Closure &&
-            ! ($node->getArgs()[0]->value ?? null) instanceof Node\Expr\ArrowFunction
-        ) {
-            return false;
-        }
-
-        return true;
+        return ! (! ($node->getArgs()[0]->value ?? null) instanceof Closure &&
+        ! ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(Node\Expr\MethodCall|Node\Expr\StaticCall $node): void
+    private function changeClosureParamType(MethodCall|StaticCall $node): void
     {
         /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
         $closure = $node->getArgs()[0]
@@ -87,21 +85,21 @@ CODE_SAMPLE
 
         $param = $closure->getParams()[0];
 
-        if ($param->type instanceof Node\Name) {
+        if ($param->type instanceof Name) {
             return;
         }
 
-        $param->type = new Node\Name\FullyQualified('Illuminate\Contracts\Database\Query\Builder');
+        $param->type = new FullyQualified('Illuminate\Contracts\Database\Query\Builder');
     }
 
-    private function expectedObjectTypeAndMethodCall(Node\Expr\MethodCall|Node\Expr\StaticCall $node): bool
+    private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
     {
         return match (true) {
-            $node instanceof Node\Expr\MethodCall && $this->isObjectType(
+            $node instanceof MethodCall && $this->isObjectType(
                 $node->var,
                 new ObjectType('Illuminate\Contracts\Database\Query\Builder')
             ) => true,
-            $node instanceof Node\Expr\StaticCall && $this->isObjectType(
+            $node instanceof StaticCall && $this->isObjectType(
                 $node->class,
                 new ObjectType('Illuminate\Database\Eloquent\Model')
             ) => true,

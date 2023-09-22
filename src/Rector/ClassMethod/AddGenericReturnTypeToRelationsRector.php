@@ -315,12 +315,7 @@ CODE_SAMPLE
         if (! $classReflection instanceof ClassReflection || $classReflection->isAnonymous()) {
             return true;
         }
-
-        if (! $classReflection->isTrait() && ! $classReflection->isSubclassOf('Illuminate\Database\Eloquent\Model')) {
-            return true;
-        }
-
-        return false;
+        return ! $classReflection->isTrait() && ! $classReflection->isSubclassOf('Illuminate\Database\Eloquent\Model');
     }
 
     /**

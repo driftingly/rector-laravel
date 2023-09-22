@@ -150,10 +150,10 @@ CODE_SAMPLE
         );
     }
 
-    private function shouldSkipFirstArg(Expr $value): bool
+    private function shouldSkipFirstArg(Expr $expr): bool
     {
         foreach (self::SKIP_VALUE_TYPES as $type) {
-            if ($value instanceof $type) {
+            if ($expr instanceof $type) {
                 return true;
             }
         }
