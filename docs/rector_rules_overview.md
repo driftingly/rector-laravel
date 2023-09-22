@@ -486,6 +486,22 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 
 <br>
 
+## EloquentWhereTypeHintClosureParameterRector
+
+Change typehint of closure parameter in where method of Eloquent Builder
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector`](../src/Rector/MethodCall/EloquentWhereTypeHintClosureParameterRector.php)
+
+```diff
+-$query->where(function ($query) {
++$query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
+     $query->where('id', 1);
+ });
+```
+
+<br>
+
+
 ## EloquentWhereRelationTypeHintingParameterRector
 
 Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `whereDoesntHave`, `orWhereDoesntHave`, `whereHasMorph`, `orWhereHasMorph`, `whereDoesntHaveMorph`, `orWhereDoesntHaveMorph`
