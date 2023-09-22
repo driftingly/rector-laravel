@@ -31,9 +31,15 @@ final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
 
     private const FACTORY_CLASS_NAME = 'Illuminate\Database\Eloquent\Factories\Factory';
 
-    public function __construct(
-        private readonly DocBlockUpdater $docBlockUpdater,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+
+    public function __construct(DocBlockUpdater $docBlockUpdater)
+    {
+        $this->docBlockUpdater = $docBlockUpdater;
     }
 
     public function getRuleDefinition(): RuleDefinition

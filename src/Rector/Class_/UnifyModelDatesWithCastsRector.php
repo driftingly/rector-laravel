@@ -24,9 +24,15 @@ use Webmozart\Assert\Assert;
  */
 final class UnifyModelDatesWithCastsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ClassInsertManipulator $classInsertManipulator
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeManipulator\ClassInsertManipulator
+     */
+    private $classInsertManipulator;
+
+    public function __construct(ClassInsertManipulator $classInsertManipulator)
+    {
+        $this->classInsertManipulator = $classInsertManipulator;
     }
 
     public function getRuleDefinition(): RuleDefinition

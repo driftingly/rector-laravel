@@ -36,7 +36,7 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     /**
      * @var string
      */
-    final public const EXCLUDE_METHODS = 'exclude_methods';
+    public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var array<class-string<Expr>>
@@ -46,7 +46,7 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     /**
      * @var string[]
      */
-    private array $excludeMethods = [];
+    private $excludeMethods = [];
 
     public function getRuleDefinition(): RuleDefinition
     {

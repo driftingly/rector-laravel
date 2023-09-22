@@ -26,21 +26,22 @@ final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector
         return new RuleDefinition(
             'The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.',
             [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
+                new CodeSample(
+                    <<<'CODE_SAMPLE'
 use App\Models\User;
 
 $user = User::find(1);
 CODE_SAMPLE
-,
-                <<<'CODE_SAMPLE'
+                    ,
+                    <<<'CODE_SAMPLE'
 use App\Models\User;
 
 $user = User::query()->find(1);
 CODE_SAMPLE
-            ),
-        
-        ]);
+                ),
+
+            ]
+        );
     }
 
     /**
@@ -109,7 +110,7 @@ CODE_SAMPLE
     {
         try {
             $reflectionMethod = new ReflectionMethod($className, $methodName);
-        } catch (ReflectionException) {
+        } catch (ReflectionException $exception) {
             return true; // method does not exist => is magic method
         }
 
@@ -130,7 +131,7 @@ CODE_SAMPLE
             if ($reflectionMethod->isStatic()) {
                 return false;
             }
-        } catch (ReflectionException) {
+        } catch (ReflectionException $exception) {
             return false; // method does not exist => is magic method
         }
 
