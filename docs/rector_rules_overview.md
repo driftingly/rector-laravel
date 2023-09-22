@@ -192,6 +192,19 @@ Convert migrations to anonymous classes.
 
 <br>
 
+## AppEnvironmentComparisonToParameterRector
+
+Replace `$app->environment() === 'local'` with `$app->environment('local')`
+
+- class: [`RectorLaravel\Rector\Expr\AppEnvironmentComparisonToParameterRector`](../src/Rector/Expr/AppEnvironmentComparisonToParameterRector.php)
+
+```diff
+-$app->environment() === 'production';
++$app->environment('production');
+```
+
+<br>
+
 ## ArgumentFuncCallToMethodCallRector
 
 Move help facade-like function calls to constructor injection
