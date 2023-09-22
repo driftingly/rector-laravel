@@ -478,6 +478,29 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 - class: [`RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector`](../src/Rector/StaticCall/EloquentMagicMethodToQueryBuilderRector.php)
 
 ```diff
+-User::find(1);
+-User::where('email', 'test@test.com')->first();
++User::query()->find(1);
++User::query()->where('email', 'test@test.com')->first();
+
+<br>
+
+## EloquentOrderByToLatestOrOldestRector
+
+Changes `orderBy()` to `latest()` or `oldest()`
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector`](../src/Rector/MethodCall/EloquentOrderByToLatestOrOldestRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Builder;
+
+-$builder->orderBy('created_at');
+-$builder->orderBy('created_at', 'desc');
+-$builder->orderBy('deleted_at');
++$builder->latest();
++$builder->oldest();
++$builder->latest('deleted_at');
+
  use App\Models\User;
 
 -$user = User::find(1);
