@@ -1,0 +1,125 @@
+<?php
+
+declare(strict_types=1);
+
+namespace RectorLaravel\Rector\MethodCall;
+
+use PhpParser\Node;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Type\ObjectType;
+use Rector\Core\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+
+/**
+ * @see \RectorLaravel\Tests\Rector\MethodCall\UseComponentPropertyWithinCommandsRector\UseComponentPropertyWithinCommandsRectorTest
+ */
+class UseComponentPropertyWithinCommandsRector extends AbstractRector
+{
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('Use $this->components property within commands', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+use Illuminate\Console\Command;
+
+class CommandWithComponents extends Command
+{
+    public function handle()
+    {
+        $this->ask('What is your name?');
+        $this->line('A line!');
+        $this->info('Info!');
+        $this->error('Error!');
+    }
+}
+CODE_SAMPLE
+,
+                <<<'CODE_SAMPLE'
+use Illuminate\Console\Command;
+
+class CommandWithComponents extends Command
+{
+    public function handle()
+    {
+        $this->components->ask('What is your name?');
+        $this->components->line('A line!');
+        $this->components->info('Info!');
+        $this->components->error('Error!');
+    }
+}
+CODE_SAMPLE
+,
+            ),
+        ]);
+    }
+
+    public function getNodeTypes(): array
+    {
+        return [Class_::class];
+    }
+
+    /**
+     * @param Class_ $node
+     */
+    public function refactor(Node $node): ?Node
+    {
+        if ($node->extends === null) {
+            return null;
+        }
+
+        if (! $this->isObjectType($node->extends, new ObjectType('Illuminate\Console\Command'))) {
+            return null;
+        }
+
+        foreach ($node->stmts as $key => $stmt) {
+            if (! $stmt instanceof ClassMethod) {
+                continue;
+            }
+
+            $node->stmts[$key] = $this->refactorClassMethod($stmt);
+        }
+
+        return $node;
+    }
+
+    private function refactorClassMethod(ClassMethod $method): ClassMethod
+    {
+        if ($method->stmts === null) {
+            return $method;
+        }
+
+        foreach ($method->stmts as $stmt) {
+            if (! $stmt instanceof Node\Stmt\Expression) {
+                continue;
+            }
+            if (! $stmt->expr instanceof Node\Expr\MethodCall) {
+                continue;
+            }
+
+            if (! $this->isName($stmt->expr->var, 'this')) {
+                continue;
+            }
+
+            if (! $this->isNames($stmt->expr->name, [
+                'ask',
+                'line',
+                'info',
+                'error',
+                'warn',
+                'confirm',
+                'askWithCompletion',
+                'choice',
+                'alert',
+            ])) {
+                continue;
+            }
+
+            $stmt->expr->var =
+                new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), 'components');
+        }
+
+        return $method;
+    }
+}
