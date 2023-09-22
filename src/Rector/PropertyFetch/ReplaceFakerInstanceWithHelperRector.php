@@ -112,7 +112,7 @@ CODE_SAMPLE
 
         $funcCall = $this->getFuncCall($node->var);
 
-        if ($funcCall === null) {
+        if (! $funcCall instanceof FuncCall) {
             return null;
         }
 
@@ -120,13 +120,13 @@ CODE_SAMPLE
         return $node;
     }
 
-    private function getFuncCall(PropertyFetch $node): ?FuncCall
+    private function getFuncCall(PropertyFetch $propertyFetch): ?FuncCall
     {
-        if (! $this->isName($node->var, 'this')) {
+        if (! $this->isName($propertyFetch->var, 'this')) {
             return null;
         }
 
-        if (! $this->isName($node->name, 'faker')) {
+        if (! $this->isName($propertyFetch->name, 'faker')) {
             return null;
         }
 

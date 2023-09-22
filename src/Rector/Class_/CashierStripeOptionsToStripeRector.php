@@ -77,13 +77,13 @@ CODE_SAMPLE
         }
 
         /** @var Class_ $node */
-        $stripeOptionsMethod = $node->getMethod('stripeOptions');
+        $classMethod = $node->getMethod('stripeOptions');
 
-        if (! $stripeOptionsMethod instanceof ClassMethod) {
+        if (! $classMethod instanceof ClassMethod) {
             return null;
         }
 
-        $stripeOptionsMethod->name = new Identifier('stripe');
+        $classMethod->name = new Identifier('stripe');
 
         return $node;
     }

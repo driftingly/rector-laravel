@@ -130,14 +130,14 @@ CODE_SAMPLE
         $phpDocInfo->addPhpDocTagNode($phpDocTagNode);
     }
 
-    private function getModelName(?Expr $defaultProp): ?string
+    private function getModelName(?Expr $expr): ?string
     {
-        if ($defaultProp instanceof ClassConstFetch) {
-            return $this->getName($defaultProp->class);
+        if ($expr instanceof ClassConstFetch) {
+            return $this->getName($expr->class);
         }
 
-        if ($defaultProp instanceof String_) {
-            return $defaultProp->value;
+        if ($expr instanceof String_) {
+            return $expr->value;
         }
 
         return null;

@@ -11,9 +11,6 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 final class User extends Model
 {
-    public static function staticMethodBelongsToModel(): void
-    {
-    }
 }
 
 final class EloquentMagicMethodToQueryBuilderRectorTest extends AbstractRectorTestCase

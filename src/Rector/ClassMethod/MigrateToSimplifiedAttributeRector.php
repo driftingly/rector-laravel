@@ -129,8 +129,8 @@ CODE_SAMPLE
         }
 
         // Skip if the new attribute name is already used
-        foreach ($allClassMethods as $method) {
-            if ($this->isName($method, $attributeName)) {
+        foreach ($allClassMethods as $allClassMethod) {
+            if ($this->isName($allClassMethod, $attributeName)) {
                 return null;
             }
         }
@@ -276,9 +276,9 @@ CODE_SAMPLE
      */
     private function findPossibleAccessor(array $allClassMethods, string $attributeName): ?ClassMethod
     {
-        foreach ($allClassMethods as $classMethod) {
-            if ($classMethod->name->toString() === 'get' . ucfirst($attributeName) . 'Attribute') {
-                return $classMethod;
+        foreach ($allClassMethods as $allClassMethod) {
+            if ($allClassMethod->name->toString() === 'get' . ucfirst($attributeName) . 'Attribute') {
+                return $allClassMethod;
             }
         }
 
@@ -290,9 +290,9 @@ CODE_SAMPLE
      */
     private function findPossibleMutator(array $allClassMethods, string $attributeName): ?ClassMethod
     {
-        foreach ($allClassMethods as $classMethod) {
-            if ($classMethod->name->toString() === 'set' . ucfirst($attributeName) . 'Attribute') {
-                return $classMethod;
+        foreach ($allClassMethods as $allClassMethod) {
+            if ($allClassMethod->name->toString() === 'set' . ucfirst($attributeName) . 'Attribute') {
+                return $allClassMethod;
             }
         }
 

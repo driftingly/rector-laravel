@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Nop;
 use PHPStan\Type\ObjectType;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Core\Rector\AbstractRector;
@@ -96,7 +97,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 
             // the nop is a workaround because the docs of the first node are somehow stripped away
             // this will add a newline but the docs will be preserved
-            return [new Node\Stmt\Nop(), $assignExpression, $node];
+            return [new Nop(), $assignExpression, $node];
         }
 
         return null;
