@@ -23,6 +23,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -30,6 +31,11 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /** @see \RectorLaravel\Tests\Rector\ClassMethod\MigrateToSimplifiedAttributeRector\MigrateToSimplifiedAttributeRectorTest */
 final class MigrateToSimplifiedAttributeRector extends AbstractRector
 {
+    public function __construct(
+        private readonly BetterNodeFinder $betterNodeFinder
+    ) {
+    }
+
     /**
      * @return array<class-string<Node>>
      */

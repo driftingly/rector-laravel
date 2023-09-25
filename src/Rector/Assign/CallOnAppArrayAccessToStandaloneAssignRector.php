@@ -14,6 +14,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Nop;
 use PHPStan\Type\ObjectType;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use RectorLaravel\NodeFactory\AppAssignFactory;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
@@ -33,6 +34,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
     public function __construct(
         private readonly AppAssignFactory $appAssignFactory,
         private readonly DocBlockUpdater $docBlockUpdater,
+        private readonly ValueResolver $valueResolver,
     ) {
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',

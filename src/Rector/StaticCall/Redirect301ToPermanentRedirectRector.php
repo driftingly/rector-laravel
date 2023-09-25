@@ -9,6 +9,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -24,8 +25,9 @@ final class Redirect301ToPermanentRedirectRector extends AbstractRector
      */
     private array $routerObjectTypes = [];
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly ValueResolver $valueResolver,
+    ) {
         $this->routerObjectTypes = [
             new ObjectType('Illuminate\Support\Facades\Route'),
             new ObjectType('Illuminate\Routing\Route'),
