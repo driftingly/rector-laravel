@@ -16,6 +16,8 @@ use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Enum\ObjectReference;
 use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PHPUnit\NodeAnalyzer\SetUpMethodDecorator;
@@ -34,7 +36,9 @@ final class AddMockConsoleOutputFalseToConsoleTestsRector extends AbstractRector
     public function __construct(
         private readonly PropertyFetchAnalyzer $propertyFetchAnalyzer,
         private readonly SetUpMethodDecorator $setUpMethodDecorator,
-        private readonly VisibilityManipulator $visibilityManipulator
+        private readonly VisibilityManipulator $visibilityManipulator,
+        private readonly BetterNodeFinder $betterNodeFinder,
+        private readonly ValueResolver $valueResolver,
     ) {
     }
 

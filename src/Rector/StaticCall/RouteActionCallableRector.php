@@ -16,6 +16,7 @@ use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\Php\PhpMethodReflection;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\Reflection\ReflectionResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -55,7 +56,8 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
 
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver,
-        private readonly RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer
+        private readonly RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer,
+        private readonly ValueResolver $valueResolver,
     ) {
     }
 

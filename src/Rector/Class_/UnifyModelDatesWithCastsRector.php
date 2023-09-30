@@ -11,7 +11,9 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Core\NodeManipulator\ClassInsertManipulator;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -25,7 +27,9 @@ use Webmozart\Assert\Assert;
 final class UnifyModelDatesWithCastsRector extends AbstractRector
 {
     public function __construct(
-        private readonly ClassInsertManipulator $classInsertManipulator
+        private readonly ClassInsertManipulator $classInsertManipulator,
+        private readonly ValueResolver $valueResolver,
+        private readonly PhpDocInfoFactory $phpDocInfoFactory,
     ) {
     }
 

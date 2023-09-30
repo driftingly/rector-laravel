@@ -14,6 +14,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\ExtendsTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\Type\ObjectType;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Core\Rector\AbstractRector;
@@ -33,6 +34,7 @@ final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
 
     public function __construct(
         private readonly DocBlockUpdater $docBlockUpdater,
+        private readonly PhpDocInfoFactory $phpDocInfoFactory,
     ) {
     }
 

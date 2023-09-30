@@ -10,6 +10,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\VariadicPlaceholder;
 use PHPStan\Type\ObjectType;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -23,6 +24,11 @@ use Webmozart\Assert\Assert;
  */
 final class FactoryApplyingStatesRector extends AbstractRector
 {
+    public function __construct(
+        private readonly ValueResolver $valueResolver,
+    ) {
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Call the state methods directly instead of specify the name of state.', [

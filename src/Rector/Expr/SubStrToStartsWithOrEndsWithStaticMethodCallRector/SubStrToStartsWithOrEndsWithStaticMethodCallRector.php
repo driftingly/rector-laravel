@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\BinaryOp\Equal;
 use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -19,6 +20,11 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
+    public function __construct(
+        private readonly ValueResolver $valueResolver,
+    ) {
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Use Str::startsWith() or Str::endsWith() instead of substr() === $str', [

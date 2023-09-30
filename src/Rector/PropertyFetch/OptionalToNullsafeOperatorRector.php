@@ -17,6 +17,7 @@ use PhpParser\Node\Expr\NullsafePropertyFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
@@ -47,6 +48,11 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
      * @var string[]
      */
     private array $excludeMethods = [];
+
+    public function __construct(
+        private readonly ValueResolver $valueResolver,
+    ) {
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
