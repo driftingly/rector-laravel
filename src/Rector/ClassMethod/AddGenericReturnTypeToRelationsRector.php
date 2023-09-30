@@ -40,12 +40,40 @@ class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
     // Relation methods which need the class as TChildModel.
     private const RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
 
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\TypeComparator\TypeComparator
+     */
+    private $typeComparator;
+
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+
     public function __construct(
-        private readonly TypeComparator $typeComparator,
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
-        private readonly BetterNodeFinder $betterNodeFinder,
+        TypeComparator $typeComparator,
+        DocBlockUpdater $docBlockUpdater,
+        PhpDocInfoFactory $phpDocInfoFactory,
+        BetterNodeFinder $betterNodeFinder
     ) {
+        $this->typeComparator = $typeComparator;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -167,10 +195,12 @@ CODE_SAMPLE
             return null;
         }
 
-        $genericTypeNode = new GenericTypeNode(
-            new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-            $this->getGenericTypes($relatedClass, $classForChildGeneric),
-        );
+        $genericTypeNode = new GenericTypeNode(new FullyQualifiedIdentifierTypeNode(
+            $methodReturnTypeName
+        ), $this->getGenericTypes(
+            $relatedClass,
+            $classForChildGeneric
+        ));
 
         // Update or add return tag
         if ($phpDocInfo->getReturnTagValue() instanceof ReturnTagValueNode) {
@@ -210,7 +240,9 @@ CODE_SAMPLE
     {
         $node = $this->betterNodeFinder->findFirstInFunctionLikeScoped(
             $classMethod,
-            fn (Node $subNode): bool => $subNode instanceof Return_
+            function (Node $subNode): bool {
+                return $subNode instanceof Return_;
+            }
         );
 
         if (! $node instanceof Return_) {
@@ -247,7 +279,7 @@ CODE_SAMPLE
 
         $classReflection = $scope->getClassReflection();
 
-        return $classReflection?->getName();
+        return ($nullsafeVariable1 = $classReflection) ? $nullsafeVariable1->getName() : null;
     }
 
     private function areNativeTypeAndPhpDocReturnTypeEqual(
@@ -267,10 +299,7 @@ CODE_SAMPLE
 
         $methodReturnTypePHPStanType = $this->staticTypeMapper->mapPhpParserNodePHPStanType($node);
 
-        return $this->typeComparator->areTypesEqual(
-            $methodReturnTypePHPStanType,
-            $phpDocPHPStanTypeWithoutGenerics,
-        );
+        return $this->typeComparator->areTypesEqual($methodReturnTypePHPStanType, $phpDocPHPStanTypeWithoutGenerics);
     }
 
     private function areGenericTypesEqual(

@@ -41,23 +41,19 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/commit/e095ac0e928b5620f33c9b60816fde5ece867d32
     $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
-            'Illuminate\Database\Eloquent\Model',
-            'touch',
-            0,
-            'attribute',
-        ),
-        ]);
+        ->ruleWithConfiguration(
+            ArgumentAdderRector::class,
+            [new ArgumentAdder('Illuminate\Database\Eloquent\Model', 'touch', 0, 'attribute'),
+        ]
+        );
 
     // https://github.com/laravel/framework/commit/6daecf43dd931dc503e410645ff4a7d611e3371f
     $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
-            'Illuminate\Queue\Failed\FailedJobProviderInterface',
-            'flush',
-            0,
-            'hours',
-        ),
-        ]);
+        ->ruleWithConfiguration(
+            ArgumentAdderRector::class,
+            [new ArgumentAdder('Illuminate\Queue\Failed\FailedJobProviderInterface', 'flush', 0, 'hours'),
+        ]
+        );
 
     // https://github.com/laravel/framework/commit/84c78b9f5f3dad58f92161069e6482f7267ffdb6
     $rectorConfig

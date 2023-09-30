@@ -26,24 +26,20 @@ class EloquentOrderByToLatestOrOldestRector extends AbstractRector
         return new RuleDefinition(
             'Changes orderBy() to latest() or oldest()',
             [
-                new CodeSample(
-                    <<<'CODE_SAMPLE'
+                new CodeSample(<<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Builder;
 
 $builder->orderBy('created_at');
 $builder->orderBy('created_at', 'desc');
 $builder->orderBy('deleted_at');
 CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
+, <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Builder;
 
 $builder->latest();
 $builder->oldest();
 $builder->latest('deleted_at');
-CODE_SAMPLE
-                    ,
-                ),
+CODE_SAMPLE),
             ]
         );
     }

@@ -27,9 +27,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -78,8 +84,9 @@ CODE_SAMPLE
 
     /**
      * @param Expression $node
+     * @return \PhpParser\Node|mixed[]|int|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node)
     {
         if (! $node->expr instanceof MethodCall) {
             return null;

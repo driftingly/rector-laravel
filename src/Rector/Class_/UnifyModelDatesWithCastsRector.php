@@ -26,11 +26,32 @@ use Webmozart\Assert\Assert;
  */
 final class UnifyModelDatesWithCastsRector extends AbstractRector
 {
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeManipulator\ClassInsertManipulator
+     */
+    private $classInsertManipulator;
+
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+
     public function __construct(
-        private readonly ClassInsertManipulator $classInsertManipulator,
-        private readonly ValueResolver $valueResolver,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
+        ClassInsertManipulator $classInsertManipulator,
+        ValueResolver $valueResolver,
+        PhpDocInfoFactory $phpDocInfoFactory
     ) {
+        $this->classInsertManipulator = $classInsertManipulator;
+        $this->valueResolver = $valueResolver;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
 
     public function getRuleDefinition(): RuleDefinition

@@ -83,7 +83,7 @@ CODE_SAMPLE
         return $this->updateRedirectStaticCall($node);
     }
 
-    private function updateRedirectHelperCall(MethodCall $methodCall): FuncCall|null
+    private function updateRedirectHelperCall(MethodCall $methodCall): ?\PhpParser\Node\Expr\FuncCall
     {
         if (! $this->isName($methodCall->name, 'back')) {
             return null;
