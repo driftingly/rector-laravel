@@ -5,12 +5,7 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\VariadicPlaceholder;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -38,9 +33,9 @@ CODE_SAMPLE
                     <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Builder;
 
-$builder->latest();
 $builder->oldest();
-$builder->latest('deleted_at');
+$builder->latest();
+$builder->oldest('deleted_at');
 CODE_SAMPLE
                     ,
                 ),
@@ -71,44 +66,44 @@ CODE_SAMPLE
         // Check if it's a method call to `orderBy`
 
         return $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Database\Query\Builder'))
-            && $methodCall->name instanceof Identifier
+            && $methodCall->name instanceof Node\Identifier
             && ($methodCall->name->name === 'orderBy' || $methodCall->name->name === 'orderByDesc')
-            && $methodCall->args !== [];
+            && count($methodCall->args) > 0;
     }
 
     private function convertOrderByToLatest(MethodCall $methodCall): MethodCall
     {
-        if (! isset($methodCall->args[0]) && ! $methodCall->args[0] instanceof VariadicPlaceholder) {
+        if (! isset($methodCall->args[0]) && ! $methodCall->args[0] instanceof Node\VariadicPlaceholder) {
             return $methodCall;
         }
 
         $columnVar = $methodCall->args[0]->value ?? null;
-        if (! $columnVar instanceof Expr) {
+        if ($columnVar === null) {
             return $methodCall;
         }
 
         $direction = $methodCall->args[1]->value->value ?? 'asc';
         if ($this->isName($methodCall->name, 'orderByDesc')) {
-            $newMethod = 'oldest';
+            $newMethod = 'latest';
         } else {
-            $newMethod = $direction === 'asc' ? 'latest' : 'oldest';
+            $newMethod = $direction === 'asc' ? 'oldest' : 'latest';
         }
-        if ($columnVar instanceof String_ && $columnVar->value === 'created_at') {
-            $methodCall->name = new Identifier($newMethod);
+        if ($columnVar instanceof Node\Scalar\String_ && $columnVar->value === 'created_at') {
+            $methodCall->name = new Node\Identifier($newMethod);
             $methodCall->args = [];
 
             return $methodCall;
         }
 
-        if ($columnVar instanceof String_) {
-            $methodCall->name = new Identifier($newMethod);
-            $methodCall->args = [new Arg(new String_($columnVar->value))];
+        if ($columnVar instanceof Node\Scalar\String_) {
+            $methodCall->name = new Node\Identifier($newMethod);
+            $methodCall->args = [new Node\Arg(new Node\Scalar\String_($columnVar->value))];
 
             return $methodCall;
         }
 
-        $methodCall->name = new Identifier($newMethod);
-        $methodCall->args = [new Arg($columnVar)];
+        $methodCall->name = new Node\Identifier($newMethod);
+        $methodCall->args = [new Node\Arg($columnVar)];
 
         return $methodCall;
     }

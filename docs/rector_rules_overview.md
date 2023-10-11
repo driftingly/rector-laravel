@@ -498,9 +498,9 @@ Changes `orderBy()` to `latest()` or `oldest()`
 -$builder->orderBy('created_at');
 -$builder->orderBy('created_at', 'desc');
 -$builder->orderBy('deleted_at');
-+$builder->latest();
 +$builder->oldest();
-+$builder->latest('deleted_at');
++$builder->latest();
++$builder->oldest('deleted_at');
 ```
 
 <br>
