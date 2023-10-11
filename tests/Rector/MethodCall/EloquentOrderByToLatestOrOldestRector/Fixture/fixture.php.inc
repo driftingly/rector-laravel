@@ -24,10 +24,10 @@ use Illuminate\Database\Query\Builder;
 $column = 'tested_at';
 
 /** @var Builder $query */
-$query->latest();
 $query->oldest();
-$query->latest('submitted_at');
+$query->latest();
 $query->oldest('submitted_at');
-$query->latest($column);
+$query->latest('submitted_at');
+$query->oldest($column);
 
 ?>
