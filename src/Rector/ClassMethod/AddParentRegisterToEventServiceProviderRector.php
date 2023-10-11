@@ -26,10 +26,22 @@ final class AddParentRegisterToEventServiceProviderRector extends AbstractRector
      */
     private const REGISTER = 'register';
 
-    public function __construct(
-        private readonly StaticCallAnalyzer $staticCallAnalyzer,
-        private readonly ReflectionResolver $reflectionResolver,
-    ) {
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeAnalyzer\StaticCallAnalyzer
+     */
+    private $staticCallAnalyzer;
+
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+
+    public function __construct(StaticCallAnalyzer $staticCallAnalyzer, ReflectionResolver $reflectionResolver)
+    {
+        $this->staticCallAnalyzer = $staticCallAnalyzer;
+        $this->reflectionResolver = $reflectionResolver;
     }
 
     public function getRuleDefinition(): RuleDefinition

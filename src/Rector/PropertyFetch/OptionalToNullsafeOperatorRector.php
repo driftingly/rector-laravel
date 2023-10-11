@@ -37,7 +37,7 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     /**
      * @var string
      */
-    final public const EXCLUDE_METHODS = 'exclude_methods';
+    public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var array<class-string<Expr>>
@@ -45,13 +45,19 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements M
     private const SKIP_VALUE_TYPES = [ConstFetch::class, Scalar::class, Array_::class, ClassConstFetch::class];
 
     /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+
+    /**
      * @var string[]
      */
-    private array $excludeMethods = [];
+    private $excludeMethods = [];
 
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
     }
 
     public function getRuleDefinition(): RuleDefinition

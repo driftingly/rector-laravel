@@ -71,7 +71,10 @@ CODE_SAMPLE
         return null;
     }
 
-    private function isWhereRelationMethodWithClosureOrArrowFunction(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function isWhereRelationMethodWithClosureOrArrowFunction($node): bool
     {
         if (! $this->expectedObjectTypeAndMethodCall($node)) {
             return false;
@@ -86,7 +89,10 @@ CODE_SAMPLE
         ! ($node->getArgs()[$position]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): void
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function changeClosureParamType($node): void
     {
         // Morph methods have the closure in the 3rd position, others use the 2nd.
         $position = $this->isNames(
@@ -111,30 +117,24 @@ CODE_SAMPLE
         $param->type = new FullyQualified('Illuminate\Contracts\Database\Query\Builder');
     }
 
-    private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function expectedObjectTypeAndMethodCall($node): bool
     {
-        return match (true) {
-            $node instanceof MethodCall && $this->isObjectType(
+        switch (true) {
+            case $node instanceof MethodCall && $this->isObjectType(
                 $node->var,
                 new ObjectType('Illuminate\Contracts\Database\Query\Builder')
-            ) => true,
-            $node instanceof StaticCall && $this->isObjectType(
+            ):
+                return true;
+            case $node instanceof StaticCall && $this->isObjectType(
                 $node->class,
                 new ObjectType('Illuminate\Database\Eloquent\Model')
-            ) => true,
-            default => false,
-        } && $this->isNames(
-            $node->name,
-            [
-                'whereHas',
-                'orWhereHas',
-                'whereDoesntHave',
-                'orWhereDoesntHave',
-                'whereHasMorph',
-                'orWhereHasMorph',
-                'whereDoesntHaveMorph',
-                'orWhereDoesntHaveMorph',
-            ]
-        );
+            ):
+                return true;
+            default:
+                return false;
+        }
     }
 }
