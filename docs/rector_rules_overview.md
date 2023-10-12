@@ -490,17 +490,46 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 
 Changes `orderBy()` to `latest()` or `oldest()`
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector`](../src/Rector/MethodCall/EloquentOrderByToLatestOrOldestRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use RectorLaravel\Rector\PropertyFetch\EloquentOrderByToLatestOrOldestRector;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->ruleWithConfiguration(EloquentOrderByToLatestOrOldestRector::class, [
+        EloquentOrderByToLatestOrOldestRector::ALLOWED_PATTERNS => [
+            'created_at',
+            'date*',
+            '*datetime*',
+            '$renameable_variable_name',
+        ],
+    ]);
+};
+```
+
+↓
 
 ```diff
  use Illuminate\Database\Eloquent\Builder;
 
 -$builder->orderBy('created_at');
 -$builder->orderBy('created_at', 'desc');
--$builder->orderBy('deleted_at');
+-$builder->orderBy('date_created', 'desc');
+-$builder->orderBy('created_datetime', 'asc');
+-$builder->orderBy($renameable_variable_name, 'desc');
 +$builder->oldest();
 +$builder->latest();
-+$builder->oldest('deleted_at');
++$builder->latest('date_created');
++$builder->oldest('created_datetime');
++$builder->latest($renameable_variable_name);
+$builder->orderBy('deleted_at');
 ```
 
 <br>
