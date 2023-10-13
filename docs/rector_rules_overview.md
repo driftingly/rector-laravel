@@ -499,16 +499,15 @@ Changes `orderBy()` to `latest()` or `oldest()`
 
 declare(strict_types=1);
 
-use RectorLaravel\Rector\PropertyFetch\EloquentOrderByToLatestOrOldestRector;
+use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(EloquentOrderByToLatestOrOldestRector::class, [
         EloquentOrderByToLatestOrOldestRector::ALLOWED_PATTERNS => [
-            'created_at',
-            'date*',
-            '*datetime*',
-            '$renameable_variable_name',
+            'submitted_a*',
+            '*tested_at',
+            '$allowed_variable_name',
         ],
     ]);
 };
@@ -519,17 +518,20 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  use Illuminate\Database\Eloquent\Builder;
 
+ $column = 'tested_at';
+
 -$builder->orderBy('created_at');
 -$builder->orderBy('created_at', 'desc');
--$builder->orderBy('date_created', 'desc');
--$builder->orderBy('created_datetime', 'asc');
--$builder->orderBy($renameable_variable_name, 'desc');
+-$builder->orderBy('submitted_at');
+-$builder->orderByDesc('submitted_at');
+-$builder->orderBy($allowed_variable_name);
 +$builder->oldest();
 +$builder->latest();
-+$builder->latest('date_created');
-+$builder->oldest('created_datetime');
-+$builder->latest($renameable_variable_name);
-$builder->orderBy('deleted_at');
++$builder->oldest('submitted_at');
++$builder->latest('submitted_at');
++$builder->oldest($allowed_variable_name);
+ $builder->orderBy($unallowed_variable_name);
+ $builder->orderBy('unallowed_column_name');
 ```
 
 <br>

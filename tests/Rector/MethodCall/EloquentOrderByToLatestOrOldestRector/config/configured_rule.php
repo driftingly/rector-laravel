@@ -15,7 +15,7 @@ return static function (RectorConfig $rectorConfig): void {
                 'created_at',
                 'submitted_a*',
                 '*tested_at',
-                '$renameable_variable_name',
+                '$allowed_variable_name',
             ],
         ],
     );

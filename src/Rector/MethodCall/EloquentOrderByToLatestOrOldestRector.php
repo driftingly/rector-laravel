@@ -10,6 +10,7 @@ use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -33,24 +34,36 @@ class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements Co
         return new RuleDefinition(
             'Changes orderBy() to latest() or oldest()',
             [
-                new CodeSample(
-                    <<<'CODE_SAMPLE'
+                new ConfiguredCodeSample(<<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Builder;
+
+$column = 'tested_at';
 
 $builder->orderBy('created_at');
 $builder->orderBy('created_at', 'desc');
-$builder->orderBy('deleted_at');
+$builder->orderBy('submitted_at');
+$builder->orderByDesc('submitted_at');
+$builder->orderBy($allowed_variable_name);
+$builder->orderBy($unallowed_variable_name);
+$builder->orderBy('unallowed_column_name');
 CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
+,<<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Builder;
+
+$column = 'tested_at';
 
 $builder->oldest();
 $builder->latest();
-$builder->oldest('deleted_at');
+$builder->oldest('submitted_at');
+$builder->latest('submitted_at');
+$builder->oldest($allowed_variable_name);
+$builder->orderBy($unallowed_variable_name);
+$builder->orderBy('unallowed_column_name');
 CODE_SAMPLE
-                    ,
-                ),
+, [self::ALLOWED_PATTERNS => [
+    'submitted_a*',
+    '*tested_at',
+    '$allowed_variable_name',]]),
             ]
         );
     }
