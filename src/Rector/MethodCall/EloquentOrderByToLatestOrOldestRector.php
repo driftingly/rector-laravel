@@ -174,6 +174,7 @@ CODE_SAMPLE
     {
         $allowedPatterns = $configuration[self::ALLOWED_PATTERNS] ?? [];
         Assert::isArray($allowedPatterns);
+        Assert::allString($allowedPatterns);
 
         $this->allowedPatterns = $allowedPatterns;
     }
