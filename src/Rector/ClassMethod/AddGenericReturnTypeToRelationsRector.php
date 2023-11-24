@@ -23,6 +23,7 @@ use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractScopeAwareRector;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
+use Rector\StaticTypeMapper\StaticTypeMapper;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -45,6 +46,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
         private readonly DocBlockUpdater $docBlockUpdater,
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
         private readonly BetterNodeFinder $betterNodeFinder,
+        private readonly StaticTypeMapper $staticTypeMapper,
     ) {
     }
 
