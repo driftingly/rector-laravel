@@ -490,17 +490,48 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 
 Changes `orderBy()` to `latest()` or `oldest()`
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector`](../src/Rector/MethodCall/EloquentOrderByToLatestOrOldestRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->ruleWithConfiguration(EloquentOrderByToLatestOrOldestRector::class, [
+        EloquentOrderByToLatestOrOldestRector::ALLOWED_PATTERNS => [
+            'submitted_a*',
+            '*tested_at',
+            '$allowed_variable_name',
+        ],
+    ]);
+};
+```
+
+↓
 
 ```diff
  use Illuminate\Database\Eloquent\Builder;
 
+ $column = 'tested_at';
+
 -$builder->orderBy('created_at');
 -$builder->orderBy('created_at', 'desc');
--$builder->orderBy('deleted_at');
+-$builder->orderBy('submitted_at');
+-$builder->orderByDesc('submitted_at');
+-$builder->orderBy($allowed_variable_name);
 +$builder->oldest();
 +$builder->latest();
-+$builder->oldest('deleted_at');
++$builder->oldest('submitted_at');
++$builder->latest('submitted_at');
++$builder->oldest($allowed_variable_name);
+ $builder->orderBy($unallowed_variable_name);
+ $builder->orderBy('unallowed_column_name');
 ```
 
 <br>

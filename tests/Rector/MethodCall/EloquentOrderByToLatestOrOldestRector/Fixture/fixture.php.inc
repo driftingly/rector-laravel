@@ -11,7 +11,7 @@ $query->orderBy('created_at');
 $query->orderBy('created_at', 'desc');
 $query->orderBy('submitted_at');
 $query->orderByDesc('submitted_at');
-$query->orderBy($column);
+$query->orderBy($allowed_variable_name);
 
 ?>
 -----
@@ -28,6 +28,6 @@ $query->oldest();
 $query->latest();
 $query->oldest('submitted_at');
 $query->latest('submitted_at');
-$query->oldest($column);
+$query->oldest($allowed_variable_name);
 
 ?>
