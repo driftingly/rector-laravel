@@ -1,0 +1,11 @@
+{
+    "include": [
+        "build",
+        "config",
+        "src",
+        "tests"
+    ],
+    "exclude": [
+        "tests/**/fixtures"
+    ]
+}

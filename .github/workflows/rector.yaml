@@ -1,0 +1,40 @@
+name: Rector
+
+on:
+    pull_request: null
+    push:
+        branches:
+            - main
+
+env:
+    # see https://github.com/composer/composer/issues/9368#issuecomment-718112361
+    COMPOSER_ROOT_VERSION: "dev-main"
+
+jobs:
+    rector:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   uses: actions/checkout@v4
+                with:
+                    # Must be used to trigger workflow after push
+                    token: ${{ secrets.GITHUB_TOKEN }}
+
+            -
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.1
+                    coverage: none
+
+            -   uses: ramsey/composer-install@v2
+
+            -   run: vendor/bin/rector process --ansi
+            -   run: vendor/bin/duster fix
+
+            # commit changes, see https://github.com/EndBug/add-and-commit
+            -
+                uses: stefanzweifel/git-auto-commit-action@v4
+                with:
+                    commit_message: '[ci-review] Rector Rectify'
+                    commit_author: 'GitHub Action <actions@github.com>'
+                    commit_user_email: 'action@github.com'

@@ -12,13 +12,12 @@
         "phpstan/phpstan": "^1.8.2",
         "symplify/phpstan-rules": "^11.0",
         "symplify/phpstan-extensions": "^11.0",
-        "symplify/easy-coding-standard": "^11.0",
         "symplify/rule-doc-generator": "^11.0",
         "rector/phpstan-rules": "^0.6",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-webmozart-assert": "^1.1",
         "phpstan/phpstan-strict-rules": "^1.2",
-        "symplify/vendor-patches": "^11.0"
+        "tightenco/duster": "^2.6"
     },
     "autoload": {
         "psr-4": {
@@ -33,8 +32,10 @@
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --ansi --error-format symplify",
-        "check-cs": "vendor/bin/ecs check --ansi",
-        "fix-cs": "vendor/bin/ecs check --fix --ansi",
+        "check-cs": "vendor/bin/duster lint",
+        "fix-cs": "vendor/bin/duster fix",
+        "lint": "vendor/bin/duster lint",
+        "fix": "vendor/bin/duster fix",
         "docs": [
             "vendor/bin/rule-doc-generator generate src --output-file docs/rector_rules_overview.md --ansi"
         ]
@@ -43,7 +44,6 @@
     "prefer-stable": true,
     "config": {
         "allow-plugins": {
-            "cweagans/composer-patches": true,
             "rector/extension-installer": true,
             "phpstan/extension-installer": true
         }
