@@ -25,7 +25,7 @@ use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 
-final class ModelFactoryNodeFactory
+final readonly class ModelFactoryNodeFactory
 {
     /**
      * @var string
@@ -33,10 +33,10 @@ final class ModelFactoryNodeFactory
     private const THIS = 'this';
 
     public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly NodeFactory $nodeFactory,
-        private readonly ValueResolver $valueResolver,
-        private readonly SimpleCallableNodeTraverser $simpleCallableNodeTraverser
+        private NodeNameResolver $nodeNameResolver,
+        private NodeFactory $nodeFactory,
+        private ValueResolver $valueResolver,
+        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser
     ) {
     }
 

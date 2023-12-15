@@ -9,10 +9,10 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\NodeNameResolver\NodeNameResolver;
 
-final class StaticCallAnalyzer
+final readonly class StaticCallAnalyzer
 {
     public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver
+        private NodeNameResolver $nodeNameResolver
     ) {
     }
 
