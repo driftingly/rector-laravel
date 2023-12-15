@@ -2,10 +2,9 @@
     "include": [
         "build",
         "config",
-        "src",
-        "tests"
+        "src"
     ],
     "exclude": [
-        "tests/**/fixtures"
+        "tests/**/Fixture"
     ]
 }

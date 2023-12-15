@@ -102,7 +102,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param StaticCall|MethodCall $node
+     * @param  StaticCall|MethodCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -127,6 +127,7 @@ CODE_SAMPLE
             }
 
             $argValue = $node->args[$typeToTimeMethodAndPosition->getPosition()]->value;
+
             return $this->processArgumentOnPosition($node, $argValue, $typeToTimeMethodAndPosition->getPosition());
         }
 
@@ -134,10 +135,10 @@ CODE_SAMPLE
     }
 
     private function processArgumentOnPosition(
-        StaticCall | MethodCall $node,
+        StaticCall|MethodCall $node,
         Expr $argExpr,
         int $argumentPosition
-    ): StaticCall | MethodCall | null {
+    ): StaticCall|MethodCall|null {
         if (! $this->nodeTypeResolver->isNumberType($argExpr)) {
             return null;
         }

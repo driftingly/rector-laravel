@@ -9,7 +9,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -47,7 +46,7 @@ $builder->orderBy($allowed_variable_name);
 $builder->orderBy($unallowed_variable_name);
 $builder->orderBy('unallowed_column_name');
 CODE_SAMPLE
-,<<<'CODE_SAMPLE'
+                    , <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Builder;
 
 $column = 'tested_at';
@@ -60,10 +59,10 @@ $builder->oldest($allowed_variable_name);
 $builder->orderBy($unallowed_variable_name);
 $builder->orderBy('unallowed_column_name');
 CODE_SAMPLE
-, [self::ALLOWED_PATTERNS => [
-    'submitted_a*',
-    '*tested_at',
-    '$allowed_variable_name',]]),
+                    , [self::ALLOWED_PATTERNS => [
+                        'submitted_a*',
+                        '*tested_at',
+                        '$allowed_variable_name', ]]),
             ]
         );
     }
@@ -84,6 +83,18 @@ CODE_SAMPLE
         }
 
         return null;
+    }
+
+    /**
+     * @param  mixed[]  $configuration
+     */
+    public function configure(array $configuration): void
+    {
+        $allowedPatterns = $configuration[self::ALLOWED_PATTERNS] ?? [];
+        Assert::isArray($allowedPatterns);
+        Assert::allString($allowedPatterns);
+
+        $this->allowedPatterns = $allowedPatterns;
     }
 
     private function isOrderByMethodCall(MethodCall $methodCall): bool
@@ -125,7 +136,6 @@ CODE_SAMPLE
             }
         }
 
-
         return false;
     }
 
@@ -164,18 +174,5 @@ CODE_SAMPLE
         $methodCall->args = [new Node\Arg($columnVar)];
 
         return $methodCall;
-    }
-
-
-    /**
-     * @param mixed[] $configuration
-     */
-    public function configure(array $configuration): void
-    {
-        $allowedPatterns = $configuration[self::ALLOWED_PATTERNS] ?? [];
-        Assert::isArray($allowedPatterns);
-        Assert::allString($allowedPatterns);
-
-        $this->allowedPatterns = $allowedPatterns;
     }
 }

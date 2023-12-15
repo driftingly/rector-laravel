@@ -32,7 +32,7 @@ use Webmozart\Assert\Assert;
  *
  * @see \RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest
  */
-final class OptionalToNullsafeOperatorRector extends AbstractRector implements MinPhpVersionInterface, ConfigurableRectorInterface
+final class OptionalToNullsafeOperatorRector extends AbstractRector implements ConfigurableRectorInterface, MinPhpVersionInterface
 {
     /**
      * @var string
@@ -91,7 +91,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param MethodCall|PropertyFetch $node
+     * @param  MethodCall|PropertyFetch  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -138,7 +138,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param mixed[] $configuration
+     * @param  mixed[]  $configuration
      */
     public function configure(array $configuration): void
     {

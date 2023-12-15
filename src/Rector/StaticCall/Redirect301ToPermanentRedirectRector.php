@@ -16,6 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://laravel.com/docs/5.7/upgrade
+ *
  * @see \RectorLaravel\Tests\Rector\StaticCall\Redirect301ToPermanentRedirectRector\Redirect301ToPermanentRedirectRectorTest
  */
 final class Redirect301ToPermanentRedirectRector extends AbstractRector
@@ -73,7 +74,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param StaticCall $node
+     * @param  StaticCall  $node
      */
     public function refactor(Node $node): ?Node
     {

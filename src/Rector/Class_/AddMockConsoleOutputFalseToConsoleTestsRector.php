@@ -95,7 +95,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Class_ $node
+     * @param  Class_  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -166,6 +166,7 @@ CODE_SAMPLE
     private function createAssign(): Assign
     {
         $propertyFetch = new PropertyFetch(new Variable('this'), 'mockConsoleOutput');
+
         return new Assign($propertyFetch, $this->nodeFactory->createFalse());
     }
 }

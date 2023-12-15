@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use PHPStan\Type\ObjectType;
-
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Config\RectorConfig;
@@ -18,7 +17,7 @@ use RectorLaravel\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector;
 use RectorLaravel\Rector\New_\AddGuardToLoginEventRector;
 use RectorLaravel\Rector\StaticCall\Redirect301ToPermanentRedirectRector;
 
-# see: https://laravel.com/docs/5.7/upgrade
+// see: https://laravel.com/docs/5.7/upgrade
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
     $rectorConfig

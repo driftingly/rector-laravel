@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-
 use RectorLaravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector;
 use RectorLaravel\Rector\MethodCall\FactoryApplyingStatesRector;
 use RectorLaravel\Rector\Namespace_\FactoryDefinitionRector;

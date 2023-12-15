@@ -16,7 +16,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \RectorLaravel\Tests\Rector\MethodCall\RedirectRouteToToRouteHelperRector\RedirectRouteToToRouteHelperRectorTest
  */
-
 final class RedirectRouteToToRouteHelperRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
@@ -72,7 +71,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param MethodCall|StaticCall $node
+     * @param  MethodCall|StaticCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -103,6 +102,7 @@ CODE_SAMPLE
 
         $methodCall->var->name = new Name('to_route');
         $methodCall->var->args = $methodCall->getArgs();
+
         return $methodCall->var;
     }
 

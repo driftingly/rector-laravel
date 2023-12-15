@@ -307,6 +307,7 @@ CODE_SAMPLE
         if ($classForChildGeneric === null || ! $phpDocHasChildGeneric) {
             return false;
         }
+
         return $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForChildGeneric));
     }
 
@@ -321,11 +322,12 @@ CODE_SAMPLE
         if (! $classReflection instanceof ClassReflection || $classReflection->isAnonymous()) {
             return true;
         }
+
         return ! $classReflection->isTrait() && ! $classReflection->isSubclassOf('Illuminate\Database\Eloquent\Model');
     }
 
     /**
-     * @param array<string> $methodNames
+     * @param  array<string>  $methodNames
      */
     private function doesMethodHasName(MethodCall $methodCall, array $methodNames): bool
     {
@@ -334,6 +336,7 @@ CODE_SAMPLE
         if (! $methodName instanceof Identifier) {
             return false;
         }
+
         return in_array($methodName->name, $methodNames, true);
     }
 
