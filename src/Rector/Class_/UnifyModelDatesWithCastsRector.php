@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\Class_;
 
+use PhpParser\Builder\Property as PropertyBuilder;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
@@ -134,7 +135,7 @@ CODE_SAMPLE
 
     private function createCastsProperty(): Property
     {
-        $propertyBuilder = new \PhpParser\Builder\Property('casts');
+        $propertyBuilder = new PropertyBuilder('casts');
         $propertyBuilder->makeProtected();
         $propertyBuilder->setDefault([]);
 

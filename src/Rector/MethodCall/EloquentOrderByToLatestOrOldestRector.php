@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
@@ -157,21 +160,21 @@ CODE_SAMPLE
             $newMethod = $direction === 'asc' ? 'oldest' : 'latest';
         }
         if ($columnVar instanceof Node\Scalar\String_ && $columnVar->value === 'created_at') {
-            $methodCall->name = new Node\Identifier($newMethod);
+            $methodCall->name = new Identifier($newMethod);
             $methodCall->args = [];
 
             return $methodCall;
         }
 
         if ($columnVar instanceof Node\Scalar\String_) {
-            $methodCall->name = new Node\Identifier($newMethod);
-            $methodCall->args = [new Node\Arg(new Node\Scalar\String_($columnVar->value))];
+            $methodCall->name = new Identifier($newMethod);
+            $methodCall->args = [new Arg(new String_($columnVar->value))];
 
             return $methodCall;
         }
 
-        $methodCall->name = new Node\Identifier($newMethod);
-        $methodCall->args = [new Node\Arg($columnVar)];
+        $methodCall->name = new Identifier($newMethod);
+        $methodCall->args = [new Arg($columnVar)];
 
         return $methodCall;
     }

@@ -3,8 +3,11 @@
 namespace RectorLaravel\Rector\If_;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Throw_;
 use Rector\Core\Rector\AbstractRector;
@@ -58,15 +61,15 @@ CODE_SAMPLE
             // Check if the condition is a negation
             if ($condition instanceof BooleanNot) {
                 // Create a new throw_unless function call
-                return new Node\Stmt\Expression(new FuncCall(new Node\Name('throw_unless'), [
-                    new Node\Arg($condition->expr),
-                    new Node\Arg($throwExpr),
+                return new Expression(new FuncCall(new Name('throw_unless'), [
+                    new Arg($condition->expr),
+                    new Arg($throwExpr),
                 ]));
             } else {
                 // Create a new throw_if function call
-                return new Node\Stmt\Expression(new FuncCall(new Node\Name('throw_if'), [
-                    new Node\Arg($condition),
-                    new Node\Arg($throwExpr),
+                return new Expression(new FuncCall(new Name('throw_if'), [
+                    new Arg($condition),
+                    new Arg($throwExpr),
                 ]));
             }
         }
