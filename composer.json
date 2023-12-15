@@ -36,6 +36,8 @@
         "fix-cs": "vendor/bin/duster fix",
         "lint": "vendor/bin/duster lint",
         "fix": "vendor/bin/duster fix",
+        "rector-dry-run": "vendor/bin/rector process --dry-run --ansi",
+        "rector": "vendor/bin/rector process --ansi",
         "docs": [
             "vendor/bin/rule-doc-generator generate src --output-file docs/rector_rules_overview.md --ansi"
         ]
