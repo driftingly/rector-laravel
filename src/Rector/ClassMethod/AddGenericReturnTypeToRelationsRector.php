@@ -191,7 +191,7 @@ CODE_SAMPLE
     {
         $argType = $this->getType($methodCall->getArgs()[0]->value);
 
-        if ($argType instanceof ConstantStringType) {
+        if ($argType instanceof ConstantStringType && $argType->isClassStringType()->yes()) {
             return $argType->getValue();
         }
 
