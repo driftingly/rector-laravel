@@ -33,6 +33,8 @@ return static function (RectorConfig $rectorConfig): void {
         ->ruleWithConfiguration(RenameMethodRector::class, [
             // https://github.com/laravel/framework/pull/42591/files
             new MethodCallRename('Illuminate\Support\Facades\Bus', 'dispatchNow', 'dispatchSync'),
+            // https://github.com/laravel/framework/pull/41136/files#diff-79076a209637866c842a9e9db32a961de43cfa12a3dd8bdfaf95694484dcee7b
+            new MethodCallRename('Illuminate\Support\Facades\Notification', 'assertTimesSent', 'assertSentTimes'),
         ]);
 
     $rectorConfig
