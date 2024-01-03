@@ -3,16 +3,15 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 
-# see: https://laravel.com/docs/5.0/upgrade
+// see: https://laravel.com/docs/5.0/upgrade
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
-    # https://stackoverflow.com/a/24949656/1348344
+    // https://stackoverflow.com/a/24949656/1348344
     $rectorConfig
         ->ruleWithConfiguration(RenameClassRector::class, [
             'Illuminate\Cache\CacheManager' => 'Illuminate\Contracts\Cache\Repository',

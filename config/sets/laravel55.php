@@ -3,14 +3,13 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
 
-# see: https://laravel.com/docs/5.5/upgrade
+// see: https://laravel.com/docs/5.5/upgrade
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');

@@ -12,11 +12,11 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 
-final class RouterRegisterNodeAnalyzer
+final readonly class RouterRegisterNodeAnalyzer
 {
     public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly NodeTypeResolver $nodeTypeResolver
+        private NodeNameResolver $nodeNameResolver,
+        private NodeTypeResolver $nodeTypeResolver
     ) {
     }
 

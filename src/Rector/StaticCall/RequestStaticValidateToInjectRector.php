@@ -23,6 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://github.com/laravel/framework/pull/27276
+ *
  * @see \RectorLaravel\Tests\Rector\StaticCall\RequestStaticValidateToInjectRector\RequestStaticValidateToInjectRectorTest
  */
 final class RequestStaticValidateToInjectRector extends AbstractScopeAwareRector

@@ -51,7 +51,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Expr $node
+     * @param  Expr  $node
      */
     public function refactor(Node $node): ?StaticCall
     {

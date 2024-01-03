@@ -69,7 +69,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param PropertyFetch|MethodCall $node
+     * @param  PropertyFetch|MethodCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -117,6 +117,7 @@ CODE_SAMPLE
         }
 
         $node->var = $funcCall;
+
         return $node;
     }
 

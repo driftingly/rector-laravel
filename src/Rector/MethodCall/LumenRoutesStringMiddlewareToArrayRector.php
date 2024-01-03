@@ -123,8 +123,10 @@ CODE_SAMPLE)]
             if (! $foundArrayItem instanceof ArrayItem) {
                 continue;
             }
+
             return $item;
         }
+
         return null;
     }
 

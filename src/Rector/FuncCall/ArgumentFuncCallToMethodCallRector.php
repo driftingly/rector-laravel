@@ -89,7 +89,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Class_ $node
+     * @param  Class_  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -160,7 +160,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param mixed[] $configuration
+     * @param  mixed[]  $configuration
      */
     public function configure(array $configuration): void
     {
@@ -181,7 +181,7 @@ CODE_SAMPLE
         $methodIfArgs = $argumentFuncCallToMethodCall->getMethodIfArgs();
 
         if (! is_string($methodIfArgs)) {
-            throw new ShouldNotHappenException();
+            throw new ShouldNotHappenException;
         }
 
         return $this->nodeFactory->createMethodCall($expr, $methodIfArgs, $funcCall->args);
@@ -210,7 +210,7 @@ CODE_SAMPLE
     private function refactorEmptyFuncCallArgs(
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
         MethodCall|PropertyFetch|Variable $expr
-    ): MethodCall | PropertyFetch | Variable {
+    ): MethodCall|PropertyFetch|Variable {
         if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
             return $this->nodeFactory->createMethodCall($expr, $argumentFuncCallToMethodCall->getMethodIfNoArgs());
         }

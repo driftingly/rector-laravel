@@ -13,7 +13,7 @@ use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 use RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector;
 use RectorLaravel\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector;
 
-# see https://laravel.com/docs/9.x/upgrade
+// see https://laravel.com/docs/9.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 

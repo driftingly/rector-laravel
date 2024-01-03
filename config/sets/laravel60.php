@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
-
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\Visibility;
@@ -15,8 +14,8 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
-# see https://laravel.com/docs/6.x/upgrade
-# https://github.com/laravel/docs/pull/5531/files
+// see https://laravel.com/docs/6.x/upgrade
+// https://github.com/laravel/docs/pull/5531/files
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
@@ -25,20 +24,20 @@ return static function (RectorConfig $rectorConfig): void {
         ->ruleWithConfiguration(RenameMethodRector::class, [
             new MethodCallRename(
                 'Illuminate\Auth\Access\Gate',
-                # https://github.com/laravel/framework/commit/69de466ddc25966a0f6551f48acab1afa7bb9424
+                // https://github.com/laravel/framework/commit/69de466ddc25966a0f6551f48acab1afa7bb9424
                 'access',
                 'inspect'
             ),
             new MethodCallRename(
                 'Illuminate\Support\Facades\Lang',
-                # https://github.com/laravel/framework/commit/efbe23c4116f86846ad6edc0d95cd56f4175a446
+                // https://github.com/laravel/framework/commit/efbe23c4116f86846ad6edc0d95cd56f4175a446
                 'trans',
                 'get'
             ),
             new MethodCallRename('Illuminate\Support\Facades\Lang', 'transChoice', 'choice'),
             new MethodCallRename(
                 'Illuminate\Translation\Translator',
-                # https://github.com/laravel/framework/commit/697b898a1c89881c91af83ecc4493fa681e2aa38
+                // https://github.com/laravel/framework/commit/697b898a1c89881c91af83ecc4493fa681e2aa38
                 'getFromJson',
                 'get'
             ),

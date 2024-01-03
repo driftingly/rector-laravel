@@ -90,7 +90,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param MethodCall|StaticCall $node
+     * @param  MethodCall|StaticCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -156,7 +156,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param mixed[] $configuration
+     * @param  mixed[]  $configuration
      */
     public function configure(array $configuration): void
     {

@@ -82,6 +82,7 @@ CODE_SAMPLE
             $node->name,
             ['whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph']
         ) ? 2 : 1;
+
         return ! (! ($node->getArgs()[$position]->value ?? null) instanceof Closure &&
         ! ($node->getArgs()[$position]->value ?? null) instanceof ArrowFunction);
     }

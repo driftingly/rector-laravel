@@ -25,7 +25,7 @@ use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 
-final class ModelFactoryNodeFactory
+final readonly class ModelFactoryNodeFactory
 {
     /**
      * @var string
@@ -33,10 +33,10 @@ final class ModelFactoryNodeFactory
     private const THIS = 'this';
 
     public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly NodeFactory $nodeFactory,
-        private readonly ValueResolver $valueResolver,
-        private readonly SimpleCallableNodeTraverser $simpleCallableNodeTraverser
+        private NodeNameResolver $nodeNameResolver,
+        private NodeFactory $nodeFactory,
+        private ValueResolver $valueResolver,
+        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser
     ) {
     }
 
@@ -59,7 +59,7 @@ final class ModelFactoryNodeFactory
             'replaceNodes' => false,
             'preserveOriginalNames' => true,
         ]);
-        $nodeTraverser = new NodeTraverser();
+        $nodeTraverser = new NodeTraverser;
         $nodeTraverser->addVisitor($nameResolver);
         $nodeTraverser->traverse([$class]);
 
@@ -113,6 +113,7 @@ final class ModelFactoryNodeFactory
     public function createEmptyConfigure(): ClassMethod
     {
         $return = new Return_(new Variable(self::THIS));
+
         return $this->createPublicMethod('configure', [$return]);
     }
 
@@ -136,13 +137,14 @@ final class ModelFactoryNodeFactory
                 }
 
                 $node->expr = $this->nodeFactory->createMethodCall($node->expr, $name, [$closure]);
+
                 return $node;
             }
         );
     }
 
     /**
-     * @param Node\Stmt[] $stmts
+     * @param  Node\Stmt[]  $stmts
      */
     private function fakerVariableToPropertyFetch(array $stmts, Param $param): void
     {
@@ -168,13 +170,14 @@ final class ModelFactoryNodeFactory
     }
 
     /**
-     * @param Node\Stmt[] $stmts
+     * @param  Node\Stmt[]  $stmts
      */
     private function createPublicMethod(string $name, array $stmts): ClassMethod
     {
         $method = new Method($name);
         $method->makePublic();
         $method->addStmts($stmts);
+
         return $method->getNode();
     }
 }

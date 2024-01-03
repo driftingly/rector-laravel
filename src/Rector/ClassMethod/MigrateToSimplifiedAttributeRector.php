@@ -45,7 +45,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
     }
 
     /**
-     * @param Class_ $node
+     * @param  Class_  $node
      */
     public function refactor(Node $node): Node|array|int|null
     {
@@ -118,7 +118,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param ClassMethod[] $allClassMethods
+     * @param  ClassMethod[]  $allClassMethods
      */
     private function refactorClassMethod(ClassMethod $classMethod, array $allClassMethods): ClassMethod|int|null
     {
@@ -231,7 +231,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param array<Stmt>|null $statements
+     * @param  array<Stmt>|null  $statements
      */
     private function createAttributeClassMethod(
         string $attributeName,
@@ -278,7 +278,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param ClassMethod[] $allClassMethods
+     * @param  ClassMethod[]  $allClassMethods
      */
     private function findPossibleAccessor(array $allClassMethods, string $attributeName): ?ClassMethod
     {
@@ -292,7 +292,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param ClassMethod[] $allClassMethods
+     * @param  ClassMethod[]  $allClassMethods
      */
     private function findPossibleMutator(array $allClassMethods, string $attributeName): ?ClassMethod
     {
@@ -374,6 +374,7 @@ CODE_SAMPLE
     {
         $attributeName = substr($nodeName, 3);
         $attributeName = substr($attributeName, 0, -strlen('Attribute'));
+
         return lcfirst($attributeName);
     }
 }
