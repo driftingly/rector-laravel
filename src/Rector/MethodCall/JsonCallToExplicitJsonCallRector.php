@@ -7,6 +7,7 @@ namespace RectorLaravel\Rector\MethodCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -67,7 +68,7 @@ final class JsonCallToExplicitJsonCallRector extends AbstractRector
         $arg = $methodCall->getArgs()[0];
         $argValue = $arg->value;
 
-        if (! $argValue instanceof Node\Scalar\String_) {
+        if (! $argValue instanceof String_) {
             return null;
         }
 
