@@ -10,5 +10,4 @@ if (interface_exists('Illuminate\Contracts\Cache\Store')) {
 
 interface Store
 {
-
 }

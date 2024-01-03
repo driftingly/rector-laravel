@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use PHPStan\Type\BooleanType;
-
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\RenameProperty;
@@ -12,9 +11,9 @@ use Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration;
 use RectorLaravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
 use RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector;
 
-# https://laravel-news.com/laravel-5-8-deprecates-string-and-array-helpers
-# https://github.com/laravel/framework/pull/26898
-# see: https://laravel.com/docs/5.8/upgrade
+// https://laravel-news.com/laravel-5-8-deprecates-string-and-array-helpers
+// https://github.com/laravel/framework/pull/26898
+// see: https://laravel.com/docs/5.8/upgrade
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/laravel-array-str-functions-to-static-call.php');
     $rectorConfig->rule(MinutesToSecondsInCacheRector::class);
@@ -22,11 +21,11 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig
         ->ruleWithConfiguration(
             AddReturnTypeDeclarationRector::class,
-            [new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Repository', 'put', new BooleanType()),
-                new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Repository', 'forever', new BooleanType()),
-                new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'put', new BooleanType()),
-                new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'putMany', new BooleanType()),
-                new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'forever', new BooleanType()),
+            [new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Repository', 'put', new BooleanType),
+                new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Repository', 'forever', new BooleanType),
+                new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'put', new BooleanType),
+                new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'putMany', new BooleanType),
+                new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'forever', new BooleanType),
             ]
         );
     $rectorConfig
