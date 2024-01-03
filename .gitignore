@@ -6,16 +6,3 @@ composer.lock
 
 .phpunit.result.cache
 .phpunit.cache
-
-# often customized locally - example on Github is just fine
-rector-recipe.php
-
-# testing
-abz
-
-# scoped & downgraded version
-php-scoper.phar
-box.phar
-php-parallel-lint
-
-tmp

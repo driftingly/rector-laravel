@@ -43,7 +43,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param BooleanNot $node
+     * @param  BooleanNot  $node
      */
     public function refactor(Node $node): ?FuncCall
     {
@@ -59,6 +59,7 @@ CODE_SAMPLE
         }
 
         $method = $this->isName($node->expr->name, 'filled') ? 'blank' : 'filled';
+
         return $this->nodeFactory->createFuncCall($method, $node->expr->args);
     }
 }

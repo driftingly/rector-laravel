@@ -3,14 +3,13 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Transform\Rector\String_\StringToClassConstantRector;
 use Rector\Transform\ValueObject\StringToClassConstant;
 
-# see: https://laravel.com/docs/5.4/upgrade
+// see: https://laravel.com/docs/5.4/upgrade
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
@@ -58,7 +57,7 @@ return static function (RectorConfig $rectorConfig): void {
             new MethodCallRename('Illuminate\Validation\Validator', 'addError', 'addFailure'),
             new MethodCallRename('Illuminate\Validation\Validator', 'doReplacements', 'makeReplacements'),
 
-            # https://github.com/laravel/framework/commit/f23ac640fa403ca8d4131c36367b53e123b6b852
+            // https://github.com/laravel/framework/commit/f23ac640fa403ca8d4131c36367b53e123b6b852
             new MethodCallRename(
                 'Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase',
                 'seeInDatabase',

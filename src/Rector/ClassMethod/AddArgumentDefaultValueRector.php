@@ -74,7 +74,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param ClassMethod $node
+     * @param  ClassMethod  $node
      */
     public function refactor(Node $node): ClassMethod
     {
@@ -107,7 +107,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param mixed[] $configuration
+     * @param  mixed[]  $configuration
      */
     public function configure(array $configuration): void
     {

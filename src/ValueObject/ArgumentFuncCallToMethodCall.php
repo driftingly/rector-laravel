@@ -7,13 +7,13 @@ namespace RectorLaravel\ValueObject;
 use Rector\Core\Validation\RectorAssert;
 use RectorLaravel\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface;
 
-final class ArgumentFuncCallToMethodCall implements ArgumentFuncCallToMethodCallInterface
+final readonly class ArgumentFuncCallToMethodCall implements ArgumentFuncCallToMethodCallInterface
 {
     public function __construct(
-        private readonly string $function,
-        private readonly string $class,
-        private readonly ?string $methodIfArgs = null,
-        private readonly ?string $methodIfNoArgs = null
+        private string $function,
+        private string $class,
+        private ?string $methodIfArgs = null,
+        private ?string $methodIfNoArgs = null
     ) {
         RectorAssert::className($class);
         RectorAssert::functionName($function);

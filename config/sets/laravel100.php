@@ -13,7 +13,7 @@ use RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector;
 use RectorLaravel\Rector\Class_\UnifyModelDatesWithCastsRector;
 use RectorLaravel\Rector\MethodCall\DatabaseExpressionToStringToMethodCallRector;
 
-# see https://laravel.com/docs/10.x/upgrade
+// see https://laravel.com/docs/10.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
@@ -29,7 +29,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig
         ->ruleWithConfiguration(RenamePropertyRector::class, [
-            # https://github.com/laravel/laravel/commit/edcbe6de7c3f17070bf0ccaa2e2b785158ae5ceb
+            // https://github.com/laravel/laravel/commit/edcbe6de7c3f17070bf0ccaa2e2b785158ae5ceb
             new RenameProperty('App\Http\Kernel', 'routeMiddleware', 'middlewareAliases'),
         ]);
 

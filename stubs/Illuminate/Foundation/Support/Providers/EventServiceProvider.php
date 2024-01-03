@@ -8,5 +8,4 @@ if (class_exists('Illuminate\Foundation\Support\Providers\EventServiceProvider')
 
 class EventServiceProvider
 {
-
 }
