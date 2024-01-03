@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\Class_;
 
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name\FullyQualified;
@@ -60,13 +70,13 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [Node\Stmt\Class_::class];
+        return [Class_::class];
     }
 
     /**
      * @param Node\Stmt\Class_ $node
      */
-    public function refactor(Node $node): ?Node\Stmt\Class_
+    public function refactor(Node $node): ?Class_
     {
         if (! $this->isObjectType($node, new ObjectType('\Illuminate\Foundation\Testing\TestCase'))) {
             return null;
@@ -75,13 +85,13 @@ CODE_SAMPLE
         $changes = false;
 
         // loop over all methods in class
-        foreach ($node->getMethods() as $method) {
+        foreach ($node->getMethods() as $classMethod) {
             // loop over all statements in method
 
             $assertions = [];
-            foreach ($method->getStmts() ?? [] as $index => $stmt) {
+            foreach ($classMethod->getStmts() ?? [] as $index => $stmt) {
                 // if statement is not a method call, skip
-                if (! $stmt instanceof Node\Stmt\Expression) {
+                if (! $stmt instanceof Expression) {
                     continue;
                 }
 
@@ -97,7 +107,7 @@ CODE_SAMPLE
                 }
 
                 // if method call is not in the form $this->expectsJobs(...), skip
-                if (! $methodCall->var instanceof Node\Expr\Variable || ! $this->isName($methodCall->var, 'this')) {
+                if (! $methodCall->var instanceof Variable || ! $this->isName($methodCall->var, 'this')) {
                     continue;
                 }
 
@@ -107,21 +117,21 @@ CODE_SAMPLE
 
                 // if the method call has a string constant as the first argument,
                 // convert it to an array
-                if ($methodCall->args[0] instanceof Node\Arg && (
-                    $methodCall->args[0]->value instanceof Node\Expr\ClassConstFetch ||
-                    $methodCall->args[0]->value instanceof Node\Scalar\String_
+                if ($methodCall->args[0] instanceof Arg && (
+                    $methodCall->args[0]->value instanceof ClassConstFetch ||
+                    $methodCall->args[0]->value instanceof String_
                 )) {
-                    $args = new Node\Expr\Array_([new Node\Expr\ArrayItem($methodCall->args[0]->value)]);
+                    $args = new Array_([new ArrayItem($methodCall->args[0]->value)]);
                 } elseif (
-                    $methodCall->args[0] instanceof Node\Arg &&
-                    $methodCall->args[0]->value instanceof Node\Expr\Array_
+                    $methodCall->args[0] instanceof Arg &&
+                    $methodCall->args[0]->value instanceof Array_
                 ) {
                     $args = $methodCall->args[0]->value;
                 } else {
                     continue;
                 }
 
-                if (! $methodCall->name instanceof Node\Identifier) {
+                if (! $methodCall->name instanceof Identifier) {
                     continue;
                 }
 
@@ -135,13 +145,13 @@ CODE_SAMPLE
                     continue;
                 }
 
-                $replacement = new Node\Stmt\Expression(new Node\Expr\StaticCall(
+                $replacement = new Expression(new StaticCall(
                     new FullyQualified('Illuminate\Support\Facades\\' . $facade),
                     'fake',
-                    [new Node\Arg($args)]
+                    [new Arg($args)]
                 ));
 
-                $method->stmts[$index] = $replacement;
+                $classMethod->stmts[$index] = $replacement;
 
                 // generate assertDispatched calls for each argument
                 foreach ($args->items as $item) {
@@ -149,10 +159,10 @@ CODE_SAMPLE
                         continue;
                     }
 
-                    $assertions[] = new Node\Stmt\Expression(new Node\Expr\StaticCall(
+                    $assertions[] = new Expression(new StaticCall(
                         new FullyQualified('Illuminate\Support\Facades\\' . $facade),
                         'assertDispatched',
-                        [new Node\Arg($item->value)]
+                        [new Arg($item->value)]
                     ));
                 }
 
@@ -160,7 +170,7 @@ CODE_SAMPLE
             }
 
             foreach ($assertions as $assertion) {
-                $method->stmts[] = $assertion;
+                $classMethod->stmts[] = $assertion;
             }
         }
 
