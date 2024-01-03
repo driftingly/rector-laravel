@@ -26,20 +26,15 @@ class EloquentWhereTypeHintClosureParameterRector extends AbstractRector
         return new RuleDefinition(
             'Change typehint of closure parameter in where method of Eloquent Builder',
             [
-                new CodeSample(
-                    <<<'CODE_SAMPLE'
+                new CodeSample(<<<'CODE_SAMPLE'
 $query->where(function ($query) {
     $query->where('id', 1);
 });
-CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
+CODE_SAMPLE, <<<'CODE_SAMPLE'
 $query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
     $query->where('id', 1);
 });
-CODE_SAMPLE
-                    ,
-                ),
+CODE_SAMPLE),
             ]
         );
     }
@@ -64,7 +59,10 @@ CODE_SAMPLE
         return null;
     }
 
-    private function isWhereMethodWithClosureOrArrowFunction(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function isWhereMethodWithClosureOrArrowFunction($node): bool
     {
         if (! $this->expectedObjectTypeAndMethodCall($node)) {
             return false;
@@ -74,7 +72,10 @@ CODE_SAMPLE
         ! ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): void
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function changeClosureParamType($node): void
     {
         /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
         $closure = $node->getArgs()[0]
@@ -93,18 +94,24 @@ CODE_SAMPLE
         $param->type = new FullyQualified('Illuminate\Contracts\Database\Query\Builder');
     }
 
-    private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function expectedObjectTypeAndMethodCall($node): bool
     {
-        return match (true) {
-            $node instanceof MethodCall && $this->isObjectType(
+        switch (true) {
+            case $node instanceof MethodCall && $this->isObjectType(
                 $node->var,
                 new ObjectType('Illuminate\Contracts\Database\Query\Builder')
-            ) => true,
-            $node instanceof StaticCall && $this->isObjectType(
+            ):
+                return true;
+            case $node instanceof StaticCall && $this->isObjectType(
                 $node->class,
                 new ObjectType('Illuminate\Database\Eloquent\Model')
-            ) => true,
-            default => false,
-        } && $this->isNames($node->name, ['where', 'orWhere']);
+            ):
+                return true;
+            default:
+                return false;
+        }
     }
 }

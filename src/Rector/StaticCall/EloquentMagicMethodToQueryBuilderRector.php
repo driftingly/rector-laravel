@@ -109,7 +109,7 @@ CODE_SAMPLE
     {
         try {
             $reflectionMethod = new ReflectionMethod($className, $methodName);
-        } catch (ReflectionException) {
+        } catch (ReflectionException $exception) {
             return true; // method does not exist => is magic method
         }
 
@@ -130,7 +130,7 @@ CODE_SAMPLE
             if ($reflectionMethod->isStatic()) {
                 return false;
             }
-        } catch (ReflectionException) {
+        } catch (ReflectionException $exception) {
             return false; // method does not exist => is magic method
         }
 
