@@ -47,7 +47,8 @@
     "config": {
         "allow-plugins": {
             "rector/extension-installer": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "cweagans/composer-patches": false
         }
     }
 }

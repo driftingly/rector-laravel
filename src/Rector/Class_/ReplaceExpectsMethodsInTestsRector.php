@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\Class_;
 
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Expr\Variable;
+use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\ClassConstFetch;
-use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -45,7 +45,7 @@ class SomethingTest extends TestCase
     }
 }
 CODE_SAMPLE
-,
+                ,
                 <<<'CODE_SAMPLE'
 use Illuminate\Foundation\Testing\TestCase;
 
@@ -74,7 +74,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Node\Stmt\Class_ $node
+     * @param  Node\Stmt\Class_  $node
      */
     public function refactor(Node $node): ?Class_
     {
