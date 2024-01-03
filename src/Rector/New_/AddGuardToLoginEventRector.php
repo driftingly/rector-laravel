@@ -67,7 +67,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Expression $node
+     * @param  Expression  $node
      */
     public function refactor(Node $node): Node|array|int|null
     {
@@ -100,7 +100,7 @@ CODE_SAMPLE
         return new Assign($guardVariable, $this->nodeFactory->createFuncCall('config', [$string]));
     }
 
-    private function getNewNode(Expression $expression): New_|null
+    private function getNewNode(Expression $expression): ?New_
     {
         if ($expression->expr instanceof Assign && $expression->expr->expr instanceof New_) {
             return $expression->expr->expr;

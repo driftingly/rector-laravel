@@ -77,7 +77,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Expression $node
+     * @param  Expression  $node
      */
     public function refactor(Node $node): Node|array|int|null
     {

@@ -41,7 +41,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Node\Stmt\Expression $node
+     * @param  Node\Stmt\Expression  $node
      */
     public function refactor(Node $node): ?Node
     {

@@ -79,7 +79,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Namespace_|FileWithoutNamespace $node
+     * @param  Namespace_|FileWithoutNamespace  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -123,6 +123,7 @@ CODE_SAMPLE
         }
 
         $node->stmts = array_merge($node->stmts, $factories);
+
         return $node;
     }
 

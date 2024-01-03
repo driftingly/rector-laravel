@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\VariadicPlaceholder;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -47,7 +51,7 @@ $builder->orderBy($allowed_variable_name);
 $builder->orderBy($unallowed_variable_name);
 $builder->orderBy('unallowed_column_name');
 CODE_SAMPLE
-,<<<'CODE_SAMPLE'
+                    , <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Builder;
 
 $column = 'tested_at';
@@ -60,10 +64,10 @@ $builder->oldest($allowed_variable_name);
 $builder->orderBy($unallowed_variable_name);
 $builder->orderBy('unallowed_column_name');
 CODE_SAMPLE
-, [self::ALLOWED_PATTERNS => [
-    'submitted_a*',
-    '*tested_at',
-    '$allowed_variable_name',]]),
+                    , [self::ALLOWED_PATTERNS => [
+                        'submitted_a*',
+                        '*tested_at',
+                        '$allowed_variable_name', ]]),
             ]
         );
     }
@@ -86,12 +90,24 @@ CODE_SAMPLE
         return null;
     }
 
+    /**
+     * @param  mixed[]  $configuration
+     */
+    public function configure(array $configuration): void
+    {
+        $allowedPatterns = $configuration[self::ALLOWED_PATTERNS] ?? [];
+        Assert::isArray($allowedPatterns);
+        Assert::allString($allowedPatterns);
+
+        $this->allowedPatterns = $allowedPatterns;
+    }
+
     private function isOrderByMethodCall(MethodCall $methodCall): bool
     {
         // Check if it's a method call to `orderBy`
 
         return $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Database\Query\Builder'))
-            && $methodCall->name instanceof Node\Identifier
+            && $methodCall->name instanceof Identifier
             && ($methodCall->name->name === 'orderBy' || $methodCall->name->name === 'orderByDesc')
             && count($methodCall->args) > 0;
     }
@@ -105,33 +121,32 @@ CODE_SAMPLE
             return true;
         }
 
-        if ($columnArg instanceof Node\Scalar\String_) {
+        if ($columnArg instanceof String_) {
             $columnName = $columnArg->value;
 
             // If specified, only allow certain patterns
-            foreach ($this->allowedPatterns as $pattern) {
-                if (fnmatch($pattern, $columnName)) {
+            foreach ($this->allowedPatterns as $allowedPattern) {
+                if (fnmatch($allowedPattern, $columnName)) {
                     return true;
                 }
             }
         }
 
-        if ($columnArg instanceof Node\Expr\Variable && is_string($columnArg->name)) {
+        if ($columnArg instanceof Variable && is_string($columnArg->name)) {
             // Check against allowed patterns
-            foreach ($this->allowedPatterns as $pattern) {
-                if (fnmatch(ltrim($pattern, '$'), $columnArg->name)) {
+            foreach ($this->allowedPatterns as $allowedPattern) {
+                if (fnmatch(ltrim($allowedPattern, '$'), $columnArg->name)) {
                     return true;
                 }
             }
         }
-
 
         return false;
     }
 
     private function convertOrderByToLatest(MethodCall $methodCall): MethodCall
     {
-        if (! isset($methodCall->args[0]) && ! $methodCall->args[0] instanceof Node\VariadicPlaceholder) {
+        if (! isset($methodCall->args[0]) && ! $methodCall->args[0] instanceof VariadicPlaceholder) {
             return $methodCall;
         }
 
@@ -146,36 +161,23 @@ CODE_SAMPLE
         } else {
             $newMethod = $direction === 'asc' ? 'oldest' : 'latest';
         }
-        if ($columnVar instanceof Node\Scalar\String_ && $columnVar->value === 'created_at') {
-            $methodCall->name = new Node\Identifier($newMethod);
+        if ($columnVar instanceof String_ && $columnVar->value === 'created_at') {
+            $methodCall->name = new Identifier($newMethod);
             $methodCall->args = [];
 
             return $methodCall;
         }
 
-        if ($columnVar instanceof Node\Scalar\String_) {
-            $methodCall->name = new Node\Identifier($newMethod);
-            $methodCall->args = [new Node\Arg(new Node\Scalar\String_($columnVar->value))];
+        if ($columnVar instanceof String_) {
+            $methodCall->name = new Identifier($newMethod);
+            $methodCall->args = [new Arg(new String_($columnVar->value))];
 
             return $methodCall;
         }
 
-        $methodCall->name = new Node\Identifier($newMethod);
-        $methodCall->args = [new Node\Arg($columnVar)];
+        $methodCall->name = new Identifier($newMethod);
+        $methodCall->args = [new Arg($columnVar)];
 
         return $methodCall;
-    }
-
-
-    /**
-     * @param mixed[] $configuration
-     */
-    public function configure(array $configuration): void
-    {
-        $allowedPatterns = $configuration[self::ALLOWED_PATTERNS] ?? [];
-        Assert::isArray($allowedPatterns);
-        Assert::allString($allowedPatterns);
-
-        $this->allowedPatterns = $allowedPatterns;
     }
 }

@@ -6,12 +6,12 @@ namespace RectorLaravel\ValueObject;
 
 use PHPStan\Type\ObjectType;
 
-final class TypeToTimeMethodAndPosition
+final readonly class TypeToTimeMethodAndPosition
 {
     public function __construct(
-        private readonly string $type,
-        private readonly string $methodName,
-        private readonly int $position
+        private string $type,
+        private string $methodName,
+        private int $position
     ) {
     }
 

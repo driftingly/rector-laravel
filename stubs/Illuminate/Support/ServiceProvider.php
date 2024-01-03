@@ -10,5 +10,4 @@ if (class_exists('Illuminate\Support\ServiceProvider')) {
 
 abstract class ServiceProvider
 {
-
 }

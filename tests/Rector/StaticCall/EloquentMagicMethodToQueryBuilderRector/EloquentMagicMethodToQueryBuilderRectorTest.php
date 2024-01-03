@@ -15,15 +15,18 @@ final class User extends Model
 
 final class EloquentMagicMethodToQueryBuilderRectorTest extends AbstractRectorTestCase
 {
+    public static function provideData(): Iterator
+    {
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
+    }
+
+    /**
+     * @test
+     */
     #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);
-    }
-
-    public static function provideData(): Iterator
-    {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
     public function provideConfigFilePath(): string

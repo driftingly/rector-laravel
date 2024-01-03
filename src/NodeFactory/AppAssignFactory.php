@@ -13,10 +13,10 @@ use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
 
-final class AppAssignFactory
+final readonly class AppAssignFactory
 {
     public function __construct(
-        private readonly PhpDocInfoFactory $phpDocInfoFactory
+        private PhpDocInfoFactory $phpDocInfoFactory
     ) {
     }
 

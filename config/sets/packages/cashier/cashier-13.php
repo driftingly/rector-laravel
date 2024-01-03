@@ -7,7 +7,7 @@ use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use RectorLaravel\Rector\Class_\CashierStripeOptionsToStripeRector;
 
-# see https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md#upgrading-to-130-from-12x
+// see https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md#upgrading-to-130-from-12x
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../config.php');
 

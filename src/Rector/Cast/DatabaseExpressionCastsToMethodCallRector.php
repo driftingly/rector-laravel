@@ -44,7 +44,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param String_ $node
+     * @param  String_  $node
      */
     public function refactor(Node $node): ?Node
     {

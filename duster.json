@@ -1,0 +1,10 @@
+{
+    "include": [
+        "build",
+        "config",
+        "src"
+    ],
+    "exclude": [
+        "tests/Rector/**/**/Fixture"
+    ]
+}
