@@ -9,6 +9,7 @@ use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
 use RectorLaravel\Rector\Cast\DatabaseExpressionCastsToMethodCallRector;
+use RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector;
 use RectorLaravel\Rector\Class_\UnifyModelDatesWithCastsRector;
 use RectorLaravel\Rector\MethodCall\DatabaseExpressionToStringToMethodCallRector;
 
@@ -22,6 +23,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://github.com/laravel/framework/pull/44784/files
     $rectorConfig->rule(DatabaseExpressionCastsToMethodCallRector::class);
     $rectorConfig->rule(DatabaseExpressionToStringToMethodCallRector::class);
+
+    // https://github.com/laravel/framework/pull/41136/files
+    $rectorConfig->rule(ReplaceExpectsMethodsInTestsRector::class);
 
     $rectorConfig
         ->ruleWithConfiguration(RenamePropertyRector::class, [
