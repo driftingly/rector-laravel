@@ -978,6 +978,36 @@ Replace assertTimesSent with assertSentTimes
 
 <br>
 
+
+## ReplaceExpectsMethodsInTestsRector
+
+Replace expectJobs and expectEvents methods in tests
+
+- class: [`RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector`](../src/Rector/Class_/ReplaceExpectsMethodsInTestsRector.php)
+
+```diff
+ use Illuminate\Foundation\Testing\TestCase;
+
+ class SomethingTest extends TestCase
+ {
+     public function testSomething()
+     {
+-        $this->expectsJobs([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
+-        $this->expectsEvents(\App\Events\SomeEvent::class);
++        \Illuminate\Support\Facades\Bus::fake([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
++        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class]);
+
+         $this->get('/');
++
++        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeJob::class);
++        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeOtherJob::class);
++        \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\SomeEvent::class);
+     }
+ }
+```
+
+<br>
+
 ## ReplaceFakerInstanceWithHelperRector
 
 Replace `$this->faker` with the `fake()` helper function in Factories
