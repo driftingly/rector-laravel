@@ -12,6 +12,7 @@ use RectorLaravel\Rector\Cast\DatabaseExpressionCastsToMethodCallRector;
 use RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector;
 use RectorLaravel\Rector\Class_\UnifyModelDatesWithCastsRector;
 use RectorLaravel\Rector\MethodCall\DatabaseExpressionToStringToMethodCallRector;
+use RectorLaravel\Rector\StaticCall\ReplaceAssertTimesSendWithAssertSentTimesRector;
 
 // see https://laravel.com/docs/10.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
@@ -26,6 +27,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/pull/41136/files
     $rectorConfig->rule(ReplaceExpectsMethodsInTestsRector::class);
+    $rectorConfig->rule(ReplaceAssertTimesSendWithAssertSentTimesRector::class);
 
     $rectorConfig
         ->ruleWithConfiguration(RenamePropertyRector::class, [

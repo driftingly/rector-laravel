@@ -18,9 +18,14 @@ use RectorLaravel\ValueObject\AddArgumentDefaultValue;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(AddArgumentDefaultValueRector::class, [
-        AddArgumentDefaultValueRector::ADDED_ARGUMENTS => [
-            new AddArgumentDefaultValue('SomeClass', 'someMethod', 0, false),
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => AddArgumentDefaultValueRector::class,
+            'configuration' => [
+                'added_arguments' => [
+                    new AddArgumentDefaultValue('SomeClass', 'someMethod', 0, false),
+                ],
+            ],
         ],
     ]);
 };
@@ -223,8 +228,13 @@ use RectorLaravel\ValueObject\ArgumentFuncCallToMethodCall;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(ArgumentFuncCallToMethodCallRector::class, [
-        new ArgumentFuncCallToMethodCall('view', 'Illuminate\Contracts\View\Factory', 'make'),
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => ArgumentFuncCallToMethodCallRector::class,
+            'configuration' => [
+                new ArgumentFuncCallToMethodCall('view', 'Illuminate\Contracts\View\Factory', 'make'),
+            ],
+        ],
     ]);
 };
 ```
@@ -503,11 +513,16 @@ use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(EloquentOrderByToLatestOrOldestRector::class, [
-        EloquentOrderByToLatestOrOldestRector::ALLOWED_PATTERNS => [
-            'submitted_a*',
-            '*tested_at',
-            '$allowed_variable_name',
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => EloquentOrderByToLatestOrOldestRector::class,
+            'configuration' => [
+                'allowed_patterns' => [
+                    'submitted_a*',
+                    '*tested_at',
+                    '$allowed_variable_name',
+                ],
+            ],
         ],
     ]);
 };
@@ -787,9 +802,14 @@ use RectorLaravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(OptionalToNullsafeOperatorRector::class, [
-        OptionalToNullsafeOperatorRector::EXCLUDE_METHODS => [
-            'present',
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => OptionalToNullsafeOperatorRector::class,
+            'configuration' => [
+                'exclude_methods' => [
+                    'present',
+                ],
+            ],
         ],
     ]);
 };
@@ -945,6 +965,20 @@ Removes the `$model` property from Factories.
 
 <br>
 
+## ReplaceAssertTimesSendWithAssertSentTimesRector
+
+Replace assertTimesSent with assertSentTimes
+
+- class: [`RectorLaravel\Rector\StaticCall\ReplaceAssertTimesSendWithAssertSentTimesRector`](../src/Rector/StaticCall/ReplaceAssertTimesSendWithAssertSentTimesRector.php)
+
+```diff
+-Notification::assertTimesSent(1, SomeNotification::class);
++Notification::assertSentTimes(SomeNotification::class, 1);
+```
+
+<br>
+
+
 ## ReplaceExpectsMethodsInTestsRector
 
 Replace expectJobs and expectEvents methods in tests
@@ -1036,8 +1070,13 @@ use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(RouteActionCallableRector::class, [
-        RouteActionCallableRector::NAMESPACE => 'App\Http\Controllers',
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => RouteActionCallableRector::class,
+            'configuration' => [
+                'namespace' => 'App\Http\Controllers',
+            ],
+        ],
     ]);
 };
 ```
