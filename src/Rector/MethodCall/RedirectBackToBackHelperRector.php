@@ -16,7 +16,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \RectorLaravel\Tests\Rector\MethodCall\RedirectBackToBackHelperRector\RedirectBackToBackHelperRectorTest
  */
-
 final class RedirectBackToBackHelperRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
@@ -72,7 +71,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param MethodCall|StaticCall $node
+     * @param  MethodCall|StaticCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -83,7 +82,7 @@ CODE_SAMPLE
         return $this->updateRedirectStaticCall($node);
     }
 
-    private function updateRedirectHelperCall(MethodCall $methodCall): FuncCall|null
+    private function updateRedirectHelperCall(MethodCall $methodCall): ?FuncCall
     {
         if (! $this->isName($methodCall->name, 'back')) {
             return null;
@@ -103,6 +102,7 @@ CODE_SAMPLE
 
         $methodCall->var->name = new Name('back');
         $methodCall->var->args = $methodCall->getArgs();
+
         return $methodCall->var;
     }
 

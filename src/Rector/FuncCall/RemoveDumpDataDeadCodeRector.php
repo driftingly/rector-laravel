@@ -15,7 +15,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \RectorLaravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\RemoveDumpDataDeadCodeRectorTest
  */
-
 final class RemoveDumpDataDeadCodeRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
@@ -69,7 +68,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Expression $node
+     * @param  Expression  $node
      */
     public function refactor(Node $node): int|Node|array|null
     {

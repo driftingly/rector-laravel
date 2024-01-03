@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace RectorLaravel\ValueObject;
 
-final class ServiceNameTypeAndVariableName
+final readonly class ServiceNameTypeAndVariableName
 {
     public function __construct(
-        private readonly string $serviceName,
-        private readonly string $type,
-        private readonly string $variableName
+        private string $serviceName,
+        private string $type,
+        private string $variableName
     ) {
     }
 

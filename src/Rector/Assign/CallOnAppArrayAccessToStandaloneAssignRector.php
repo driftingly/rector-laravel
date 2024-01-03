@@ -52,7 +52,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
     }
 
     /**
-     * @param Expression $node
+     * @param  Expression  $node
      */
     public function refactor(Node $node): Node|array|int|null
     {
@@ -99,7 +99,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 
             // the nop is a workaround because the docs of the first node are somehow stripped away
             // this will add a newline but the docs will be preserved
-            return [new Nop(), $assignExpression, $node];
+            return [new Nop, $assignExpression, $node];
         }
 
         return null;

@@ -56,7 +56,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param MethodCall $node
+     * @param  MethodCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -81,7 +81,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param array<Arg|VariadicPlaceholder> $args
+     * @param  array<Arg|VariadicPlaceholder>  $args
      * @return mixed[]
      */
     private function getStatesFromArgs(array $args): array

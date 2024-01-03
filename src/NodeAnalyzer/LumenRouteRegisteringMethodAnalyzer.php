@@ -11,11 +11,11 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 
-final class LumenRouteRegisteringMethodAnalyzer
+final readonly class LumenRouteRegisteringMethodAnalyzer
 {
     public function __construct(
-        private readonly NodeTypeResolver $nodeTypeResolver,
-        private readonly NodeNameResolver $nodeNameResolver
+        private NodeTypeResolver $nodeTypeResolver,
+        private NodeNameResolver $nodeNameResolver
     ) {
     }
 

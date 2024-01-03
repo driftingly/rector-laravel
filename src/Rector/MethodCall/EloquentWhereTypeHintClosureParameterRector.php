@@ -69,6 +69,7 @@ CODE_SAMPLE
         if (! $this->expectedObjectTypeAndMethodCall($node)) {
             return false;
         }
+
         return ! (! ($node->getArgs()[0]->value ?? null) instanceof Closure &&
         ! ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction);
     }
