@@ -2,6 +2,8 @@
 
 namespace RectorLaravel\Tests\Rector\Class_\ReplaceExpectsMethodsInTestsRector\Source;
 
-class TestCase extends \Illuminate\Foundation\Testing\TestCase
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+
+class TestCase extends BaseTestCase
 {
 }
