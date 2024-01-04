@@ -4,7 +4,7 @@
     "license": "MIT",
     "description": "Rector upgrades rules for Laravel Framework",
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "rector/rector": "^0.18.5"
     },
     "require-dev": {
