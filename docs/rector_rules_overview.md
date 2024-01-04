@@ -1,4 +1,4 @@
-# 47 Rules Overview
+# 50 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -678,6 +678,19 @@ Change `app()` func calls to facade calls
 
 <br>
 
+## JsonCallToExplicitJsonCallRector
+
+Change method calls from `$this->json` to `$this->postJson,` `$this->putJson,` etc.
+
+- class: [`RectorLaravel\Rector\MethodCall\JsonCallToExplicitJsonCallRector`](../src/Rector/MethodCall/JsonCallToExplicitJsonCallRector.php)
+
+```diff
+-$this->json("POST", "/api/v1/users", $data);
++§this->postJson("/api/v1/users", $data);
+```
+
+<br>
+
 ## LumenRoutesStringActionToUsesArrayRector
 
 Changes action in rule definitions from string to array notation.
@@ -978,7 +991,6 @@ Replace assertTimesSent with assertSentTimes
 
 <br>
 
-
 ## ReplaceExpectsMethodsInTestsRector
 
 Replace expectJobs and expectEvents methods in tests
@@ -1027,6 +1039,23 @@ Replace `$this->faker` with the `fake()` helper function in Factories
          ];
      }
  }
+```
+
+<br>
+
+## ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector
+
+Replace `withoutJobs`, `withoutEvents` and `withoutNotifications` with Facade `fake`
+
+- class: [`RectorLaravel\Rector\MethodCall\ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector`](../src/Rector/MethodCall/ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector.php)
+
+```diff
+-$this->withoutJobs();
+-$this->withoutEvents();
+-$this->withoutNotifications();
++\Illuminate\Support\Facades\Bus::fake();
++\Illuminate\Support\Facades\Event::fake();
++\Illuminate\Support\Facades\Notification::fake();
 ```
 
 <br>
