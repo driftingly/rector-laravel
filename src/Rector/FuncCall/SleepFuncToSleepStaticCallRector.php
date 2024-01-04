@@ -21,16 +21,11 @@ class SleepFuncToSleepStaticCallRector extends AbstractRector
         return new RuleDefinition(
             'Use Sleep::sleep() and Sleep::usleep() instead of the sleep() and usleep() function.',
             [
-                new CodeSample(
-                    <<<'CODE_SAMPLE'
+                new CodeSample(<<<'CODE_SAMPLE'
 sleep(5);
-CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
+CODE_SAMPLE, <<<'CODE_SAMPLE'
 \Illuminate\Support\Sleep::sleep(5);
-CODE_SAMPLE
-                    ,
-                ),
+CODE_SAMPLE),
             ]
         );
     }

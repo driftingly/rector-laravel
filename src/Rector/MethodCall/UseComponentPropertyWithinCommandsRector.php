@@ -25,8 +25,7 @@ class UseComponentPropertyWithinCommandsRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Use $this->components property within commands', [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
+            new CodeSample(<<<'CODE_SAMPLE'
 use Illuminate\Console\Command;
 
 class CommandWithComponents extends Command
@@ -39,9 +38,7 @@ class CommandWithComponents extends Command
         $this->error('Error!');
     }
 }
-CODE_SAMPLE
-                ,
-                <<<'CODE_SAMPLE'
+CODE_SAMPLE, <<<'CODE_SAMPLE'
 use Illuminate\Console\Command;
 
 class CommandWithComponents extends Command
@@ -54,9 +51,7 @@ class CommandWithComponents extends Command
         $this->components->error('Error!');
     }
 }
-CODE_SAMPLE
-                ,
-            ),
+CODE_SAMPLE),
         ]);
     }
 

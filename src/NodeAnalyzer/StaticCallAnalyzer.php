@@ -9,11 +9,16 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\NodeNameResolver\NodeNameResolver;
 
-final readonly class StaticCallAnalyzer
+final class StaticCallAnalyzer
 {
-    public function __construct(
-        private NodeNameResolver $nodeNameResolver
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     public function isParentCallNamed(Node $node, string $desiredMethodName): bool
