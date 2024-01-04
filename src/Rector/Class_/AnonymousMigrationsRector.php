@@ -22,9 +22,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AnonymousMigrationsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ClassAnalyzer $classAnalyzer
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ClassAnalyzer
+     */
+    private $classAnalyzer;
+    public function __construct(ClassAnalyzer $classAnalyzer)
+    {
+        $this->classAnalyzer = $classAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition

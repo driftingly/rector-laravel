@@ -45,7 +45,10 @@ CODE_SAMPLE
         return [Expr::class];
     }
 
-    public function refactor(Node $node): MethodCall|StaticCall|null
+    /**
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null
+     */
+    public function refactor(Node $node)
     {
         if (! $node instanceof Identical && ! $node instanceof Equal) {
             return null;
@@ -55,10 +58,12 @@ CODE_SAMPLE
         $methodCall = array_values(
             array_filter(
                 [$node->left, $node->right],
-                fn ($node) => ($node instanceof MethodCall || $node instanceof StaticCall) && $this->isName(
-                    $node->name,
-                    'environment'
-                )
+                function ($node) {
+                    return ($node instanceof MethodCall || $node instanceof StaticCall) && $this->isName(
+                        $node->name,
+                        'environment'
+                    );
+                }
             )
         )[0] ?? null;
 
@@ -68,7 +73,9 @@ CODE_SAMPLE
 
         /** @var Expr $otherNode */
         $otherNode = array_values(
-            array_filter([$node->left, $node->right], static fn ($node) => $node !== $methodCall)
+            array_filter([$node->left, $node->right], static function ($node) use ($methodCall) {
+                return $node !== $methodCall;
+            })
         )[0] ?? null;
 
         if (! $otherNode instanceof String_) {
@@ -85,22 +92,29 @@ CODE_SAMPLE
         return $methodCall;
     }
 
-    private function validMethodCall(MethodCall|StaticCall $methodCall): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $methodCall
+     */
+    private function validMethodCall($methodCall): bool
     {
-        return match (true) {
-            $methodCall instanceof MethodCall && $this->isObjectType(
+        switch (true) {
+            case $methodCall instanceof MethodCall && $this->isObjectType(
                 $methodCall->var,
                 new ObjectType('Illuminate\Contracts\Foundation\Application')
-            ) => true,
-            $methodCall instanceof StaticCall && $this->isObjectType(
+            ):
+                return true;
+            case $methodCall instanceof StaticCall && $this->isObjectType(
                 $methodCall->class,
                 new ObjectType('Illuminate\Support\Facades\App')
-            ) => true,
-            $methodCall instanceof StaticCall && $this->isObjectType(
+            ):
+                return true;
+            case $methodCall instanceof StaticCall && $this->isObjectType(
                 $methodCall->class,
                 new ObjectType('App')
-            ) => true,
-            default => false,
-        };
+            ):
+                return true;
+            default:
+                return false;
+        }
     }
 }
