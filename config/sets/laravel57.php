@@ -6,7 +6,7 @@ use PHPStan\Type\ObjectType;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Config\RectorConfig;
-use Rector\Core\ValueObject\Visibility;
+use Rector\ValueObject\Visibility;
 use Rector\Removing\Rector\ClassMethod\ArgumentRemoverRector;
 use Rector\Removing\ValueObject\ArgumentRemover;
 use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
