@@ -11,12 +11,22 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 
-final readonly class LumenRouteRegisteringMethodAnalyzer
+final class LumenRouteRegisteringMethodAnalyzer
 {
-    public function __construct(
-        private NodeTypeResolver $nodeTypeResolver,
-        private NodeNameResolver $nodeNameResolver
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\NodeTypeResolver
+     */
+    private $nodeTypeResolver;
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    public function __construct(NodeTypeResolver $nodeTypeResolver, NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeTypeResolver = $nodeTypeResolver;
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     public function isLumenRoutingClass(MethodCall $methodCall): bool
@@ -24,12 +34,18 @@ final readonly class LumenRouteRegisteringMethodAnalyzer
         return $this->nodeTypeResolver->isObjectType($methodCall->var, new ObjectType('Laravel\Lumen\Routing\Router'));
     }
 
-    public function isRoutesRegisterGroup(Identifier|Expr $name): bool
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    public function isRoutesRegisterGroup($name): bool
     {
         return $this->nodeNameResolver->isName($name, 'group');
     }
 
-    public function isRoutesRegisterRoute(Identifier|Expr $name): bool
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    public function isRoutesRegisterRoute($name): bool
     {
         return $this->nodeNameResolver->isNames($name, ['delete', 'get', 'options', 'patch', 'post', 'put']);
     }
