@@ -1,3 +1,5 @@
+includes:
+    - vendor/symplify/phpstan-rules/config/rector-rules.neon
 parameters:
     level: max
 
