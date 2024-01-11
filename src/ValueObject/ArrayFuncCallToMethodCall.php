@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\ValueObject;
 
-use Rector\Core\Validation\RectorAssert;
+use Rector\Validation\RectorAssert;
 use RectorLaravel\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface;
 
 final readonly class ArrayFuncCallToMethodCall implements ArgumentFuncCallToMethodCallInterface
