@@ -12,7 +12,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         EloquentMagicMethodToQueryBuilderRector::class,
         [
-            EloquentMagicMethodToQueryBuilderRector::EXCLUDE_METHODS => ['excludedPublicMethodBelongsToEloquentQueryBuilder'],
+            EloquentMagicMethodToQueryBuilderRector::EXCLUDE_METHODS => ['excludablePublicMethodBelongsToEloquentQueryBuilder'],
         ],
     );
 };

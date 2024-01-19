@@ -14,7 +14,7 @@ class Builder extends QueryBuilder
     {
     }
 
-    public function excludedPublicMethodBelongsToEloquentQueryBuilder(): void
+    public function excludablePublicMethodBelongsToEloquentQueryBuilder(): void
     {
     }
 }

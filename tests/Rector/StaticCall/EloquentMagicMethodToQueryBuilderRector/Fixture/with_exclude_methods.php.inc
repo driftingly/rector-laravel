@@ -12,7 +12,7 @@ class SomeController
         $user = User::publicMethodBelongsToQueryBuilder();
 
         # not eligible
-        $user = User::excludedPublicMethodBelongsToEloquentQueryBuilder();
+        $user = User::excludablePublicMethodBelongsToEloquentQueryBuilder();
     }
 }
 -----
@@ -30,6 +30,6 @@ class SomeController
         $user = User::query()->publicMethodBelongsToQueryBuilder();
 
         # not eligible
-        $user = User::excludedPublicMethodBelongsToEloquentQueryBuilder();
+        $user = User::excludablePublicMethodBelongsToEloquentQueryBuilder();
     }
 }
