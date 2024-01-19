@@ -118,7 +118,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param mixed[] $configuration
+     * @param  mixed[]  $configuration
      */
     public function configure(array $configuration): void
     {
@@ -131,7 +131,7 @@ CODE_SAMPLE
 
     public function isMagicMethod(string $className, string $methodName): bool
     {
-        if (in_array($methodName, $this->excludeMethods)) {
+        if (in_array($methodName, $this->excludeMethods, true)) {
             return false;
         }
 
