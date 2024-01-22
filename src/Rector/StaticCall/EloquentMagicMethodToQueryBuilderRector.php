@@ -10,17 +10,29 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use ReflectionException;
 use ReflectionMethod;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @see \RectorLaravel\Tests\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector\EloquentMagicMethodToQueryBuilderRectorTest
  */
-final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector
+final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    /**
+     * @var string
+     */
+    final public const EXCLUDE_METHODS = 'exclude_methods';
+
+    /**
+     * @var string[]
+     */
+    private array $excludeMethods = [];
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -105,8 +117,24 @@ CODE_SAMPLE
         return $newNode;
     }
 
+    /**
+     * @param  mixed[]  $configuration
+     */
+    public function configure(array $configuration): void
+    {
+        $excludeMethods = $configuration[self::EXCLUDE_METHODS] ?? $configuration;
+        Assert::isArray($excludeMethods);
+        Assert::allString($excludeMethods);
+
+        $this->excludeMethods = $excludeMethods;
+    }
+
     public function isMagicMethod(string $className, string $methodName): bool
     {
+        if (in_array($methodName, $this->excludeMethods, true)) {
+            return false;
+        }
+
         try {
             $reflectionMethod = new ReflectionMethod($className, $methodName);
         } catch (ReflectionException) {

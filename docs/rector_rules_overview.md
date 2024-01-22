@@ -485,13 +485,40 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector`](../src/Rector/StaticCall/EloquentMagicMethodToQueryBuilderRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => EloquentMagicMethodToQueryBuilderRector::class,
+            'configuration' => [
+                'exclude_methods' => [
+                    'find',
+                    'findOrFail',
+                ],
+            ],
+        ],
+    ]);
+};
+```
+
+↓
 
 ```diff
  use App\Models\User;
 
--$user = User::find(1);
-+$user = User::query()->find(1);
+-$user = User::where('x', 1);
++$user = User::query()->where('x', 1);
 ```
 
 <br>

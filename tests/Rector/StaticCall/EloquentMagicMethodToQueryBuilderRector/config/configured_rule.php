@@ -9,5 +9,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../../../config/config.php');
     $rectorConfig->importNames(importDocBlockNames: false);
     $rectorConfig->importShortClasses(false);
-    $rectorConfig->rule(EloquentMagicMethodToQueryBuilderRector::class);
+    $rectorConfig->ruleWithConfiguration(
+        EloquentMagicMethodToQueryBuilderRector::class,
+        [
+            EloquentMagicMethodToQueryBuilderRector::EXCLUDE_METHODS => ['excludablePublicMethodBelongsToEloquentQueryBuilder'],
+        ],
+    );
 };
