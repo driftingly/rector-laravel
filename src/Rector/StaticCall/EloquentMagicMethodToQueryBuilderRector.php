@@ -14,7 +14,6 @@ use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use ReflectionException;
 use ReflectionMethod;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -51,9 +50,9 @@ use App\Models\User;
 
 $user = User::query()->find(1);
 CODE_SAMPLE
-                , [
-                    self::EXCLUDE_METHODS => ['find'],
-                ]),
+                    , [
+                        self::EXCLUDE_METHODS => ['find'],
+                    ]),
 
             ]);
     }
