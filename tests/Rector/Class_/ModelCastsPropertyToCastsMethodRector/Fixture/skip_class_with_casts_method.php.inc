@@ -10,7 +10,7 @@ class ClassWithCastsMethod extends Model
         'name' => 'string',
     ];
 
-    public function casts(): array
+    private function casts(): array
     {
         return [
             'birthday' => 'datetime',

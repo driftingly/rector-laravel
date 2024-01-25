@@ -82,7 +82,7 @@ CODE_SAMPLE,
                 if ($this->isName($stmt, 'casts') && $stmt->isProtected()) {
                     $method = $this->builderFactory->method('casts')
                         ->setReturnType('array')
-                        ->makePublic();
+                        ->makeProtected();
 
                     // convert the property to a return statement
                     $method->addStmt(new Node\Stmt\Return_($stmt->props[0]->default));

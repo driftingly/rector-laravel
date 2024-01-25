@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CastsPropertyExists extends Model
 {
-    public function casts(): array
+    protected function casts(): array
     {
         return [
             'birthday' => 'datetime',
