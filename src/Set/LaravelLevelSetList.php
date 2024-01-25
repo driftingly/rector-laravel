@@ -72,4 +72,9 @@ final class LaravelLevelSetList implements SetListInterface
      * @var string
      */
     final public const UP_TO_LARAVEL_100 = __DIR__ . '/../../config/sets/level/up-to-laravel-100.php';
+
+    /**
+     * @var string
+     */
+    final public const UP_TO_LARAVEL_110 = __DIR__ . '/../../config/sets/level/up-to-laravel-110.php';
 }
