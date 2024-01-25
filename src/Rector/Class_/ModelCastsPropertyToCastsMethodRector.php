@@ -5,6 +5,9 @@ namespace RectorLaravel\Rector\Class_;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -68,30 +71,23 @@ CODE_SAMPLE,
 
         // Check if there is already a casts() method
         foreach ($node->stmts as $stmt) {
-            if ($stmt instanceof Node\Stmt\ClassMethod) {
-                if ($this->isName($stmt, 'casts')) {
-
-                    return null;
-                }
+            if ($stmt instanceof ClassMethod && $this->isName($stmt, 'casts')) {
+                return null;
             }
         }
 
         // Check if there is a protected $casts property
         foreach ($node->stmts as $index => $stmt) {
-            if ($stmt instanceof Node\Stmt\Property) {
-                if ($this->isName($stmt, 'casts') && $stmt->isProtected()) {
-                    $method = $this->builderFactory->method('casts')
-                        ->setReturnType('array')
-                        ->makeProtected();
+            if ($stmt instanceof Property && ($this->isName($stmt, 'casts') && $stmt->isProtected())) {
+                $method = $this->builderFactory->method('casts')
+                    ->setReturnType('array')
+                    ->makeProtected();
+                // convert the property to a return statement
+                $method->addStmt(new Return_($stmt->props[0]->default));
+                unset($node->stmts[$index]);
+                $node->stmts[] = $method->getNode();
 
-                    // convert the property to a return statement
-                    $method->addStmt(new Node\Stmt\Return_($stmt->props[0]->default));
-
-                    unset($node->stmts[$index]);
-                    $node->stmts[] = $method->getNode();
-
-                    return $node;
-                }
+                return $node;
             }
         }
 
