@@ -27,7 +27,7 @@ final class JsonCallToExplicitJsonCallRector extends AbstractRector
                     // code before
                     '$this->json("POST", "/api/v1/users", $data);',
                     // code after
-                    '§this->postJson("/api/v1/users", $data);'
+                    '$this->postJson("/api/v1/users", $data);'
                 ),
             ]
         );
