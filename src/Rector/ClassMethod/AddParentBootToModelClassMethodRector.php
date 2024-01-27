@@ -22,14 +22,24 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class AddParentBootToModelClassMethodRector extends AbstractRector
 {
     /**
+     * @readonly
+     * @var \RectorLaravel\NodeAnalyzer\StaticCallAnalyzer
+     */
+    private $staticCallAnalyzer;
+    /**
+     * @readonly
+     * @var \Rector\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+    /**
      * @var string
      */
     private const BOOT = 'boot';
 
-    public function __construct(
-        private readonly StaticCallAnalyzer $staticCallAnalyzer,
-        private readonly ReflectionResolver $reflectionResolver,
-    ) {
+    public function __construct(StaticCallAnalyzer $staticCallAnalyzer, ReflectionResolver $reflectionResolver)
+    {
+        $this->staticCallAnalyzer = $staticCallAnalyzer;
+        $this->reflectionResolver = $reflectionResolver;
     }
 
     public function getRuleDefinition(): RuleDefinition
