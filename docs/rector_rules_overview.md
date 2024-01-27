@@ -1,4 +1,4 @@
-# 50 Rules Overview
+# 51 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -695,6 +695,14 @@ Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Ill
      }
  }
 ```
+
+<br>
+
+## ModelCastsPropertyToCastsMethodRector
+
+Refactor Model `$casts` property with `casts()` method
+
+- class: [`RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector`](../src/Rector/Class_/ModelCastsPropertyToCastsMethodRector.php)
 
 <br>
 
