@@ -8,31 +8,6 @@ Adds default value for arguments in defined methods.
 
 - class: [`RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector`](../src/Rector/ClassMethod/AddArgumentDefaultValueRector.php)
 
-```php
-<?php
-
-declare(strict_types=1);
-
-use RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
-use RectorLaravel\ValueObject\AddArgumentDefaultValue;
-use Rector\Config\RectorConfig;
-
-return static function (RectorConfig $rectorConfig): void {
-    $containerConfigurator->extension('rectorConfig', [
-        [
-            'class' => AddArgumentDefaultValueRector::class,
-            'configuration' => [
-                'added_arguments' => [
-                    new AddArgumentDefaultValue('SomeClass', 'someMethod', 0, false),
-                ],
-            ],
-        ],
-    ]);
-};
-```
-
-↓
-
 ```diff
  class SomeClass
  {
@@ -217,29 +192,6 @@ Move help facade-like function calls to constructor injection
 :wrench: **configure it!**
 
 - class: [`RectorLaravel\Rector\FuncCall\ArgumentFuncCallToMethodCallRector`](../src/Rector/FuncCall/ArgumentFuncCallToMethodCallRector.php)
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use RectorLaravel\Rector\FuncCall\ArgumentFuncCallToMethodCallRector;
-use RectorLaravel\ValueObject\ArgumentFuncCallToMethodCall;
-use Rector\Config\RectorConfig;
-
-return static function (RectorConfig $rectorConfig): void {
-    $containerConfigurator->extension('rectorConfig', [
-        [
-            'class' => ArgumentFuncCallToMethodCallRector::class,
-            'configuration' => [
-                new ArgumentFuncCallToMethodCall('view', 'Illuminate\Contracts\View\Factory', 'make'),
-            ],
-        ],
-    ]);
-};
-```
-
-↓
 
 ```diff
  class SomeController
@@ -489,36 +441,11 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 
 - class: [`RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector`](../src/Rector/StaticCall/EloquentMagicMethodToQueryBuilderRector.php)
 
-```php
-<?php
-
-declare(strict_types=1);
-
-use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
-use Rector\Config\RectorConfig;
-
-return static function (RectorConfig $rectorConfig): void {
-    $containerConfigurator->extension('rectorConfig', [
-        [
-            'class' => EloquentMagicMethodToQueryBuilderRector::class,
-            'configuration' => [
-                'exclude_methods' => [
-                    'find',
-                    'findOrFail',
-                ],
-            ],
-        ],
-    ]);
-};
-```
-
-↓
-
 ```diff
  use App\Models\User;
 
--$user = User::where('x', 1);
-+$user = User::query()->where('x', 1);
+-$user = User::find(1);
++$user = User::query()->find(1);
 ```
 
 <br>
@@ -530,32 +457,6 @@ Changes `orderBy()` to `latest()` or `oldest()`
 :wrench: **configure it!**
 
 - class: [`RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector`](../src/Rector/MethodCall/EloquentOrderByToLatestOrOldestRector.php)
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
-use Rector\Config\RectorConfig;
-
-return static function (RectorConfig $rectorConfig): void {
-    $containerConfigurator->extension('rectorConfig', [
-        [
-            'class' => EloquentOrderByToLatestOrOldestRector::class,
-            'configuration' => [
-                'allowed_patterns' => [
-                    'submitted_a*',
-                    '*tested_at',
-                    '$allowed_variable_name',
-                ],
-            ],
-        ],
-    ]);
-};
-```
-
-↓
 
 ```diff
  use Illuminate\Database\Eloquent\Builder;
@@ -833,30 +734,6 @@ Convert simple calls to optional helper to use the nullsafe operator
 
 - class: [`RectorLaravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector`](../src/Rector/PropertyFetch/OptionalToNullsafeOperatorRector.php)
 
-```php
-<?php
-
-declare(strict_types=1);
-
-use RectorLaravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
-use Rector\Config\RectorConfig;
-
-return static function (RectorConfig $rectorConfig): void {
-    $containerConfigurator->extension('rectorConfig', [
-        [
-            'class' => OptionalToNullsafeOperatorRector::class,
-            'configuration' => [
-                'exclude_methods' => [
-                    'present',
-                ],
-            ],
-        ],
-    ]);
-};
-```
-
-↓
-
 ```diff
 -optional($user)->getKey();
 -optional($user)->id;
@@ -1116,28 +993,6 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 :wrench: **configure it!**
 
 - class: [`RectorLaravel\Rector\StaticCall\RouteActionCallableRector`](../src/Rector/StaticCall/RouteActionCallableRector.php)
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
-use Rector\Config\RectorConfig;
-
-return static function (RectorConfig $rectorConfig): void {
-    $containerConfigurator->extension('rectorConfig', [
-        [
-            'class' => RouteActionCallableRector::class,
-            'configuration' => [
-                'namespace' => 'App\Http\Controllers',
-            ],
-        ],
-    ]);
-};
-```
-
-↓
 
 ```diff
 -Route::get('/users', 'UserController@index');

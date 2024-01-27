@@ -14,7 +14,7 @@ use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use ReflectionException;
 use ReflectionMethod;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -38,7 +38,7 @@ final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector imple
         return new RuleDefinition(
             'The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform certain magic method calls on Eloquent Models into corresponding Query Builder method calls.',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     <<<'CODE_SAMPLE'
 use App\Models\User;
 
@@ -50,7 +50,9 @@ use App\Models\User;
 
 $user = User::query()->find(1);
 CODE_SAMPLE
-                ),
+                    , [
+                        self::EXCLUDE_METHODS => ['find'],
+                    ]),
 
             ]);
     }
