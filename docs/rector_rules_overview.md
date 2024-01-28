@@ -614,7 +614,7 @@ Change method calls from `$this->json` to `$this->postJson,` `$this->putJson,` e
 
 ```diff
 -$this->json("POST", "/api/v1/users", $data);
-+§this->postJson("/api/v1/users", $data);
++$this->postJson("/api/v1/users", $data);
 ```
 
 <br>
@@ -703,6 +703,23 @@ Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Ill
 Refactor Model `$casts` property with `casts()` method
 
 - class: [`RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector`](../src/Rector/Class_/ModelCastsPropertyToCastsMethodRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+
+ class Person extends Model
+ {
+-    protected $casts = [
+-        'age' => 'integer',
+-    ];
++    protected function casts(): array
++    {
++        return [
++            'age' => 'integer',
++        ];
++    }
+ }
+```
 
 <br>
 
