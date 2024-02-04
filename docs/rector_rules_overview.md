@@ -1,4 +1,4 @@
-# 51 Rules Overview
+# 53 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -903,6 +903,32 @@ Removes the `$model` property from Factories.
  {
 -    protected $model = \App\Models\User::class;
  }
+```
+
+<br>
+
+## RemoveRedundantValueCallsRector
+
+Removes redundant value helper calls
+
+- class: [`RectorLaravel\Rector\FuncCall\RemoveRedundantValueCallsRector`](../src/Rector/FuncCall/RemoveRedundantValueCallsRector.php)
+
+```diff
+-value(new Object())->something();
++(new Object())->something();
+```
+
+<br>
+
+## RemoveRedundantWithCallsRector
+
+Removes redundant with helper calls
+
+- class: [`RectorLaravel\Rector\FuncCall\RemoveRedundantWithCallsRector`](../src/Rector/FuncCall/RemoveRedundantWithCallsRector.php)
+
+```diff
+-with(new Object())->something();
++(new Object())->something();
 ```
 
 <br>
