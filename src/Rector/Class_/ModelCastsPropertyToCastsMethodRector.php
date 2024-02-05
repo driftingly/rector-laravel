@@ -18,15 +18,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ModelCastsPropertyToCastsMethodRector extends AbstractRector
 {
-    public function __construct(protected BuilderFactory $builderFactory)
+    /**
+     * @var \PhpParser\BuilderFactory
+     */
+    protected $builderFactory;
+    public function __construct(BuilderFactory $builderFactory)
     {
+        $this->builderFactory = $builderFactory;
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Refactor Model $casts property with casts() method', [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
+            new CodeSample(<<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
@@ -35,8 +39,8 @@ class Person extends Model
         'age' => 'integer',
     ];
 }
-CODE_SAMPLE,
-                <<<'CODE_SAMPLE'
+CODE_SAMPLE
+, <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
@@ -48,8 +52,8 @@ class Person extends Model
         ];
     }
 }
-CODE_SAMPLE,
-            ),
+CODE_SAMPLE
+),
         ]);
     }
 
