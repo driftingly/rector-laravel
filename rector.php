@@ -9,7 +9,7 @@ return RectorConfig::configure()
     ->withImportNames()
     ->withPaths([
         __DIR__ . '/src',
-        __DIR__ . '/tests'
+        __DIR__ . '/tests',
     ])
     ->withSkip([
         // for tests
