@@ -62,7 +62,9 @@ return static function (RectorConfig $rectorConfig): void {
                     new FuncCallToStaticCall('studly_case', 'Illuminate\Support\Str', 'studly'),
                     new FuncCallToStaticCall('title_case', 'Illuminate\Support\Str', 'title'),
                 ],
-                fn ($function) => ! in_array($function->getOldFuncName(), $internalFunctions, true)
+                function ($function) use ($internalFunctions) {
+                    return ! in_array($function->getOldFuncName(), $internalFunctions, true);
+                }
             )
         );
 };
