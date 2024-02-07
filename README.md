@@ -17,17 +17,18 @@ composer require driftingly/rector-laravel --dev
 To add a set to your config, use `RectorLaravel\Set\LaravelSetList` class and pick one of the constants:
 
 ```php
-use RectorLaravel\Set\LaravelSetList;
-use Rector\Config\RectorConfig;
+<?php
 
-return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->sets([
+declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+use RectorLaravel\Set\LaravelSetList;
+
+return RectorConfig::configure()
+    ->withSets([
         LaravelSetList::LARAVEL_110
     ]);
-};
 ```
-
-<br>
 
 ## Learn Rector Faster
 
