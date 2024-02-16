@@ -7,13 +7,18 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeTraverser;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
+use Rector\CustomRules\SimpleNodeDumper;
 use Rector\Rector\AbstractScopeAwareRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class DispatchNonShouldQueueToDispatchSyncRector extends AbstractScopeAwareRector
 {
+    public function __construct(private ReflectionProvider $reflections)
+    {
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -30,11 +35,11 @@ class DispatchNonShouldQueueToDispatchSyncRector extends AbstractScopeAwareRecto
 
     public function getNodeTypes(): array
     {
-        return [Node\Expr\Assign::class, Node\Stmt\If_::class, Node\Stmt\Foreach_::class];
+        return [Node\Expr\Assign::class];
     }
 
     /**
-     * @param Node\Expr\Assign|Node\Stmt\If_ $node
+     * @param Node\Expr\Assign $node
      */
     public function refactorWithScope(Node $node, Scope $scope): ?Node
     {
@@ -45,19 +50,32 @@ class DispatchNonShouldQueueToDispatchSyncRector extends AbstractScopeAwareRecto
             function (Node $node) use (&$hasChanged, $scope): FuncCall|MethodCall|null {
                 if (
                     ($node instanceof FuncCall || $node instanceof MethodCall) &&
-                    $this->isName($node, 'dispatch') &&
+                    $this->isName($node->name, 'dispatch') &&
                     count($node->args) === 1
                 ) {
+//                    if (
+//                        $node instanceof MethodCall &&
+//                        ! $this->isObjectType(
+//                            $node->var,
+//                            new ObjectType('Illuminate\Foundation\Bus\Dispatchable')
+//                        )
+//                    ) {
+//                        echo SimpleNodeDumper::dump($node->var);
+//                        return null;
+//                    }
+
                     $newNode = $this->processCall($node, $scope);
+
+                    if ($newNode === null) {
+                        return null;
+                    }
 
                     if ($newNode !== $node) {
                         $hasChanged = true;
                         return $newNode;
                     }
-
-                    return null;
                 }
-    
+
                 return null;
             }
         );

@@ -4,5 +4,4 @@ namespace RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSy
 
 class SomeJob
 {
-
 }
