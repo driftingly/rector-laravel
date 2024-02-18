@@ -58,7 +58,7 @@ CODE_SAMPLE,
         if (! $class instanceof Name) {
             return null;
         }
-        
+
         $node->args[1] = new Arg(new ClassConstFetch($class, 'class'));
         $node->args = [
             ...$node->args,
