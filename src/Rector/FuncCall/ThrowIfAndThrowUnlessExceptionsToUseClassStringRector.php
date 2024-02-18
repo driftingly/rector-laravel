@@ -58,8 +58,7 @@ CODE_SAMPLE,
         if (! $class instanceof Name) {
             return null;
         }
-
-        // convert the class to a class string
+        
         $node->args[1] = new Arg(new ClassConstFetch($class, 'class'));
         $node->args = [
             ...$node->args,
