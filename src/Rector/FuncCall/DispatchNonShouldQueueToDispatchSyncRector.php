@@ -7,6 +7,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeTraverser;
 use PHPStan\Analyser\Scope;
+use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\CustomRules\SimpleNodeDumper;
@@ -53,16 +54,29 @@ class DispatchNonShouldQueueToDispatchSyncRector extends AbstractScopeAwareRecto
                     $this->isName($node->name, 'dispatch') &&
                     count($node->args) === 1
                 ) {
-//                    if (
-//                        $node instanceof MethodCall &&
-//                        ! $this->isObjectType(
-//                            $node->var,
-//                            new ObjectType('Illuminate\Foundation\Bus\Dispatchable')
-//                        )
-//                    ) {
-//                        echo SimpleNodeDumper::dump($node->var);
-//                        return null;
-//                    }
+                    if (
+                        $node instanceof MethodCall
+                    ) {
+                        if ($this->nodeTypeResolver->getType($node->var)->getObjectClassNames() === []) {
+                            return null;
+                        }
+                        $class = $this->nodeTypeResolver->getType($node->var)->getObjectClassNames()[0];
+
+                        try {
+                            $reflection = $this->reflections->getClass(
+                                $class
+                            );
+
+                            var_dump($reflection->getNativeReflection()->getTraits());
+
+                            if (! $reflection->hasTraitUse('Illuminate\Foundation\Bus\Dispatchable')) {
+                                return null;
+                            }
+
+                        } catch (ClassNotFoundException) {
+                            return null;
+                        }
+                    }
 
                     $newNode = $this->processCall($node, $scope);
 
