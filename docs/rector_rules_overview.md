@@ -1,4 +1,4 @@
-# 53 Rules Overview
+# 54 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -1076,6 +1076,19 @@ Use `Str::startsWith()` or `Str::endsWith()` instead of `substr()` === `$str`
 +if (Str::startsWith($str, 'foo')) {
      // do something
  }
+```
+
+<br>
+
+## ThrowIfAndThrowUnlessExceptionsToUseClassStringRector
+
+changes use of a new throw instance to class string
+
+- class: [`RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector`](../src/Rector/FuncCall/ThrowIfAndThrowUnlessExceptionsToUseClassStringRector.php)
+
+```diff
+-throw_if($condition, new MyException('custom message'));
++throw_if($condition, MyException::class, 'custom message');
 ```
 
 <br>
