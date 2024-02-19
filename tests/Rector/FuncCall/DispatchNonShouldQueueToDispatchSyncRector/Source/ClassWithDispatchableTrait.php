@@ -2,7 +2,10 @@
 
 namespace RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\Source;
 
-class ClassWithDispatchableTrait
+use Illuminate\Foundation\Bus\Dispatchable;
+use stdClass;
+
+class ClassWithDispatchableTrait extends stdClass
 {
-    use Illuminate\Foundation\Bus\Dispatchable;
+    use Dispatchable;
 }
