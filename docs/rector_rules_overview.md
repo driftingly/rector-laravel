@@ -1150,7 +1150,7 @@ Use `$this->components` property within commands
 
 ## ValidationRuleArrayStringValueToArrayRector
 
-Convert string validation rules into arrays for Laravel's Validator::make.
+Convert string validation rules into arrays for Laravel's Validator.
 
 - class: [`RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector`](../src/Rector/MethodCall/ValidationRuleArrayStringValueToArrayRector.php)
 

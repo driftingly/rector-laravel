@@ -11,17 +11,21 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * @see \RectorLaravel\Tests\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector\ValidationRuleArrayStringValueToArrayRectorTest
+ */
 class ValidationRuleArrayStringValueToArrayRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Convert string validation rules into arrays for Laravel\'s Validator::make.',
+            'Convert string validation rules into arrays for Laravel\'s Validator.',
             [
                 new CodeSample(
                     // Code before
@@ -48,7 +52,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param MethodCall|StaticCall|ClassMethod $node
+     * @param  MethodCall|StaticCall|ClassMethod  $node
      */
     public function refactor(Node $node): MethodCall|StaticCall|ClassMethod|null
     {
@@ -59,22 +63,19 @@ CODE_SAMPLE
         return $this->refactorCall($node);
     }
 
-    /**
-     * @param Array_ $rulesArgument
-     * @return bool
-     */
-    public function processValidationRules(Array_ $rulesArgument): bool
+    public function processValidationRules(Array_ $array): bool
     {
         $changed = false;
 
-        foreach ($rulesArgument->items as $item) {
+        foreach ($array->items as $item) {
             if ($item instanceof ArrayItem && $item->value instanceof String_) {
                 $stringRules = $item->value->value;
                 $arrayRules = explode('|', $stringRules);
-                $item->value = new Array_(array_map(static fn($rule) => new ArrayItem(new String_($rule)), $arrayRules));
+                $item->value = new Array_(array_map(static fn ($rule) => new ArrayItem(new String_($rule)), $arrayRules));
                 $changed = true;
             }
         }
+
         return $changed;
     }
 
@@ -89,18 +90,18 @@ CODE_SAMPLE
         if (
             $node instanceof MethodCall &&
             ! $this->isObjectType(
-            $node->var,
-            new ObjectType('Illuminate\Validation\Factory')
-        )) {
+                $node->var,
+                new ObjectType('Illuminate\Validation\Factory')
+            )) {
             return null;
         }
 
         if (
             $node instanceof StaticCall &&
             ! $this->isObjectType(
-            $node->class,
-            new ObjectType('Illuminate\Support\Facades\Validator')
-        )) {
+                $node->class,
+                new ObjectType('Illuminate\Support\Facades\Validator')
+            )) {
             return null;
         }
 
@@ -121,19 +122,23 @@ CODE_SAMPLE
         return $this->processValidationRules($rulesArgument) ? $node : null;
     }
 
-    private function refactorClassMethod(ClassMethod $node): ClassMethod|null
+    private function refactorClassMethod(ClassMethod $classMethod): ?ClassMethod
     {
-        if (! $this->isObjectType($node, new ObjectType('Illuminate\Foundation\Http\FormRequest'))) {
+        if (! $this->isObjectType($classMethod, new ObjectType('Illuminate\Foundation\Http\FormRequest'))) {
             return null;
         }
 
-        if (! $this->isName($node, 'rules')) {
+        if (! $this->isName($classMethod, 'rules')) {
             return null;
         }
 
         $changed = false;
 
-        $this->traverseNodesWithCallable($node, function (Node $node) use (&$changed): Return_|null {
+        $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$changed): Return_|int|null {
+            if ($changed) {
+                return NodeTraverser::STOP_TRAVERSAL;
+            }
+
             if (! $node instanceof Return_) {
                 return null;
             }
@@ -144,6 +149,7 @@ CODE_SAMPLE
 
             if ($this->processValidationRules($node->expr)) {
                 $changed = true;
+
                 return $node;
             }
 
@@ -151,7 +157,7 @@ CODE_SAMPLE
         });
 
         if ($changed) {
-            return $node;
+            return $classMethod;
         }
 
         return null;
