@@ -442,8 +442,10 @@ Dispatch non ShouldQueue to dispatchSync when using assignment
 ```diff
 -$result = dispatch(new SomeJob());
 -$anotherResult = Bus::dispatch(new SomeJob());
-+$result = dispatchSync(new SomeJob());
+-$anotherResult = $this->dispatch(new SomeJob());
++$result = dispatch_sync(new SomeJob());
 +$anotherResult = Bus::dispatchSync(new SomeJob());
++$anotherResult = $this->dispatchSync(new SomeJob());
 ```
 
 <br>

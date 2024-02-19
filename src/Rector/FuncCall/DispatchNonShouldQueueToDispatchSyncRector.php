@@ -36,11 +36,13 @@ class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
                     <<<'CODE_SAMPLE'
 $result = dispatch(new SomeJob());
 $anotherResult = Bus::dispatch(new SomeJob());
+$anotherResult = $this->dispatch(new SomeJob());
 CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
-$result = dispatchSync(new SomeJob());
+$result = dispatch_sync(new SomeJob());
 $anotherResult = Bus::dispatchSync(new SomeJob());
+$anotherResult = $this->dispatchSync(new SomeJob());
 CODE_SAMPLE
                 ),
             ]
