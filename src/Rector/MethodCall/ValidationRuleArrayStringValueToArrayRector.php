@@ -7,7 +7,10 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -41,21 +44,63 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [MethodCall::class];
+        return [MethodCall::class, StaticCall::class, ClassMethod::class];
     }
 
     /**
-     * @param  MethodCall  $node
+     * @param MethodCall|StaticCall|ClassMethod $node
      */
-    public function refactor(Node $node): ?MethodCall
+    public function refactor(Node $node): MethodCall|StaticCall|ClassMethod|null
+    {
+        if ($node instanceof ClassMethod) {
+            return $this->refactorClassMethod($node);
+        }
+
+        return $this->refactorCall($node);
+    }
+
+    /**
+     * @param Array_ $rulesArgument
+     * @return bool
+     */
+    public function processValidationRules(Array_ $rulesArgument): bool
+    {
+        $changed = false;
+
+        foreach ($rulesArgument->items as $item) {
+            if ($item instanceof ArrayItem && $item->value instanceof String_) {
+                $stringRules = $item->value->value;
+                $arrayRules = explode('|', $stringRules);
+                $item->value = new Array_(array_map(static fn($rule) => new ArrayItem(new String_($rule)), $arrayRules));
+                $changed = true;
+            }
+        }
+        return $changed;
+    }
+
+    private function refactorCall(StaticCall|MethodCall $node): StaticCall|MethodCall|null
     {
         if (
-            ! $this->isName($node->name, 'make') &&
-            $this->isObjectType(
-                $node->var,
-                new ObjectType('Illuminate\Validation\Factory')
-            )
+            ! $this->isName($node->name, 'make')
         ) {
+            return null;
+        }
+
+        if (
+            $node instanceof MethodCall &&
+            ! $this->isObjectType(
+            $node->var,
+            new ObjectType('Illuminate\Validation\Factory')
+        )) {
+            return null;
+        }
+
+        if (
+            $node instanceof StaticCall &&
+            ! $this->isObjectType(
+            $node->class,
+            new ObjectType('Illuminate\Support\Facades\Validator')
+        )) {
             return null;
         }
 
@@ -73,16 +118,37 @@ CODE_SAMPLE
             return null;
         }
 
+        return $this->processValidationRules($rulesArgument) ? $node : null;
+    }
+
+    private function refactorClassMethod(ClassMethod $node): ClassMethod|null
+    {
+        if (! $this->isObjectType($node, new ObjectType('Illuminate\Foundation\Http\FormRequest'))) {
+            return null;
+        }
+
+        if (! $this->isName($node, 'rules')) {
+            return null;
+        }
+
         $changed = false;
 
-        foreach ($rulesArgument->items as $item) {
-            if ($item instanceof ArrayItem && $item->value instanceof String_) {
-                $stringRules = $item->value->value;
-                $arrayRules = explode('|', $stringRules);
-                $item->value = new Array_(array_map(static fn ($rule) => new ArrayItem(new String_($rule)), $arrayRules));
-                $changed = true;
+        $this->traverseNodesWithCallable($node, function (Node $node) use (&$changed): Return_|null {
+            if (! $node instanceof Return_) {
+                return null;
             }
-        }
+
+            if (! $node->expr instanceof Array_) {
+                return null;
+            }
+
+            if ($this->processValidationRules($node->expr)) {
+                $changed = true;
+                return $node;
+            }
+
+            return null;
+        });
 
         if ($changed) {
             return $node;
