@@ -1,4 +1,4 @@
-# 53 Rules Overview
+# 54 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -1144,6 +1144,21 @@ Use `$this->components` property within commands
 +        $this->components->error('Error!');
      }
  }
+```
+
+<br>
+
+## ValidationRuleArrayStringValueToArrayRector
+
+Convert string validation rules into arrays for Laravel's Validator::make.
+
+- class: [`RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector`](../src/Rector/MethodCall/ValidationRuleArrayStringValueToArrayRector.php)
+
+```diff
+ Validator::make($data, [
+-    'field' => 'required|nullable|string|max:255',
++    'field' => ['required', 'nullable', 'string', 'max:255'],
+ ]);
 ```
 
 <br>
