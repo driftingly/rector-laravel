@@ -779,6 +779,19 @@ Refactor Model `$casts` property with `casts()` method
 
 <br>
 
+## NewInstanceToAppMakeRector
+
+Change new instance to a fetch class via the container
+
+- class: [`RectorLaravel\Rector\New_\NewInstanceToAppMakeRector`](../src/Rector/New_/NewInstanceToAppMakeRector.php)
+
+```diff
+-new SomeClass();
++\Illuminate\Support\Facades\App::make(SomeClass::class);
+```
+
+<br>
+
 ## NotFilledBlankFuncCallToBlankFilledFuncCallRector
 
 Swap the use of NotBooleans used with `filled()` and `blank()` to the correct helper.
