@@ -1160,3 +1160,18 @@ Use `$this->components` property within commands
 ```
 
 <br>
+
+## ValidationRuleArrayStringValueToArrayRector
+
+Convert string validation rules into arrays for Laravel's Validator.
+
+- class: [`RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector`](../src/Rector/MethodCall/ValidationRuleArrayStringValueToArrayRector.php)
+
+```diff
+ Validator::make($data, [
+-    'field' => 'required|nullable|string|max:255',
++    'field' => ['required', 'nullable', 'string', 'max:255'],
+ ]);
+```
+
+<br>
