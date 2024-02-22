@@ -1080,6 +1080,19 @@ Use `Str::startsWith()` or `Str::endsWith()` instead of `substr()` === `$str`
 
 <br>
 
+## ThrowIfAndThrowUnlessExceptionsToUseClassStringRector
+
+changes use of a new throw instance to class string
+
+- class: [`RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector`](../src/Rector/FuncCall/ThrowIfAndThrowUnlessExceptionsToUseClassStringRector.php)
+
+```diff
+-throw_if($condition, new MyException('custom message'));
++throw_if($condition, MyException::class, 'custom message');
+```
+
+<br>
+
 ## ThrowIfRector
 
 Change if throw to throw_if
