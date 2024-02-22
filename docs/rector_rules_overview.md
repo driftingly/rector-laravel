@@ -1,4 +1,4 @@
-# 54 Rules Overview
+# 56 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
