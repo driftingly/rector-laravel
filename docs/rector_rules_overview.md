@@ -1097,6 +1097,19 @@ Use `Str::startsWith()` or `Str::endsWith()` instead of `substr()` === `$str`
 
 <br>
 
+## ThrowIfAndThrowUnlessExceptionsToUseClassStringRector
+
+changes use of a new throw instance to class string
+
+- class: [`RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector`](../src/Rector/FuncCall/ThrowIfAndThrowUnlessExceptionsToUseClassStringRector.php)
+
+```diff
+-throw_if($condition, new MyException('custom message'));
++throw_if($condition, MyException::class, 'custom message');
+```
+
+<br>
+
 ## ThrowIfRector
 
 Change if throw to throw_if
@@ -1161,6 +1174,21 @@ Use `$this->components` property within commands
 +        $this->components->error('Error!');
      }
  }
+```
+
+<br>
+
+## ValidationRuleArrayStringValueToArrayRector
+
+Convert string validation rules into arrays for Laravel's Validator.
+
+- class: [`RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector`](../src/Rector/MethodCall/ValidationRuleArrayStringValueToArrayRector.php)
+
+```diff
+ Validator::make($data, [
+-    'field' => 'required|nullable|string|max:255',
++    'field' => ['required', 'nullable', 'string', 'max:255'],
+ ]);
 ```
 
 <br>
