@@ -4,10 +4,10 @@ namespace RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSy
 
 use RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\Source\SomeJob;
 
-$a = dispatch(new SomeJob());
+dispatch(new SomeJob());
 
 $job = new SomeJob();
-$b = dispatch($job);
+dispatch($job);
 
 ?>
 -----
@@ -17,9 +17,9 @@ namespace RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSy
 
 use RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\Source\SomeJob;
 
-$a = dispatch_sync(new SomeJob());
+dispatch_sync(new SomeJob());
 
 $job = new SomeJob();
-$b = dispatch_sync($job);
+dispatch_sync($job);
 
 ?>

@@ -435,17 +435,17 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 ## DispatchNonShouldQueueToDispatchSyncRector
 
-Dispatch non ShouldQueue to dispatchSync when using assignment
+Dispatch non ShouldQueue jobs to dispatchSync
 
 - class: [`RectorLaravel\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector`](../src/Rector/FuncCall/DispatchNonShouldQueueToDispatchSyncRector.php)
 
 ```diff
--$result = dispatch(new SomeJob());
--$anotherResult = Bus::dispatch(new SomeJob());
--$anotherResult = $this->dispatch(new SomeJob());
-+$result = dispatch_sync(new SomeJob());
-+$anotherResult = Bus::dispatchSync(new SomeJob());
-+$anotherResult = $this->dispatchSync(new SomeJob());
+-dispatch(new SomeJob());
+-Bus::dispatch(new SomeJob());
+-$this->dispatch(new SomeJob());
++dispatch_sync(new SomeJob());
++Bus::dispatchSync(new SomeJob());
++$this->dispatchSync(new SomeJob());
 ```
 
 <br>

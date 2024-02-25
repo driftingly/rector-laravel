@@ -4,7 +4,6 @@ namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -30,19 +29,19 @@ class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Dispatch non ShouldQueue to dispatchSync when using assignment',
+            'Dispatch non ShouldQueue jobs to dispatchSync',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
-$result = dispatch(new SomeJob());
-$anotherResult = Bus::dispatch(new SomeJob());
-$anotherResult = $this->dispatch(new SomeJob());
+dispatch(new SomeJob());
+Bus::dispatch(new SomeJob());
+$this->dispatch(new SomeJob());
 CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
-$result = dispatch_sync(new SomeJob());
-$anotherResult = Bus::dispatchSync(new SomeJob());
-$anotherResult = $this->dispatchSync(new SomeJob());
+dispatch_sync(new SomeJob());
+Bus::dispatchSync(new SomeJob());
+$this->dispatchSync(new SomeJob());
 CODE_SAMPLE
                 ),
             ]
@@ -51,58 +50,38 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [Assign::class];
+        return [FuncCall::class, MethodCall::class, StaticCall::class];
     }
 
     /**
-     * @param  Node\Expr\Assign  $node
+     * @param  FuncCall|MethodCall|StaticCall  $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): FuncCall|MethodCall|StaticCall|null
     {
-        $hasChanged = false;
-
-        $this->traverseNodesWithCallable(
-            $node,
-            function (Node $node) use (&$hasChanged): FuncCall|MethodCall|StaticCall|null {
-                if (
-                    (
-                        $node instanceof FuncCall ||
-                        $node instanceof MethodCall ||
-                        $node instanceof StaticCall
-                    ) &&
-                    $this->isName($node->name, 'dispatch') &&
-                    count($node->args) === 1
-                ) {
-                    if (
-                        $node instanceof MethodCall &&
-                        ! $this->isDispatchablesCall($node) &&
-                        ! $this->isCallOnDispatcherContract($node)
-                    ) {
-                        return null;
-                    }
-
-                    if (
-                        $node instanceof StaticCall
-                        && ! $this->isCallOnBusFacade($node)
-                    ) {
-                        return null;
-                    }
-
-                    $newNode = $this->processCall($node);
-
-                    if ($newNode !== null) {
-                        $hasChanged = true;
-
-                        return $newNode;
-                    }
-                }
-
+        if (
+            $this->isName($node->name, 'dispatch') &&
+            count($node->args) === 1
+        ) {
+            if (
+                $node instanceof MethodCall &&
+                ! $this->isDispatchablesCall($node) &&
+                ! $this->isCallOnDispatcherContract($node)
+            ) {
                 return null;
             }
-        );
 
-        if ($hasChanged) {
-            return $node;
+            if (
+                $node instanceof StaticCall
+                && ! $this->isCallOnBusFacade($node)
+            ) {
+                return null;
+            }
+
+            $newNode = $this->processCall($node);
+
+            if ($newNode !== null) {
+                return $newNode;
+            }
         }
 
         return null;

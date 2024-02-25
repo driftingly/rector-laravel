@@ -4,6 +4,6 @@ namespace RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSy
 
 use RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\Source\SomeJob;
 
-$a = SomeFacade::dispatch(new SomeJob());
+SomeFacade::dispatch(new SomeJob());
 
 ?>

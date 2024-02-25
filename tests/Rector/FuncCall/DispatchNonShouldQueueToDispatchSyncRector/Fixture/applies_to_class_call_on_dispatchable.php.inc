@@ -5,7 +5,7 @@ namespace RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSy
 use RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\Source\ClassWithDispatchableTrait;
 use RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\Source\SomeJob;
 
-$a = (new ClassWithDispatchableTrait())->dispatch(new SomeJob());
+(new ClassWithDispatchableTrait())->dispatch(new SomeJob());
 
 ?>
 -----
@@ -16,6 +16,6 @@ namespace RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSy
 use RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\Source\ClassWithDispatchableTrait;
 use RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\Source\SomeJob;
 
-$a = (new ClassWithDispatchableTrait())->dispatchSync(new SomeJob());
+(new ClassWithDispatchableTrait())->dispatchSync(new SomeJob());
 
 ?>
