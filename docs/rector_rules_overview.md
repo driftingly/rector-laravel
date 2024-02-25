@@ -1,4 +1,4 @@
-# 51 Rules Overview
+# 54 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -907,6 +907,32 @@ Removes the `$model` property from Factories.
 
 <br>
 
+## RemoveRedundantValueCallsRector
+
+Removes redundant value helper calls
+
+- class: [`RectorLaravel\Rector\FuncCall\RemoveRedundantValueCallsRector`](../src/Rector/FuncCall/RemoveRedundantValueCallsRector.php)
+
+```diff
+-value(new Object())->something();
++(new Object())->something();
+```
+
+<br>
+
+## RemoveRedundantWithCallsRector
+
+Removes redundant with helper calls
+
+- class: [`RectorLaravel\Rector\FuncCall\RemoveRedundantWithCallsRector`](../src/Rector/FuncCall/RemoveRedundantWithCallsRector.php)
+
+```diff
+-with(new Object())->something();
++(new Object())->something();
+```
+
+<br>
+
 ## ReplaceAssertTimesSendWithAssertSentTimesRector
 
 Replace assertTimesSent with assertSentTimes
@@ -1054,6 +1080,19 @@ Use `Str::startsWith()` or `Str::endsWith()` instead of `substr()` === `$str`
 
 <br>
 
+## ThrowIfAndThrowUnlessExceptionsToUseClassStringRector
+
+changes use of a new throw instance to class string
+
+- class: [`RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector`](../src/Rector/FuncCall/ThrowIfAndThrowUnlessExceptionsToUseClassStringRector.php)
+
+```diff
+-throw_if($condition, new MyException('custom message'));
++throw_if($condition, MyException::class, 'custom message');
+```
+
+<br>
+
 ## ThrowIfRector
 
 Change if throw to throw_if
@@ -1118,6 +1157,21 @@ Use `$this->components` property within commands
 +        $this->components->error('Error!');
      }
  }
+```
+
+<br>
+
+## ValidationRuleArrayStringValueToArrayRector
+
+Convert string validation rules into arrays for Laravel's Validator.
+
+- class: [`RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector`](../src/Rector/MethodCall/ValidationRuleArrayStringValueToArrayRector.php)
+
+```diff
+ Validator::make($data, [
+-    'field' => 'required|nullable|string|max:255',
++    'field' => ['required', 'nullable', 'string', 'max:255'],
+ ]);
 ```
 
 <br>
