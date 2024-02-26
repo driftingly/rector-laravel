@@ -33,9 +33,9 @@ final readonly class RouterRegisterNodeAnalyzer
             return true;
         }
 
-        return $node instanceof StaticCall && $this->nodeNameResolver->isName(
+        return $node instanceof StaticCall && $this->nodeNameResolver->isNames(
             $node->class,
-            'Illuminate\Support\Facades\Route'
+            ['Illuminate\Support\Facades\Route', 'Route']
         );
     }
 
