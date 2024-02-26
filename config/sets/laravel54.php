@@ -33,11 +33,7 @@ return static function (RectorConfig $rectorConfig): void {
         ]);
 
     $rectorConfig
-        ->ruleWithConfiguration(RenameMethodRector::class, [new MethodCallRename(
-            'Illuminate\Support\Collection',
-            'every',
-            'nth'
-        ),
+        ->ruleWithConfiguration(RenameMethodRector::class, [
             new MethodCallRename('Illuminate\Database\Eloquent\Relations\BelongsToMany', 'setJoin', 'performJoin'),
             new MethodCallRename(
                 'Illuminate\Database\Eloquent\Relations\BelongsToMany',
