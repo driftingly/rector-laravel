@@ -3,6 +3,7 @@
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration;
+use RectorLaravel\Rector\Param\AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../config.php');
@@ -17,21 +18,26 @@ return static function (RectorConfig $rectorConfig): void {
         'Illuminate\Contracts\Database\Eloquent\Builder',
     ];
 
-    $positionOne = [
+    $basicPositionOne = [
         'where', 'orWhere', 'whereNot', 'whereExists',
     ];
-    $positionTwo = [
+    $basicPositionTwo = [
         'where', 'whereHas', 'orWhereHas', 'whereDoesntHave', 'orWhereDoesntHave', 'withWhereHas', 'when',
     ];
-    $positionThree = [
+    $basicPositionThree = [
         'where', 'whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph', 'when',
     ];
 
-    $ruleConfiguration = [];
+    $arrayPositionOne = [
+        'with', 'withCount',
+    ];
+
+    $basicRuleConfiguration = [];
+    $arrayRuleConfiguration = [];
 
     foreach ($classesToApplyTo as $targetClass) {
-        foreach ($positionOne as $method) {
-            $ruleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+        foreach ($basicPositionOne as $method) {
+            $basicRuleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
                 $targetClass,
                 $method,
                 0,
@@ -39,8 +45,8 @@ return static function (RectorConfig $rectorConfig): void {
                 $builderClass,
             );
         }
-        foreach ($positionTwo as $method) {
-            $ruleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+        foreach ($basicPositionTwo as $method) {
+            $basicRuleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
                 $targetClass,
                 $method,
                 1,
@@ -48,11 +54,21 @@ return static function (RectorConfig $rectorConfig): void {
                 $builderClass,
             );
         }
-        foreach ($positionThree as $method) {
-            $ruleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+        foreach ($basicPositionThree as $method) {
+            $basicRuleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
                 $targetClass,
                 $method,
                 2,
+                0,
+                $builderClass,
+            );
+        }
+
+        foreach ($arrayPositionOne as $method) {
+            $arrayRuleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+                $targetClass,
+                $method,
+                0,
                 0,
                 $builderClass,
             );
@@ -61,7 +77,31 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfiguration(
         AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector::class,
-        $ruleConfiguration
+        $basicRuleConfiguration
     );
 
+    $rectorConfig->ruleWithConfiguration(
+        AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector::class,
+        $arrayRuleConfiguration,
+    );
+
+    $rectorConfig->ruleWithConfiguration(
+        AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector::class,
+        [
+            new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+                'Illuminate\Database\Eloquent\Model',
+                'handleLazyLoadingViolationUsing',
+                0,
+                0,
+                new \PHPStan\Type\ObjectType('Illuminate\Database\Eloquent\Model')
+            ),
+            new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+                'Illuminate\Database\Eloquent\Model',
+                'handleLazyLoadingViolationUsing',
+                0,
+                1,
+                new \PHPStan\Type\StringType(),
+            )
+        ]
+    );
 };
