@@ -1,4 +1,4 @@
-# 54 Rules Overview
+# 56 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -429,6 +429,23 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
+## DispatchNonShouldQueueToDispatchSyncRector
+
+Dispatch non ShouldQueue jobs to dispatchSync
+
+- class: [`RectorLaravel\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector`](../src/Rector/FuncCall/DispatchNonShouldQueueToDispatchSyncRector.php)
+
+```diff
+-dispatch(new SomeJob());
+-Bus::dispatch(new SomeJob());
+-$this->dispatch(new SomeJob());
++dispatch_sync(new SomeJob());
++Bus::dispatchSync(new SomeJob());
++$this->dispatchSync(new SomeJob());
 ```
 
 <br>
