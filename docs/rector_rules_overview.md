@@ -1,4 +1,4 @@
-# 56 Rules Overview
+# 57 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -1011,6 +1011,23 @@ Replace `$this->faker` with the `fake()` helper function in Factories
          ];
      }
  }
+```
+
+<br>
+
+## ReplaceServiceContainerCallArgRector
+
+Changes the string or class const used for a service container make call
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\MethodCall\ReplaceServiceContainerCallArgRector`](../src/Rector/MethodCall/ReplaceServiceContainerCallArgRector.php)
+
+```diff
+-app('encrypter')->encrypt('...');
+-\Illuminate\Support\Facades\Application::make('encrypter')->encrypt('...');
++app(Illuminate\Contracts\Encryption\Encrypter::class)->encrypt('...');
++\Illuminate\Support\Facades\Application::make(Illuminate\Contracts\Encryption\Encrypter::class)->encrypt('...');
 ```
 
 <br>
