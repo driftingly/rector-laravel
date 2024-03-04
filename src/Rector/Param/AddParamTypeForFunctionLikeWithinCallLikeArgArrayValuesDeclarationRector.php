@@ -2,11 +2,11 @@
 
 namespace RectorLaravel\Rector\Param;
 
-use PhpParser\Node\Expr\Array_;
 use const false;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -31,6 +31,9 @@ use function array_filter;
 use function array_values;
 use function is_int;
 
+/**
+ * @see \RectorLaravel\Tests\Rector\Param\AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector\AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRectorTest
+ */
 class AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
@@ -55,8 +58,7 @@ class AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector e
          * @readonly
          */
         private readonly StaticTypeMapper $staticTypeMapper
-    )
-    {
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -115,6 +117,9 @@ CODE_SAMPLE,
             if (! $this->isName($node->name, $addParamTypeForFunctionLikeParamDeclaration->getMethodName())) {
                 continue;
             }
+            if (! $node instanceof CallLike) {
+                continue;
+            }
             $this->processFunctionLike($node, $addParamTypeForFunctionLikeParamDeclaration);
         }
         if (! $this->hasChanged) {
@@ -126,7 +131,7 @@ CODE_SAMPLE,
 
     public function configure(array $configuration): void
     {
-        Assert::allIsAOf($configuration, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration::class);
+        Assert::allIsInstanceOf($configuration, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration::class);
         $this->addParamTypeForFunctionLikeParamDeclarations = $configuration;
     }
 
