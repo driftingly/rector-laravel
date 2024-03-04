@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\Rector\Param;
 
+use PhpParser\Node\Expr\Array_;
 use const false;
 
 use PhpParser\Node;
@@ -33,24 +34,6 @@ use function is_int;
 class AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @readonly
-     *
-     * @var \Rector\NodeTypeResolver\TypeComparator\TypeComparator
-     */
-    private $typeComparator;
-    /**
-     * @readonly
-     *
-     * @var \Rector\Php\PhpVersionProvider
-     */
-    private $phpVersionProvider;
-    /**
-     * @readonly
-     *
-     * @var \Rector\StaticTypeMapper\StaticTypeMapper
-     */
-    private $staticTypeMapper;
-    /**
      * @var AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration[]
      */
     private $addParamTypeForFunctionLikeParamDeclarations = [];
@@ -59,11 +42,21 @@ class AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector e
      */
     private $hasChanged = false;
 
-    public function __construct(TypeComparator $typeComparator, PhpVersionProvider $phpVersionProvider, StaticTypeMapper $staticTypeMapper)
+    public function __construct(
+        /**
+         * @readonly
+         */
+        private readonly TypeComparator $typeComparator,
+        /**
+         * @readonly
+         */
+        private readonly PhpVersionProvider $phpVersionProvider,
+        /**
+         * @readonly
+         */
+        private readonly StaticTypeMapper $staticTypeMapper
+    )
     {
-        $this->typeComparator = $typeComparator;
-        $this->phpVersionProvider = $phpVersionProvider;
-        $this->staticTypeMapper = $staticTypeMapper;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -95,7 +88,7 @@ CODE_SAMPLE,
 
     public function getNodeTypes(): array
     {
-        return [Node\Expr\MethodCall::class, Node\Expr\StaticCall::class];
+        return [MethodCall::class, StaticCall::class];
     }
 
     public function refactor(Node $node): ?Node
@@ -168,7 +161,7 @@ CODE_SAMPLE,
             $arg = array_values($args)[0];
         }
         $array = $arg->value;
-        if (! $array instanceof Node\Expr\Array_) {
+        if (! $array instanceof Array_) {
             return;
         }
         foreach ($array->items as $item) {
