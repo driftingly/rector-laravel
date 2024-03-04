@@ -7,7 +7,7 @@ if (class_exists('Illuminate\Foundation\Events\Dispatchable')) {
 }
 trait Dispatchable
 {
-    public static function dispatch()
+    public static function dispatch(...$arguments)
     {
     }
 
