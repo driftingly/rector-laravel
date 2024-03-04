@@ -1,5 +1,6 @@
 <?php
 
+use PHPStan\Type\ObjectType;
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration;
@@ -7,7 +8,7 @@ use Rector\TypeDeclaration\ValueObject\AddParamTypeForFunctionLikeWithinCallLike
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../config.php');
 
-    $applicationClass = new \PHPStan\Type\ObjectType(
+    $applicationClass = new ObjectType(
         'Illuminate\Contracts\Foundation\Application'
     );
 
