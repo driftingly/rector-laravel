@@ -16,7 +16,7 @@ return static function (RectorConfig $rectorConfig): void {
                 'someMethod',
                 0,
                 0,
-                new \PHPStan\Type\StringType(),
+                new \PHPStan\Type\StringType,
             ),
         ]
     );

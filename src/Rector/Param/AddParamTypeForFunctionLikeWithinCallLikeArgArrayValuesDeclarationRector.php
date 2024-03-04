@@ -2,6 +2,8 @@
 
 namespace RectorLaravel\Rector\Param;
 
+use const false;
+
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\CallLike;
@@ -20,24 +22,31 @@ use Rector\Rector\AbstractRector;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration;
 use Rector\ValueObject\PhpVersionFeature;
-use RectorPrefix202402\Webmozart\Assert\Assert;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
+
+use function array_filter;
+use function array_values;
+use function is_int;
 
 class AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
      * @readonly
+     *
      * @var \Rector\NodeTypeResolver\TypeComparator\TypeComparator
      */
     private $typeComparator;
     /**
      * @readonly
+     *
      * @var \Rector\Php\PhpVersionProvider
      */
     private $phpVersionProvider;
     /**
      * @readonly
+     *
      * @var \Rector\StaticTypeMapper\StaticTypeMapper
      */
     private $staticTypeMapper;
@@ -48,7 +57,8 @@ class AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector e
     /**
      * @var bool
      */
-    private $hasChanged = \false;
+    private $hasChanged = false;
+
     public function __construct(TypeComparator $typeComparator, PhpVersionProvider $phpVersionProvider, StaticTypeMapper $staticTypeMapper)
     {
         $this->typeComparator = $typeComparator;
@@ -76,8 +86,8 @@ CODE_SAMPLE,
                         'method',
                         0,
                         0,
-                        new IntegerType(),
-                    )
+                        new IntegerType,
+                    ),
                 ]
             ),
         ]);
@@ -90,7 +100,7 @@ CODE_SAMPLE,
 
     public function refactor(Node $node): ?Node
     {
-        $this->hasChanged = \false;
+        $this->hasChanged = false;
         foreach ($this->addParamTypeForFunctionLikeParamDeclarations as $addParamTypeForFunctionLikeParamDeclaration) {
             $type = match (true) {
                 $node instanceof MethodCall => $node->var,
@@ -100,37 +110,44 @@ CODE_SAMPLE,
             if ($type === null) {
                 continue;
             }
-            if (!$this->isObjectType($type, $addParamTypeForFunctionLikeParamDeclaration->getObjectType())) {
+            if (! $this->isObjectType($type, $addParamTypeForFunctionLikeParamDeclaration->getObjectType())) {
                 continue;
             }
             if (($node->name ?? null) === null) {
                 continue;
             }
-            if (!$node->name instanceof Identifier) {
+            if (! $node->name instanceof Identifier) {
                 continue;
             }
-            if (!$this->isName($node->name, $addParamTypeForFunctionLikeParamDeclaration->getMethodName())) {
+            if (! $this->isName($node->name, $addParamTypeForFunctionLikeParamDeclaration->getMethodName())) {
                 continue;
             }
             $this->processFunctionLike($node, $addParamTypeForFunctionLikeParamDeclaration);
         }
-        if (!$this->hasChanged) {
+        if (! $this->hasChanged) {
             return null;
         }
+
         return $node;
     }
 
-    private function processFunctionLike(CallLike $callLike, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration) : void
+    public function configure(array $configuration): void
+    {
+        Assert::allIsAOf($configuration, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration::class);
+        $this->addParamTypeForFunctionLikeParamDeclarations = $configuration;
+    }
+
+    private function processFunctionLike(CallLike $callLike, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration): void
     {
         if ($callLike->isFirstClassCallable()) {
             return;
         }
-        if (\is_int($addParamTypeForFunctionLikeWithinCallLikeArgDeclaration->getCallLikePosition())) {
+        if (is_int($addParamTypeForFunctionLikeWithinCallLikeArgDeclaration->getCallLikePosition())) {
             if ($callLike->getArgs() === []) {
                 return;
             }
             $arg = $callLike->args[$addParamTypeForFunctionLikeWithinCallLikeArgDeclaration->getCallLikePosition()] ?? null;
-            if (!$arg instanceof Arg) {
+            if (! $arg instanceof Arg) {
                 return;
             }
             // int positions shouldn't have names
@@ -138,19 +155,20 @@ CODE_SAMPLE,
                 return;
             }
         } else {
-            $args = \array_filter($callLike->getArgs(), static function (Arg $arg) use ($addParamTypeForFunctionLikeWithinCallLikeArgDeclaration): bool {
+            $args = array_filter($callLike->getArgs(), static function (Arg $arg) use ($addParamTypeForFunctionLikeWithinCallLikeArgDeclaration): bool {
                 if ($arg->name === null) {
-                    return \false;
+                    return false;
                 }
+
                 return $arg->name->name === $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration->getCallLikePosition();
             });
             if ($args === []) {
                 return;
             }
-            $arg = \array_values($args)[0];
+            $arg = array_values($args)[0];
         }
         $array = $arg->value;
-        if (!$array instanceof Node\Expr\Array_) {
+        if (! $array instanceof Node\Expr\Array_) {
             return;
         }
         foreach ($array->items as $item) {
@@ -160,17 +178,18 @@ CODE_SAMPLE,
             if ($item->value === null) {
                 continue;
             }
-            if (!$item->value instanceof FunctionLike) {
+            if (! $item->value instanceof FunctionLike) {
                 continue;
             }
             $functionLike = $item->value;
-            if (!isset($functionLike->params[$addParamTypeForFunctionLikeWithinCallLikeArgDeclaration->getFunctionLikePosition()])) {
+            if (! isset($functionLike->params[$addParamTypeForFunctionLikeWithinCallLikeArgDeclaration->getFunctionLikePosition()])) {
                 return;
             }
             $this->refactorParameter($functionLike->params[$addParamTypeForFunctionLikeWithinCallLikeArgDeclaration->getFunctionLikePosition()], $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration);
         }
     }
-    private function refactorParameter(Param $param, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration) : void
+
+    private function refactorParameter(Param $param, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration): void
     {
         // already set → no change
         if ($param->type !== null) {
@@ -185,17 +204,13 @@ CODE_SAMPLE,
         if ($addParamTypeForFunctionLikeWithinCallLikeArgDeclaration->getParamType() instanceof MixedType) {
             if ($this->phpVersionProvider->isAtLeastPhpVersion(PhpVersionFeature::MIXED_TYPE)) {
                 $param->type = $paramTypeNode;
+
                 return;
             }
             $param->type = null;
+
             return;
         }
         $param->type = $paramTypeNode;
-    }
-
-    public function configure(array $configuration) : void
-    {
-        Assert::allIsAOf($configuration, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration::class);
-        $this->addParamTypeForFunctionLikeParamDeclarations = $configuration;
     }
 }
