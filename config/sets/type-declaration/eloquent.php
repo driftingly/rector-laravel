@@ -100,8 +100,8 @@ return static function (RectorConfig $rectorConfig): void {
                 'handleLazyLoadingViolationUsing',
                 0,
                 1,
-                new \PHPStan\Type\StringType(),
-            )
+                new \PHPStan\Type\StringType,
+            ),
         ]
     );
 };
