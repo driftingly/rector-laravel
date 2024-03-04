@@ -1,5 +1,6 @@
 <?php
 
+use PHPStan\Type\ObjectType;
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration;
@@ -8,7 +9,7 @@ use RectorLaravel\Rector\Param\AddParamTypeForFunctionLikeWithinCallLikeArgArray
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../config.php');
 
-    $builderClass = new \PHPStan\Type\ObjectType(
+    $builderClass = new ObjectType(
         'Illuminate\Contracts\Database\Query\Builder'
     );
 
@@ -93,7 +94,7 @@ return static function (RectorConfig $rectorConfig): void {
                 'handleLazyLoadingViolationUsing',
                 0,
                 0,
-                new \PHPStan\Type\ObjectType('Illuminate\Database\Eloquent\Model')
+                new ObjectType('Illuminate\Database\Eloquent\Model')
             ),
             new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
                 'Illuminate\Database\Eloquent\Model',
