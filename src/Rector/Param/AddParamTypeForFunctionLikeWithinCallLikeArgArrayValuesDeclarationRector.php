@@ -169,12 +169,20 @@ CODE_SAMPLE,
         if (! $array instanceof Array_) {
             return;
         }
+        $this->refactorArray($array, $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration);
+    }
+
+    private function refactorArray(Array_ $array, AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration): void
+    {
         foreach ($array->items as $item) {
             if ($item === null) {
                 continue;
             }
             if ($item->value === null) {
                 continue;
+            }
+            if ($item->value instanceof Array_) {
+                $this->refactorArray($item->value, $addParamTypeForFunctionLikeWithinCallLikeArgDeclaration);
             }
             if (! $item->value instanceof FunctionLike) {
                 continue;
