@@ -5,17 +5,16 @@ namespace RectorLaravel\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
-use PHPStan\Analyser\Scope;
 use PHPStan\Type\ClosureType;
 use PHPStan\Type\MixedType;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see \RectorLaravel\Tests\Rector\FuncCall\RemoveRedundantValueCallsRector\RemoveRedundantValueCallsRectorTest
  */
-class RemoveRedundantValueCallsRector extends AbstractScopeAwareRector
+class RemoveRedundantValueCallsRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
@@ -32,7 +31,7 @@ class RemoveRedundantValueCallsRector extends AbstractScopeAwareRector
         return [FuncCall::class];
     }
 
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
         if (! $node instanceof FuncCall) {
             return null;
@@ -52,7 +51,7 @@ class RemoveRedundantValueCallsRector extends AbstractScopeAwareRector
             return null;
         }
 
-        if ($scope->getType($args[0]->value)->isSuperTypeOf(new ClosureType([], new MixedType, true))->no() === false) {
+        if ($this->getType($args[0]->value)->isSuperTypeOf(new ClosureType([], new MixedType, true))->no() === false) {
             return null;
         }
 

@@ -1,4 +1,4 @@
-# 57 Rules Overview
+# 58 Rules Overview
 
 ## AddArgumentDefaultValueRector
 
@@ -446,6 +446,26 @@ Dispatch non ShouldQueue jobs to dispatchSync
 +dispatch_sync(new SomeJob());
 +Bus::dispatchSync(new SomeJob());
 +$this->dispatchSync(new SomeJob());
+```
+
+<br>
+
+## DispatchToHelperFunctionsRector
+
+Use the event or dispatch helpers instead of the static dispatch method.
+
+- class: [`RectorLaravel\Rector\StaticCall\DispatchToHelperFunctionsRector`](../src/Rector/StaticCall/DispatchToHelperFunctionsRector.php)
+
+```diff
+-ExampleEvent::dispatch($email);
++event(new ExampleEvent($email));
+```
+
+<br>
+
+```diff
+-ExampleJob::dispatch($email);
++dispatch(new ExampleJob($email));
 ```
 
 <br>
