@@ -43,6 +43,33 @@ return static function (RectorConfig $rectorConfig): void {
     }
 
     $rectorConfig->ruleWithConfiguration(
+        AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector::class,
+        [
+            new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+                'Illuminate\Http\Request',
+                'validate',
+                0,
+                0,
+                new \PHPStan\Type\StringType(),
+            ),
+            new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+                'Illuminate\Http\Request',
+                'validate',
+                0,
+                1,
+                new \PHPStan\Type\MixedType(true),
+            ),
+            new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+                'Illuminate\Http\Request',
+                'validate',
+                0,
+                2,
+                new \PHPStan\Type\ObjectType('Closure'),
+            ),
+        ]
+    );
+
+    $rectorConfig->ruleWithConfiguration(
         AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector::class,
         [
             new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
@@ -70,7 +97,7 @@ return static function (RectorConfig $rectorConfig): void {
                 'sometimes',
                 2,
                 1,
-                new \PHPStan\Type\ObjectType('Illuminate\Support\Fluent'),
+                new \PHPStan\Type\MixedType(true),
             ),
         ]
     );
@@ -98,6 +125,13 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector::class,
         [
+            new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
+                'Illuminate\Validation\Rules\Exists',
+                'where',
+                0,
+                0,
+                new \PHPStan\Type\ObjectType('Illuminate\Contracts\Database\Query\Builder'),
+            ),
             new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
                 'Illuminate\Validation\Rules\Exists',
                 'where',
