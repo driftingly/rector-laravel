@@ -5,15 +5,14 @@ namespace RectorLaravel\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
-use PHPStan\Analyser\Scope;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see \RectorLaravel\Tests\Rector\FuncCall\RemoveRedundantWithCallsRector\RemoveRedundantWithCallsRectorTest
  */
-class RemoveRedundantWithCallsRector extends AbstractScopeAwareRector
+class RemoveRedundantWithCallsRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
@@ -30,7 +29,7 @@ class RemoveRedundantWithCallsRector extends AbstractScopeAwareRector
         return [FuncCall::class];
     }
 
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
         if (! $node instanceof FuncCall) {
             return null;
@@ -51,7 +50,7 @@ class RemoveRedundantWithCallsRector extends AbstractScopeAwareRector
         }
 
         if (count($args) === 2) {
-            $secondArgumentType = $scope->getType($args[1]->value);
+            $secondArgumentType = $this->getType($args[1]->value);
 
             if ($secondArgumentType->isCallable()->no() === false) {
                 return null;

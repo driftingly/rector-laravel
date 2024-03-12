@@ -10,6 +10,7 @@ return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/src',
         __DIR__ . '/tests',
+        __DIR__ . '/config',
     ])
     ->withSkip([
         // for tests

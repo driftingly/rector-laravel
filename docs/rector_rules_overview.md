@@ -1,4 +1,23 @@
-# 57 Rules Overview
+# 60 Rules Overview
+
+## AbortIfRector
+
+Change if abort to abort_if
+
+- class: [`RectorLaravel\Rector\If_\AbortIfRector`](../src/Rector/If_/AbortIfRector.php)
+
+```diff
+-if ($condition) {
+-    abort(404);
+-}
+-if (!$condition) {
+-    abort(404);
+-}
++abort_if($condition, 404);
++abort_unless($condition, 404);
+```
+
+<br>
 
 ## AddArgumentDefaultValueRector
 
@@ -446,6 +465,26 @@ Dispatch non ShouldQueue jobs to dispatchSync
 +dispatch_sync(new SomeJob());
 +Bus::dispatchSync(new SomeJob());
 +$this->dispatchSync(new SomeJob());
+```
+
+<br>
+
+## DispatchToHelperFunctionsRector
+
+Use the event or dispatch helpers instead of the static dispatch method.
+
+- class: [`RectorLaravel\Rector\StaticCall\DispatchToHelperFunctionsRector`](../src/Rector/StaticCall/DispatchToHelperFunctionsRector.php)
+
+```diff
+-ExampleEvent::dispatch($email);
++event(new ExampleEvent($email));
+```
+
+<br>
+
+```diff
+-ExampleJob::dispatch($email);
++dispatch(new ExampleJob($email));
 ```
 
 <br>
@@ -1045,6 +1084,25 @@ Replace `withoutJobs`, `withoutEvents` and `withoutNotifications` with Facade `f
 +\Illuminate\Support\Facades\Bus::fake();
 +\Illuminate\Support\Facades\Event::fake();
 +\Illuminate\Support\Facades\Notification::fake();
+```
+
+<br>
+
+## ReportIfRector
+
+Change if report to report_if
+
+- class: [`RectorLaravel\Rector\If_\ReportIfRector`](../src/Rector/If_/ReportIfRector.php)
+
+```diff
+-if ($condition) {
+-    report(new Exception());
+-}
+-if (!$condition) {
+-    report(new Exception());
+-}
++report_if($condition, new Exception());
++report_unless($condition, new Exception());
 ```
 
 <br>
