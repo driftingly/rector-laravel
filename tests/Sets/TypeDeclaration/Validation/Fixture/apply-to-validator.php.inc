@@ -34,7 +34,7 @@ $validator->after(function (\Illuminate\Contracts\Validation\Validator $validato
     }
 });
 
-$validator->sometimes('reason', 'required|max:500', function (\Illuminate\Support\Fluent $input, \Illuminate\Support\Fluent $item) {
+$validator->sometimes('reason', 'required|max:500', function (\Illuminate\Support\Fluent $input, mixed $item) {
     return $input->games >= 100;
 });
 
