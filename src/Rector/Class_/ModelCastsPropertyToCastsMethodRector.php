@@ -8,7 +8,11 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\Return_;
+use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\Type\ObjectType;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -18,8 +22,11 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ModelCastsPropertyToCastsMethodRector extends AbstractRector
 {
-    public function __construct(protected BuilderFactory $builderFactory)
-    {
+    public function __construct(
+        protected BuilderFactory $builderFactory,
+        protected PhpDocInfoFactory $phpDocInfoFactory,
+        protected DocBlockUpdater $docBlockUpdater,
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -82,15 +89,39 @@ CODE_SAMPLE,
                 $method = $this->builderFactory->method('casts')
                     ->setReturnType('array')
                     ->makeProtected();
+
+                if ($stmt->getDocComment() !== null) {
+                    $method->setDocComment($stmt->getDocComment());
+                }
+
+                unset($node->stmts[$index]);
+
                 // convert the property to a return statement
                 $method->addStmt(new Return_($stmt->props[0]->default));
-                unset($node->stmts[$index]);
-                $node->stmts[] = $method->getNode();
+                $methodNode = $method->getNode();
+                $node->stmts[] = $methodNode;
+
+                $this->restorePhpDoc($methodNode);
 
                 return $node;
             }
         }
 
         return null;
+    }
+
+    private function restorePhpDoc(ClassMethod|Node $methodNode): void
+    {
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($methodNode);
+
+        $varTagValueNode = $phpDocInfo->getVarTagValueNode();
+
+        if ($varTagValueNode === null) {
+            return;
+        }
+
+        $phpDocInfo->addTagValueNode(new ReturnTagValueNode($varTagValueNode->type, $varTagValueNode->description));
+        $phpDocInfo->removeByType(VarTagValueNode::class);
+        $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($methodNode);
     }
 }
