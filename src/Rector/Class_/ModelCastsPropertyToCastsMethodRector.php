@@ -116,7 +116,7 @@ CODE_SAMPLE,
 
         $varTagValueNode = $phpDocInfo->getVarTagValueNode();
 
-        if ($varTagValueNode === null) {
+        if (! $varTagValueNode instanceof VarTagValueNode) {
             return;
         }
 
