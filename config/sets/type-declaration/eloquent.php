@@ -17,6 +17,8 @@ return static function (RectorConfig $rectorConfig): void {
         'Illuminate\Database\Eloquent\Model',
         'Illuminate\Contracts\Database\Query\Builder',
         'Illuminate\Contracts\Database\Eloquent\Builder',
+        'Illuminate\Database\Eloquent\Builder',
+        'Illuminate\Database\Query\Builder',
     ];
 
     $basicPositionOne = [
@@ -27,10 +29,6 @@ return static function (RectorConfig $rectorConfig): void {
     ];
     $basicPositionThree = [
         'where', 'whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph', 'when',
-    ];
-
-    $arrayPositionOne = [
-        'with', 'withCount',
     ];
 
     $basicRuleConfiguration = [];
@@ -60,16 +58,6 @@ return static function (RectorConfig $rectorConfig): void {
                 $targetClass,
                 $method,
                 2,
-                0,
-                $builderClass,
-            );
-        }
-
-        foreach ($arrayPositionOne as $method) {
-            $arrayRuleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
-                $targetClass,
-                $method,
-                0,
                 0,
                 $builderClass,
             );
