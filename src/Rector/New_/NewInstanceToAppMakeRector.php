@@ -9,6 +9,7 @@ use PhpParser\Node\Name;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -25,14 +26,15 @@ class NewInstanceToAppMakeRector extends AbstractRector implements ConfigurableR
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Change new instance to a fetch class via the container', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 <<<'CODE_SAMPLE'
-new SomeClass();
+new \SomeNamespace\SomeClass();
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
-\Illuminate\Support\Facades\App::make(SomeClass::class);
-CODE_SAMPLE,
-            ),
+\Illuminate\Support\Facades\App::make(\SomeNamespace\SomeClass::class);
+CODE_SAMPLE, [
+                'SomeNamespace\*'
+            ]),
         ]);
     }
 

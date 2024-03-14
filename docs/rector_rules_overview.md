@@ -1,4 +1,4 @@
-# 60 Rules Overview
+# 61 Rules Overview
 
 ## AbortIfRector
 
@@ -783,11 +783,13 @@ Refactor Model `$casts` property with `casts()` method
 
 Change new instance to a fetch class via the container
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\New_\NewInstanceToAppMakeRector`](../src/Rector/New_/NewInstanceToAppMakeRector.php)
 
 ```diff
--new SomeClass();
-+\Illuminate\Support\Facades\App::make(SomeClass::class);
+-new \SomeNamespace\SomeClass();
++\Illuminate\Support\Facades\App::make(\SomeNamespace\SomeClass::class);
 ```
 
 <br>
