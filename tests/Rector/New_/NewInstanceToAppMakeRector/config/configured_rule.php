@@ -8,5 +8,7 @@ use RectorLaravel\Rector\New_\NewInstanceToAppMakeRector;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../../../config/config.php');
 
-    $rectorConfig->rule(NewInstanceToAppMakeRector::class);
+    $rectorConfig->ruleWithConfiguration(NewInstanceToAppMakeRector::class, [
+        'SomeNamespace\\*',
+    ]);
 };

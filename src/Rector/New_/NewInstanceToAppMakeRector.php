@@ -17,6 +17,11 @@ use Webmozart\Assert\Assert;
  */
 class NewInstanceToAppMakeRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    /**
+     * @var string[]
+     */
+    private array $namespacePatterns;
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Change new instance to a fetch class via the container', [
@@ -45,6 +50,14 @@ CODE_SAMPLE,
             return null;
         }
 
+        foreach ($this->namespacePatterns as $namespacePattern) {
+            if (fnmatch($namespacePattern, $node->class->toString(), FNM_NOESCAPE)) {
+                break;
+            }
+
+            return null;
+        }
+
         return $this->nodeFactory->createStaticCall(
             'Illuminate\Support\Facades\App',
             'make',
@@ -60,6 +73,6 @@ CODE_SAMPLE,
     {
         Assert::allString($configuration);
 
-
+        $this->namespacePatterns = $configuration;
     }
 }
