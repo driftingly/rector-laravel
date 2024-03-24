@@ -1,4 +1,4 @@
-# 60 Rules Overview
+# 61 Rules Overview
 
 ## AbortIfRector
 
@@ -917,6 +917,19 @@ Replace `redirect()->route("home")` and `Redirect::route("home")` with `to_route
 +        return to_route('home')->with('error', 'Incorrect Details.')
      }
  }
+```
+
+<br>
+
+## RefactorBlueprintGeometryColumnsRector
+
+refactors calls with the pre Laravel 11 methods for blueprint geometry columns
+
+- class: [`RectorLaravel\Rector\MethodCall\RefactorBlueprintGeometryColumnsRector`](../src/Rector/MethodCall/RefactorBlueprintGeometryColumnsRector.php)
+
+```diff
+-$blueprint->point('coordinates')->spatialIndex();
++$blueprint->geometry('coordinates', 'point')->spatialIndex();
 ```
 
 <br>
