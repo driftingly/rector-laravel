@@ -13,6 +13,6 @@ return static function (RectorConfig $rectorConfig): void {
     // https://github.com/laravel/framework/pull/47237
     $rectorConfig->rule(ModelCastsPropertyToCastsMethodRector::class);
 
-    // https://github.com/laravel/framework/pull/49810
+    // https://github.com/laravel/framework/pull/49634
     $rectorConfig->rule(RefactorBlueprintGeometryColumnsRector::class);
 };
