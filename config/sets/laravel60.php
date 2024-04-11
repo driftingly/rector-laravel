@@ -71,8 +71,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig
         ->ruleWithConfiguration(ArgumentAdderRector::class, [                // https://github.com/laravel/framework/commit/6c1e014943a508afb2c10869c3175f7783a004e1
             new ArgumentAdder('Illuminate\Database\Capsule\Manager', 'table', 1, 'as', null),
-            new ArgumentAdder('Illuminate\Database\Connection', 'table', 1, 'as', null),
-            new ArgumentAdder('Illuminate\Database\ConnectionInterface', 'table', 1, 'as', null),
-            new ArgumentAdder('Illuminate\Database\Query\Builder', 'from', 1, 'as', null),
         ]);
 };
