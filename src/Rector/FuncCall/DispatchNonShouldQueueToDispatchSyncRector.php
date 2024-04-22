@@ -112,14 +112,14 @@ CODE_SAMPLE
 
         // Queued closures can only be dispatched from the helper
         if (
-            !($call instanceof StaticCall && $this->isCallOnBusFacade($call))&& (
+            ! ($call instanceof StaticCall && $this->isCallOnBusFacade($call)) && (
                 $this->getType(
                     $call->args[0]->value,
                 ) instanceof ClosureType ||
                 $call->args[0]->value instanceof Closure ||
                 $call->args[0]->value instanceof ArrowFunction
             )
-            ) {
+        ) {
             return null;
         }
 
