@@ -225,44 +225,4 @@ return static function (RectorConfig $rectorConfig): void {
         ]);
 
     $rectorConfig->rule(HelperFuncCallToFacadeClassRector::class);
-
-    $rectorConfig
-        ->ruleWithConfiguration(RenameClassRector::class, [
-            'App' => 'Illuminate\Support\Facades\App',
-            'Artisan' => 'Illuminate\Support\Facades\Artisan',
-            'Auth' => 'Illuminate\Support\Facades\Auth',
-            'Blade' => 'Illuminate\Support\Facades\Blade',
-            'Broadcast' => 'Illuminate\Support\Facades\Broadcast',
-            'Bus' => 'Illuminate\Support\Facades\Bus',
-            'Cache' => 'Illuminate\Support\Facades\Cache',
-            'Config' => 'Illuminate\Support\Facades\Config',
-            'Cookie' => 'Illuminate\Support\Facades\Cookie',
-            'Crypt' => 'Illuminate\Support\Facades\Crypt',
-            'DB' => 'Illuminate\Support\Facades\DB',
-            'Date' => 'Illuminate\Support\Facades\Date',
-            'Event' => 'Illuminate\Support\Facades\Event',
-            'Facade' => 'Illuminate\Support\Facades\Facade',
-            'File' => 'Illuminate\Support\Facades\File',
-            'Gate' => 'Illuminate\Support\Facades\Gate',
-            'Hash' => 'Illuminate\Support\Facades\Hash',
-            'Http' => 'Illuminate\Support\Facades\Http',
-            'Lang' => 'Illuminate\Support\Facades\Lang',
-            'Log' => 'Illuminate\Support\Facades\Log',
-            'Mail' => 'Illuminate\Support\Facades\Mail',
-            'Notification' => 'Illuminate\Support\Facades\Notification',
-            'Password' => 'Illuminate\Support\Facades\Password',
-            'Queue' => 'Illuminate\Support\Facades\Queue',
-            'RateLimiter' => 'Illuminate\Support\Facades\RateLimiter',
-            'Redirect' => 'Illuminate\Support\Facades\Redirect',
-            'Redis' => 'Illuminate\Support\Facades\Redis',
-            'Request' => 'Illuminate\Http\Request',
-            'Response' => 'Illuminate\Support\Facades\Response',
-            'Route' => 'Illuminate\Support\Facades\Route',
-            'Schema' => 'Illuminate\Support\Facades\Schema',
-            'Session' => 'Illuminate\Support\Facades\Session',
-            'Storage' => 'Illuminate\Support\Facades\Storage',
-            'URL' => 'Illuminate\Support\Facades\URL',
-            'Validator' => 'Illuminate\Support\Facades\Validator',
-            'View' => 'Illuminate\Support\Facades\View',
-        ]);
 };
