@@ -4,6 +4,8 @@ namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrowFunction;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -12,6 +14,7 @@ use PhpParser\Node\Name;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\ClosureType;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -102,6 +105,19 @@ CODE_SAMPLE
             $this->isObjectType(
                 $call->args[0]->value,
                 $shouldQueueType
+            )
+        ) {
+            return null;
+        }
+
+        // Queued closures can only be dispatched from the helper
+        if (
+            ! ($call instanceof StaticCall && $this->isCallOnBusFacade($call)) && (
+                $this->getType(
+                    $call->args[0]->value,
+                ) instanceof ClosureType ||
+                $call->args[0]->value instanceof Closure ||
+                $call->args[0]->value instanceof ArrowFunction
             )
         ) {
             return null;

@@ -168,9 +168,9 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
 
     public function testServiceUnavailable()
     {
-        $this->get('/')->asserServiceUnavailable();
-        $this->get('/')->asserServiceUnavailable();
-        $this->get('/')->asserServiceUnavailable();
+        $this->get('/')->assertServiceUnavailable();
+        $this->get('/')->assertServiceUnavailable();
+        $this->get('/')->assertServiceUnavailable();
     }
 }
 CODE_SAMPLE
