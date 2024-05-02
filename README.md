@@ -34,12 +34,22 @@ return RectorConfig::configure()
     ]);
 ```
 
+## Contributors
+
+Thank you everyone who works so hard on improving this package:
+
+- [@TomasVotruba](https://github.com/TomasVotruba)
+- [@peterfox](https://github.com/peterfox)
+- [@GeniJaho](https://github.com/GeniJaho)
+- [@driftingly](https://github.com/driftingly)
+- [All Contributors](https://github.com/driftingly/rector-laravel/graphs/contributors)
+
+## Hire The Rector Team
+
+Rector is a tool that [we develop](https://getrector.com/) and share for free, so anyone can automate their refactoring. But not everyone has dozens of hours to understand complexity of abstract-syntax-tree in their own time. **That's why we provide commercial support - to save your time**.
+
+Would you like to apply Rector on your code base but don't have time for the struggle with your project? [Hire the Rector team](https://getrector.com/contact) to get there faster.
+
 ## Learn Rector Faster
 
-Rector is a tool that [we develop](https://getrector.org/) and share for free, so anyone can save hundreds of hours on refactoring.
-But not everyone has time to understand Rector and AST complexity. You have 2 ways to speed this process up:
-
-* Read the book - <a href="https://leanpub.com/rector-the-power-of-automated-refactoring">The Power of Automated Refactoring</a>
-* Hire our experienced team to <a href="https://getrector.org/contact">improve your codebase</a>
-
-Both ways support us to and improve Rector in sustainable way by learning from practical projects.
+Not everyone has time to understand Rector and AST complexity. You can speed up the process by reading the book [The Power of Automated Refactoring](https://leanpub.com/rector-the-power-of-automated-refactoring). Not only will it help you learn and understand Rector but it supports the project as well.

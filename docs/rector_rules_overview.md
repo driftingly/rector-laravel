@@ -341,9 +341,9 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
 -        $this->get('/')->assertStatus(503);
 -        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_SERVICE_UNAVAILABLE);
 -        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_SERVICE_UNAVAILABLE);
-+        $this->get('/')->asserServiceUnavailable();
-+        $this->get('/')->asserServiceUnavailable();
-+        $this->get('/')->asserServiceUnavailable();
++        $this->get('/')->assertServiceUnavailable();
++        $this->get('/')->assertServiceUnavailable();
++        $this->get('/')->assertServiceUnavailable();
      }
  }
 ```
