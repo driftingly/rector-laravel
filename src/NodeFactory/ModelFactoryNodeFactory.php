@@ -9,6 +9,7 @@ use PhpParser\Builder\Property;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -66,13 +67,13 @@ final readonly class ModelFactoryNodeFactory
         return $class;
     }
 
-    public function createDefinition(Closure $closure): ClassMethod
+    public function createDefinition(Closure|ArrowFunction $callable): ClassMethod
     {
-        if (isset($closure->params[0])) {
-            $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[0]);
+        if (isset($callable->params[0])) {
+            $this->fakerVariableToPropertyFetch($callable->getStmts(), $callable->params[0]);
         }
 
-        return $this->createPublicMethod('definition', $closure->stmts);
+        return $this->createPublicMethod('definition', $callable->getStmts());
     }
 
     public function createStateMethod(MethodCall $methodCall): ?ClassMethod
@@ -87,8 +88,8 @@ final readonly class ModelFactoryNodeFactory
 
         $thirdArgValue = $methodCall->args[2]->value;
         // the third argument may be closure or array
-        if ($thirdArgValue instanceof Closure && isset($thirdArgValue->params[0])) {
-            $this->fakerVariableToPropertyFetch($thirdArgValue->stmts, $thirdArgValue->params[0]);
+        if (($thirdArgValue instanceof Closure || $thirdArgValue instanceof ArrowFunction) && isset($thirdArgValue->params[0])) {
+            $this->fakerVariableToPropertyFetch($thirdArgValue->getStmts(), $thirdArgValue->params[0]);
             unset($thirdArgValue->params[0]);
         }
 
@@ -117,11 +118,11 @@ final readonly class ModelFactoryNodeFactory
         return $this->createPublicMethod('configure', [$return]);
     }
 
-    public function appendConfigure(ClassMethod $classMethod, string $name, Closure $closure): void
+    public function appendConfigure(ClassMethod $classMethod, string $name, Closure|ArrowFunction $callable): void
     {
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable(
             (array) $classMethod->stmts,
-            function (Node $node) use ($closure, $name): ?Return_ {
+            function (Node $node) use ($callable, $name): ?Return_ {
                 if (! $node instanceof Return_) {
                     return null;
                 }
@@ -130,13 +131,13 @@ final readonly class ModelFactoryNodeFactory
                     return null;
                 }
 
-                if (isset($closure->params[1])) {
-                    $this->fakerVariableToPropertyFetch($closure->stmts, $closure->params[1]);
+                if (isset($callable->params[1])) {
+                    $this->fakerVariableToPropertyFetch($callable->getStmts(), $callable->params[1]);
                     // remove argument $faker
-                    unset($closure->params[1]);
+                    unset($callable->params[1]);
                 }
 
-                $node->expr = $this->nodeFactory->createMethodCall($node->expr, $name, [$closure]);
+                $node->expr = $this->nodeFactory->createMethodCall($node->expr, $name, [$callable]);
 
                 return $node;
             }
