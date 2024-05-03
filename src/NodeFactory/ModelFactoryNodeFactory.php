@@ -25,19 +25,39 @@ use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\PhpParser\Node\Value\ValueResolver;
 
-final readonly class ModelFactoryNodeFactory
+final class ModelFactoryNodeFactory
 {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\NodeFactory
+     */
+    private $nodeFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    /**
+     * @readonly
+     * @var \Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser
+     */
+    private $simpleCallableNodeTraverser;
     /**
      * @var string
      */
     private const THIS = 'this';
 
-    public function __construct(
-        private NodeNameResolver $nodeNameResolver,
-        private NodeFactory $nodeFactory,
-        private ValueResolver $valueResolver,
-        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser
-    ) {
+    public function __construct(NodeNameResolver $nodeNameResolver, NodeFactory $nodeFactory, ValueResolver $valueResolver, SimpleCallableNodeTraverser $simpleCallableNodeTraverser)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodeFactory = $nodeFactory;
+        $this->valueResolver = $valueResolver;
+        $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
     }
 
     public function createEmptyFactory(string $name, Expr $expr): Class_

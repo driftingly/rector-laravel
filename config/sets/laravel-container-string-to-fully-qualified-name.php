@@ -62,17 +62,15 @@ return static function (RectorConfig $rectorConfig): void {
         'command.tinker' => 'Laravel\Tinker\Console\TinkerCommand',
     ];
 
-    $ruleConfig = array_map(
-        fn (string $service, string $interface) => new ReplaceServiceContainerCallArg(
+    $ruleConfig = array_map(function (string $service, string $interface) {
+        return new ReplaceServiceContainerCallArg(
             $service,
             new ClassConstFetch(
                 new FullyQualified($interface),
                 'class'
             )
-        ),
-        array_keys($servicesMap),
-        $servicesMap,
-    );
+        );
+    }, array_keys($servicesMap), $servicesMap);
 
     $rectorConfig->ruleWithConfiguration(
         ReplaceServiceContainerCallArgRector::class,

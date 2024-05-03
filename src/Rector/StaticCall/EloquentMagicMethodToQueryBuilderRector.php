@@ -26,12 +26,12 @@ final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector imple
     /**
      * @var string
      */
-    final public const EXCLUDE_METHODS = 'exclude_methods';
+    public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var string[]
      */
-    private array $excludeMethods = [];
+    private $excludeMethods = [];
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -139,7 +139,7 @@ CODE_SAMPLE
 
         try {
             $reflectionMethod = new ReflectionMethod($className, $methodName);
-        } catch (ReflectionException) {
+        } catch (ReflectionException $exception) {
             return true; // method does not exist => is magic method
         }
 
@@ -160,7 +160,7 @@ CODE_SAMPLE
             if ($reflectionMethod->isStatic()) {
                 return false;
             }
-        } catch (ReflectionException) {
+        } catch (ReflectionException $exception) {
             return false; // method does not exist => is magic method
         }
 

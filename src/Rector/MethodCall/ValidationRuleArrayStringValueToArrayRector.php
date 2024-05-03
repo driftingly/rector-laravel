@@ -53,8 +53,9 @@ CODE_SAMPLE
 
     /**
      * @param  MethodCall|StaticCall|ClassMethod  $node
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Stmt\ClassMethod|null
      */
-    public function refactor(Node $node): MethodCall|StaticCall|ClassMethod|null
+    public function refactor(Node $node)
     {
         if ($node instanceof ClassMethod) {
             return $this->refactorClassMethod($node);
@@ -71,7 +72,9 @@ CODE_SAMPLE
             if ($item instanceof ArrayItem && $item->value instanceof String_) {
                 $stringRules = $item->value->value;
                 $arrayRules = explode('|', $stringRules);
-                $item->value = new Array_(array_map(static fn ($rule) => new ArrayItem(new String_($rule)), $arrayRules));
+                $item->value = new Array_(array_map(static function ($rule) {
+                    return new ArrayItem(new String_($rule));
+                }, $arrayRules));
                 $changed = true;
             }
         }
@@ -79,7 +82,11 @@ CODE_SAMPLE
         return $changed;
     }
 
-    private function refactorCall(StaticCall|MethodCall $node): StaticCall|MethodCall|null
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall $node
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|null
+     */
+    private function refactorCall($node)
     {
         if (
             ! $this->isName($node->name, 'make')
@@ -134,7 +141,7 @@ CODE_SAMPLE
 
         $changed = false;
 
-        $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$changed): Return_|int|null {
+        $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$changed) {
             if ($changed) {
                 return NodeTraverser::STOP_TRAVERSAL;
             }

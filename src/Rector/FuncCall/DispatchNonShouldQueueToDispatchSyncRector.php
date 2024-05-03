@@ -25,8 +25,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
 {
-    public function __construct(private readonly ReflectionProvider $reflectionProvider)
+    /**
+     * @readonly
+     * @var \PHPStan\Reflection\ReflectionProvider
+     */
+    private $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
     {
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -58,8 +64,9 @@ CODE_SAMPLE
 
     /**
      * @param  FuncCall|MethodCall|StaticCall  $node
+     * @return \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null
      */
-    public function refactor(Node $node): FuncCall|MethodCall|StaticCall|null
+    public function refactor(Node $node)
     {
         if (
             $this->isName($node->name, 'dispatch') &&
@@ -90,7 +97,11 @@ CODE_SAMPLE
         return null;
     }
 
-    private function processCall(FuncCall|MethodCall|StaticCall $call): FuncCall|MethodCall|StaticCall|null
+    /**
+     * @param \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $call
+     * @return \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null
+     */
+    private function processCall($call)
     {
         static $shouldQueueType = new ObjectType('Illuminate\Contracts\Queue\ShouldQueue');
 
@@ -113,9 +124,7 @@ CODE_SAMPLE
         // Queued closures can only be dispatched from the helper
         if (
             ! ($call instanceof StaticCall && $this->isCallOnBusFacade($call)) && (
-                $this->getType(
-                    $call->args[0]->value,
-                ) instanceof ClosureType ||
+                $this->getType($call->args[0]->value) instanceof ClosureType ||
                 $call->args[0]->value instanceof Closure ||
                 $call->args[0]->value instanceof ArrowFunction
             )
@@ -145,7 +154,7 @@ CODE_SAMPLE
                 return true;
             }
 
-        } catch (ClassNotFoundException) {
+        } catch (ClassNotFoundException $exception) {
         }
 
         return false;
