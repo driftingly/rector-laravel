@@ -4,20 +4,40 @@ namespace RectorLaravel\ValueObject;
 
 use PhpParser\Node\Expr\ClassConstFetch;
 
-final readonly class ReplaceServiceContainerCallArg
+final class ReplaceServiceContainerCallArg
 {
-    public function __construct(
-        private string|ClassConstFetch $oldService,
-        private string|ClassConstFetch $newService
-    ) {
+    /**
+     * @readonly
+     * @var string|\PhpParser\Node\Expr\ClassConstFetch
+     */
+    private $oldService;
+    /**
+     * @readonly
+     * @var string|\PhpParser\Node\Expr\ClassConstFetch
+     */
+    private $newService;
+    /**
+     * @param string|\PhpParser\Node\Expr\ClassConstFetch $oldService
+     * @param string|\PhpParser\Node\Expr\ClassConstFetch $newService
+     */
+    public function __construct($oldService, $newService)
+    {
+        $this->oldService = $oldService;
+        $this->newService = $newService;
     }
 
-    public function getOldService(): string|ClassConstFetch
+    /**
+     * @return string|\PhpParser\Node\Expr\ClassConstFetch
+     */
+    public function getOldService()
     {
         return $this->oldService;
     }
 
-    public function getNewService(): string|ClassConstFetch
+    /**
+     * @return string|\PhpParser\Node\Expr\ClassConstFetch
+     */
+    public function getNewService()
     {
         return $this->newService;
     }

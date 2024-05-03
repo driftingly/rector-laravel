@@ -27,15 +27,30 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 {
     /**
+     * @readonly
+     * @var \RectorLaravel\NodeFactory\AppAssignFactory
+     */
+    private $appAssignFactory;
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    /**
      * @var ServiceNameTypeAndVariableName[]
      */
-    private array $serviceNameTypeAndVariableNames = [];
+    private $serviceNameTypeAndVariableNames = [];
 
-    public function __construct(
-        private readonly AppAssignFactory $appAssignFactory,
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly ValueResolver $valueResolver,
-    ) {
+    public function __construct(AppAssignFactory $appAssignFactory, DocBlockUpdater $docBlockUpdater, ValueResolver $valueResolver)
+    {
+        $this->appAssignFactory = $appAssignFactory;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->valueResolver = $valueResolver;
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',
             'Illuminate\Validation\Factory',
@@ -53,8 +68,9 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 
     /**
      * @param  Expression  $node
+     * @return \PhpParser\Node|mixed[]|int|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node)
     {
         if (! $node->expr instanceof Assign) {
             return null;
