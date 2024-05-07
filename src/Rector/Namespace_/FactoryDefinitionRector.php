@@ -7,6 +7,7 @@ namespace RectorLaravel\Rector\Namespace_;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\Closure;
@@ -207,12 +208,12 @@ CODE_SAMPLE
             return;
         }
 
-        $callback = $methodCall->args[1]->value;
-        if (! $callback instanceof Closure) {
+        $callable = $methodCall->args[1]->value;
+        if (! $callable instanceof Closure && ! $callable instanceof ArrowFunction) {
             return;
         }
 
-        $class->stmts[] = $this->modelFactoryNodeFactory->createDefinition($callback);
+        $class->stmts[] = $this->modelFactoryNodeFactory->createDefinition($callable);
     }
 
     private function addState(Class_ $class, MethodCall $methodCall): void
@@ -235,8 +236,8 @@ CODE_SAMPLE
             return;
         }
 
-        $closure = $methodCall->args[1]->value;
-        if (! $closure instanceof Closure) {
+        $callable = $methodCall->args[1]->value;
+        if (! $callable instanceof Closure && ! $callable instanceof ArrowFunction) {
             return;
         }
 
@@ -246,6 +247,6 @@ CODE_SAMPLE
             $class->stmts[] = $method;
         }
 
-        $this->modelFactoryNodeFactory->appendConfigure($method, $name, $closure);
+        $this->modelFactoryNodeFactory->appendConfigure($method, $name, $callable);
     }
 }
