@@ -42,6 +42,8 @@ return static function (RectorConfig $rectorConfig): void {
         ->ruleWithConfiguration(RenameMethodRector::class, [
             // https://github.com/laravel/framework/pull/42591/files
             new MethodCallRename('Illuminate\Support\Facades\Bus', 'dispatchNow', 'dispatchSync'),
+            new MethodCallRename('Illuminate\Foundation\Bus\Dispatchable', 'dispatchNow', 'dispatchSync'),
+            new MethodCallRename('Illuminate\Foundation\Bus\DispatchesJobs', 'dispatchNow', 'dispatchSync'),
         ]);
 
     $rectorConfig
