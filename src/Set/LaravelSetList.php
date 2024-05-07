@@ -127,4 +127,9 @@ final class LaravelSetList implements SetListInterface
      * @var string
      */
     final public const LARAVEL_IF_HELPERS = __DIR__ . '/../../config/sets/laravel-if-helpers.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_ARRAYACCESS_TO_METHOD_CALL = __DIR__ . '/../../config/sets/laravel-arrayaccess-to-method-call.php';
 }
