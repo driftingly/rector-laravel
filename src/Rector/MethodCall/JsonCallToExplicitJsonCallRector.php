@@ -65,22 +65,31 @@ final class JsonCallToExplicitJsonCallRector extends AbstractRector
             return null;
         }
 
-        $arg = $methodCall->getArgs()[0];
-        $argValue = $arg->value;
+        $methodCallArgs = $methodCall->getArgs();
 
-        if (! $argValue instanceof String_) {
+        if (count($methodCallArgs) < 2) {
+            return null;
+        }
+
+        $firstArg = $methodCallArgs[0]->value;
+
+        if (! $firstArg instanceof String_) {
             return null;
         }
 
         $supportedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
 
-        if (in_array($argValue->value, $supportedMethods, true)) {
-            $methodCall->name = new Identifier(strtolower($argValue->value) . 'Json');
-            $methodCall->args = array_slice($methodCall->args, 1);
-
-            return $methodCall;
+        if (! in_array($firstArg->value, $supportedMethods, true)) {
+            return null;
         }
 
-        return null;
+        if ($firstArg->value === 'GET' && count($methodCallArgs) > 2) {
+            return null;
+        }
+
+        $methodCall->name = new Identifier(strtolower($firstArg->value) . 'Json');
+        $methodCall->args = array_slice($methodCall->args, 1);
+
+        return $methodCall;
     }
 }
