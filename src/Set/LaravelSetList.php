@@ -117,4 +117,14 @@ final class LaravelSetList implements SetListInterface
      * @var string
      */
     final public const LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER = __DIR__ . '/../../config/sets/laravel-eloquent-magic-method-to-query-builder.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME = __DIR__ . '/../../config/sets/laravel-container-string-to-fully-qualified-name.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_IF_HELPERS = __DIR__ . '/../../config/sets/laravel-if-helpers.php';
 }
