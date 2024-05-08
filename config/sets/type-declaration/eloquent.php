@@ -4,12 +4,11 @@ use PHPStan\Type\ObjectType;
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration;
-use RectorLaravel\Rector\Param\AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../config.php');
 
-    $generator = new \RectorLaravel\Util\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRectorConfigGenerator();
+    $generator = new \RectorLaravel\Util\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRectorConfigGenerator;
 
     $builderClass = new ObjectType(
         'Illuminate\Contracts\Database\Query\Builder'

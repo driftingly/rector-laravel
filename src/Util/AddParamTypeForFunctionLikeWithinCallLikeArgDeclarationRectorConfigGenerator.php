@@ -8,11 +8,9 @@ use Rector\TypeDeclaration\ValueObject\AddParamTypeForFunctionLikeWithinCallLike
 class AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRectorConfigGenerator
 {
     /**
-     * @param array<int, string|int<0, max>> $callPositionsOrNames
-     * @param class-string[] $targetClasses
-     * @param int<0, max> $functionPosition
-     * @param string $methodName
-     * @param ObjectType $type
+     * @param  array<int, string|int<0, max>>  $callPositionsOrNames
+     * @param  class-string[]  $targetClasses
+     * @param  int<0, max>  $functionPosition
      * @return AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration[]
      */
     public function generate(

@@ -22,7 +22,7 @@ return static function (RectorConfig $rectorConfig): void {
                     'make',
                     1,
                     0,
-                    new \PHPStan\Type\StringType(),
+                    new \PHPStan\Type\StringType,
                 ),
                 new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
                     $targetClass,
@@ -50,7 +50,7 @@ return static function (RectorConfig $rectorConfig): void {
                 'validate',
                 0,
                 0,
-                new \PHPStan\Type\StringType(),
+                new \PHPStan\Type\StringType,
             ),
             new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
                 'Illuminate\Http\Request',
@@ -117,7 +117,7 @@ return static function (RectorConfig $rectorConfig): void {
                 'forEach',
                 0,
                 1,
-                new \PHPStan\Type\StringType(),
+                new \PHPStan\Type\StringType,
             ),
         ]
     );
