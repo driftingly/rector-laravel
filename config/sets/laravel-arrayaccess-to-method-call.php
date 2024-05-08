@@ -18,7 +18,7 @@ return static function (RectorConfig $rectorConfig): void {
                 new \Rector\Transform\ValueObject\ArrayDimFetchToMethodCall(
                     new \PHPStan\Type\ObjectType('Illuminate\Config\Repository'),
                     'get',
-                )
+                ),
             ],
         );
 };
