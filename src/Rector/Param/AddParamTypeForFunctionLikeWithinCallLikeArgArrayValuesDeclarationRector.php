@@ -46,17 +46,8 @@ class AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector e
     private $hasChanged = false;
 
     public function __construct(
-        /**
-         * @readonly
-         */
         private readonly TypeComparator $typeComparator,
-        /**
-         * @readonly
-         */
         private readonly PhpVersionProvider $phpVersionProvider,
-        /**
-         * @readonly
-         */
         private readonly StaticTypeMapper $staticTypeMapper
     ) {
     }

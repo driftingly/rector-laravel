@@ -1,14 +1,16 @@
 <?php
 
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration;
+use RectorLaravel\Util\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRectorConfigGenerator;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../config.php');
 
-    $generator = new \RectorLaravel\Util\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRectorConfigGenerator;
+    $generator = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRectorConfigGenerator;
 
     $builderClass = new ObjectType(
         'Illuminate\Contracts\Database\Query\Builder'
@@ -144,7 +146,7 @@ return static function (RectorConfig $rectorConfig): void {
                 'handleLazyLoadingViolationUsing',
                 0,
                 1,
-                new \PHPStan\Type\StringType,
+                new StringType,
             ),
         ]
     );
