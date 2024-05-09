@@ -127,4 +127,9 @@ final class LaravelSetList implements SetListInterface
      * @var string
      */
     final public const LARAVEL_IF_HELPERS = __DIR__ . '/../../config/sets/laravel-if-helpers.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_TYPE_DECLARATIONS = __DIR__ . '/../../config/sets/type-declaration.php';
 }
