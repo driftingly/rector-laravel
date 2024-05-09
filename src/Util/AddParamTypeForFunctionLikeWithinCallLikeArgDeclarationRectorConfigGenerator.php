@@ -18,18 +18,18 @@ class AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRectorConfigGenerat
         array $targetClasses,
         int $functionPosition,
         string $methodName,
-        ObjectType $type
+        ObjectType $objectType
     ): array {
         $configurations = [];
 
-        foreach ($callPositionsOrNames as $callPositionsOrName) {
+        foreach ($callPositionsOrNames as $callPositionOrName) {
             foreach ($targetClasses as $targetClass) {
                 $configurations[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
                     $targetClass,
                     $methodName,
-                    $callPositionsOrName,
+                    $callPositionOrName,
                     $functionPosition,
-                    $type
+                    $objectType
                 );
             }
         }

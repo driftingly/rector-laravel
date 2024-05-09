@@ -19,12 +19,12 @@ return static function (RectorConfig $rectorConfig): void {
 
     $ruleConfiguration = [];
 
-    foreach ($classesToApplyTo as $targetClass) {
+    foreach ($classesToApplyTo as $classToApplyTo) {
         foreach ([
             'bind', 'bindIf', 'singleton', 'singletonIf', 'scoped', 'scopedIf',
         ] as $method) {
             $ruleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
-                $targetClass,
+                $classToApplyTo,
                 $method,
                 1,
                 0,
@@ -32,14 +32,14 @@ return static function (RectorConfig $rectorConfig): void {
             );
         }
         $ruleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
-            $targetClass,
+            $classToApplyTo,
             'resolving',
             1,
             1,
             $applicationClass,
         );
         $ruleConfiguration[] = new AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration(
-            $targetClass,
+            $classToApplyTo,
             'extends',
             1,
             1,
