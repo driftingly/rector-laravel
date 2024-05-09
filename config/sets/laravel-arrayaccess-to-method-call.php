@@ -1,22 +1,24 @@
 <?php
 
 declare(strict_types=1);
-
+use PHPStan\Type\ObjectType;
 use Rector\Config\RectorConfig;
+use Rector\Transform\Rector\ArrayDimFetch\ArrayDimFetchToMethodCallRector;
+use Rector\Transform\ValueObject\ArrayDimFetchToMethodCall;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
     $rectorConfig
         ->ruleWithConfiguration(
-            \Rector\Transform\Rector\ArrayDimFetch\ArrayDimFetchToMethodCallRector::class,
+            ArrayDimFetchToMethodCallRector::class,
             [
-                new \Rector\Transform\ValueObject\ArrayDimFetchToMethodCall(
-                    new \PHPStan\Type\ObjectType('Illuminate\Foundation\Application'),
+                new ArrayDimFetchToMethodCall(
+                    new ObjectType('Illuminate\Foundation\Application'),
                     'make',
                 ),
-                new \Rector\Transform\ValueObject\ArrayDimFetchToMethodCall(
-                    new \PHPStan\Type\ObjectType('Illuminate\Config\Repository'),
+                new ArrayDimFetchToMethodCall(
+                    new ObjectType('Illuminate\Config\Repository'),
                     'get',
                 ),
             ],
