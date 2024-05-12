@@ -5,6 +5,7 @@
         "src"
     ],
     "exclude": [
-        "tests/Rector/**/**/Fixture"
+        "tests/Rector/**/**/Fixture",
+        "tests/Sets/**/Fixture"
     ]
 }
