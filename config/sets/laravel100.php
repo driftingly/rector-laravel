@@ -35,7 +35,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig
         ->ruleWithConfiguration(RenamePropertyRector::class, [
             // https://github.com/laravel/laravel/commit/edcbe6de7c3f17070bf0ccaa2e2b785158ae5ceb
-            new RenameProperty('App\Http\Kernel', 'routeMiddleware', 'middlewareAliases'),
+            new RenameProperty('Illuminate\Foundation\Http\Kernel', 'routeMiddleware', 'middlewareAliases'),
         ]);
 
     $rectorConfig

@@ -16,6 +16,11 @@ class DispatchesJobsClass
     use DispatchesJobs;
 }
 
+class Kernel extends \Illuminate\Foundation\Http\Kernel
+{
+    protected $routeMiddleware = [];
+}
+
 Bus::dispatchNow(fn () => null);
 DispatchableJobClass::dispatchNow(fn () => null);
 DispatchesJobsClass::dispatchNow(fn () => null);
@@ -39,6 +44,11 @@ class DispatchableJobClass
 class DispatchesJobsClass
 {
     use DispatchesJobs;
+}
+
+class Kernel extends \Illuminate\Foundation\Http\Kernel
+{
+    protected $middlewareAliases = [];
 }
 
 Bus::dispatchSync(fn () => null);
