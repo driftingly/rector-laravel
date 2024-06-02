@@ -35,13 +35,15 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig
         ->ruleWithConfiguration(RenamePropertyRector::class, [
             // https://github.com/laravel/laravel/commit/edcbe6de7c3f17070bf0ccaa2e2b785158ae5ceb
-            new RenameProperty('App\Http\Kernel', 'routeMiddleware', 'middlewareAliases'),
+            new RenameProperty('Illuminate\Foundation\Http\Kernel', 'routeMiddleware', 'middlewareAliases'),
         ]);
 
     $rectorConfig
         ->ruleWithConfiguration(RenameMethodRector::class, [
             // https://github.com/laravel/framework/pull/42591/files
             new MethodCallRename('Illuminate\Support\Facades\Bus', 'dispatchNow', 'dispatchSync'),
+            new MethodCallRename('Illuminate\Foundation\Bus\Dispatchable', 'dispatchNow', 'dispatchSync'),
+            new MethodCallRename('Illuminate\Foundation\Bus\DispatchesJobs', 'dispatchNow', 'dispatchSync'),
         ]);
 
     $rectorConfig
