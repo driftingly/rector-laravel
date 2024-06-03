@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
-use Rector\Arguments\ValueObject\ArgumentAdder;
+use Rector\Arguments\ValueObject\ArgumentAdderWithoutDefaultValue;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
@@ -19,29 +19,27 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/commit/8f9ddea4481717943ed4ecff96d86b703c81a87d
     $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
+        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdderWithoutDefaultValue(
             'Illuminate\Contracts\Foundation\Application',
             'storagePath',
             0,
             'path',
-            ''
         ),
         ]);
 
     // https://github.com/laravel/framework/commit/e6c8aaea886d35cc55bd3469f1a95ad56d53e474
     $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
+        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdderWithoutDefaultValue(
             'Illuminate\Foundation\Application',
             'langPath',
             0,
             'path',
-            ''
         ),
         ]);
 
     // https://github.com/laravel/framework/commit/e095ac0e928b5620f33c9b60816fde5ece867d32
     $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
+        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdderWithoutDefaultValue(
             'Illuminate\Database\Eloquent\Model',
             'touch',
             0,
@@ -51,7 +49,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/commit/6daecf43dd931dc503e410645ff4a7d611e3371f
     $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
+        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdderWithoutDefaultValue(
             'Illuminate\Queue\Failed\FailedJobProviderInterface',
             'flush',
             0,
