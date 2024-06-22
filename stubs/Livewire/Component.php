@@ -8,5 +8,4 @@ if (class_exists('Livewire\Component')) {
 
 class Component
 {
-
 }

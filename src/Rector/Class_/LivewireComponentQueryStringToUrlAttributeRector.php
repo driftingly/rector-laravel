@@ -5,16 +5,20 @@ namespace RectorLaravel\Rector\Class_;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\NodeTraverser;
+use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use function pcov\collect;
 
+/**
+ * @see RectorLaravel\Tests\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector\LivewireComponentQueryStringToUrlAttributeRectorTest
+ */
 final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector
 {
     private const URL_ATTRIBUTE = 'Livewire\Attributes\Url';
@@ -58,7 +62,7 @@ class MyComponent extends Component
     public string $another = '';
 }
 CODE_SAMPLE
-)
+                ),
             ]
         );
     }
@@ -69,7 +73,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Class_ $node
+     * @param  Class_  $node
      */
     public function refactor(Node $node): ?Class_
     {
@@ -80,12 +84,12 @@ CODE_SAMPLE
         $queryStringProperty = null;
 
         foreach ($node->stmts as $stmt) {
-            if ($stmt instanceof Node\Stmt\Property && $this->isName($stmt, self::QUERY_STRING_PROPERTY_NAME)) {
+            if ($stmt instanceof Property && $this->isName($stmt, self::QUERY_STRING_PROPERTY_NAME)) {
                 $queryStringProperty = $stmt;
             }
         }
 
-        if ($queryStringProperty === null) {
+        if (! $queryStringProperty instanceof Property) {
             return null;
         }
 
@@ -99,7 +103,7 @@ CODE_SAMPLE
         $propertyNodes = [];
 
         foreach ($node->stmts as $stmt) {
-            if ($stmt instanceof Node\Stmt\Property && $this->isNames($stmt, $urlPropertyNames)) {
+            if ($stmt instanceof Property && $this->isNames($stmt, $urlPropertyNames)) {
                 $propertyNodes[] = $stmt;
             }
         }
@@ -114,7 +118,7 @@ CODE_SAMPLE
         }
 
         // remove the query string property
-        $node->stmts = array_filter($node->stmts, fn(Node $node) => $node !== $queryStringProperty);
+        $node->stmts = array_filter($node->stmts, fn (Node $node) => $node !== $queryStringProperty);
 
         return $node;
     }
@@ -122,7 +126,7 @@ CODE_SAMPLE
     /**
      * @return string[]
      */
-    private function findQueryStringProperties(Node\Stmt\Property $property): array
+    private function findQueryStringProperties(Property $property): array
     {
         if ($property->props === []) {
             return [];
@@ -130,19 +134,18 @@ CODE_SAMPLE
 
         $array = $property->props[0]->default;
 
-        if (! $array instanceof Node\Expr\Array_ || $array->items === []) {
+        if (! $array instanceof Array_ || $array->items === []) {
             return [];
         }
 
         $properties = [];
-
 
         foreach ($array->items as $item) {
             if ($item === null) {
                 continue;
             }
 
-            if ($item->value instanceof Node\Scalar\String_) {
+            if ($item->value instanceof String_) {
                 $properties[] = $item->value->value;
             }
         }
@@ -154,7 +157,7 @@ CODE_SAMPLE
         return $properties;
     }
 
-    private function addUrlAttributeToProperty(Node\Stmt\Property $property): void
+    private function addUrlAttributeToProperty(Property $property): void
     {
         if ($this->phpAttributeAnalyzer->hasPhpAttribute($property, self::URL_ATTRIBUTE)) {
             return;

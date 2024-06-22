@@ -4,5 +4,4 @@ namespace RectorLaravel\Set;
 
 class LaravelLivewireSetList
 {
-
 }
