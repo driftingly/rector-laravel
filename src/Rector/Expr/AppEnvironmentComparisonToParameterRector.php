@@ -51,7 +51,7 @@ CODE_SAMPLE
             return null;
         }
 
-        /** @var Node\Expr\MethodCall|Node\Expr\StaticCall|null $methodCall */
+        /** @var MethodCall|StaticCall|null $methodCall */
         $methodCall = array_values(
             array_filter(
                 [$node->left, $node->right],
