@@ -51,7 +51,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  Node\Expr\FuncCall  $node
+     * @param  FuncCall  $node
      */
     public function refactor(Node $node): ?Node
     {

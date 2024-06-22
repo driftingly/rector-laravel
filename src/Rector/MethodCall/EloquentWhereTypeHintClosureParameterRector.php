@@ -76,7 +76,7 @@ CODE_SAMPLE
 
     private function changeClosureParamType(MethodCall|StaticCall $node): void
     {
-        /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
+        /** @var ArrowFunction|Closure $closure */
         $closure = $node->getArgs()[0]
             ->value;
 
