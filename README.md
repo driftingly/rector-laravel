@@ -10,7 +10,7 @@ See available [Laravel rules](/docs/rector_rules_overview.md)
 
 This package is a [Rector](https://github.com/rectorphp/rector) extension developed by the Laravel community.
 
-Rules additional first party packages are included as well e.g. Cashier and Livewire.
+Rules for additional first party packages are included as well e.g. Cashier and Livewire.
 
 Install the `RectorLaravel` package as dependency:
 
