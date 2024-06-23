@@ -1,11 +1,11 @@
 <?php
 
-namespace RectorLaravel\Set;
+namespace RectorLaravel\Set\Packages\Livewire;
 
-final class LaravelLivewireSetList
+final class LivewireSetList
 {
     /**
      * @var string
      */
-    final public const UP_TO_LIVEWIRE_30 = __DIR__ . '/../../config/sets/level/up-to-livewire-30.php';
+    final public const LIVEWIRE_30 = __DIR__ . '/../../../../config/sets/packages/livewire/livewire-30.php';
 }

@@ -6,7 +6,7 @@ namespace RectorLaravel\Set\Packages\Livewire;
 
 use Rector\Set\Contract\SetListInterface;
 
-final class CashierLevelSetList implements SetListInterface
+final class LivewireLevelSetList implements SetListInterface
 {
     /**
      * @var string
