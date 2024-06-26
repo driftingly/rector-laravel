@@ -145,6 +145,11 @@ CODE_SAMPLE
                 continue;
             }
 
+            if ($item->key instanceof String_) {
+                $properties[] = $item->key->value;
+                continue;
+            }
+
             if ($item->value instanceof String_) {
                 $properties[] = $item->value->value;
             }

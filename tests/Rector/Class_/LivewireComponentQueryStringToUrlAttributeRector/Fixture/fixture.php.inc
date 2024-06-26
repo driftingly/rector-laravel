@@ -10,9 +10,12 @@ class MyComponent extends Component
 
     public string $another = '';
 
+    public string $asKey = '';
+
     protected $queryString = [
         'something',
         'another',
+        'asKey' => ['except' => 1],
     ];
 }
 
@@ -31,6 +34,9 @@ class MyComponent extends Component
 
     #[\Livewire\Attributes\Url]
     public string $another = '';
+
+    #[\Livewire\Attributes\Url]
+    public string $asKey = '';
 }
 
 ?>
