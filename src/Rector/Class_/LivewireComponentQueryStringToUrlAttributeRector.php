@@ -147,6 +147,7 @@ CODE_SAMPLE
 
             if ($item->key instanceof String_) {
                 $properties[] = $item->key->value;
+
                 continue;
             }
 
