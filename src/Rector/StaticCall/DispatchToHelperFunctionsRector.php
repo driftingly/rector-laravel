@@ -128,7 +128,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
         return new FuncCall(
             new Name($method),
             [
-                new Arg(new New_(new Name($class), $staticCall->args)),
+                new Arg(new New_(new Name\FullyQualified($class), $staticCall->args)),
             ],
         );
     }
