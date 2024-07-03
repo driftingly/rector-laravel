@@ -47,7 +47,7 @@ return static function (RectorConfig $rectorConfig): void {
         'migrator' => 'Illuminate\Database\Migrations\Migrator',
         'migration.creator' => 'Illuminate\Database\Migrations\MigrationCreator',
         'composer' => 'Illuminate\Support\Composer',
-        'hash' => 'Illuminate\Contracts\Hashing\Hasher',
+        'hash' => 'Illuminate\Hashing\HashManager',
         'hash.driver' => 'Illuminate\Contracts\Hashing\Hasher',
         'mail.manager' => 'Illuminate\Contracts\Mail\Factory',
         'mailer' => 'Illuminate\Mail\Mailer',
