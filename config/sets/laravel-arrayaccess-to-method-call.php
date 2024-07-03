@@ -18,8 +18,16 @@ return static function (RectorConfig $rectorConfig): void {
                     'make',
                 ),
                 new ArrayDimFetchToMethodCall(
+                    new ObjectType('Illuminate\Contracts\Foundation\Application'),
+                    'make',
+                ),
+                new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Config\Repository'),
                     'get',
+                ),
+                new ArrayDimFetchToMethodCall(
+                    new ObjectType('Illuminate\Contracts\Config\Repository'),
+                    'make',
                 ),
             ],
         );
