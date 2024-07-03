@@ -132,4 +132,9 @@ final class LaravelSetList implements SetListInterface
      * @var string
      */
     final public const LARAVEL_TYPE_DECLARATIONS = __DIR__ . '/../../config/sets/type-declaration.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_ARRAYACCESS_TO_METHOD_CALL = __DIR__ . '/../../config/sets/laravel-arrayaccess-to-method-call.php';
 }

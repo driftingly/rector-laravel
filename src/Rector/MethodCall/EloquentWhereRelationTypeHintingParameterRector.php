@@ -96,7 +96,7 @@ CODE_SAMPLE
             ['whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph']
         ) ? 2 : 1;
 
-        /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
+        /** @var ArrowFunction|Closure $closure */
         $closure = $node->getArgs()[$position]
 ->value;
 
