@@ -12,4 +12,4 @@ namespace RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\
 
 use RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\Source\TestEvent;
 
-event(new RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\Source\TestEvent('param1', 'param2'));
+event(new \RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\Source\TestEvent('param1', 'param2'));
