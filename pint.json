@@ -1,0 +1,6 @@
+{
+    "rules": {
+        "single_line_empty_body": false,
+        "concat_space": false
+    }
+}
