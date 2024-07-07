@@ -2,13 +2,13 @@
 
 namespace RectorLaravel\Rector\StaticCall;
 
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
