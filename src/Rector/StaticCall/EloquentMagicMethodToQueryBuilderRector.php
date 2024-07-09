@@ -109,14 +109,14 @@ CODE_SAMPLE
             return null;
         }
 
-        $queryMethodCall = $this->nodeFactory->createStaticCall($originalClassName, 'query');
+        $staticCall = $this->nodeFactory->createStaticCall($originalClassName, 'query');
 
-        $newNode = $this->nodeFactory->createMethodCall($queryMethodCall, $methodName);
+        $methodCall = $this->nodeFactory->createMethodCall($staticCall, $methodName);
         foreach ($node->args as $arg) {
-            $newNode->args[] = $arg;
+            $methodCall->args[] = $arg;
         }
 
-        return $newNode;
+        return $methodCall;
     }
 
     /**
