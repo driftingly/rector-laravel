@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\Class_\LivewireComponentQueryStringToUrlAtt
 
 use Livewire\Component;
 
-class MyComponent extends Component
+class DoesNotDoubleApplyAttributes extends Component
 {
     #[\Livewire\Attributes\Url]
     public string $something = '';
@@ -25,7 +25,7 @@ namespace RectorLaravel\Tests\Rector\Class_\LivewireComponentQueryStringToUrlAtt
 
 use Livewire\Component;
 
-class MyComponent extends Component
+class DoesNotDoubleApplyAttributes extends Component
 {
     #[\Livewire\Attributes\Url]
     public string $something = '';

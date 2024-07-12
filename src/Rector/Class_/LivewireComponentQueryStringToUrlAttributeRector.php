@@ -103,72 +103,124 @@ CODE_SAMPLE
         $propertyNodes = [];
 
         foreach ($node->stmts as $stmt) {
-            if ($stmt instanceof Property && $this->isNames($stmt, $urlPropertyNames)) {
+            if ($stmt instanceof Property && $this->isNames($stmt, array_keys($urlPropertyNames))) {
                 $propertyNodes[] = $stmt;
             }
         }
 
-        // only apply the url if all named properties in the queryString property have been resolved
-        if (count($propertyNodes) < count($urlPropertyNames)) {
-            return null;
-        }
-
         foreach ($propertyNodes as $propertyNode) {
-            $this->addUrlAttributeToProperty($propertyNode);
+            $args = $urlPropertyNames[$this->getName($propertyNode)] ?? [];
+            $this->addUrlAttributeToProperty($propertyNode, $args);
         }
 
-        // remove the query string property
-        $node->stmts = array_filter($node->stmts, fn (Node $node) => $node !== $queryStringProperty);
+        // remove the query string property if now empty
+        $this->attemptQueryStringRemoval($node, $queryStringProperty);
 
         return $node;
     }
 
     /**
-     * @return string[]
+     * @return array<string, Node\Arg[]>|null
      */
-    private function findQueryStringProperties(Property $property): array
+    private function findQueryStringProperties(Property $property): ?array
     {
         if ($property->props === []) {
-            return [];
+            return null;
         }
 
         $array = $property->props[0]->default;
 
         if (! $array instanceof Array_ || $array->items === []) {
-            return [];
+            return null;
         }
 
         $properties = [];
+        $toFilter = [];
 
         foreach ($array->items as $item) {
             if ($item === null) {
                 continue;
             }
 
-            if ($item->key instanceof String_) {
-                $properties[] = $item->key->value;
+            if ($item->key instanceof String_ && $item->value instanceof Array_) {
+                $args = $this->processArrayOptionsIntoArgs($item->value);
+
+                if ($args === null) {
+                    continue;
+                }
+
+                $properties[$item->key->value] = $args;
+                $toFilter[] = $item;
 
                 continue;
             }
 
             if ($item->value instanceof String_) {
-                $properties[] = $item->value->value;
+                $properties[$item->value->value] = [];
+                $toFilter[] = $item;
             }
         }
 
-        if (count($properties) !== count($array->items)) {
-            return [];
+        if ($properties === []) {
+            return null;
         }
+
+        // we remove the array properties which will be converted
+        $array->items = array_filter(
+            $array->items,
+            fn (Node\Expr\ArrayItem|null $item): bool => !in_array($item, $toFilter, true),
+        );
 
         return $properties;
     }
 
-    private function addUrlAttributeToProperty(Property $property): void
+    /**
+     * @param Node\Arg[] $args
+     */
+    private function addUrlAttributeToProperty(Property $property, array $args): void
     {
         if ($this->phpAttributeAnalyzer->hasPhpAttribute($property, self::URL_ATTRIBUTE)) {
             return;
         }
 
-        $property->attrGroups[] = new AttributeGroup([new Attribute(new FullyQualified(self::URL_ATTRIBUTE))]);
+        $property->attrGroups[] = new AttributeGroup([
+            new Attribute(
+                new FullyQualified(self::URL_ATTRIBUTE), args: $args
+            )
+        ]);
+    }
+
+    /**
+     * @return Node\Arg[]|null
+     */
+    private function processArrayOptionsIntoArgs(Array_ $array): ?array
+    {
+        $args = [];
+
+        foreach ($array->items as $item) {
+            if ($item === null) {
+                continue;
+            }
+            if ($item->key instanceof String_ && $item->value instanceof Node\Scalar) {
+                if (in_array($item->key->value, ['except', 'as'], true)) {
+                    $args[] = new Node\Arg($item->value, name: new Node\Identifier($item->key->value));
+                }
+            }
+        }
+
+        if (count($args) !== count($array->items)) {
+            return null;
+        }
+
+        return $args;
+    }
+
+    private function attemptQueryStringRemoval(Class_ $node, Property $property): void
+    {
+        $array = $property->props[0]->default;
+
+        if ($array instanceof Array_ && $array->items === []) {
+            $node->stmts = array_filter($node->stmts, fn (Node $node) => $node !== $property);
+        }
     }
 }

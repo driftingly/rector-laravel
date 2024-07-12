@@ -2,7 +2,7 @@
 
 namespace RectorLaravel\Tests\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector\Fixture;
 
-class MyComponent
+class SkipNonComponent
 {
     public string $something = '';
 
@@ -12,21 +12,6 @@ class MyComponent
         'something',
         'another',
     ];
-}
-
-?>
------
-<?php
-
-namespace RectorLaravel\Tests\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector\Fixture;
-
-class MyComponent
-{
-    #[\Livewire\Attributes\Url]
-    public string $something = '';
-
-    #[\Livewire\Attributes\Url]
-    public string $another = '';
 }
 
 ?>
