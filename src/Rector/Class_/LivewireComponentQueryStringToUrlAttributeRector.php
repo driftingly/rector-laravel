@@ -3,10 +3,14 @@
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
@@ -22,7 +26,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector
 {
     private const URL_ATTRIBUTE = 'Livewire\Attributes\Url';
+
     private const COMPONENT_CLASS = 'Livewire\Component';
+
     private const QUERY_STRING_PROPERTY_NAME = 'queryString';
 
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer)
@@ -103,7 +109,7 @@ CODE_SAMPLE
         $propertyNodes = [];
 
         foreach ($node->stmts as $stmt) {
-            if ($stmt instanceof Property && $this->isNames($stmt, array_keys($urlPropertyNames))) {
+            if ($stmt instanceof Property && $this->isNames($stmt, array_keys((array) $urlPropertyNames))) {
                 $propertyNodes[] = $stmt;
             }
         }
@@ -168,14 +174,14 @@ CODE_SAMPLE
         // we remove the array properties which will be converted
         $array->items = array_filter(
             $array->items,
-            fn (Node\Expr\ArrayItem|null $item): bool => !in_array($item, $toFilter, true),
+            fn (?ArrayItem $arrayItem): bool => ! in_array($arrayItem, $toFilter, true),
         );
 
         return $properties;
     }
 
     /**
-     * @param Node\Arg[] $args
+     * @param  Node\Arg[]  $args
      */
     private function addUrlAttributeToProperty(Property $property, array $args): void
     {
@@ -186,7 +192,7 @@ CODE_SAMPLE
         $property->attrGroups[] = new AttributeGroup([
             new Attribute(
                 new FullyQualified(self::URL_ATTRIBUTE), args: $args
-            )
+            ),
         ]);
     }
 
@@ -201,10 +207,8 @@ CODE_SAMPLE
             if ($item === null) {
                 continue;
             }
-            if ($item->key instanceof String_ && $item->value instanceof Node\Scalar) {
-                if (in_array($item->key->value, ['except', 'as'], true)) {
-                    $args[] = new Node\Arg($item->value, name: new Node\Identifier($item->key->value));
-                }
+            if ($item->key instanceof String_ && $item->value instanceof Scalar && in_array($item->key->value, ['except', 'as'], true)) {
+                $args[] = new Arg($item->value, name: new Identifier($item->key->value));
             }
         }
 
@@ -215,12 +219,12 @@ CODE_SAMPLE
         return $args;
     }
 
-    private function attemptQueryStringRemoval(Class_ $node, Property $property): void
+    private function attemptQueryStringRemoval(Class_ $class, Property $property): void
     {
         $array = $property->props[0]->default;
 
         if ($array instanceof Array_ && $array->items === []) {
-            $node->stmts = array_filter($node->stmts, fn (Node $node) => $node !== $property);
+            $class->stmts = array_filter($class->stmts, fn (Node $node) => $node !== $property);
         }
     }
 }
