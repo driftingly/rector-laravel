@@ -13,6 +13,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $servicesMap = [
         'events' => 'Illuminate\Contracts\Events\Dispatcher',
+        'config' => 'Illuminate\Contracts\Config\Repository',
         'log' => 'Psr\Log\LoggerInterface',
         'router' => 'Illuminate\Routing\Router',
         'url' => 'Illuminate\Contracts\Routing\UrlGenerator',
