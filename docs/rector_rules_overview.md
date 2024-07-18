@@ -1,4 +1,4 @@
-# 61 Rules Overview
+# 62 Rules Overview
 
 ## AbortIfRector
 
@@ -671,6 +671,32 @@ Change method calls from `$this->json` to `$this->postJson,` `$this->putJson,` e
 ```diff
 -$this->json("POST", "/api/v1/users", $data);
 +$this->postJson("/api/v1/users", $data);
+```
+
+<br>
+
+## LivewireComponentQueryStringToUrlAttributeRector
+
+Converts the `$queryString` property of a Livewire component to use the Url Attribute
+
+- class: [`RectorLaravel\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector`](../src/Rector/Class_/LivewireComponentQueryStringToUrlAttributeRector.php)
+
+```diff
+ use Livewire\Component;
+
+ class MyComponent extends Component
+ {
++    #[\Livewire\Attributes\Url]
+     public string $something = '';
+
++    #[\Livewire\Attributes\Url]
+     public string $another = '';
+-
+-    protected $queryString = [
+-        'something',
+-        'another',
+-    ];
+ }
 ```
 
 <br>
