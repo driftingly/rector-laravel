@@ -13,6 +13,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $servicesMap = [
         'events' => 'Illuminate\Contracts\Events\Dispatcher',
+        'config' => 'Illuminate\Contracts\Config\Repository',
         'log' => 'Psr\Log\LoggerInterface',
         'router' => 'Illuminate\Routing\Router',
         'url' => 'Illuminate\Contracts\Routing\UrlGenerator',
@@ -47,7 +48,7 @@ return static function (RectorConfig $rectorConfig): void {
         'migrator' => 'Illuminate\Database\Migrations\Migrator',
         'migration.creator' => 'Illuminate\Database\Migrations\MigrationCreator',
         'composer' => 'Illuminate\Support\Composer',
-        'hash' => 'Illuminate\Contracts\Hashing\Hasher',
+        'hash' => 'Illuminate\Hashing\HashManager',
         'hash.driver' => 'Illuminate\Contracts\Hashing\Hasher',
         'mail.manager' => 'Illuminate\Contracts\Mail\Factory',
         'mailer' => 'Illuminate\Mail\Mailer',

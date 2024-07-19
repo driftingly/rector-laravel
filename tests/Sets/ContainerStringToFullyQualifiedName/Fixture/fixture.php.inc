@@ -53,7 +53,7 @@ app(\Illuminate\Cache\Repository::class);
 app(\Illuminate\Contracts\Filesystem\Factory::class);
 app(\Illuminate\Encryption\Encrypter::class);
 app(\Illuminate\Filesystem\Filesystem::class);
-app(\Illuminate\Contracts\Hashing\Hasher::class);
+app(\Illuminate\Hashing\HashManager::class);
 app(\Illuminate\Mail\Mailer::class);
 
 ?>

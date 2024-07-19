@@ -12,11 +12,11 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Broker\ClassNotFoundException;
-use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ClosureType;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Rector\StaticTypeMapper\ValueObject\Type\AliasedObjectType;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -25,6 +25,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
 {
+    private const string SHOULD_QUEUE_INTERFACE = 'Illuminate\Contracts\Queue\ShouldQueue';
+
+    private const string BUS_FACADE = 'Illuminate\Support\Facades\Bus';
+
+    private const string DISPATCHER_INTERFACE = 'Illuminate\Contracts\Bus\Dispatcher';
+
+    private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
+
     public function __construct(private readonly ReflectionProvider $reflectionProvider)
     {
     }
@@ -92,20 +100,17 @@ CODE_SAMPLE
 
     private function processCall(FuncCall|MethodCall|StaticCall $call): FuncCall|MethodCall|StaticCall|null
     {
-        static $shouldQueueType = new ObjectType('Illuminate\Contracts\Queue\ShouldQueue');
-
         if (! $call->args[0] instanceof Arg) {
             return null;
         }
 
+        static $objectType = new ObjectType(self::SHOULD_QUEUE_INTERFACE);
+        $argumentType = $this->getType($call->args[0]->value);
+
         if (
-            $this->getType($call->args[0]->value)->isSuperTypeOf(
-                $shouldQueueType
-            )->yes() ||
-            $this->isObjectType(
-                $call->args[0]->value,
-                $shouldQueueType
-            )
+            $argumentType->isSuperTypeOf($objectType)->yes() ||
+            $this->isObjectType($call->args[0]->value, $objectType) ||
+            $argumentType instanceof AliasedObjectType && $this->isSubclassOfShouldQueueInterface($argumentType)
         ) {
             return null;
         }
@@ -141,7 +146,7 @@ CODE_SAMPLE
                 $type->getClassName()
             );
 
-            if ($this->usesDispatchablesTrait($reflection)) {
+            if ($reflection->hasTraitUse(self::DISPATCHABLE_TRAIT)) {
                 return true;
             }
 
@@ -151,22 +156,26 @@ CODE_SAMPLE
         return false;
     }
 
-    private function usesDispatchablesTrait(ClassReflection $classReflection): bool
+    private function isSubclassOfShouldQueueInterface(AliasedObjectType $aliasedObjectType): bool
     {
-        return in_array(
-            'Illuminate\Foundation\Bus\Dispatchable',
-            array_keys($classReflection->getTraits(true)),
-            true
-        );
+        try {
+            $reflection = $this->reflectionProvider->getClass(
+                $aliasedObjectType->getFullyQualifiedName(),
+            );
+        } catch (ClassNotFoundException) {
+            return false;
+        }
+
+        return $reflection->isSubclassOf(self::SHOULD_QUEUE_INTERFACE);
     }
 
     private function isCallOnBusFacade(StaticCall $staticCall): bool
     {
-        return $this->isName($staticCall->class, 'Illuminate\Support\Facades\Bus');
+        return $this->isName($staticCall->class, self::BUS_FACADE);
     }
 
     private function isCallOnDispatcherContract(MethodCall $methodCall): bool
     {
-        return $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Contracts\Bus\Dispatcher'));
+        return $this->isObjectType($methodCall->var, new ObjectType(self::DISPATCHER_INTERFACE));
     }
 }
