@@ -64,7 +64,7 @@ CODE_SAMPLE
 
     private function updateFilterOrRejectCall(MethodCall $methodCall): ?MethodCall
     {
-        if (! $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Support\Collection'))) {
+        if (! $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Support\Enumerable'))) {
             return null;
         }
 
