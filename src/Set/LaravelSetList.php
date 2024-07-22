@@ -101,6 +101,11 @@ final class LaravelSetList implements SetListInterface
     /**
      * @var string
      */
+    final public const LARAVEL_COLLECTION = __DIR__ . '/../../config/sets/laravel-collection.php';
+
+    /**
+     * @var string
+     */
     final public const LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL = __DIR__ . '/../../config/sets/laravel-array-str-functions-to-static-call.php';
 
     /**
