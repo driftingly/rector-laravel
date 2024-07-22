@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\AvoidNegatedCollectionFilterOrRejectRector\AvoidNegatedCollectionFilterOrRejectRector
+ * @see \RectorLaravel\Tests\Rector\MethodCall\AvoidNegatedCollectionFilterOrRejectRector\AvoidNegatedCollectionFilterOrRejectRectorTest
  */
 final class AvoidNegatedCollectionFilterOrRejectRector extends AbstractRector
 {
