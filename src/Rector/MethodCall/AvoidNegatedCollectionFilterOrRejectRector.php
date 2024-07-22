@@ -23,7 +23,7 @@ final class AvoidNegatedCollectionFilterOrRejectRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Avoid negated conditionals in `filter()` by using `reject()`, or vice versa',
+            'Avoid negated conditionals in `filter()` by using `reject()`, or vice versa.',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
@@ -40,7 +40,7 @@ use Illuminate\Support\Collection;
 
 $collection = new Collection([0, 1, null, -1]);
 $collection->reject(fn (?int $number): bool => is_null($number)); // Avoid negation
-$collection->reject(fn (?int $number): bool => (bool) $number); // Ensures explicit cast
+$collection->reject(fn (?int $number): bool => (bool) $number); // Explicitly cast
 $collection->filter(fn (?int $number): bool => $number > 0); // Adds return type
 CODE_SAMPLE
                 ),

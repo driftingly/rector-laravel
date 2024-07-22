@@ -352,7 +352,7 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
 
 ## AvoidNegatedCollectionFilterOrRejectRector
 
-Avoid negated conditionals in `filter()` by using `reject()`, or vice versa
+Avoid negated conditionals in `filter()` by using `reject()`, or vice versa.
 
 - class: [`RectorLaravel\Rector\MethodCall\AvoidNegatedCollectionFilterOrRejectRector`](../src/Rector/MethodCall/AvoidNegatedCollectionFilterOrRejectRector.php)
 
