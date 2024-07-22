@@ -7,6 +7,7 @@ namespace RectorLaravel\Rector\MethodCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\BooleanNot;
+use PhpParser\Node\Expr\Cast\Bool_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
@@ -22,7 +23,7 @@ final class AvoidNegatedCollectionFilterOrRejectRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Avoid negated conditionals in `\Illuminate\Support\Collection::filter()` by using `reject()`, or vice versa',
+            'Avoid negated conditionals in `filter()` by using `reject()`, or vice versa',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
@@ -93,7 +94,12 @@ CODE_SAMPLE
                 ? 'reject'
                 : 'filter'
         );
-        $argValue->expr = $return->expr;
+
+        $returnExpr = $return->expr;
+        $argValue->expr = $this->getType($returnExpr)->isBoolean()->yes()
+            ? $returnExpr
+            : new Bool_($returnExpr);
+        $argValue->returnType = new Identifier('bool');
 
         return $methodCall;
     }
