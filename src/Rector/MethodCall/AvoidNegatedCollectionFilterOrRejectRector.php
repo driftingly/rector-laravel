@@ -95,10 +95,13 @@ CODE_SAMPLE
                 : 'filter'
         );
 
+        // Since negation implicitly casts to boolean, we need to replace it with an
+        // explicit cast - unless the value is already a boolean.
         $returnExpr = $return->expr;
         $argValue->expr = $this->getType($returnExpr)->isBoolean()->yes()
             ? $returnExpr
             : new Bool_($returnExpr);
+
         $argValue->returnType = new Identifier('bool');
 
         return $methodCall;
