@@ -29,17 +29,19 @@ final class AvoidNegatedCollectionFilterOrRejectRector extends AbstractRector
                     <<<'CODE_SAMPLE'
 use Illuminate\Support\Collection;
 
-(new Collection([0, 1, null, -1]))
-    ->filter(fn (?int $number): bool => ! is_null($number))
-    ->reject(fn (int $number): bool => ! $number > 0);
+$collection = new Collection([0, 1, null, -1]);
+$collection->filter(fn (?int $number): bool => ! is_null($number));
+$collection->filter(fn (?int $number): bool => ! $number);
+$collection->reject(fn (?int $number) => ! $number > 0);
 CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
 use Illuminate\Support\Collection;
 
-(new Collection([0, 1, null, -1]))
-    ->reject(fn (?int $number): bool => is_null($number))
-    ->filter(fn (int $number): bool => $number > 0);
+$collection = new Collection([0, 1, null, -1]);
+$collection->reject(fn (?int $number): bool => is_null($number)); // Avoid negation
+$collection->reject(fn (?int $number): bool => (bool) $number); // Ensures explicit cast
+$collection->filter(fn (?int $number): bool => $number > 0); // Adds return type
 CODE_SAMPLE
                 ),
             ]
