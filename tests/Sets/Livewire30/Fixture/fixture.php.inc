@@ -8,6 +8,10 @@ class FixtureComponent extends Component
 {
     #[\Livewire\Attributes\Rule]
     public $email;
+
+    public function getFooBarAttribute()
+    {
+    }
 }
 
 ?>
@@ -22,6 +26,11 @@ class FixtureComponent extends Component
 {
     #[\Livewire\Attributes\Validate]
     public $email;
+
+    #[\Livewire\Attributes\Computed]
+    public function fooBar()
+    {
+    }
 }
 
 ?>

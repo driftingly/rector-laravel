@@ -28,13 +28,13 @@ use Livewire\Component;
 class MyComponent extends Component
 {
     #[\Livewire\Attributes\Computed]
-    public function getFooBarAttribute()
+    public function fooBar()
     {
 
     }
 
     #[\Livewire\Attributes\Computed]
-    public function getBarFooAttribute()
+    public function barFoo()
     {
 
     }

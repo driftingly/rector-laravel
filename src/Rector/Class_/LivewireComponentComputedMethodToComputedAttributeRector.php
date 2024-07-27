@@ -5,6 +5,7 @@ namespace RectorLaravel\Rector\Class_;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -23,7 +24,7 @@ final class LivewireComponentComputedMethodToComputedAttributeRector extends Abs
 
     private const COMPONENT_CLASS = 'Livewire\Component';
 
-    private const METHOD_PATTERN = '/^get[\w]*Attribute$/';
+    private const METHOD_PATTERN = '/^get(?\'methodName\'[\w]*)Attribute$/';
 
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer)
     {
@@ -79,8 +80,14 @@ CODE_SAMPLE
             if (
                 $stmt instanceof ClassMethod &&
                 $stmt->isPublic() &&
-                (bool) preg_match(self::METHOD_PATTERN, $this->getName($stmt))) {
-                $this->addComputedAttributeToProperty($stmt);
+                (bool) preg_match(self::METHOD_PATTERN, $this->getName($stmt), $matches)) {
+                $methodName = lcfirst($matches['methodName']);
+
+                if ($this->methodExistsInClass($node, $methodName)) {
+                    continue;
+                }
+
+                $this->addComputedAttributeToClassMethodAndRename($stmt, $methodName);
                 $changes = true;
             }
         }
@@ -92,7 +99,7 @@ CODE_SAMPLE
         return $node;
     }
 
-    private function addComputedAttributeToProperty(ClassMethod $classMethod): void
+    private function addComputedAttributeToClassMethodAndRename(ClassMethod $classMethod, string $name): void
     {
         if ($this->phpAttributeAnalyzer->hasPhpAttribute($classMethod, self::COMPUTED_ATTRIBUTE)) {
             return;
@@ -103,5 +110,12 @@ CODE_SAMPLE
                 new FullyQualified(self::COMPUTED_ATTRIBUTE)
             ),
         ]);
+
+        $classMethod->name = new Identifier($name);
+    }
+
+    private function methodExistsInClass(Class_ $class, string $methodName): bool
+    {
+        return $this->getType($class)->hasMethod($methodName)->yes();
     }
 }
