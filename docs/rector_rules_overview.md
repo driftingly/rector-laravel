@@ -1,4 +1,4 @@
-# 62 Rules Overview
+# 63 Rules Overview
 
 ## AbortIfRector
 
@@ -671,6 +671,26 @@ Change method calls from `$this->json` to `$this->postJson,` `$this->putJson,` e
 ```diff
 -$this->json("POST", "/api/v1/users", $data);
 +$this->postJson("/api/v1/users", $data);
+```
+
+<br>
+
+## LivewireComponentComputedMethodToComputedAttributeRector
+
+Converts the computed methods of a Livewire component to use the Computed Attribute
+
+- class: [`RectorLaravel\Rector\Class_\LivewireComponentComputedMethodToComputedAttributeRector`](../src/Rector/Class_/LivewireComponentComputedMethodToComputedAttributeRector.php)
+
+```diff
+-use Livewire\Component;
+-
+ class MyComponent extends Component
+ {
++    #[\Livewire\Attributes\Url]
+     public function getFooBarAttribute()
+     {
+     }
+ }
 ```
 
 <br>
