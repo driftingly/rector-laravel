@@ -6,12 +6,12 @@ use Livewire\Component;
 
 class MyComponent extends Component
 {
-    private function getFooBarAttribute()
+    private function getFooBarProperty()
     {
 
     }
 
-    protected function getBarFooAttribute()
+    protected function getBarFooProperty()
     {
 
     }

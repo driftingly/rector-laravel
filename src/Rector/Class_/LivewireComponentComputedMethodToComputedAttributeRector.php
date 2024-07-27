@@ -24,7 +24,7 @@ final class LivewireComponentComputedMethodToComputedAttributeRector extends Abs
 
     private const COMPONENT_CLASS = 'Livewire\Component';
 
-    private const METHOD_PATTERN = '/^get(?\'methodName\'[\w]*)Attribute$/';
+    private const METHOD_PATTERN = '/^get(?\'methodName\'[\w]*)Property$/';
 
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer)
     {
@@ -41,7 +41,7 @@ use Livewire\Component;
 
 class MyComponent extends Component
 {
-    public function getFooBarAttribute()
+    public function getFooBarProperty()
     {
     }
 }
@@ -50,7 +50,7 @@ CODE_SAMPLE,
 class MyComponent extends Component
 {
     #[\Livewire\Attributes\Url]
-    public function getFooBarAttribute()
+    public function fooBar()
     {
     }
 }

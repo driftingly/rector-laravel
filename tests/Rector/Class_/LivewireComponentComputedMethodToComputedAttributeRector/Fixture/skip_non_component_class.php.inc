@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\Class_\LivewireComponentComputedMethodToCom
 
 class SkipNonComponent
 {
-    public function getBarFooAttribute()
+    public function getBarFooProperty()
     {
 
     }

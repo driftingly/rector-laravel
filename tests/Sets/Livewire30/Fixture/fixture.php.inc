@@ -9,7 +9,7 @@ class FixtureComponent extends Component
     #[\Livewire\Attributes\Rule]
     public $email;
 
-    public function getFooBarAttribute()
+    public function getFooBarProperty()
     {
     }
 }

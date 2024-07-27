@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class SkipIfMethodAlreadyExists extends Component
 {
-    public function getUserAttribute()
+    public function getUserProperty()
     {
 
     }
