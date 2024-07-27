@@ -47,9 +47,11 @@ class MyComponent extends Component
 }
 CODE_SAMPLE,
                     <<<'CODE_SAMPLE'
+use Livewire\Component;
+
 class MyComponent extends Component
 {
-    #[\Livewire\Attributes\Url]
+    #[\Livewire\Attributes\Computed]
     public function fooBar()
     {
     }

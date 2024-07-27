@@ -682,12 +682,13 @@ Converts the computed methods of a Livewire component to use the Computed Attrib
 - class: [`RectorLaravel\Rector\Class_\LivewireComponentComputedMethodToComputedAttributeRector`](../src/Rector/Class_/LivewireComponentComputedMethodToComputedAttributeRector.php)
 
 ```diff
--use Livewire\Component;
--
+ use Livewire\Component;
+
  class MyComponent extends Component
  {
-+    #[\Livewire\Attributes\Url]
-     public function getFooBarAttribute()
+-    public function getFooBarProperty()
++    #[\Livewire\Attributes\Computed]
++    public function fooBar()
      {
      }
  }
