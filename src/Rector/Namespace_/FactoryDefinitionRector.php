@@ -31,9 +31,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class FactoryDefinitionRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ModelFactoryNodeFactory $modelFactoryNodeFactory
-    ) {
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeFactory\ModelFactoryNodeFactory
+     */
+    private $modelFactoryNodeFactory;
+    public function __construct(ModelFactoryNodeFactory $modelFactoryNodeFactory)
+    {
+        $this->modelFactoryNodeFactory = $modelFactoryNodeFactory;
     }
 
     public function getRuleDefinition(): RuleDefinition

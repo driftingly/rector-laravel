@@ -23,29 +23,30 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DispatchToHelperFunctionsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {
+    /**
+     * @readonly
+     * @var \PHPStan\Reflection\ReflectionProvider
+     */
+    private $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
     }
-
     /**
      * @throws PoorDocumentationException
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition(
-            'Use the event or dispatch helpers instead of the static dispatch method.',
-            [
-                new CodeSample(
-                    'ExampleEvent::dispatch($email);',
-                    'event(new ExampleEvent($email));'
-                ),
-                new CodeSample(
-                    'ExampleJob::dispatch($email);',
-                    'dispatch(new ExampleJob($email));'
-                ),
-            ],
-        );
+        return new RuleDefinition('Use the event or dispatch helpers instead of the static dispatch method.', [
+            new CodeSample(
+                'ExampleEvent::dispatch($email);',
+                'event(new ExampleEvent($email));'
+            ),
+            new CodeSample(
+                'ExampleJob::dispatch($email);',
+                'dispatch(new ExampleJob($email));'
+            ),
+        ]);
     }
 
     /**
@@ -99,7 +100,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
             return $this->reflectionProvider->getClass(
                 $type->getClassName()
             );
-        } catch (ClassNotFoundException) {
+        } catch (ClassNotFoundException $exception) {
         }
 
         return null;
@@ -126,11 +127,8 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
             return null;
         }
 
-        return new FuncCall(
-            new Name($method),
-            [
-                new Arg(new New_(new FullyQualified($class), $staticCall->args)),
-            ],
-        );
+        return new FuncCall(new Name($method), [
+            new Arg(new New_(new FullyQualified($class), $staticCall->args)),
+        ]);
     }
 }
