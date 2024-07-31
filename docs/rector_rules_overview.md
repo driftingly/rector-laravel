@@ -1,4 +1,4 @@
-# 63 Rules Overview
+# 64 Rules Overview
 
 ## AbortIfRector
 
@@ -364,7 +364,7 @@ Avoid negated conditionals in `filter()` by using `reject()`, or vice versa.
 -$collection->filter(fn (?int $number): bool => ! $number);
 -$collection->reject(fn (?int $number) => ! $number > 0);
 +$collection->reject(fn (?int $number): bool => is_null($number)); // Avoid negation
-+$collection->reject(fn (?int $number): bool => (bool) $number); // Ensures explicit cast
++$collection->reject(fn (?int $number): bool => (bool) $number); // Explicitly cast
 +$collection->filter(fn (?int $number): bool => $number > 0); // Adds return type
 ```
 
