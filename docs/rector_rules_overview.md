@@ -695,6 +695,27 @@ Change method calls from `$this->json` to `$this->postJson,` `$this->putJson,` e
 
 <br>
 
+## LivewireComponentComputedMethodToComputedAttributeRector
+
+Converts the computed methods of a Livewire component to use the Computed Attribute
+
+- class: [`RectorLaravel\Rector\Class_\LivewireComponentComputedMethodToComputedAttributeRector`](../src/Rector/Class_/LivewireComponentComputedMethodToComputedAttributeRector.php)
+
+```diff
+ use Livewire\Component;
+
+ class MyComponent extends Component
+ {
+-    public function getFooBarProperty()
++    #[\Livewire\Attributes\Computed]
++    public function fooBar()
+     {
+     }
+ }
+```
+
+<br>
+
 ## LivewireComponentQueryStringToUrlAttributeRector
 
 Converts the `$queryString` property of a Livewire component to use the Url Attribute
