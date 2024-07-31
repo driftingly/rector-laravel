@@ -350,6 +350,26 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
 
 <br>
 
+## AvoidNegatedCollectionFilterOrRejectRector
+
+Avoid negated conditionals in `filter()` by using `reject()`, or vice versa.
+
+- class: [`RectorLaravel\Rector\MethodCall\AvoidNegatedCollectionFilterOrRejectRector`](../src/Rector/MethodCall/AvoidNegatedCollectionFilterOrRejectRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+ $collection = new Collection([0, 1, null, -1]);
+-$collection->filter(fn (?int $number): bool => ! is_null($number));
+-$collection->filter(fn (?int $number): bool => ! $number);
+-$collection->reject(fn (?int $number) => ! $number > 0);
++$collection->reject(fn (?int $number): bool => is_null($number)); // Avoid negation
++$collection->reject(fn (?int $number): bool => (bool) $number); // Ensures explicit cast
++$collection->filter(fn (?int $number): bool => $number > 0); // Adds return type
+```
+
+<br>
+
 ## CallOnAppArrayAccessToStandaloneAssignRector
 
 Replace magical call on `$this->app["something"]` to standalone type assign variable
