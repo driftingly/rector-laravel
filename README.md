@@ -18,24 +18,31 @@ Install the `RectorLaravel` package as dependency:
 composer require driftingly/rector-laravel --dev
 ```
 
-## Use Sets
+## Automate Laravel Upgrades
 
-To add a set to your config, use `RectorLaravel\Set\LaravelSetList` class and pick one of the constants:
+To add a set to your config, use `RectorLaravel\Set\LaravelLevelSetList` and pick the constant that matches your target version.
+Sets for higher versions include sets for lower versions.
 
 ```php
-<?php
-
-declare(strict_types=1);
-
-use Rector\Config\RectorConfig;
-use RectorLaravel\Set\LaravelSetList;
-
-return RectorConfig::configure()
+return Rector\Config\RectorConfig::configure()
     ->withSets([
-        LaravelSetList::LARAVEL_110
+        RectorLaravel\Set\LaravelLevelSetList::LARAVEL_110,
     ]);
 ```
-## Available Sets
+
+## Additional Sets
+
+The other sets do not correlate directly to Laravel upgrades, but can be used to improve different aspects of your code.
+Use `RectorLaravel\Set\LaravelSetList` to add sets.
+
+```php
+return Rector\Config\RectorConfig::configure()
+    ->withSets([
+        RectorLaravel\Set\LaravelSetList::LARAVEL_CODE_QUALITY,
+        RectorLaravel\Set\LaravelSetList::LARAVEL_COLLECTION,
+        ...
+    ]);
+```
 
 | Set                                                                                                                                                                                         | Purpose                                                                                                                                                                                                                                          |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
