@@ -25,22 +25,34 @@ To add a set to your config, use `RectorLaravel\Set\LaravelLevelSetList` and pic
 Sets for higher versions include sets for lower versions.
 
 ```php
-return Rector\Config\RectorConfig::configure()
+<?php declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+use RectorLaravel\Set\LaravelLevelSetList;
+
+return RectorConfig::configure()
     ->withSets([
-        RectorLaravel\Set\LaravelLevelSetList::LARAVEL_110,
+        LaravelLevelSetList::UP_TO_LARAVEL_110,
     ]);
 ```
 
+The sets in `RectorLaravel\Set\LaravelSetList` only contain changes related to a specific version upgrade.
+For example, the rules in `LaravelSetList::LARAVEL_110` apply when upgrading from Laravel 10 to Laravel 11.
+
 ## Additional Sets
 
-The other sets do not correlate directly to Laravel upgrades, but can be used to improve different aspects of your code.
-Use `RectorLaravel\Set\LaravelSetList` to add sets.
+To improve different aspects of your code, use the sets in `RectorLaravel\Set\LaravelSetList`.
 
 ```php
+<?php declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+use RectorLaravel\Set\LaravelSetList;
+
 return Rector\Config\RectorConfig::configure()
     ->withSets([
-        RectorLaravel\Set\LaravelSetList::LARAVEL_CODE_QUALITY,
-        RectorLaravel\Set\LaravelSetList::LARAVEL_COLLECTION,
+        LaravelSetList::LARAVEL_CODE_QUALITY,
+        LaravelSetList::LARAVEL_COLLECTION,
         ...
     ]);
 ```
