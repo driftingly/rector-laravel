@@ -91,12 +91,7 @@ final class LaravelSetList implements SetListInterface
     /**
      * @var string
      */
-    final public const LARAVEL_STATIC_TO_INJECTION = __DIR__ . '/../../config/sets/laravel-static-to-injection.php';
-
-    /**
-     * @var string
-     */
-    final public const LARAVEL_CODE_QUALITY = __DIR__ . '/../../config/sets/laravel-code-quality.php';
+    final public const LARAVEL_ARRAYACCESS_TO_METHOD_CALL = __DIR__ . '/../../config/sets/laravel-arrayaccess-to-method-call.php';
 
     /**
      * @var string
@@ -106,17 +101,12 @@ final class LaravelSetList implements SetListInterface
     /**
      * @var string
      */
-    final public const LARAVEL_LEGACY_FACTORIES_TO_CLASSES = __DIR__ . '/../../config/sets/laravel-legacy-factories-to-classes.php';
+    final public const LARAVEL_CODE_QUALITY = __DIR__ . '/../../config/sets/laravel-code-quality.php';
 
     /**
      * @var string
      */
-    final public const LARAVEL_FACADE_ALIASES_TO_FULL_NAMES = __DIR__ . '/../../config/sets/laravel-facade-aliases-to-full-names.php';
-
-    /**
-     * @var string
-     */
-    final public const LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER = __DIR__ . '/../../config/sets/laravel-eloquent-magic-method-to-query-builder.php';
+    final public const LARAVEL_COLLECTION = __DIR__ . '/../../config/sets/laravel-collection.php';
 
     /**
      * @var string
@@ -126,10 +116,25 @@ final class LaravelSetList implements SetListInterface
     /**
      * @var string
      */
+    final public const LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER = __DIR__ . '/../../config/sets/laravel-eloquent-magic-method-to-query-builder.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_FACADE_ALIASES_TO_FULL_NAMES = __DIR__ . '/../../config/sets/laravel-facade-aliases-to-full-names.php';
+
+    /**
+     * @var string
+     */
     final public const LARAVEL_IF_HELPERS = __DIR__ . '/../../config/sets/laravel-if-helpers.php';
 
     /**
      * @var string
      */
-    final public const LARAVEL_ARRAYACCESS_TO_METHOD_CALL = __DIR__ . '/../../config/sets/laravel-arrayaccess-to-method-call.php';
+    final public const LARAVEL_LEGACY_FACTORIES_TO_CLASSES = __DIR__ . '/../../config/sets/laravel-legacy-factories-to-classes.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_STATIC_TO_INJECTION = __DIR__ . '/../../config/sets/laravel-static-to-injection.php';
 }

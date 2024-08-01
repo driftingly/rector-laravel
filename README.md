@@ -1,4 +1,5 @@
 # Rector Rules for Laravel
+
 [![Tests](https://github.com/driftingly/rector-laravel/actions/workflows/tests.yaml/badge.svg)](https://github.com/driftingly/rector-laravel/actions/workflows/tests.yaml)
 [![Code Analysis](https://github.com/driftingly/rector-laravel/actions/workflows/code_analysis.yaml/badge.svg)](https://github.com/driftingly/rector-laravel/actions/workflows/code_analysis.yaml)
 [![Packagist Downloads](https://img.shields.io/packagist/dm/driftingly/rector-laravel)](https://packagist.org/packages/driftingly/rector-laravel/stats)
@@ -12,10 +13,10 @@ This package is a [Rector](https://github.com/rectorphp/rector) extension develo
 
 Rules for additional first party packages are included as well e.g. Cashier and Livewire.
 
-Install the `RectorLaravel` package as dependency:
+Install as a dev dependency:
 
 ```bash
-composer require driftingly/rector-laravel --dev
+composer require --dev driftingly/rector-laravel
 ```
 
 ## Automate Laravel Upgrades
@@ -46,15 +47,16 @@ return Rector\Config\RectorConfig::configure()
 
 | Set                                                                                                                                                                                         | Purpose                                                                                                                                                                                                                                          |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [LaravelSetList::LARAVEL_ARRAYACCESS_TO_METHOD_CALL](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-arrayaccess-to-method-call.php)                             | Converts uses of things like `$app['config']` to `$app->make('config')`.                                                                                                                                                                         |
 | [LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-array-str-functions-to-static-call.php)              | Converts most string and array helpers into Str and Arr Facades' static calls.<br/>https://laravel.com/docs/11.x/facades#facades-vs-helper-functions                                                                                             |
 | [LaravelSetList::LARAVEL_CODE_QUALITY](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-code-quality.php)                                                         | Replaces magical call on `$this->app["something"]` to standalone variable with PHPDocs.                                                                                                                                                          |
+| [LaravelSetList::LARAVEL_COLLECTION](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-collection.php)                                                             | Improves the usage of Laravel Collections by using simpler, more efficient, or more readable methods.                                                                                                                                            |
 | [LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-container-string-to-fully-qualified-name.php) | Changes the string or class const used for a service container make call.<br/>https://laravel.com/docs/11.x/container#the-make-method                                                                                                            |
 | [LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-eloquent-magic-method-to-query-builder.php)     | Transforms magic method calls on Eloquent Models into corresponding Query Builder method calls.<br/>https://laravel.com/docs/11.x/eloquent                                                                                                       |
 | [LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-facade-aliases-to-full-names.php)                         | Replaces Facade aliases with full Facade names.<br/>https://laravel.com/docs/11.x/facades#facade-class-reference                                                                                                                                 |
 | [LaravelSetList::LARAVEL_IF_HELPERS](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-if-helpers.php)                                                             | Replaces `abort()`, `report()`, `throw` statements inside conditions with `abort_if()`, `report_if()`, `throw_if()` function calls.<br/>https://laravel.com/docs/11.x/helpers#method-abort-if                                                    |
 | [LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-legacy-factories-to-classes.php)                           | Migrates Eloquent legacy model factories (with closures) into class based factories.<br/>https://laravel.com/docs/8.x/releases#model-factory-classes                                                                                             |
 | [LaravelSetList::LARAVEL_STATIC_TO_INJECTION](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-static-to-injection.php)                                           | Replaces Laravel's Facades with Dependency Injection.<br/>https://tomasvotruba.com/blog/2019/03/04/how-to-turn-laravel-from-static-to-dependency-injection-in-one-day/<br/>https://laravel.com/docs/11.x/facades#facades-vs-dependency-injection |
-| [LaravelSetList::LARAVEL_ARRAYACCESS_TO_METHOD_CALL](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-arrayaccess-to-method-call.php)                             | Converts uses of things like `$app['config']` to `$app->make('config')`.                                                                                                                                                                         |
 
 ## Contributors
 

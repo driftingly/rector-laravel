@@ -1,4 +1,4 @@
-# 62 Rules Overview
+# 64 Rules Overview
 
 ## AbortIfRector
 
@@ -350,6 +350,26 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
 
 <br>
 
+## AvoidNegatedCollectionFilterOrRejectRector
+
+Avoid negated conditionals in `filter()` by using `reject()`, or vice versa.
+
+- class: [`RectorLaravel\Rector\MethodCall\AvoidNegatedCollectionFilterOrRejectRector`](../src/Rector/MethodCall/AvoidNegatedCollectionFilterOrRejectRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+ $collection = new Collection([0, 1, null, -1]);
+-$collection->filter(fn (?int $number): bool => ! is_null($number));
+-$collection->filter(fn (?int $number): bool => ! $number);
+-$collection->reject(fn (?int $number) => ! $number > 0);
++$collection->reject(fn (?int $number): bool => is_null($number)); // Avoid negation
++$collection->reject(fn (?int $number): bool => (bool) $number); // Explicitly cast
++$collection->filter(fn (?int $number): bool => $number > 0); // Adds return type
+```
+
+<br>
+
 ## CallOnAppArrayAccessToStandaloneAssignRector
 
 Replace magical call on `$this->app["something"]` to standalone type assign variable
@@ -671,6 +691,27 @@ Change method calls from `$this->json` to `$this->postJson,` `$this->putJson,` e
 ```diff
 -$this->json("POST", "/api/v1/users", $data);
 +$this->postJson("/api/v1/users", $data);
+```
+
+<br>
+
+## LivewireComponentComputedMethodToComputedAttributeRector
+
+Converts the computed methods of a Livewire component to use the Computed Attribute
+
+- class: [`RectorLaravel\Rector\Class_\LivewireComponentComputedMethodToComputedAttributeRector`](../src/Rector/Class_/LivewireComponentComputedMethodToComputedAttributeRector.php)
+
+```diff
+ use Livewire\Component;
+
+ class MyComponent extends Component
+ {
+-    public function getFooBarProperty()
++    #[\Livewire\Attributes\Computed]
++    public function fooBar()
+     {
+     }
+ }
 ```
 
 <br>
