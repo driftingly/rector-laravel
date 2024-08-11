@@ -1,4 +1,4 @@
-# 64 Rules Overview
+# 65 Rules Overview
 
 ## AbortIfRector
 
@@ -390,6 +390,25 @@ Replace magical call on `$this->app["something"]` to standalone type assign vari
 +        /** @var \Illuminate\Validation\Factory $validationFactory */
 +        $validationFactory = $this->app['validator'];
 +        $validator = $validationFactory->make('...');
+     }
+ }
+```
+
+<br>
+
+## CarbonSetTestNowToTravelToRector
+
+Use the travelTo method instead of the Carbon's setTestNow method.
+
+- class: [`RectorLaravel\Rector\StaticCall\CarbonSetTestNowToTravelToRector`](../src/Rector/StaticCall/CarbonSetTestNowToTravelToRector.php)
+
+```diff
+ class SomeTest extends TestCase
+ {
+     public function test()
+     {
+-        Carbon::setTestNow('2024-08-11');
++        $this->travelTo('2024-08-11');
      }
  }
 ```
