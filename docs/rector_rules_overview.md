@@ -398,11 +398,14 @@ Replace magical call on `$this->app["something"]` to standalone type assign vari
 
 ## CarbonSetTestNowToTravelToRector
 
-Use the travelTo method instead of the Carbon's setTestNow method.
+Use the `$this->travelTo()` method in Laravel's `TestCase` class instead of the `Carbon::setTestNow()` method.
 
 - class: [`RectorLaravel\Rector\StaticCall\CarbonSetTestNowToTravelToRector`](../src/Rector/StaticCall/CarbonSetTestNowToTravelToRector.php)
 
 ```diff
+ use Illuminate\Support\Carbon;
+ use Illuminate\Foundation\Testing\TestCase;
+
  class SomeTest extends TestCase
  {
      public function test()

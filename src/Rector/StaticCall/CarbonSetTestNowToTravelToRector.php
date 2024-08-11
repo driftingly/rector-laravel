@@ -24,10 +24,13 @@ final class CarbonSetTestNowToTravelToRector extends AbstractScopeAwareRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Use the travelTo method instead of the Carbon\'s setTestNow method.',
+            'Use the `$this->travelTo()` method in Laravel\'s `TestCase` class instead of the `Carbon::setTestNow()` method.',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
+use Illuminate\Support\Carbon;
+use Illuminate\Foundation\Testing\TestCase;
+
 class SomeTest extends TestCase
 {
     public function test()
@@ -38,6 +41,9 @@ class SomeTest extends TestCase
 CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
+use Illuminate\Support\Carbon;
+use Illuminate\Foundation\Testing\TestCase;
+
 class SomeTest extends TestCase
 {
     public function test()
