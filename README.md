@@ -49,7 +49,7 @@ To improve different aspects of your code, use the sets in `RectorLaravel\Set\La
 use Rector\Config\RectorConfig;
 use RectorLaravel\Set\LaravelSetList;
 
-return Rector\Config\RectorConfig::configure()
+return RectorConfig::configure()
     ->withSets([
         LaravelSetList::LARAVEL_CODE_QUALITY,
         LaravelSetList::LARAVEL_COLLECTION,
