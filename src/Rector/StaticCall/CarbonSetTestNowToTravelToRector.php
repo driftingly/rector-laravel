@@ -3,6 +3,7 @@
 namespace RectorLaravel\Rector\StaticCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
@@ -87,7 +88,15 @@ CODE_SAMPLE
             return null;
         }
 
-        return $this->nodeFactory->createMethodCall(new Variable('this'), 'travelTo', $node->args);
+        $args = $node->args === []
+            ? [new Arg($this->nodeFactory->createNull())]
+            : $node->args;
+
+        return $this->nodeFactory->createMethodCall(
+            new Variable('this'),
+            'travelTo',
+            $args,
+        );
     }
 
     private function isCarbon(Node $node): bool
