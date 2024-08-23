@@ -1,15 +1,14 @@
 <?php
 
-namespace RectorLaravel\Tests\Sets\Laravel90;
-
+namespace RectorLaravel\Tests\Sets\Laravel90\Fixture;
 
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailer;
 use Illuminate\Mail\MailManager;
 use Illuminate\Mail\Message;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
-use RectorLaravel\Tests\Sets\Laravel90\Source\Collection;
 
 (new Collection())->reduceWithKeys(fn () => null);
 (new Collection())->reduceMany(fn () => null);
@@ -27,16 +26,15 @@ use RectorLaravel\Tests\Sets\Laravel90\Source\Collection;
 -----
 <?php
 
-namespace RectorLaravel\Tests\Sets\Laravel90;
-
+namespace RectorLaravel\Tests\Sets\Laravel90\Fixture;
 
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailer;
 use Illuminate\Mail\MailManager;
 use Illuminate\Mail\Message;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
-use RectorLaravel\Tests\Sets\Laravel90\Source\Collection;
 
 (new Collection())->reduce(fn () => null);
 (new Collection())->reduceSpread(fn () => null);

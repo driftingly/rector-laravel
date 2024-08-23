@@ -5,7 +5,7 @@ declare(strict_types=1);
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\MixedType;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
-use Rector\Arguments\ValueObject\ArgumentAdder;
+use Rector\Arguments\ValueObject\ArgumentAdderWithoutDefaultValue;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
@@ -21,12 +21,11 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/commit/4d228d6e9dbcbd4d97c45665980d8b8c685b27e6
     $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdder(
+        ->ruleWithConfiguration(ArgumentAdderRector::class, [new ArgumentAdderWithoutDefaultValue(
             'Illuminate\Contracts\Database\Eloquent\Castable',
             'castUsing',
             0,
             'arguments',
-            [], // TODO: Add argument without default value
             new ArrayType(new MixedType, new MixedType)
         ),
         ]);
