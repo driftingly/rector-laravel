@@ -2,6 +2,6 @@
 
 namespace RectorLaravel\Tests\Rector\FuncCall\TypeHintTappableCallRector\Fixture;
 
-throw_if(true, \Exception::class, 'message');
+nottap('test', function ($string) {});
 
 ?>
