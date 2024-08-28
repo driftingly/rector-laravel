@@ -1,4 +1,4 @@
-# 65 Rules Overview
+# 66 Rules Overview
 
 ## AbortIfRector
 
@@ -1227,6 +1227,26 @@ Change static `validate()` method to `$request->validate()`
 +        $validatedData = $request->validate(['some_attribute' => 'required']);
      }
  }
+```
+
+<br>
+
+## ReverseConditionableMethodCallRector
+
+Reverse conditionable method calls
+
+- class: [`RectorLaravel\Rector\MethodCall\ReverseConditionableMethodCallRector`](../src/Rector/MethodCall/ReverseConditionableMethodCallRector.php)
+
+```diff
+-$conditionable->when(!$condition, function () {});
++$conditionable->unless($true, function () {});
+```
+
+<br>
+
+```diff
+-$conditionable->unless(!$condition, function () {});
++$conditionable->when($condition, function () {});
 ```
 
 <br>
