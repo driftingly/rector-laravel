@@ -28,7 +28,7 @@ class ReverseConditionableMethodCallRector extends AbstractRector
 $conditionable->when(!$condition, function () {});
 CODE_SAMPLE,
                     <<<'CODE_SAMPLE'
-$conditionable->unless($true, function () {});
+$conditionable->unless($condition, function () {});
 CODE_SAMPLE
                 ),
                 new CodeSample(<<<'CODE_SAMPLE'

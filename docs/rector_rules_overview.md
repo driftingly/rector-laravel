@@ -1239,7 +1239,7 @@ Reverse conditionable method calls
 
 ```diff
 -$conditionable->when(!$condition, function () {});
-+$conditionable->unless($true, function () {});
++$conditionable->unless($condition, function () {});
 ```
 
 <br>
