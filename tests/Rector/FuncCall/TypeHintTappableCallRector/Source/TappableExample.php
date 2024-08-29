@@ -2,7 +2,9 @@
 
 namespace RectorLaravel\Tests\Rector\FuncCall\TypeHintTappableCallRector\Source;
 
+use Illuminate\Support\Traits\Tappable;
+
 class TappableExample
 {
-    use \Illuminate\Support\Traits\Tappable;
+    use Tappable;
 }
