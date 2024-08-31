@@ -1231,6 +1231,26 @@ Change static `validate()` method to `$request->validate()`
 
 <br>
 
+## ReverseConditionableMethodCallRector
+
+Reverse conditionable method calls
+
+- class: [`RectorLaravel\Rector\MethodCall\ReverseConditionableMethodCallRector`](../src/Rector/MethodCall/ReverseConditionableMethodCallRector.php)
+
+```diff
+-$conditionable->when(!$condition, function () {});
++$conditionable->unless($condition, function () {});
+```
+
+<br>
+
+```diff
+-$conditionable->unless(!$condition, function () {});
++$conditionable->when($condition, function () {});
+```
+
+<br>
+
 ## RouteActionCallableRector
 
 Use PHP callable syntax instead of string syntax for controller route declarations.
