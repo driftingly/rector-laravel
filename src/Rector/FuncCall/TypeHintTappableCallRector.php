@@ -80,12 +80,16 @@ CODE_SAMPLE
         /** @var Closure $closure */
         $closure = $node->getArgs()[1]->value;
 
+        if ($closure->getParams() === []) {
+            return null;
+        }
+
         $this->refactorParameter($closure->getParams()[0], $node->getArgs()[0]->value);
 
         return $node;
     }
 
-    private function refactorParameter(Param $param, Node $node): bool
+    private function refactorParameter(Param $param, Node $node): void
     {
         $nodePhpStanType = $this->nodeTypeResolver->getType($node);
 
@@ -93,14 +97,12 @@ CODE_SAMPLE
         if ($param->type instanceof Node) {
             $currentParamType = $this->staticTypeMapper->mapPhpParserNodePHPStanType($param->type);
             if ($this->typeComparator->areTypesEqual($currentParamType, $nodePhpStanType)) {
-                return false;
+                return;
             }
         }
 
         $paramTypeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($nodePhpStanType, TypeKind::PARAM);
         $param->type = $paramTypeNode;
-
-        return true;
     }
 
     private function refactorMethodCall(MethodCall $methodCall): ?MethodCall
@@ -115,6 +117,10 @@ CODE_SAMPLE
 
         /** @var Closure $closure */
         $closure = $methodCall->getArgs()[0]->value;
+
+        if ($closure->getParams() === []) {
+            return null;
+        }
 
         $this->refactorParameter($closure->getParams()[0], $methodCall->var);
 
