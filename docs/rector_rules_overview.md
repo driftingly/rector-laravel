@@ -1326,6 +1326,26 @@ Change if throw to throw_if
 
 <br>
 
+## TypeHintTappableCallRector
+
+Automatically type hints your tappable closures
+
+- class: [`RectorLaravel\Rector\FuncCall\TypeHintTappableCallRector`](../src/Rector/FuncCall/TypeHintTappableCallRector.php)
+
+```diff
+-tap($collection, function ($collection) {}
++tap($collection, function (Collection $collection) {}
+```
+
+<br>
+
+```diff
+-(new Collection)->tap(function ($collection) {}
++(new Collection)->tap(function (Collection $collection) {}
+```
+
+<br>
+
 ## UnifyModelDatesWithCastsRector
 
 Unify Model `$dates` property with `$casts`
