@@ -68,8 +68,9 @@ CODE_SAMPLE
 
     /**
      * @param  Expression  $node
+     * @return \PhpParser\Node|mixed[]|int|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node)
     {
         $newNode = $this->getNewNode($node);
 

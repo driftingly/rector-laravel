@@ -20,14 +20,13 @@ class ThrowIfAndThrowUnlessExceptionsToUseClassStringRector extends AbstractRect
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('changes use of a new throw instance to class string', [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
+            new CodeSample(<<<'CODE_SAMPLE'
 throw_if($condition, new MyException('custom message'));
-CODE_SAMPLE,
-                <<<'CODE_SAMPLE'
+CODE_SAMPLE
+, <<<'CODE_SAMPLE'
 throw_if($condition, MyException::class, 'custom message');
-CODE_SAMPLE,
-            ),
+CODE_SAMPLE
+),
         ]);
     }
 
@@ -61,10 +60,7 @@ CODE_SAMPLE,
 
         // convert the class to a class string
         $node->args[1] = new Arg(new ClassConstFetch($class, 'class'));
-        $node->args = [
-            ...$node->args,
-            ...$exception->getArgs(),
-        ];
+        $node->args = array_merge(is_array($node->args) ? $node->args : iterator_to_array($node->args), $exception->getArgs());
 
         return $node;
     }

@@ -25,15 +25,20 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector
 {
+    /**
+     * @readonly
+     * @var \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer
+     */
+    private $phpAttributeAnalyzer;
     private const URL_ATTRIBUTE = 'Livewire\Attributes\Url';
 
     private const COMPONENT_CLASS = 'Livewire\Component';
 
     private const QUERY_STRING_PROPERTY_NAME = 'queryString';
 
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer)
+    public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer)
     {
-
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -55,7 +60,8 @@ class MyComponent extends Component
         'another',
     ];
 }
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                     <<<'CODE_SAMPLE'
 use Livewire\Component;
 
@@ -172,10 +178,9 @@ CODE_SAMPLE
         }
 
         // we remove the array properties which will be converted
-        $array->items = array_filter(
-            $array->items,
-            fn (?ArrayItem $arrayItem): bool => ! in_array($arrayItem, $toFilter, true),
-        );
+        $array->items = array_filter($array->items, function (?ArrayItem $arrayItem) use ($toFilter) : bool {
+            return ! in_array($arrayItem, $toFilter, true);
+        });
 
         return $properties;
     }
@@ -191,7 +196,7 @@ CODE_SAMPLE
 
         $property->attrGroups[] = new AttributeGroup([
             new Attribute(
-                new FullyQualified(self::URL_ATTRIBUTE), args: $args
+                new FullyQualified(self::URL_ATTRIBUTE), $args
             ),
         ]);
     }
@@ -208,7 +213,7 @@ CODE_SAMPLE
                 continue;
             }
             if ($item->key instanceof String_ && $item->value instanceof Scalar && in_array($item->key->value, ['except', 'as'], true)) {
-                $args[] = new Arg($item->value, name: new Identifier($item->key->value));
+                $args[] = new Arg($item->value, false, false, [], new Identifier($item->key->value));
             }
         }
 
@@ -224,7 +229,9 @@ CODE_SAMPLE
         $array = $property->props[0]->default;
 
         if ($array instanceof Array_ && $array->items === []) {
-            $class->stmts = array_filter($class->stmts, fn (Node $node) => $node !== $property);
+            $class->stmts = array_filter($class->stmts, function (Node $node) use ($property) {
+                return $node !== $property;
+            });
         }
     }
 }
