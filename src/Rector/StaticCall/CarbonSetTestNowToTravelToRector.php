@@ -24,11 +24,9 @@ final class CarbonSetTestNowToTravelToRector extends AbstractScopeAwareRector
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition(
-            'Use the `$this->travelTo()` method in Laravel\'s `TestCase` class instead of the `Carbon::setTestNow()` method.',
-            [
-                new CodeSample(
-                    <<<'CODE_SAMPLE'
+        return new RuleDefinition('Use the `$this->travelTo()` method in Laravel\'s `TestCase` class instead of the `Carbon::setTestNow()` method.', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
 use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\TestCase;
 
@@ -40,8 +38,8 @@ class SomeTest extends TestCase
     }
 }
 CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
+                ,
+                <<<'CODE_SAMPLE'
 use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\TestCase;
 
@@ -53,9 +51,8 @@ class SomeTest extends TestCase
     }
 }
 CODE_SAMPLE
-                ),
-            ],
-        );
+            ),
+        ]);
     }
 
     /**
@@ -92,11 +89,7 @@ CODE_SAMPLE
             ? [new Arg($this->nodeFactory->createNull())]
             : $node->args;
 
-        return $this->nodeFactory->createMethodCall(
-            new Variable('this'),
-            'travelTo',
-            $args,
-        );
+        return $this->nodeFactory->createMethodCall(new Variable('this'), 'travelTo', $args);
     }
 
     private function isCarbon(Node $node): bool

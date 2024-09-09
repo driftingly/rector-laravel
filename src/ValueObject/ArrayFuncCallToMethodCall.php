@@ -7,8 +7,28 @@ namespace RectorLaravel\ValueObject;
 use Rector\Validation\RectorAssert;
 use RectorLaravel\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface;
 
-final readonly class ArrayFuncCallToMethodCall implements ArgumentFuncCallToMethodCallInterface
+final class ArrayFuncCallToMethodCall implements ArgumentFuncCallToMethodCallInterface
 {
+    /**
+     * @var non-empty-string
+     * @readonly
+     */
+    private $function;
+    /**
+     * @var non-empty-string
+     * @readonly
+     */
+    private $class;
+    /**
+     * @var non-empty-string
+     * @readonly
+     */
+    private $arrayMethod;
+    /**
+     * @var non-empty-string
+     * @readonly
+     */
+    private $nonArrayMethod;
     /**
      * @param  non-empty-string  $function
      * @param  non-empty-string  $class
@@ -16,11 +36,15 @@ final readonly class ArrayFuncCallToMethodCall implements ArgumentFuncCallToMeth
      * @param  non-empty-string  $nonArrayMethod
      */
     public function __construct(
-        private string $function,
-        private string $class,
-        private string $arrayMethod,
-        private string $nonArrayMethod
+        string $function,
+        string $class,
+        string $arrayMethod,
+        string $nonArrayMethod
     ) {
+        $this->function = $function;
+        $this->class = $class;
+        $this->arrayMethod = $arrayMethod;
+        $this->nonArrayMethod = $nonArrayMethod;
         RectorAssert::className($class);
         RectorAssert::functionName($function);
         RectorAssert::methodName($arrayMethod);
