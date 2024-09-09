@@ -9,7 +9,7 @@ use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
@@ -48,15 +48,15 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [MethodCall::class, StaticCall::class, ClassMethod::class];
+        return [MethodCall::class, StaticCall::class, ClassLike::class];
     }
 
     /**
-     * @param  MethodCall|StaticCall|ClassMethod  $node
+     * @param  MethodCall|StaticCall|ClassLike  $node
      */
-    public function refactor(Node $node): MethodCall|StaticCall|ClassMethod|null
+    public function refactor(Node $node): MethodCall|StaticCall|ClassLike|null
     {
-        if ($node instanceof ClassMethod) {
+        if ($node instanceof ClassLike) {
             return $this->refactorClassMethod($node);
         }
 
@@ -122,42 +122,47 @@ CODE_SAMPLE
         return $this->processValidationRules($rulesArgument) ? $node : null;
     }
 
-    private function refactorClassMethod(ClassMethod $classMethod): ?ClassMethod
+    private function refactorClassMethod(ClassLike $classLike): ?ClassLike
     {
-        if (! $this->isObjectType($classMethod, new ObjectType('Illuminate\Foundation\Http\FormRequest'))) {
+        if (! $this->isObjectType($classLike, new ObjectType('Illuminate\Foundation\Http\FormRequest'))) {
             return null;
         }
 
-        if (! $this->isName($classMethod, 'rules')) {
-            return null;
+        $hasChanged = false;
+        foreach ($classLike->getMethods() as $classMethod) {
+            if (! $this->isName($classMethod, 'rules')) {
+                continue;
+            }
+
+            $changed = false;
+            $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$changed, &$hasChanged): Return_|int|null {
+                if ($changed) {
+                    $hasChanged = true;
+
+                    return NodeTraverser::STOP_TRAVERSAL;
+                }
+
+                if (! $node instanceof Return_) {
+                    return null;
+                }
+
+                if (! $node->expr instanceof Array_) {
+                    return null;
+                }
+
+                if ($this->processValidationRules($node->expr)) {
+                    $hasChanged = true;
+                    $changed = true;
+
+                    return $node;
+                }
+
+                return null;
+            });
         }
 
-        $changed = false;
-
-        $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$changed): Return_|int|null {
-            if ($changed) {
-                return NodeTraverser::STOP_TRAVERSAL;
-            }
-
-            if (! $node instanceof Return_) {
-                return null;
-            }
-
-            if (! $node->expr instanceof Array_) {
-                return null;
-            }
-
-            if ($this->processValidationRules($node->expr)) {
-                $changed = true;
-
-                return $node;
-            }
-
-            return null;
-        });
-
-        if ($changed) {
-            return $classMethod;
+        if ($hasChanged) {
+            return $classLike;
         }
 
         return null;

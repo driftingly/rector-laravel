@@ -8,7 +8,7 @@ use PhpParser\BuilderHelpers;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\ClassLike;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use RectorLaravel\ValueObject\AddArgumentDefaultValue;
@@ -70,40 +70,49 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [ClassMethod::class];
+        return [ClassLike::class];
     }
 
     /**
-     * @param  ClassMethod  $node
+     * @param  ClassLike  $node
      */
-    public function refactor(Node $node): ClassMethod
+    public function refactor(Node $node): ?ClassLike
     {
+        $hasChanged = false;
         foreach ($this->addedArguments as $addedArgument) {
             if (! $this->nodeTypeResolver->isObjectType($node, $addedArgument->getObjectType())) {
                 continue;
             }
 
-            if (! $this->isName($node->name, $addedArgument->getMethod())) {
-                continue;
+            foreach ($node->getMethods() as $classMethod) {
+                if (! $this->isName($classMethod->name, $addedArgument->getMethod())) {
+                    continue;
+                }
+
+                if (! isset($classMethod->params[$addedArgument->getPosition()])) {
+                    continue;
+                }
+
+                $position = $addedArgument->getPosition();
+                $param = $classMethod->params[$position];
+
+                if ($param->default instanceof Expr) {
+                    continue;
+                }
+
+                $classMethod->params[$position] = new Param($param->var, BuilderHelpers::normalizeValue(
+                    $addedArgument->getDefaultValue()
+                ));
+
+                $hasChanged = true;
             }
-
-            if (! isset($node->params[$addedArgument->getPosition()])) {
-                continue;
-            }
-
-            $position = $addedArgument->getPosition();
-            $param = $node->params[$position];
-
-            if ($param->default instanceof Expr) {
-                continue;
-            }
-
-            $node->params[$position] = new Param($param->var, BuilderHelpers::normalizeValue(
-                $addedArgument->getDefaultValue()
-            ));
         }
 
-        return $node;
+        if ($hasChanged) {
+            return $node;
+        }
+
+        return null;
     }
 
     /**
