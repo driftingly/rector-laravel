@@ -10,7 +10,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassLike;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
@@ -139,6 +138,7 @@ CODE_SAMPLE
             $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$changed, &$hasChanged): Return_|int|null {
                 if ($changed) {
                     $hasChanged = true;
+
                     return NodeTraverser::STOP_TRAVERSAL;
                 }
 
