@@ -1,0 +1,68 @@
+<?php
+
+namespace RectorLaravel\Tests\Sets;
+
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\TestCase;
+use Rector\Set\Contract\SetInterface;
+use RectorLaravel\Set\LaravelSetList;
+use RectorLaravel\Set\LaravelSetProvider;
+
+final class LaravelSetProviderTest extends TestCase
+{
+    private const LARAVEL_VERSION_SETS = [
+        LaravelSetList::LARAVEL_50,
+        LaravelSetList::LARAVEL_51,
+        LaravelSetList::LARAVEL_52,
+        LaravelSetList::LARAVEL_53,
+        LaravelSetList::LARAVEL_54,
+        LaravelSetList::LARAVEL_55,
+        LaravelSetList::LARAVEL_56,
+        LaravelSetList::LARAVEL_57,
+        LaravelSetList::LARAVEL_58,
+        LaravelSetList::LARAVEL_60,
+        LaravelSetList::LARAVEL_70,
+        LaravelSetList::LARAVEL_80,
+        LaravelSetList::LARAVEL_90,
+        LaravelSetList::LARAVEL_100,
+        LaravelSetList::LARAVEL_110,
+    ];
+
+    public function testItProvidesSets(): void
+    {
+        $provider = new LaravelSetProvider();
+
+        Assert::assertContainsOnlyInstancesOf(
+            SetInterface::class,
+            $provider->provide()
+        );
+    }
+
+    public function testItReturnsUniqueSets(): void
+    {
+        $provider = new LaravelSetProvider();
+
+        $sets = $provider->provide();
+
+        $uniqueSets = array_unique(array_map(fn (SetInterface $set) => $set->getSetFilePath(), $sets));
+
+        Assert::assertCount(count($sets), $uniqueSets);
+    }
+
+    public function testItProvidesAllLaravelVersions(): void
+    {
+        $provider = new LaravelSetProvider();
+
+        $sets = $provider->provide();
+
+        $sets = array_filter(
+            array_map(
+                fn (SetInterface $set) => $set->getSetFilePath(),
+                $sets
+            ),
+            fn(string $filePath) => in_array($filePath, self::LARAVEL_VERSION_SETS, true),
+        );
+
+        Assert::assertCount(count(self::LARAVEL_VERSION_SETS), $sets);
+    }
+}
