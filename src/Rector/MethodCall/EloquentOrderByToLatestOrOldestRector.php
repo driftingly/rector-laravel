@@ -26,12 +26,12 @@ class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements Co
     /**
      * @var string
      */
-    final public const ALLOWED_PATTERNS = 'allowed_patterns';
+    public const ALLOWED_PATTERNS = 'allowed_patterns';
 
     /**
      * @var string[]
      */
-    private array $allowedPatterns = [];
+    private $allowedPatterns = [];
 
     public function getRuleDefinition(): RuleDefinition
     {
