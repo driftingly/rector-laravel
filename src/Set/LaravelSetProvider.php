@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\Set;
 
+use Rector\Set\Contract\SetInterface;
 use Rector\Set\Contract\SetProviderInterface;
 use Rector\Set\ValueObject\Set;
 use RectorLaravel\Set\Packages\Livewire\LivewireSetList;
@@ -38,7 +39,7 @@ final class LaravelSetProvider implements SetProviderInterface
     ];
 
     /**
-     * @return \Rector\Set\Contract\SetInterface[]
+     * @return SetInterface[]
      */
     public function provide(): array
     {

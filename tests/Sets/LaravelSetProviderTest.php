@@ -30,19 +30,19 @@ final class LaravelSetProviderTest extends TestCase
 
     public function testItProvidesSets(): void
     {
-        $provider = new LaravelSetProvider();
+        $laravelSetProvider = new LaravelSetProvider();
 
         Assert::assertContainsOnlyInstancesOf(
             SetInterface::class,
-            $provider->provide()
+            $laravelSetProvider->provide()
         );
     }
 
     public function testItReturnsUniqueSets(): void
     {
-        $provider = new LaravelSetProvider();
+        $laravelSetProvider = new LaravelSetProvider();
 
-        $sets = $provider->provide();
+        $sets = $laravelSetProvider->provide();
 
         $uniqueSets = array_unique(array_map(fn (SetInterface $set) => $set->getSetFilePath(), $sets));
 
@@ -51,16 +51,16 @@ final class LaravelSetProviderTest extends TestCase
 
     public function testItProvidesAllLaravelVersions(): void
     {
-        $provider = new LaravelSetProvider();
+        $laravelSetProvider = new LaravelSetProvider();
 
-        $sets = $provider->provide();
+        $sets = $laravelSetProvider->provide();
 
         $sets = array_filter(
             array_map(
                 fn (SetInterface $set) => $set->getSetFilePath(),
                 $sets
             ),
-            fn(string $filePath) => in_array($filePath, self::LARAVEL_VERSION_SETS, true),
+            fn (string $filePath) => in_array($filePath, self::LARAVEL_VERSION_SETS, true),
         );
 
         Assert::assertCount(count(self::LARAVEL_VERSION_SETS), $sets);
