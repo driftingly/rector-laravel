@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\Set;
 
+use Rector\Set\Contract\SetInterface;
 use Rector\Set\Contract\SetProviderInterface;
 use Rector\Set\ValueObject\Set;
 use RectorLaravel\Set\Packages\Livewire\LivewireSetList;
@@ -37,6 +38,9 @@ final class LaravelSetProvider implements SetProviderInterface
         LaravelSetList::LARAVEL_110,
     ];
 
+    /**
+     * @return SetInterface[]
+     */
     public function provide(): array
     {
         return [
@@ -45,27 +49,15 @@ final class LaravelSetProvider implements SetProviderInterface
                 'array/str func to static calls',
                 LaravelSetList::ARRAY_STR_FUNCTIONS_TO_STATIC_CALL
             ),
-            new Set(self::GROUP_NAME, 'Code quality', LaravelSetList::LARAVEL_CODE_QUALITY),
+            new Set(
+                self::GROUP_NAME,
+                'Code quality',
+                LaravelSetList::LARAVEL_CODE_QUALITY
+            ),
             new Set(
                 self::GROUP_NAME,
                 'Container strings to FQN types',
                 LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME,
-            ),
-            new Set(
-                'Laravel Code Quality',
-                'array/str functions to static calls',
-                LaravelSetList::ARRAY_STR_FUNCTIONS_TO_STATIC_CALL
-            ),
-            new Set(self::GROUP_NAME, 'Code quality', LaravelSetList::LARAVEL_CODE_QUALITY),
-            new Set(
-                self::GROUP_NAME,
-                'Container strings to FQN types',
-                LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME,
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Code Quality for Laravel',
-                LaravelSetList::LARAVEL_CODE_QUALITY,
             ),
             new Set(
                 self::GROUP_NAME,
