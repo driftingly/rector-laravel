@@ -17,6 +17,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
 {
+    /**
+     * @var string[]
+     */
+    protected array $methodsToReplace = [
+        'assertSee' => 'assertSeeHtml',
+        'assertDontSee' => 'assertDontSeeHtml',
+        'assertSeeInOrder' => 'assertSeeHtmlInOrder',
+    ];
+
     public function __construct(
         private readonly ValueResolver $valueResolver
     ) {
@@ -60,15 +69,9 @@ final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
             return null;
         }
 
-        $methodsToReplace = [
-            'assertSee' => 'assertSeeHtml',
-            'assertDontSee' => 'assertDontSeeHtml',
-            'assertSeeInOrder' => 'assertSeeHtmlInOrder',
-        ];
-
         $methodCallName = (string) $this->getName($node->name);
 
-        if (! array_key_exists($methodCallName, $methodsToReplace)) {
+        if (! array_key_exists($methodCallName, $this->methodsToReplace)) {
             return null;
         }
 
@@ -82,7 +85,7 @@ final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
 
         return $this->nodeFactory->createMethodCall(
             $node->var,
-            $methodsToReplace[$methodCallName],
+            $this->methodsToReplace[$methodCallName],
             [$node->getArgs()[0]]
         );
     }

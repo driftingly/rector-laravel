@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\AssertStatusToAssertMethodRector
 
 use Illuminate\Testing\TestResponse;
 
-class FixtureWithHtmlEscapeTrueOrMissing
+class FixtureWithOtherMethodNames
 {
     public function testSeeHtml(TestResponse $response)
     {

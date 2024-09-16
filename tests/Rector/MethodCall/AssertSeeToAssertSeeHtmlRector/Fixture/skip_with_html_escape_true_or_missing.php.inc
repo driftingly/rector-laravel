@@ -10,7 +10,13 @@ class FixtureWithHtmlEscapeTrueOrMissing
     {
         $response->assertSee("<li>foo</li>", true);
         $response->assertSee("<li>foo</li>", 1);
-        $response->assertDontSee("<li>bar</li>");
+        $response->assertSee("<li>bar</li>");
+        $response->assertDontSeeHtml("<li>bar</li>", true);
+        $response->assertDontSeeHtml("<li>bar</li>", 1);
+        $response->assertDontSeeHtml("<li>bar</li>");
+        $response->assertSeeInOrder(["<li>foo</li>", "<li>bar</li>", "<li>baz</li>"], true);
+        $response->assertSeeInOrder(["<li>foo</li>", "<li>bar</li>", "<li>baz</li>"], 1);
+        $response->assertSeeInOrder(["<li>foo</li>", "<li>bar</li>", "<li>baz</li>"]);
     }
 }
 ?>
