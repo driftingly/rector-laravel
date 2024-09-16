@@ -19,9 +19,7 @@ final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
 {
     public function __construct(
         private readonly ValueResolver $valueResolver
-
-    )
-    {
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -40,7 +38,7 @@ final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
                 new CodeSample(
                     '$response->assertSeeInOrder(["<li>foo</li>", "<li>bar</li>"], false);',
                     '$response->assertSeeHtmlInOrder(["<li>foo</li>", "<li>bar</li>"]);'
-                )
+                ),
             ]
         );
     }

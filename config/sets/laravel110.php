@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector;
+use RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector;
 use RectorLaravel\Rector\MethodCall\RefactorBlueprintGeometryColumnsRector;
 
 // see https://laravel.com/docs/11.x/upgrade
@@ -15,4 +16,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/pull/49634
     $rectorConfig->rule(RefactorBlueprintGeometryColumnsRector::class);
+
+    // https://github.com/laravel/framework/pull/52285
+    $rectorConfig->rule(AssertSeeToAssertSeeHtmlRector::class);
 };
