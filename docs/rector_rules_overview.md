@@ -1,4 +1,4 @@
-# 66 Rules Overview
+# 68 Rules Overview
 
 ## AbortIfRector
 
@@ -233,6 +233,33 @@ Move help facade-like function calls to constructor injection
 +        $viewFactory = $this->viewFactory;
      }
  }
+```
+
+<br>
+
+## AssertSeeToAssertSeeHtmlRector
+
+Replace assertSee with assertSeeHtml when testing HTML with escape set to false
+
+- class: [`RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector`](../src/Rector/MethodCall/AssertSeeToAssertSeeHtmlRector.php)
+
+```diff
+-$response->assertSee("<li>foo</li>", false);
++$response->assertSeeHtml("<li>foo</li>");
+```
+
+<br>
+
+```diff
+-$response->assertDontSee("<li>foo</li>", false);
++$response->assertDontSeeHtml("<li>foo</li>");
+```
+
+<br>
+
+```diff
+-$response->assertSeeInOrder(["<li>foo</li>", "<li>bar</li>"], false);
++$response->assertSeeHtmlInOrder(["<li>foo</li>", "<li>bar</li>"]);
 ```
 
 <br>
