@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Set;
 
-use Rector\Set\Contract\SetListInterface;
-
-final class LaravelLevelSetList implements SetListInterface
+final class LaravelLevelSetList
 {
     /**
      * @var string

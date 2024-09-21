@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Set\Packages\Cashier;
 
-use Rector\Set\Contract\SetListInterface;
-
-final class CashierSetList implements SetListInterface
+final class CashierSetList
 {
     /**
      * @var string
