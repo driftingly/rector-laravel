@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name\FullyQualified;
-use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -55,7 +55,11 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $this->isObjectType($node, new ObjectType('Illuminate\Routing\ResponseFactory'))) {
+        if (! $node->var instanceof FuncCall) {
+            return null;
+        }
+
+        if (count($node->var->args) > 0) {
             return null;
         }
 

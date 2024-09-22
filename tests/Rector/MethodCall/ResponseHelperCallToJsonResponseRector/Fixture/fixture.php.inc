@@ -8,6 +8,11 @@ class FixtureWithResponseHelperCalls
     {
         return response()->json();
     }
+
+    public function testVariableWithSameNameIsNotChanged()
+    {
+        return $response->json();
+    }
 }
 
 ?>
@@ -21,6 +26,11 @@ class FixtureWithResponseHelperCalls
     public function testNoArguments()
     {
         return new \Illuminate\Http\JsonResponse();
+    }
+
+    public function testVariableWithSameNameIsNotChanged()
+    {
+        return $response->json();
     }
 }
 
