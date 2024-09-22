@@ -20,8 +20,6 @@ return static function (RectorConfig $rectorConfig): void {
     $classesToApplyTo = [
         'Illuminate\Database\Eloquent\Model',
         'Illuminate\Contracts\Database\Query\Builder',
-        'Illuminate\Contracts\Database\Eloquent\Builder',
-        'Illuminate\Database\Eloquent\Builder',
         'Illuminate\Database\Query\Builder',
     ];
 
