@@ -26,11 +26,11 @@ namespace RectorLaravel\Tests\Sets\TypeDeclaration\ServiceContainer\Fixture;
     return new \stdClass();
 });
 
-\Illuminate\Support\Facades\App::extends('class', function ($instance, $app) {
+\Illuminate\Support\Facades\App::extends(\Illuminate\Support\Collection::class, function ($instance, $app) {
     return new \stdClass();
 });
 
-\Illuminate\Support\Facades\App::resolving('class', function ($instance, $app) {
+\Illuminate\Support\Facades\App::resolving(\Illuminate\Support\Collection::class, function ($instance, $app) {
     return new \stdClass();
 });
 
@@ -64,11 +64,11 @@ namespace RectorLaravel\Tests\Sets\TypeDeclaration\ServiceContainer\Fixture;
     return new \stdClass();
 });
 
-\Illuminate\Support\Facades\App::extends('class', function ($instance, \Illuminate\Contracts\Foundation\Application $app) {
+\Illuminate\Support\Facades\App::extends(\Illuminate\Support\Collection::class, function (\Illuminate\Support\Collection $instance, \Illuminate\Contracts\Foundation\Application $app) {
     return new \stdClass();
 });
 
-\Illuminate\Support\Facades\App::resolving('class', function ($instance, \Illuminate\Contracts\Foundation\Application $app) {
+\Illuminate\Support\Facades\App::resolving(\Illuminate\Support\Collection::class, function (\Illuminate\Support\Collection $instance, \Illuminate\Contracts\Foundation\Application $app) {
     return new \stdClass();
 });
 

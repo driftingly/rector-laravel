@@ -51,4 +51,22 @@ return static function (RectorConfig $rectorConfig): void {
         AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector::class,
         $ruleConfiguration
     );
+
+    $rectorConfig->ruleWithConfiguration(
+        \Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromArgRector::class,
+        [
+            new \Rector\TypeDeclaration\ValueObject\AddClosureParamTypeFromArg(
+                'Illuminate\Support\Facades\App',
+                'extends',
+                1,
+                0,
+            ),
+            new \Rector\TypeDeclaration\ValueObject\AddClosureParamTypeFromArg(
+                'Illuminate\Support\Facades\App',
+                'resolving',
+                1,
+                0,
+            )
+        ]
+    );
 };
