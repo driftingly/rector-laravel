@@ -1,5 +1,7 @@
 <?php
 
+use Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromArgRector;
+use Rector\TypeDeclaration\ValueObject\AddClosureParamTypeFromArg;
 use PHPStan\Type\ObjectType;
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddParamTypeForFunctionLikeWithinCallLikeArgDeclarationRector;
@@ -53,20 +55,20 @@ return static function (RectorConfig $rectorConfig): void {
     );
 
     $rectorConfig->ruleWithConfiguration(
-        \Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromArgRector::class,
+        AddClosureParamTypeFromArgRector::class,
         [
-            new \Rector\TypeDeclaration\ValueObject\AddClosureParamTypeFromArg(
+            new AddClosureParamTypeFromArg(
                 'Illuminate\Support\Facades\App',
                 'extends',
                 1,
                 0,
             ),
-            new \Rector\TypeDeclaration\ValueObject\AddClosureParamTypeFromArg(
+            new AddClosureParamTypeFromArg(
                 'Illuminate\Support\Facades\App',
                 'resolving',
                 1,
                 0,
-            )
+            ),
         ]
     );
 };

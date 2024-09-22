@@ -40,6 +40,7 @@ class AddParamTypeForFunctionLikeWithinCallLikeArgArrayValuesDeclarationRector e
      * @var AddParamTypeForFunctionLikeWithinCallLikeArgDeclaration[]
      */
     private $addParamTypeForFunctionLikeParamDeclarations = [];
+
     /**
      * @var bool
      */
