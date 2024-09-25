@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Scalar\LNumber;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -212,46 +210,31 @@ CODE_SAMPLE
         $arg = $methodCall->getArgs()[0];
         $argValue = $arg->value;
 
-        if (! $argValue instanceof LNumber && ! $argValue instanceof ClassConstFetch) {
+        $type = $this->getType($argValue);
+
+        if (! $type->isInteger()->yes()) {
             return null;
         }
 
-        if ($argValue instanceof LNumber) {
-            $replacementMethod = match ($argValue->value) {
-                200 => 'assertOk',
-                204 => 'assertNoContent',
-                401 => 'assertUnauthorized',
-                403 => 'assertForbidden',
-                404 => 'assertNotFound',
-                405 => 'assertMethodNotAllowed',
-                410 => 'assertGone',
-                422 => 'assertUnprocessable',
-                500 => 'assertInternalServerError',
-                503 => 'assertServiceUnavailable',
-                default => null
-            };
-        } else {
-            if (! in_array($this->getName($argValue->class), [
-                'Illuminate\Http\Response',
-                'Symfony\Component\HttpFoundation\Response',
-            ], true)) {
-                return null;
-            }
+        $value = ($type->getConstantScalarValues()[0] ?? null);
 
-            $replacementMethod = match ($this->getName($argValue->name)) {
-                'HTTP_OK' => 'assertOk',
-                'HTTP_NO_CONTENT' => 'assertNoContent',
-                'HTTP_UNAUTHORIZED' => 'assertUnauthorized',
-                'HTTP_FORBIDDEN' => 'assertForbidden',
-                'HTTP_NOT_FOUND' => 'assertNotFound',
-                'HTTP_METHOD_NOT_ALLOWED' => 'assertMethodNotAllowed',
-                'HTTP_GONE' => 'assertGone',
-                'HTTP_UNPROCESSABLE_ENTITY' => 'assertUnprocessable',
-                'HTTP_INTERNAL_SERVER_ERROR' => 'assertInternalServerError',
-                'HTTP_SERVICE_UNAVAILABLE' => 'assertServiceUnavailable',
-                default => null
-            };
+        if ($value === null) {
+            return null;
         }
+
+        $replacementMethod = match ($value) {
+            200 => 'assertOk',
+            204 => 'assertNoContent',
+            401 => 'assertUnauthorized',
+            403 => 'assertForbidden',
+            404 => 'assertNotFound',
+            405 => 'assertMethodNotAllowed',
+            410 => 'assertGone',
+            422 => 'assertUnprocessable',
+            500 => 'assertInternalServerError',
+            503 => 'assertServiceUnavailable',
+            default => null
+        };
 
         if ($replacementMethod === null) {
             return null;
