@@ -273,103 +273,27 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
 ```diff
  class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
  {
-     public function testOk()
+     public function testFoo()
      {
 -        $this->get('/')->assertStatus(200);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_OK);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_OK);
-+        $this->get('/')->assertOk();
-+        $this->get('/')->assertOk();
-+        $this->get('/')->assertOk();
-     }
-
-     public function testNoContent()
-     {
 -        $this->get('/')->assertStatus(204);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_NO_CONTENT);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NO_CONTENT);
-+        $this->get('/')->assertNoContent();
-+        $this->get('/')->assertNoContent();
-+        $this->get('/')->assertNoContent();
-     }
-
-     public function testUnauthorized()
-     {
 -        $this->get('/')->assertStatus(401);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_UNAUTHORIZED);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNAUTHORIZED);
-+        $this->get('/')->assertUnauthorized();
-+        $this->get('/')->assertUnauthorized();
-+        $this->get('/')->assertUnauthorized();
-     }
-
-     public function testForbidden()
-     {
 -        $this->get('/')->assertStatus(403);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_FORBIDDEN);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
-+        $this->get('/')->assertForbidden();
-+        $this->get('/')->assertForbidden();
-+        $this->get('/')->assertForbidden();
-     }
-
-     public function testNotFound()
-     {
 -        $this->get('/')->assertStatus(404);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_NOT_FOUND);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
-+        $this->get('/')->assertNotFound();
-+        $this->get('/')->assertNotFound();
-+        $this->get('/')->assertNotFound();
-     }
-
-     public function testMethodNotAllowed()
-     {
 -        $this->get('/')->assertStatus(405);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_METHOD_NOT_ALLOWED);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_METHOD_NOT_ALLOWED);
-+        $this->get('/')->assertMethodNotAllowed();
-+        $this->get('/')->assertMethodNotAllowed();
-+        $this->get('/')->assertMethodNotAllowed();
-     }
-
-     public function testUnprocessableEntity()
-     {
 -        $this->get('/')->assertStatus(422);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY);
-+        $this->get('/')->assertUnprocessable();
-+        $this->get('/')->assertUnprocessable();
-+        $this->get('/')->assertUnprocessable();
-     }
-
-     public function testGone()
-     {
 -        $this->get('/')->assertStatus(410);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_GONE);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_GONE);
-+        $this->get('/')->assertGone();
-+        $this->get('/')->assertGone();
-+        $this->get('/')->assertGone();
-     }
-
-     public function testInternalServerError()
-     {
 -        $this->get('/')->assertStatus(500);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
-+        $this->get('/')->assertInternalServerError();
-+        $this->get('/')->assertInternalServerError();
-+        $this->get('/')->assertInternalServerError();
-     }
-
-     public function testServiceUnavailable()
-     {
 -        $this->get('/')->assertStatus(503);
--        $this->get('/')->assertStatus(\Illuminate\Http\Response::HTTP_SERVICE_UNAVAILABLE);
--        $this->get('/')->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_SERVICE_UNAVAILABLE);
-+        $this->get('/')->assertServiceUnavailable();
-+        $this->get('/')->assertServiceUnavailable();
++        $this->get('/')->assertOk();
++        $this->get('/')->assertNoContent();
++        $this->get('/')->assertUnauthorized();
++        $this->get('/')->assertForbidden();
++        $this->get('/')->assertNotFound();
++        $this->get('/')->assertMethodNotAllowed();
++        $this->get('/')->assertUnprocessable();
++        $this->get('/')->assertGone();
++        $this->get('/')->assertInternalServerError();
 +        $this->get('/')->assertServiceUnavailable();
      }
  }
