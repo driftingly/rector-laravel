@@ -1360,3 +1360,16 @@ Convert string validation rules into arrays for Laravel's Validator.
 ```
 
 <br>
+
+## ResponseHelperCallToJsonResponseRector
+
+Change `response()->json()` to `new JsonResponse()`
+
+- class: [`RectorLaravel\Rector\MethodCall\ResponseHelperCallToJsonResponseRector`](../src/Rector/MethodCall/ResponseHelperCallToJsonResponseRector.php)
+
+```diff
+-    return response()->json(['message' => 'Hello World']);
++    return new \Illuminate\Http\JsonResponse(['message' => 'Hello World']);
+```
+
+<br>
