@@ -6,52 +6,52 @@ class FixtureWithIlluminateTest
 {
     public function testOk(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_OK);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_OK);
     }
 
     public function testNoContent(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NO_CONTENT);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_NO_CONTENT);
     }
 
     public function testForbidden(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_FORBIDDEN);
     }
 
     public function testNotFound(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_NOT_FOUND);
     }
 
     public function testMethodNotAllowed(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_METHOD_NOT_ALLOWED);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_METHOD_NOT_ALLOWED);
     }
 
     public function testUnauthorized(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNAUTHORIZED);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_UNAUTHORIZED);
     }
 
     public function testUnprocessableEntity(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function testGone(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_GONE);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_GONE);
     }
 
     public function testInternalServerError(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     public function testServiceUnavailable(\Illuminate\Testing\TestResponse $response)
     {
-        $response->assertStatus(\Symfony\Component\HttpFoundation\Response::HTTP_SERVICE_UNAVAILABLE);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_SERVICE_UNAVAILABLE);
     }
 }
 
