@@ -82,6 +82,8 @@ Thank you everyone who works so hard on improving this package:
 - [@driftingly](https://github.com/driftingly)
 - [All Contributors](https://github.com/driftingly/rector-laravel/graphs/contributors)
 
+A special thank you to [Caneco](https://github.com/caneco) for designing the logo!
+
 ## Hire The Rector Team
 
 Rector is a tool that [we develop](https://getrector.com/) and share for free, so anyone can automate their refactoring. But not everyone has dozens of hours to understand complexity of abstract-syntax-tree in their own time. **That's why we provide commercial support - to save your time**.
