@@ -1,4 +1,4 @@
-<img src="https://repository-images.githubusercontent.com/349255032/ad79180f-da72-4503-9a17-da2712355f9c" style="width: 100%" />
+<img src="./banner.png" style="width: 100%" />
 
 # Rector Rules for Laravel
 
