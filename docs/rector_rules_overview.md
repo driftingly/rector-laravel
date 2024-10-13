@@ -978,6 +978,8 @@ refactors calls with the pre Laravel 11 methods for blueprint geometry columns
 
 It will removes the dump data just like dd or dump functions from the code.`
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector`](../src/Rector/FuncCall/RemoveDumpDataDeadCodeRector.php)
 
 ```diff
