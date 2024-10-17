@@ -78,19 +78,8 @@ CODE_SAMPLE
             return null;
         }
 
-        return new Return_(new New_(new Class_(
-            null,
-            [
-                'flags' => $node->flags,
-                'extends' => $node->extends,
-                'implements' => $node->implements,
-                'stmts' => $node->stmts,
-                'attrGroups' => $node->attrGroups,
-            ],
-            [
-                'startLine' => $node->getStartLine(),
-                'endLine' => $node->getEndLine(),
-            ]
-        )));
+        $node->name = null;
+
+        return new Return_(new New_($node));
     }
 }
