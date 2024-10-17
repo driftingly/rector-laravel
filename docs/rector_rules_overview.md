@@ -1,4 +1,4 @@
-# 68 Rules Overview
+# 69 Rules Overview
 
 ## AbortIfRector
 
@@ -1184,6 +1184,19 @@ Change static `validate()` method to `$request->validate()`
 
 <br>
 
+## ResponseHelperCallToJsonResponseRector
+
+Use new JsonResponse instead of `response()->json()`
+
+- class: [`RectorLaravel\Rector\MethodCall\ResponseHelperCallToJsonResponseRector`](../src/Rector/MethodCall/ResponseHelperCallToJsonResponseRector.php)
+
+```diff
+-response()->json(['key' => 'value']);
++return new JsonResponse(['key' => 'value']);
+```
+
+<br>
+
 ## ReverseConditionableMethodCallRector
 
 Reverse conditionable method calls
@@ -1359,19 +1372,6 @@ Convert string validation rules into arrays for Laravel's Validator.
 -    'field' => 'required|nullable|string|max:255',
 +    'field' => ['required', 'nullable', 'string', 'max:255'],
  ]);
-```
-
-<br>
-
-## ResponseHelperCallToJsonResponseRector
-
-Change `response()->json()` to `new JsonResponse()`
-
-- class: [`RectorLaravel\Rector\MethodCall\ResponseHelperCallToJsonResponseRector`](../src/Rector/MethodCall/ResponseHelperCallToJsonResponseRector.php)
-
-```diff
--    return response()->json(['message' => 'Hello World']);
-+    return new \Illuminate\Http\JsonResponse(['message' => 'Hello World']);
 ```
 
 <br>
