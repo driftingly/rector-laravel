@@ -86,6 +86,11 @@ final class LaravelSetProvider implements SetProviderInterface
             ),
             new Set(
                 self::GROUP_NAME,
+                'Apply type hints to Laravel',
+                LaravelSetList::LARAVEL_TYPE_DECLARATIONS,
+            ),
+            new Set(
+                self::GROUP_NAME,
                 'Livewire 3.0',
                 LivewireSetList::LIVEWIRE_30,
             ),

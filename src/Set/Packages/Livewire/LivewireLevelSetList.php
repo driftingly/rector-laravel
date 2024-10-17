@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Set\Packages\Livewire;
 
-use Rector\Set\Contract\SetListInterface;
-
-final class LivewireLevelSetList implements SetListInterface
+final class LivewireLevelSetList
 {
     /**
      * @var string
