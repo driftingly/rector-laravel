@@ -10,7 +10,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeTraverser;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -29,7 +29,7 @@ final class RemoveDumpDataDeadCodeRector extends AbstractRector implements Confi
         return new RuleDefinition(
             'It will removes the dump data just like dd or dump functions from the code.`',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     <<<'CODE_SAMPLE'
 class MyController
 {
@@ -61,6 +61,8 @@ class MyController
     }
 }
 CODE_SAMPLE
+                    ,
+                    ['dd', 'dump'],
                 ),
             ]
         );
