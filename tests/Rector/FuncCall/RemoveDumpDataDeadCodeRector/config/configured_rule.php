@@ -8,5 +8,5 @@ use RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../../../config/config.php');
 
-    $rectorConfig->rule(RemoveDumpDataDeadCodeRector::class);
+    $rectorConfig->ruleWithConfiguration(RemoveDumpDataDeadCodeRector::class, ['dd', 'dump']);
 };

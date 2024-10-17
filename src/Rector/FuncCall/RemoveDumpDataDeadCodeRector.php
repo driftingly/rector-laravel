@@ -8,15 +8,22 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeTraverser;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @see \RectorLaravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\RemoveDumpDataDeadCodeRectorTest
  */
-final class RemoveDumpDataDeadCodeRector extends AbstractRector
+final class RemoveDumpDataDeadCodeRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    /**
+     * @var string[]
+     */
+    private array $dumpFunctionNames = ['dd', 'dump'];
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -76,10 +83,20 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $this->isNames($node->expr->name, ['dd', 'dump'])) {
+        if (! $this->isNames($node->expr->name, $this->dumpFunctionNames)) {
             return null;
         }
 
         return NodeTraverser::REMOVE_NODE;
+    }
+
+    /**
+     * @param  mixed[]  $configuration
+     */
+    public function configure(array $configuration): void
+    {
+        Assert::allString($configuration);
+
+        $this->dumpFunctionNames = $configuration;
     }
 }
