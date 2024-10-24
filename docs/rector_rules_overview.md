@@ -63,6 +63,8 @@ Adds the `@extends` annotation to Factories.
 
 Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddGenericReturnTypeToRelationsRector.php)
 
 ```diff
@@ -73,6 +75,23 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
  class User extends Model
  {
 +    /** @return HasMany<Account> */
+     public function accounts(): HasMany
+     {
+         return $this->hasMany(Account::class);
+     }
+ }
+```
+
+<br>
+
+```diff
+ use App\Account;
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Relations\HasMany;
+
+ class User extends Model
+ {
++    /** @return HasMany<Account, $this> */
      public function accounts(): HasMany
      {
          return $this->hasMany(Account::class);
