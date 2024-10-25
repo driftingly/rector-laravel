@@ -1,4 +1,4 @@
-# 69 Rules Overview
+# 70 Rules Overview
 
 ## AbortIfRector
 
@@ -574,6 +574,19 @@ Replace use of the unsafe `empty()` function with Laravel's safer `blank()` & `f
 -!empty([]);
 +blank([]);
 +filled([]);
+```
+
+<br>
+
+## EnvVariableToEnvHelperRector
+
+Change env variable to env static call
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\EnvVariableToEnvHelperRector`](../src/Rector/ArrayDimFetch/EnvVariableToEnvHelperRector.php)
+
+```diff
+-$_ENV['APP_NAME'];
++\Illuminate\Support\Env::get('APP_NAME');
 ```
 
 <br>
