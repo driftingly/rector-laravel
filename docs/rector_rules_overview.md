@@ -578,6 +578,19 @@ Replace use of the unsafe `empty()` function with Laravel's safer `blank()` & `f
 
 <br>
 
+## EnvVariableToEnvHelperRector
+
+Change env variable to env static call
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\EnvVariableToEnvHelperRector`](../src/Rector/ArrayDimFetch/EnvVariableToEnvHelperRector.php)
+
+```diff
+-$_ENV['APP_NAME'];
++\Illuminate\Support\Env::get('APP_NAME');
+```
+
+<br>
+
 ## FactoryApplyingStatesRector
 
 Call the state methods directly instead of specify the name of state.
