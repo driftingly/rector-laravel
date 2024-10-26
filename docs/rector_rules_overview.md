@@ -1,4 +1,4 @@
-# 69 Rules Overview
+# 70 Rules Overview
 
 ## AbortIfRector
 
@@ -1180,6 +1180,21 @@ Change static `validate()` method to `$request->validate()`
 +        $validatedData = $request->validate(['some_attribute' => 'required']);
      }
  }
+```
+
+<br>
+
+## RequestVariablesToRequestFacadeRector
+
+Change request variable definition in Facade
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\RequestVariablesToRequestFacadeRector`](../src/Rector/ArrayDimFetch/RequestVariablesToRequestFacadeRector.php)
+
+```diff
+-$_GET['value'];
+-$_POST['value'];
++\Illuminate\Support\Facades\Request::input('value');
++\Illuminate\Support\Facades\Request::input('value');
 ```
 
 <br>
