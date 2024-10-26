@@ -1197,6 +1197,21 @@ Change static `validate()` method to `$request->validate()`
 
 <br>
 
+## RequestVariablesToRequestFacadeRector
+
+Change request variable definition in Facade
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\RequestVariablesToRequestFacadeRector`](../src/Rector/ArrayDimFetch/RequestVariablesToRequestFacadeRector.php)
+
+```diff
+-$_GET['value'];
+-$_POST['value'];
++\Illuminate\Support\Facades\Request::input('value');
++\Illuminate\Support\Facades\Request::input('value');
+```
+
+<br>
+
 ## ResponseHelperCallToJsonResponseRector
 
 Use new JsonResponse instead of `response()->json()`
