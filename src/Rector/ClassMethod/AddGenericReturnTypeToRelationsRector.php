@@ -237,6 +237,12 @@ CODE_SAMPLE,
      */
     public function configure(array $configuration): void
     {
+        if ($configuration === []) {
+            $this->shouldUseNewGenerics = false;
+
+            return;
+        }
+
         Assert::count($configuration, 1);
         Assert::keyExists($configuration, 'shouldUseNewGenerics');
         Assert::boolean($configuration['shouldUseNewGenerics']);
