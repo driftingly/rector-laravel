@@ -14,6 +14,7 @@ use RectorLaravel\ValueObject\ApplyDefaultWithFuncCall;
 use RectorLaravel\ValueObject\ApplyDefaultWithMethodCall;
 use RectorLaravel\ValueObject\ApplyDefaultWithStaticCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -32,14 +33,16 @@ final class ApplyDefaultInsteadOfNullCoalesceRector extends AbstractRector imple
         return new RuleDefinition(
             'Apply default instead of null coalesce',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     <<<'CODE_SAMPLE'
 config('app.name') ?? 'Laravel';
 CODE_SAMPLE,
                     <<<'CODE_SAMPLE'
 config('app.name', 'Laravel');
 CODE_SAMPLE
-                ),
+                , [
+                    new ApplyDefaultWithFuncCall('config')
+                ]),
             ]
         );
     }
@@ -68,21 +71,30 @@ CODE_SAMPLE
         $call = $node->left;
 
         foreach ($this->applyDefaultWith as $applyDefaultWith) {
+            $valid = false;
 
-            if ($applyDefaultWith instanceof ApplyDefaultWithFuncCall) {
-                if ($call instanceof FuncCall && ! $this->isName($call, $applyDefaultWith->getFunctionName())) {
-                    continue;
-                }
-            } elseif ($applyDefaultWith instanceof ApplyDefaultWithMethodCall) {
-                if ($call instanceof MethodCall && (! $this->isObjectType($call, $applyDefaultWith->getObjectType()) ||
-                    $this->isName($call, $applyDefaultWith->getMethodName()))) {
-                    continue;
-                }
-            } elseif ($applyDefaultWith instanceof ApplyDefaultWithStaticCall) {
-                if ($call instanceof StaticCall && (! $this->isObjectType($call, $applyDefaultWith->getObjectType()) ||
-                    $this->isName($call, $applyDefaultWith->getMethodName()))) {
-                    continue;
-                }
+            if ($applyDefaultWith instanceof ApplyDefaultWithFuncCall &&
+                $call instanceof FuncCall && $this->isName($call, $applyDefaultWith->getFunctionName())) {
+                $valid = true;
+            } elseif (
+                $applyDefaultWith instanceof ApplyDefaultWithMethodCall &&
+                $call instanceof MethodCall &&
+                $this->isObjectType($call->var, $applyDefaultWith->getObjectType()) &&
+                $this->isName($call->name, $applyDefaultWith->getMethodName())
+            ) {
+                $valid = true;å
+            }
+            elseif (
+                $applyDefaultWith instanceof ApplyDefaultWithStaticCall &&
+                $call instanceof StaticCall &&
+                $this->isObjectType($call->class, $applyDefaultWith->getObjectType()) &&
+                $this->isName($call->name, $applyDefaultWith->getMethodName())
+            ) {
+                $valid = true;
+            }
+
+            if (! $valid) {
+                continue;
             }
 
             if (count($call->args) === $applyDefaultWith->getArgumentPosition()) {
@@ -91,6 +103,8 @@ CODE_SAMPLE
                 }
                 $call->args[count($call->args)] = new Arg($node->right);
 
+                return $call;
+            } elseif (count($call->args) === ($applyDefaultWith->getArgumentPosition() + 1)) {
                 return $call;
             }
         }
