@@ -477,10 +477,10 @@ CODE_SAMPLE
 
     private function setShouldUseNewGenerics(): void
     {
-        $laravelVersion = new ReflectionClassConstant($this->applicationClass, 'VERSION');
+        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
 
-        if (is_string($laravelVersion->getValue())) {
-            $this->shouldUseNewGenerics = version_compare($laravelVersion->getValue(), '11.15.0', '>=');
+        if (is_string($reflectionClassConstant->getValue())) {
+            $this->shouldUseNewGenerics = version_compare($reflectionClassConstant->getValue(), '11.15.0', '>=');
         }
     }
 }
