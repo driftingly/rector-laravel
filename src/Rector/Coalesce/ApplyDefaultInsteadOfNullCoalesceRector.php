@@ -74,13 +74,12 @@ CODE_SAMPLE
                     continue;
                 }
             } elseif ($applyDefaultWith instanceof ApplyDefaultWithMethodCall) {
-                if ($call instanceof MethodCall && (! $this->isObjectType($call->var, $applyDefaultWith->getObjectType()) ||
+                if ($call instanceof MethodCall && (! $this->isObjectType($call, $applyDefaultWith->getObjectType()) ||
                     $this->isName($call, $applyDefaultWith->getMethodName()))) {
                     continue;
                 }
-
             } elseif ($applyDefaultWith instanceof ApplyDefaultWithStaticCall) {
-                if ($call instanceof StaticCall && (! $this->isObjectType($call->class, $applyDefaultWith->getObjectType()) ||
+                if ($call instanceof StaticCall && (! $this->isObjectType($call, $applyDefaultWith->getObjectType()) ||
                     $this->isName($call, $applyDefaultWith->getMethodName()))) {
                     continue;
                 }
