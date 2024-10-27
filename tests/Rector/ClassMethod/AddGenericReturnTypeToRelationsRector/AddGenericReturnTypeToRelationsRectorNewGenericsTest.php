@@ -12,7 +12,6 @@ final class AddGenericReturnTypeToRelationsRectorNewGenericsTest extends Abstrac
 {
     public static function provideData(): Iterator
     {
-        //        yield [__DIR__ . '/Fixture/NewGenerics/has-one-through.php.inc'];
         return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/NewGenerics');
     }
 
