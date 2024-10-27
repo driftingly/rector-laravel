@@ -13,7 +13,6 @@ use Rector\Rector\AbstractRector;
 use RectorLaravel\ValueObject\ApplyDefaultWithFuncCall;
 use RectorLaravel\ValueObject\ApplyDefaultWithMethodCall;
 use RectorLaravel\ValueObject\ApplyDefaultWithStaticCall;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -40,9 +39,9 @@ CODE_SAMPLE,
                     <<<'CODE_SAMPLE'
 config('app.name', 'Laravel');
 CODE_SAMPLE
-                , [
-                    new ApplyDefaultWithFuncCall('config')
-                ]),
+                    , [
+                        new ApplyDefaultWithFuncCall('config'),
+                    ]),
             ]
         );
     }
@@ -82,9 +81,8 @@ CODE_SAMPLE
                 $this->isObjectType($call->var, $applyDefaultWith->getObjectType()) &&
                 $this->isName($call->name, $applyDefaultWith->getMethodName())
             ) {
-                $valid = true;å
-            }
-            elseif (
+                $valid = true;
+            } elseif (
                 $applyDefaultWith instanceof ApplyDefaultWithStaticCall &&
                 $call instanceof StaticCall &&
                 $this->isObjectType($call->class, $applyDefaultWith->getObjectType()) &&
