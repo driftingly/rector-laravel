@@ -10,12 +10,11 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
-use RectorLaravel\ValueObject\ApplyDefaultWithFuncCall;
-use RectorLaravel\ValueObject\ApplyDefaultWithMethodCall;
-use RectorLaravel\ValueObject\ApplyDefaultWithStaticCall;
+use RectorLaravel\ValueObject\ApplyDefaultInsteadOfNullCoalesce;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
+use PHPStan\Type\ObjectType;
 
 /**
  * @see \RectorLaravel\Tests\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector\ApplyDefaultInsteadOfNullCoalesceRectorTest
@@ -23,7 +22,7 @@ use Webmozart\Assert\Assert;
 final class ApplyDefaultInsteadOfNullCoalesceRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var array<int, ApplyDefaultWithFuncCall|ApplyDefaultWithMethodCall|ApplyDefaultWithStaticCall>
+     * @var ApplyDefaultInsteadOfNullCoalesce[]
      */
     private array $applyDefaultWith;
 
@@ -40,7 +39,7 @@ CODE_SAMPLE,
 config('app.name', 'Laravel');
 CODE_SAMPLE
                     , [
-                        new ApplyDefaultWithFuncCall('config'),
+                        new ApplyDefaultInsteadOfNullCoalesce('config'),
                     ]),
             ]
         );
@@ -72,20 +71,19 @@ CODE_SAMPLE
         foreach ($this->applyDefaultWith as $applyDefaultWith) {
             $valid = false;
 
-            if ($applyDefaultWith instanceof ApplyDefaultWithFuncCall &&
-                $call instanceof FuncCall && $this->isName($call, $applyDefaultWith->getFunctionName())) {
-                $valid = true;
-            } elseif (
-                $applyDefaultWith instanceof ApplyDefaultWithMethodCall &&
-                $call instanceof MethodCall &&
-                $this->isObjectType($call->var, $applyDefaultWith->getObjectType()) &&
+            $objectType = $call->var ?? $call->class ?? null;
+
+            if (
+                $applyDefaultWith->getObjectType() instanceof ObjectType &&
+                $objectType !== null &&
+                $this->isObjectType(
+                    $objectType,
+                    $applyDefaultWith->getObjectType()) &&
                 $this->isName($call->name, $applyDefaultWith->getMethodName())
             ) {
                 $valid = true;
             } elseif (
-                $applyDefaultWith instanceof ApplyDefaultWithStaticCall &&
-                $call instanceof StaticCall &&
-                $this->isObjectType($call->class, $applyDefaultWith->getObjectType()) &&
+                $applyDefaultWith->getObjectType() === null &&
                 $this->isName($call->name, $applyDefaultWith->getMethodName())
             ) {
                 $valid = true;
@@ -112,11 +110,7 @@ CODE_SAMPLE
 
     public function configure(array $configuration): void
     {
-        Assert::allIsInstanceOfAny($configuration, [
-            ApplyDefaultWithFuncCall::class,
-            ApplyDefaultWithMethodCall::class,
-            ApplyDefaultWithStaticCall::class,
-        ]);
+        Assert::allIsInstanceOf($configuration, ApplyDefaultInsteadOfNullCoalesce::class);
         $this->applyDefaultWith = $configuration;
     }
 }

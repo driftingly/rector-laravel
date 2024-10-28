@@ -4,13 +4,13 @@ namespace RectorLaravel\ValueObject;
 
 use PHPStan\Type\ObjectType;
 
-final readonly class ApplyDefaultWithStaticCall
+final readonly class ApplyDefaultInsteadOfNullCoalesce
 {
-    public function __construct(private ObjectType $objectType, private string $methodName, private int $argumentPosition = 1)
+    public function __construct(private string $methodName, private ?ObjectType $objectType = null,  private int $argumentPosition = 1)
     {
     }
 
-    public function getObjectType(): ObjectType
+    public function getObjectType(): ?ObjectType
     {
         return $this->objectType;
     }
