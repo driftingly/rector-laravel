@@ -8,11 +8,12 @@ use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class AddGenericReturnTypeToRelationsRectorTest extends AbstractRectorTestCase
+final class AddGenericReturnTypeToRelationsRectorNewGenericsTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
+        //        yield [__DIR__ . '/Fixture/NewGenerics/has-one-through.php.inc'];
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/NewGenerics');
     }
 
     /**
@@ -26,6 +27,6 @@ final class AddGenericReturnTypeToRelationsRectorTest extends AbstractRectorTest
 
     public function provideConfigFilePath(): string
     {
-        return __DIR__ . '/config/configured_rule.php';
+        return __DIR__ . '/config/use_new_generics_configured_rule.php';
     }
 }

@@ -1,4 +1,4 @@
-# 68 Rules Overview
+# 70 Rules Overview
 
 ## AbortIfRector
 
@@ -63,6 +63,8 @@ Adds the `@extends` annotation to Factories.
 
 Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddGenericReturnTypeToRelationsRector.php)
 
 ```diff
@@ -73,6 +75,23 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
  class User extends Model
  {
 +    /** @return HasMany<Account> */
+     public function accounts(): HasMany
+     {
+         return $this->hasMany(Account::class);
+     }
+ }
+```
+
+<br>
+
+```diff
+ use App\Account;
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Relations\HasMany;
+
+ class User extends Model
+ {
++    /** @return HasMany<Account, $this> */
      public function accounts(): HasMany
      {
          return $this->hasMany(Account::class);
@@ -578,6 +597,19 @@ Replace use of the unsafe `empty()` function with Laravel's safer `blank()` & `f
 
 <br>
 
+## EnvVariableToEnvHelperRector
+
+Change env variable to env static call
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\EnvVariableToEnvHelperRector`](../src/Rector/ArrayDimFetch/EnvVariableToEnvHelperRector.php)
+
+```diff
+-$_ENV['APP_NAME'];
++\Illuminate\Support\Env::get('APP_NAME');
+```
+
+<br>
+
 ## FactoryApplyingStatesRector
 
 Call the state methods directly instead of specify the name of state.
@@ -978,6 +1010,8 @@ refactors calls with the pre Laravel 11 methods for blueprint geometry columns
 
 It will removes the dump data just like dd or dump functions from the code.`
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector`](../src/Rector/FuncCall/RemoveDumpDataDeadCodeRector.php)
 
 ```diff
@@ -1182,6 +1216,34 @@ Change static `validate()` method to `$request->validate()`
 
 <br>
 
+## RequestVariablesToRequestFacadeRector
+
+Change request variable definition in Facade
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\RequestVariablesToRequestFacadeRector`](../src/Rector/ArrayDimFetch/RequestVariablesToRequestFacadeRector.php)
+
+```diff
+-$_GET['value'];
+-$_POST['value'];
++\Illuminate\Support\Facades\Request::input('value');
++\Illuminate\Support\Facades\Request::input('value');
+```
+
+<br>
+
+## ResponseHelperCallToJsonResponseRector
+
+Use new JsonResponse instead of `response()->json()`
+
+- class: [`RectorLaravel\Rector\MethodCall\ResponseHelperCallToJsonResponseRector`](../src/Rector/MethodCall/ResponseHelperCallToJsonResponseRector.php)
+
+```diff
+-response()->json(['key' => 'value']);
++return new JsonResponse(['key' => 'value']);
+```
+
+<br>
+
 ## ReverseConditionableMethodCallRector
 
 Reverse conditionable method calls
@@ -1357,19 +1419,6 @@ Convert string validation rules into arrays for Laravel's Validator.
 -    'field' => 'required|nullable|string|max:255',
 +    'field' => ['required', 'nullable', 'string', 'max:255'],
  ]);
-```
-
-<br>
-
-## ResponseHelperCallToJsonResponseRector
-
-Change `response()->json()` to `new JsonResponse()`
-
-- class: [`RectorLaravel\Rector\MethodCall\ResponseHelperCallToJsonResponseRector`](../src/Rector/MethodCall/ResponseHelperCallToJsonResponseRector.php)
-
-```diff
--    return response()->json(['message' => 'Hello World']);
-+    return new \Illuminate\Http\JsonResponse(['message' => 'Hello World']);
 ```
 
 <br>

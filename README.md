@@ -1,3 +1,5 @@
+<img src="./banner.png" style="width: 100%" />
+
 # Rector Rules for Laravel
 
 [![Tests](https://github.com/driftingly/rector-laravel/actions/workflows/tests.yaml/badge.svg)](https://github.com/driftingly/rector-laravel/actions/workflows/tests.yaml)
@@ -79,6 +81,8 @@ Thank you everyone who works so hard on improving this package:
 - [@GeniJaho](https://github.com/GeniJaho)
 - [@driftingly](https://github.com/driftingly)
 - [All Contributors](https://github.com/driftingly/rector-laravel/graphs/contributors)
+
+A special thank you to [Caneco](https://github.com/caneco) for designing the logo!
 
 ## Hire The Rector Team
 

@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector;
+use RectorLaravel\Rector\ArrayDimFetch\EnvVariableToEnvHelperRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../../../config/config.php');
 
-    $rectorConfig->ruleWithConfiguration(RemoveDumpDataDeadCodeRector::class, ['dd', 'dump']);
+    $rectorConfig->rule(EnvVariableToEnvHelperRector::class);
 };
