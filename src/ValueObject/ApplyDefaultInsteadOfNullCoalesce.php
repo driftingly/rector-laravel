@@ -6,7 +6,7 @@ use PHPStan\Type\ObjectType;
 
 final readonly class ApplyDefaultInsteadOfNullCoalesce
 {
-    public function __construct(private string $methodName, private ?ObjectType $objectType = null,  private int $argumentPosition = 1)
+    public function __construct(private string $methodName, private ?ObjectType $objectType = null, private int $argumentPosition = 1)
     {
     }
 

@@ -12,7 +12,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfiguration(ApplyDefaultInsteadOfNullCoalesceRector::class, [
         new ApplyDefaultInsteadOfNullCoalesce('config'),
-        new ApplyDefaultInsteadOfNullCoalesce( 'input', new ObjectType('Illuminate\Http\Request')),
-        new ApplyDefaultInsteadOfNullCoalesce( 'get', new ObjectType('Illuminate\Support\Env')),
+        new ApplyDefaultInsteadOfNullCoalesce('input', new ObjectType('Illuminate\Http\Request')),
+        new ApplyDefaultInsteadOfNullCoalesce('get', new ObjectType('Illuminate\Support\Env')),
     ]);
 };
