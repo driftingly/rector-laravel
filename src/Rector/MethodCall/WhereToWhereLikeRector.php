@@ -5,21 +5,32 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
+ * @see https://github.com/laravel/framework/pull/52147
+ *
  * @see \RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\WhereToWhereLikeRectorTest
+ * @see \RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\WhereToWhereLikeRectorPostgresTest
  */
-final class WhereToWhereLikeRector extends AbstractRector
+final class WhereToWhereLikeRector extends AbstractRector implements ConfigurableRectorInterface
 {
     private const array WHERE_LIKE_METHODS = [
         'where' => 'whereLike',
         'orwhere' => 'orWhereLike',
     ];
+
+    private bool $usingPostgresDriver = false;
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -57,24 +68,31 @@ final class WhereToWhereLikeRector extends AbstractRector
 
         $likeParameter = $this->getLikeParameterUsedInQuery($node);
 
-        if (!in_array($likeParameter, ['like', 'like binary', 'not like', 'not like binary'])) {
+        if (!in_array($likeParameter, ['like', 'like binary', 'ilike', 'not like', 'not like binary', 'not ilike'])) {
             return null;
         }
 
-        $newNodeName = self::WHERE_LIKE_METHODS[$node->name->toLowerString()];
+        $this->setNewNodeName($node, $likeParameter);
 
-        if (str_contains($likeParameter, 'not')) {
-            $newNodeName = str_replace('Like', 'NotLike', $newNodeName);
-        }
+        $this->setCaseSensitivity($node, $likeParameter);
 
-        $node->name = new Node\Identifier($newNodeName);
+        // Remove the second argument (the 'like' operator)
         unset($node->args[1]);
 
-        if (in_array($likeParameter, ['like binary', 'not like binary'])) {
-            $node->args[] = new Node\Arg(new Node\Expr\ConstFetch(new Node\Name('true')));
+        return $node;
+    }
+
+    public function configure(array $configuration): void
+    {
+        if ($configuration === []) {
+            $this->usingPostgresDriver = false;
+            return;
         }
 
-        return $node;
+        Assert::count($configuration, 1);
+        Assert::keyExists($configuration, 'usingPostgresDriver');
+        Assert::boolean($configuration['usingPostgresDriver']);
+        $this->usingPostgresDriver = $configuration['usingPostgresDriver'];
     }
 
     private function getLikeParameterUsedInQuery(MethodCall $node): ?string
@@ -85,4 +103,42 @@ final class WhereToWhereLikeRector extends AbstractRector
 
         return strtolower($node->args[1]->value->value);
     }
+
+    private function setNewNodeName(MethodCall $node, string $likeParameter): void
+    {
+        $newNodeName = self::WHERE_LIKE_METHODS[$node->name->toLowerString()];
+
+        if (str_contains($likeParameter, 'not')) {
+            $newNodeName = str_replace('Like', 'NotLike', $newNodeName);
+        }
+
+        $node->name = new Identifier($newNodeName);
+    }
+
+    private function setCaseSensitivity(MethodCall $node, string $likeParameter): void
+    {
+        // Case sensitive query in MySQL
+        if (in_array($likeParameter, ['like binary', 'not like binary'])) {
+            $node->args[] = $this->getCaseSensitivityArgument($node);
+        }
+
+        // Case sensitive query in Postgres
+        if ($this->usingPostgresDriver && in_array($likeParameter, ['like', 'not like'])) {
+            $node->args[] = $this->getCaseSensitivityArgument($node);
+        }
+    }
+
+    private function getCaseSensitivityArgument(MethodCall $node): Arg
+    {
+        if ($node->args[2]->name !== null) {
+            return new Arg(
+                new ConstFetch(new Name('true')),
+                name: new Identifier('caseSensitive')
+            );
+        }
+
+        return new Arg(new ConstFetch(new Name('true')));
+    }
+
+
 }

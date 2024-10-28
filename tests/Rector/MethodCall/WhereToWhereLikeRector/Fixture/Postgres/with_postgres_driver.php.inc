@@ -16,8 +16,8 @@ class Fixture
         $query->orwhere('name', like: 'not like', value: 'Rector');
 
         // Case Sensitivity
-        $query->where('name', 'like binary', 'Rector');
-        $query->where('name', 'not like binary', 'Rector');
+        $query->where('name', 'ilike', 'Rector');
+        $query->where('name', 'not ilike', 'Rector');
     }
 }
 ?>
@@ -32,16 +32,16 @@ class Fixture
 {
     public function run(Builder $query)
     {
-        $query->whereLike('name', 'Rector');
-        $query->orWhereLike('name', 'Rector');
-        $query->orWhereLike('name', 'Rector');
-        $query->whereNotLike('name', 'Rector');
-        $query->orWhereNotLike('name', 'Rector');
-        $query->orWhereNotLike('name', value: 'Rector');
+        $query->whereLike('name', 'Rector', true);
+        $query->orWhereLike('name', 'Rector', true);
+        $query->orWhereLike('name', 'Rector', true);
+        $query->whereNotLike('name', 'Rector', true);
+        $query->orWhereNotLike('name', 'Rector', true);
+        $query->orWhereNotLike('name', value: 'Rector', caseSensitive: true);
 
         // Case Sensitivity
-        $query->whereLike('name', 'Rector', true);
-        $query->whereNotLike('name', 'Rector', true);
+        $query->whereLike('name', 'Rector');
+        $query->whereNotLike('name', 'Rector');
     }
 }
 ?>

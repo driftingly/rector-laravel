@@ -8,11 +8,11 @@ use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class WhereToWhereLikeRectorTest extends AbstractRectorTestCase
+final class WhereToWhereLikePostgresRectorTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/Default');
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/Postgres');
     }
 
     #[DataProvider('provideData')]
@@ -23,6 +23,6 @@ final class WhereToWhereLikeRectorTest extends AbstractRectorTestCase
 
     public function provideConfigFilePath(): string
     {
-        return __DIR__ . '/config/configured_rule.php';
+        return __DIR__ . '/config/postgres_configured_rule.php';
     }
 }
