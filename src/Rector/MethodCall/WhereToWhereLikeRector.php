@@ -6,25 +6,25 @@ namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
-use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector\AssertSeeToAssertSeeHtmlRectorTest
+ * @see \RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\WhereToWhereLikeRectorTest
  */
 final class WhereToWhereLikeRector extends AbstractRector
 {
-public function __construct(private ValueResolver $valueResolver)
-{
-}
+    private const array WHERE_LIKE_METHODS = [
+        'where' => 'whereLike',
+        'orwhere' => 'orWhereLike',
+    ];
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Changes `where` method call to `whereLike` method call in Laravel TestResponse',
+            'Changes `where` method call to `whereLike` method call in Laravel Query Builder',
             [
             ]
         );
@@ -47,7 +47,7 @@ public function __construct(private ValueResolver $valueResolver)
             return null;
         }
 
-        if (! $this->isName($node->name, 'where')) {
+        if (!in_array(strtolower((string) $this->getName($node->name)), array_keys(self::WHERE_LIKE_METHODS))) {
             return null;
         }
 
@@ -55,13 +55,34 @@ public function __construct(private ValueResolver $valueResolver)
             return null;
         }
 
-        // if second arg is not 'like' string, skip
-        if (! $node->args[1]->value instanceof Node\Scalar\String_ || $node->args[1]->value->value !== 'like') {
+        $likeParameter = $this->getLikeParameterUsedInQuery($node);
+
+        if (!in_array($likeParameter, ['like', 'like binary', 'not like', 'not like binary'])) {
             return null;
         }
 
-        $node->name = new Node\Identifier('whereLike');
+        $newNodeName = self::WHERE_LIKE_METHODS[$node->name->toLowerString()];
+
+        if (str_contains($likeParameter, 'not')) {
+            $newNodeName = str_replace('Like', 'NotLike', $newNodeName);
+        }
+
+        $node->name = new Node\Identifier($newNodeName);
         unset($node->args[1]);
+
+        if (in_array($likeParameter, ['like binary', 'not like binary'])) {
+            $node->args[] = new Node\Arg(new Node\Expr\ConstFetch(new Node\Name('true')));
+        }
+
         return $node;
+    }
+
+    private function getLikeParameterUsedInQuery(MethodCall $node): ?string
+    {
+        if (! $node->args[1]->value instanceof String_) {
+            return null;
+        }
+
+        return strtolower($node->args[1]->value->value);
     }
 }
