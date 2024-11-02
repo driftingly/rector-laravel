@@ -100,8 +100,6 @@ CODE_SAMPLE
                 $call->args[count($call->args)] = new Arg($node->right);
 
                 return $call;
-            } elseif (count($call->args) === ($applyDefaultWith->getArgumentPosition() + 1)) {
-                return $call;
             }
         }
 
