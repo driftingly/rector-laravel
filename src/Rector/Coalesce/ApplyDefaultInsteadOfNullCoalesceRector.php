@@ -12,6 +12,7 @@ use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use RectorLaravel\ValueObject\ApplyDefaultInsteadOfNullCoalesce;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -26,6 +27,23 @@ final class ApplyDefaultInsteadOfNullCoalesceRector extends AbstractRector imple
      */
     private array $applyDefaultWith;
 
+    public function __construct()
+    {
+        $this->applyDefaultWith = self::defaultLaravelMethods();
+    }
+
+    /**
+     * @return ApplyDefaultInsteadOfNullCoalesce[]
+     */
+    public static function defaultLaravelMethods(): array
+    {
+        return [
+            new ApplyDefaultInsteadOfNullCoalesce('config'),
+            new ApplyDefaultInsteadOfNullCoalesce('input', new ObjectType('Illuminate\Http\Request')),
+            new ApplyDefaultInsteadOfNullCoalesce('get', new ObjectType('Illuminate\Support\Env')),
+        ];
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -33,14 +51,17 @@ final class ApplyDefaultInsteadOfNullCoalesceRector extends AbstractRector imple
             [
                 new ConfiguredCodeSample(
                     <<<'CODE_SAMPLE'
-config('app.name') ?? 'Laravel';
+custom_helper('app.name') ?? 'Laravel';
 CODE_SAMPLE,
                     <<<'CODE_SAMPLE'
-config('app.name', 'Laravel');
+custom_helper('app.name', 'Laravel');
 CODE_SAMPLE
-                    , [
-                        new ApplyDefaultInsteadOfNullCoalesce('config'),
-                    ]),
+                    ,
+                    [
+                        ...self::defaultLaravelMethods(),
+                        new ApplyDefaultInsteadOfNullCoalesce('custom_helper'),
+                    ],
+                ),
             ]
         );
     }

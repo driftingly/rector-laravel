@@ -213,8 +213,8 @@ Apply default instead of null coalesce
 - class: [`RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector`](../src/Rector/Coalesce/ApplyDefaultInsteadOfNullCoalesceRector.php)
 
 ```diff
--config('app.name') ?? 'Laravel';
-+config('app.name', 'Laravel');
+-custom_helper('app.name') ?? 'Laravel';
++custom_helper('app.name', 'Laravel');
 ```
 
 <br>
