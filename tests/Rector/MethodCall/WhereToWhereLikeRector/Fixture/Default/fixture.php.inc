@@ -2,7 +2,7 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\Fixture;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class Fixture
 {
@@ -27,7 +27,7 @@ class Fixture
 
 namespace RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\Fixture;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class Fixture
 {

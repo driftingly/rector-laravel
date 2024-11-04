@@ -9,6 +9,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../../../../../config/config.php');
 
     $rectorConfig->ruleWithConfiguration(WhereToWhereLikeRector::class, [
-        'usingPostgresDriver' => true,
+        WhereToWhereLikeRector::USING_POSTGRES_DRIVER => true,
     ]);
 };

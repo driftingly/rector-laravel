@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\Fixture;
 
 use Illuminate\Database\Query\Builder;
 
-class Fixture
+class WithPostgresDriver
 {
     public function run(Builder $query)
     {
@@ -28,7 +28,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\Fixture;
 
 use Illuminate\Database\Query\Builder;
 
-class Fixture
+class WithPostgresDriver
 {
     public function run(Builder $query)
     {
