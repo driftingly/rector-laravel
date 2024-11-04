@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
@@ -25,6 +26,8 @@ use Webmozart\Assert\Assert;
  */
 final class WhereToWhereLikeRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    public const string USING_POSTGRES_DRIVER = 'usingPostgresDriver';
+
     private const array WHERE_LIKE_METHODS = [
         'where' => 'whereLike',
         'orwhere' => 'orWhereLike',
@@ -49,7 +52,7 @@ $query->orWhereLike('name', 'Rector');
 $query->whereLike('name', 'Rector', true);
 CODE_SAMPLE
                     ,
-                    ['usingPostgresDriver' => false]
+                    [WhereToWhereLikeRector::USING_POSTGRES_DRIVER => false]
                 ),
                 new ConfiguredCodeSample(
                     <<<'CODE_SAMPLE'
@@ -64,7 +67,7 @@ $query->orWhereLike('name', 'Rector');
 $query->whereLike('name', 'Rector', true);
 CODE_SAMPLE
                     ,
-                    ['usingPostgresDriver' => true]
+                    [WhereToWhereLikeRector::USING_POSTGRES_DRIVER => true]
                 ),
             ]);
     }
@@ -74,15 +77,24 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [MethodCall::class];
+        return [MethodCall::class, StaticCall::class];
     }
 
     /**
-     * @param  MethodCall  $node
+     * @param  MethodCall|StaticCall  $node
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isObjectType($node->var, new ObjectType('Illuminate\Database\Query\Builder'))) {
+        if ($node instanceof StaticCall) {
+            return null;
+        }
+
+        return $this->refactorMethodCall($node);
+    }
+
+    private function refactorMethodCall(MethodCall $node): ?MethodCall
+    {
+        if (! $this->isObjectType($node->var, new ObjectType('Illuminate\Contracts\Database\Query\Builder'))) {
             return null;
         }
 
@@ -118,10 +130,9 @@ CODE_SAMPLE
             return;
         }
 
-        Assert::count($configuration, 1);
-        Assert::keyExists($configuration, 'usingPostgresDriver');
-        Assert::boolean($configuration['usingPostgresDriver']);
-        $this->usingPostgresDriver = $configuration['usingPostgresDriver'];
+        Assert::keyExists($configuration, self::USING_POSTGRES_DRIVER);
+        Assert::boolean($configuration[self::USING_POSTGRES_DRIVER]);
+        $this->usingPostgresDriver = $configuration[self::USING_POSTGRES_DRIVER];
     }
 
     private function getLikeParameterUsedInQuery(MethodCall $methodCall): ?string

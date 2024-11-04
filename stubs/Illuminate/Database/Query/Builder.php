@@ -6,7 +6,7 @@ if (class_exists('Illuminate\Database\Query\Builder')) {
     return;
 }
 
-class Builder
+class Builder implements \Illuminate\Contracts\Database\Query\Builder
 {
     public function publicMethodBelongsToQueryBuilder(): void {}
 
