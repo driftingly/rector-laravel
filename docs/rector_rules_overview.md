@@ -1,4 +1,4 @@
-# 70 Rules Overview
+# 71 Rules Overview
 
 ## AbortIfRector
 
@@ -62,8 +62,6 @@ Adds the `@extends` annotation to Factories.
 ## AddGenericReturnTypeToRelationsRector
 
 Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
-
-:wrench: **configure it!**
 
 - class: [`RectorLaravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddGenericReturnTypeToRelationsRector.php)
 

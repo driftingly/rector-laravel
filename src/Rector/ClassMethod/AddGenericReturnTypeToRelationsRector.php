@@ -22,20 +22,19 @@ use PHPStan\Type\ThisType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractScopeAwareRector;
 use Rector\StaticTypeMapper\StaticTypeMapper;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use ReflectionClassConstant;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Webmozart\Assert\Assert;
 
 /**
  * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorNewGenericsTest
  * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorOldGenericsTest
  */
-class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector implements ConfigurableRectorInterface
+class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
 {
     // Relation methods which are supported by this Rector.
     private const RELATION_METHODS = [
@@ -59,6 +58,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector imp
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly StaticTypeMapper $staticTypeMapper,
+        private readonly string $applicationClass = 'Illuminate\Foundation\Application',
     ) {
     }
 
@@ -67,7 +67,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector imp
         return new RuleDefinition(
             'Add generic return type to relations in child of Illuminate\Database\Eloquent\Model',
             [
-                new ConfiguredCodeSample(
+                new CodeSample(
                     <<<'CODE_SAMPLE'
 use App\Account;
 use Illuminate\Database\Eloquent\Model;
@@ -96,9 +96,9 @@ class User extends Model
         return $this->hasMany(Account::class);
     }
 }
-CODE_SAMPLE,
-                    ['shouldUseNewGenerics' => false]),
-                new ConfiguredCodeSample(
+CODE_SAMPLE
+                ),
+                new CodeSample(
                     <<<'CODE_SAMPLE'
 use App\Account;
 use Illuminate\Database\Eloquent\Model;
@@ -127,8 +127,8 @@ class User extends Model
         return $this->hasMany(Account::class);
     }
 }
-CODE_SAMPLE,
-                    ['shouldUseNewGenerics' => true]),
+CODE_SAMPLE
+                ),
             ]
         );
     }
@@ -196,6 +196,9 @@ CODE_SAMPLE,
             return null;
         }
 
+        // Put here to make the check as late as possible
+        $this->setShouldUseNewGenerics();
+
         $classForChildGeneric = $this->getClassForChildGeneric($scope, $relationMethodCall);
         $classForIntermediateGeneric = $this->getClassForIntermediateGeneric($relationMethodCall);
 
@@ -230,24 +233,6 @@ CODE_SAMPLE,
         $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
 
         return $node;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function configure(array $configuration): void
-    {
-        if ($configuration === []) {
-            $this->shouldUseNewGenerics = false;
-
-            return;
-        }
-
-        Assert::count($configuration, 1);
-        Assert::keyExists($configuration, 'shouldUseNewGenerics');
-        Assert::boolean($configuration['shouldUseNewGenerics']);
-
-        $this->shouldUseNewGenerics = $configuration['shouldUseNewGenerics'];
     }
 
     private function getRelatedModelClassFromMethodCall(MethodCall $methodCall): ?string
@@ -488,5 +473,14 @@ CODE_SAMPLE,
         }
 
         return $generics;
+    }
+
+    private function setShouldUseNewGenerics(): void
+    {
+        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
+
+        if (is_string($reflectionClassConstant->getValue())) {
+            $this->shouldUseNewGenerics = version_compare($reflectionClassConstant->getValue(), '11.15.0', '>=');
+        }
     }
 }
