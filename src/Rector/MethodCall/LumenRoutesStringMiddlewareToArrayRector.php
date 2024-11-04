@@ -19,9 +19,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LumenRoutesStringMiddlewareToArrayRector extends AbstractRector
 {
-    public function __construct(
-        private readonly LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer
-    ) {
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeAnalyzer\LumenRouteRegisteringMethodAnalyzer
+     */
+    private $lumenRouteRegisteringMethodAnalyzer;
+    public function __construct(LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer)
+    {
+        $this->lumenRouteRegisteringMethodAnalyzer = $lumenRouteRegisteringMethodAnalyzer;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -35,7 +40,8 @@ CODE_SAMPLE
                 , <<<'CODE_SAMPLE'
 $router->get('/user', ['middleware => ['test']]);
 $router->post('/user', ['middleware => ['test', 'authentication']]);
-CODE_SAMPLE)]
+CODE_SAMPLE
+)]
         );
     }
 

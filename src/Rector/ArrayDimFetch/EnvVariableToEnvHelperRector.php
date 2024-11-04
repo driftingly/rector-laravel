@@ -22,7 +22,8 @@ class EnvVariableToEnvHelperRector extends AbstractRector
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 $_ENV['APP_NAME'];
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                 <<<'CODE_SAMPLE'
 \Illuminate\Support\Env::get('APP_NAME');
 CODE_SAMPLE

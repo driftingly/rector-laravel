@@ -94,7 +94,7 @@ CODE_SAMPLE
         $conditionVariables = [];
         $returnValue = false;
 
-        $this->traverseNodesWithCallable($condition, function (Node $node) use (&$conditionVariables): null {
+        $this->traverseNodesWithCallable($condition, function (Node $node) use (&$conditionVariables) {
             if ($node instanceof Assign) {
                 $conditionVariables[] = $this->getName($node->var);
             }

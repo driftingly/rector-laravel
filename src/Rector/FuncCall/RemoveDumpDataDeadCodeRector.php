@@ -22,15 +22,14 @@ final class RemoveDumpDataDeadCodeRector extends AbstractRector implements Confi
     /**
      * @var string[]
      */
-    private array $dumpFunctionNames = ['dd', 'dump'];
+    private $dumpFunctionNames = ['dd', 'dump'];
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'It will removes the dump data just like dd or dump functions from the code.`',
             [
-                new ConfiguredCodeSample(
-                    <<<'CODE_SAMPLE'
+                new ConfiguredCodeSample(<<<'CODE_SAMPLE'
 class MyController
 {
     public function store()
@@ -45,9 +44,7 @@ class MyController
         return true;
     }
 }
-CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
+CODE_SAMPLE, <<<'CODE_SAMPLE'
 class MyController
 {
     public function store()
@@ -60,10 +57,7 @@ class MyController
         return true;
     }
 }
-CODE_SAMPLE
-                    ,
-                    ['dd', 'dump'],
-                ),
+CODE_SAMPLE, ['dd', 'dump']),
             ]
         );
     }
@@ -78,8 +72,9 @@ CODE_SAMPLE
 
     /**
      * @param  Expression  $node
+     * @return int|\PhpParser\Node|mixed[]|null
      */
-    public function refactor(Node $node): int|Node|array|null
+    public function refactor(Node $node)
     {
         if (! $node->expr instanceof FuncCall) {
             return null;
