@@ -1,4 +1,4 @@
-# 72 Rules Overview
+# 73 Rules Overview
 
 ## AbortIfRector
 
@@ -73,6 +73,23 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
  class User extends Model
  {
 +    /** @return HasMany<Account> */
+     public function accounts(): HasMany
+     {
+         return $this->hasMany(Account::class);
+     }
+ }
+```
+
+<br>
+
+```diff
+ use App\Account;
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Relations\HasMany;
+
+ class User extends Model
+ {
++    /** @return HasMany<Account, $this> */
      public function accounts(): HasMany
      {
          return $this->hasMany(Account::class);

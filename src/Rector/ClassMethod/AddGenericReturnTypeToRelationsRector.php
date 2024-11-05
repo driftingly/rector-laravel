@@ -12,11 +12,13 @@ use PhpParser\Node\Stmt\Return_;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\ThisType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
@@ -24,10 +26,14 @@ use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractScopeAwareRector;
 use Rector\StaticTypeMapper\StaticTypeMapper;
+use ReflectionClassConstant;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-/** @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorTest */
+/**
+ * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorNewGenericsTest
+ * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorOldGenericsTest
+ */
 class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
 {
     // Relation methods which are supported by this Rector.
@@ -41,12 +47,18 @@ class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
     // Relation methods which need the class as TChildModel.
     private const RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
 
+    // Relation methods which need the class as TIntermediateModel.
+    private const RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
+
+    private bool $shouldUseNewGenerics = false;
+
     public function __construct(
         private readonly TypeComparator $typeComparator,
         private readonly DocBlockUpdater $docBlockUpdater,
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly StaticTypeMapper $staticTypeMapper,
+        private readonly string $applicationClass = 'Illuminate\Foundation\Application',
     ) {
     }
 
@@ -79,6 +91,37 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class User extends Model
 {
     /** @return HasMany<Account> */
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(Account::class);
+    }
+}
+CODE_SAMPLE
+                ),
+                new CodeSample(
+                    <<<'CODE_SAMPLE'
+use App\Account;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class User extends Model
+{
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(Account::class);
+    }
+}
+CODE_SAMPLE
+
+                    ,
+                    <<<'CODE_SAMPLE'
+use App\Account;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class User extends Model
+{
+    /** @return HasMany<Account, $this> */
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
@@ -153,7 +196,11 @@ CODE_SAMPLE
             return null;
         }
 
+        // Put here to make the check as late as possible
+        $this->setShouldUseNewGenerics();
+
         $classForChildGeneric = $this->getClassForChildGeneric($scope, $relationMethodCall);
+        $classForIntermediateGeneric = $this->getClassForIntermediateGeneric($relationMethodCall);
 
         // Don't update the docblock if return type already contains the correct generics. This avoids overwriting
         // non-FQCN with our fully qualified ones.
@@ -163,7 +210,8 @@ CODE_SAMPLE
                 $node,
                 $phpDocInfo->getReturnTagValue(),
                 $relatedClass,
-                $classForChildGeneric
+                $classForChildGeneric,
+                $classForIntermediateGeneric
             )
         ) {
             return null;
@@ -171,7 +219,7 @@ CODE_SAMPLE
 
         $genericTypeNode = new GenericTypeNode(
             new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-            $this->getGenericTypes($relatedClass, $classForChildGeneric),
+            $this->getGenericTypes($relatedClass, $classForChildGeneric, $classForIntermediateGeneric),
         );
 
         // Update or add return tag
@@ -243,6 +291,10 @@ CODE_SAMPLE
      */
     private function getClassForChildGeneric(Scope $scope, MethodCall $methodCall): ?string
     {
+        if ($this->shouldUseNewGenerics) {
+            return null;
+        }
+
         if (! $this->doesMethodHasName($methodCall, self::RELATION_WITH_CHILD_METHODS)) {
             return null;
         }
@@ -250,6 +302,45 @@ CODE_SAMPLE
         $classReflection = $scope->getClassReflection();
 
         return $classReflection?->getName();
+    }
+
+    /**
+     * We need the intermediate class for generics which need a TIntermediateModel.
+     * This is the case for *through relations
+     */
+    private function getClassForIntermediateGeneric(MethodCall $methodCall): ?string
+    {
+        if (! $this->shouldUseNewGenerics) {
+            return null;
+        }
+
+        if (! $this->doesMethodHasName($methodCall, self::RELATION_WITH_INTERMEDIATE_METHODS)) {
+            return null;
+        }
+
+        $args = $methodCall->getArgs();
+
+        if (count($args) < 2) {
+            return null;
+        }
+
+        $argType = $this->getType($args[1]->value);
+
+        if ($argType instanceof ConstantStringType && $argType->isClassStringType()->yes()) {
+            return $argType->getValue();
+        }
+
+        if (! $argType instanceof GenericClassStringType) {
+            return null;
+        }
+
+        $modelType = $argType->getGenericType();
+
+        if (! $modelType instanceof ObjectType) {
+            return null;
+        }
+
+        return $modelType->getClassName();
     }
 
     private function areNativeTypeAndPhpDocReturnTypeEqual(
@@ -279,7 +370,8 @@ CODE_SAMPLE
         Node $node,
         ReturnTagValueNode $returnTagValueNode,
         string $relatedClass,
-        ?string $classForChildGeneric
+        ?string $classForChildGeneric,
+        ?string $classForIntermediateGeneric
     ): bool {
         $phpDocPHPStanType = $this->staticTypeMapper->mapPHPStanPhpDocTypeNodeToPHPStanType(
             $returnTagValueNode->type,
@@ -299,16 +391,37 @@ CODE_SAMPLE
             return false;
         }
 
-        $phpDocHasChildGeneric = count($phpDocTypes) === 2;
-        if ($classForChildGeneric === null && ! $phpDocHasChildGeneric) {
-            return true;
+        if (! $this->shouldUseNewGenerics) {
+            $phpDocHasChildGeneric = count($phpDocTypes) === 2;
+
+            if ($classForChildGeneric === null && ! $phpDocHasChildGeneric) {
+                return true;
+            }
+
+            if ($classForChildGeneric === null || ! $phpDocHasChildGeneric) {
+                return false;
+            }
+
+            return $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForChildGeneric));
         }
 
-        if ($classForChildGeneric === null || ! $phpDocHasChildGeneric) {
+        $phpDocHasIntermediateGeneric = count($phpDocTypes) === 3;
+
+        if ($classForIntermediateGeneric === null && ! $phpDocHasIntermediateGeneric) {
+            // If there is only one generic, it means method is using the old format. We should update it.
+            if (count($phpDocTypes) === 1) {
+                return false;
+            }
+
+            // We want to convert the existing relationship definition to use `$this` as the second generic
+            return $phpDocTypes[1] instanceof ThisType;
+        }
+
+        if ($classForIntermediateGeneric === null || ! $phpDocHasIntermediateGeneric) {
             return false;
         }
 
-        return $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForChildGeneric));
+        return $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForIntermediateGeneric));
     }
 
     private function shouldSkipNode(ClassMethod $classMethod, Scope $scope): bool
@@ -341,16 +454,33 @@ CODE_SAMPLE
     }
 
     /**
-     * @return FullyQualifiedIdentifierTypeNode[]
+     * @return IdentifierTypeNode[]
      */
-    private function getGenericTypes(string $relatedClass, ?string $childClass): array
+    private function getGenericTypes(string $relatedClass, ?string $childClass, ?string $intermediateClass): array
     {
         $generics = [new FullyQualifiedIdentifierTypeNode($relatedClass)];
 
-        if ($childClass !== null) {
+        if (! $this->shouldUseNewGenerics && $childClass !== null) {
             $generics[] = new FullyQualifiedIdentifierTypeNode($childClass);
         }
 
+        if ($this->shouldUseNewGenerics) {
+            if ($intermediateClass !== null) {
+                $generics[] = new FullyQualifiedIdentifierTypeNode($intermediateClass);
+            }
+
+            $generics[] = new IdentifierTypeNode('$this');
+        }
+
         return $generics;
+    }
+
+    private function setShouldUseNewGenerics(): void
+    {
+        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
+
+        if (is_string($reflectionClassConstant->getValue())) {
+            $this->shouldUseNewGenerics = version_compare($reflectionClassConstant->getValue(), '11.15.0', '>=');
+        }
     }
 }

@@ -29,3 +29,6 @@ parameters:
         - '#Parameter \#1 \$node (.*?) of method RectorLaravel\\(.*?)\:\:(refactor|refactorWithScope)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Contract\\Rector\\RectorInterface\:\:refactor\(\)#'
 
         - '#Parameter \#1 \$className of method Rector\\Reflection\\ReflectionResolver\:\:resolveMethodReflection\(\) expects class\-string, string given#'
+
+        # Laravel Container not being recognized properly in some of the tests
+        - '#Call to method needs\(\) on an unknown class Illuminate\\Contracts\\Container\\ContextualBindingBuilder#'
