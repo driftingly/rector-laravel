@@ -19,7 +19,7 @@ parameters:
 
     ignoreErrors:
         # false positive
-        - '#Parameter \#1 \$value of static method PhpParser\\BuilderHelpers\:\:normalizeValue\(\) expects array\|bool\|float\|int\|PhpParser\\Node\\Expr\|string\|UnitEnum\|null, mixed given#'
+        - '#Parameter \#1 \$value of static method PhpParser\\BuilderHelpers\:\:normalizeValue\(\) expects array\|bool\|float\|int\|PhpParser\\Node\\Expr\|string\|null, mixed given#'
 
         -
             path: src/Rector/Class_/UnifyModelDatesWithCastsRector.php

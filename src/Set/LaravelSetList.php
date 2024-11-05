@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Set;
 
-use Rector\Set\Contract\SetListInterface;
-
-final class LaravelSetList implements SetListInterface
+final class LaravelSetList
 {
     /**
      * @var string
@@ -137,4 +135,9 @@ final class LaravelSetList implements SetListInterface
      * @var string
      */
     final public const LARAVEL_STATIC_TO_INJECTION = __DIR__ . '/../../config/sets/laravel-static-to-injection.php';
+
+    /**
+     * @var string
+     */
+    final public const LARAVEL_TYPE_DECLARATIONS = __DIR__ . '/../../config/sets/type-declaration.php';
 }
