@@ -1435,3 +1435,33 @@ Convert string validation rules into arrays for Laravel's Validator.
 ```
 
 <br>
+
+## WhereToWhereLikeRector
+
+Changes `where` method calls to `whereLike` method calls in the Eloquent & Query Builder
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\MethodCall\WhereToWhereLikeRector`](../src/Rector/MethodCall/WhereToWhereLikeRector.php)
+
+```diff
+-$query->where('name', 'like', 'Rector');
+-$query->orWhere('name', 'like', 'Rector');
+-$query->where('name', 'like binary', 'Rector');
++$query->whereLike('name', 'Rector');
++$query->orWhereLike('name', 'Rector');
++$query->whereLike('name', 'Rector', true);
+```
+
+<br>
+
+```diff
+-$query->where('name', 'ilike', 'Rector');
+-$query->orWhere('name', 'ilike', 'Rector');
+-$query->where('name', 'like', 'Rector');
++$query->whereLike('name', 'Rector');
++$query->orWhereLike('name', 'Rector');
++$query->whereLike('name', 'Rector', true);
+```
+
+<br>
