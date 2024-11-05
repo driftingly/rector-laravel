@@ -1,4 +1,4 @@
-# 71 Rules Overview
+# 72 Rules Overview
 
 ## AbortIfRector
 
@@ -217,6 +217,21 @@ Replace `$app->environment() === 'local'` with `$app->environment('local')`
 ```diff
 -$app->environment() === 'production';
 +$app->environment('production');
+```
+
+<br>
+
+## ApplyDefaultInsteadOfNullCoalesceRector
+
+Apply default instead of null coalesce
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector`](../src/Rector/Coalesce/ApplyDefaultInsteadOfNullCoalesceRector.php)
+
+```diff
+-custom_helper('app.name') ?? 'Laravel';
++custom_helper('app.name', 'Laravel');
 ```
 
 <br>
