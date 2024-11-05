@@ -1,4 +1,4 @@
-# 73 Rules Overview
+# 72 Rules Overview
 
 ## AbortIfRector
 
