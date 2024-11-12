@@ -68,8 +68,9 @@ CODE_SAMPLE
 
     /**
      * @param  Expression  $node
+     * @return array<int, Expression|Node>|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node): array|null
     {
         $newNode = $this->getNewNode($node);
 

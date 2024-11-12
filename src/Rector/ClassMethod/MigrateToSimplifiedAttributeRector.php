@@ -47,7 +47,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
     /**
      * @param  Class_  $node
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node): Node|null
     {
         if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;

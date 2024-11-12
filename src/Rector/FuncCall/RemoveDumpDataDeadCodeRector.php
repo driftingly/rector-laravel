@@ -78,8 +78,9 @@ CODE_SAMPLE
 
     /**
      * @param  Expression  $node
+     * @return NodeTraverser::REMOVE_NODE|null
      */
-    public function refactor(Node $node): int|Node|array|null
+    public function refactor(Node $node): int|null
     {
         if (! $node->expr instanceof FuncCall) {
             return null;
