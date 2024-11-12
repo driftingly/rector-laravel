@@ -17,7 +17,8 @@
         "symplify/phpstan-extensions": "^11.4",
         "symplify/phpstan-rules": "^12.4",
         "symplify/rule-doc-generator": "^12.1",
-        "tightenco/duster": "^2.7"
+        "tightenco/duster": "^2.7",
+        "phpstan/phpstan-deprecation-rules": "^1.2"
     },
     "autoload": {
         "psr-4": {
