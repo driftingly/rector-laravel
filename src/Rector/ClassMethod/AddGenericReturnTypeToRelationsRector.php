@@ -239,21 +239,17 @@ CODE_SAMPLE
     {
         $argType = $this->getType($methodCall->getArgs()[0]->value);
 
-        if ($argType instanceof ConstantStringType && $argType->isClassStringType()->yes()) {
-            return $argType->getValue();
-        }
-
-        if (! $argType instanceof GenericClassStringType) {
+        if (! $argType->isClassStringType()->yes()) {
             return null;
         }
 
-        $modelType = $argType->getGenericType();
+        $objectClassNames = $argType->getClassStringObjectType()->getObjectClassNames();
 
-        if (! $modelType instanceof ObjectType) {
+        if ($objectClassNames === []) {
             return null;
         }
 
-        return $modelType->getClassName();
+        return $objectClassNames[0];
     }
 
     private function getRelationMethodCall(ClassMethod $classMethod): ?MethodCall
@@ -326,21 +322,17 @@ CODE_SAMPLE
 
         $argType = $this->getType($args[1]->value);
 
-        if ($argType instanceof ConstantStringType && $argType->isClassStringType()->yes()) {
-            return $argType->getValue();
-        }
-
-        if (! $argType instanceof GenericClassStringType) {
+        if (! $argType->isClassStringType()->yes()) {
             return null;
         }
 
-        $modelType = $argType->getGenericType();
+        $objectClassNames = $argType->getClassStringObjectType()->getObjectClassNames();
 
-        if (! $modelType instanceof ObjectType) {
+        if ($objectClassNames === []) {
             return null;
         }
 
-        return $modelType->getClassName();
+        return $objectClassNames[0];
     }
 
     private function areNativeTypeAndPhpDocReturnTypeEqual(
