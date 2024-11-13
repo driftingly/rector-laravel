@@ -14,7 +14,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\Php\PhpMethodReflection;
+use PHPStan\Reflection\MethodReflection;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\Node\Value\ValueResolver;
@@ -123,7 +123,7 @@ CODE_SAMPLE
 
         $phpMethodReflection = $this->reflectionResolver->resolveMethodReflection($segments[0], $segments[1], $scope);
 
-        if (! $phpMethodReflection instanceof PhpMethodReflection) {
+        if (! $phpMethodReflection instanceof MethodReflection) {
             return null;
         }
 
@@ -132,7 +132,7 @@ CODE_SAMPLE
             $segments[1],
         ]);
 
-        if (is_array($argValue) && isset($argValue['as'])) {
+        if (is_array($argValue) && isset($argValue['as']) && is_string($argValue['as'])) {
             $node = new MethodCall($node, 'name', [new Arg(new String_($argValue['as']))]);
         }
 
@@ -144,9 +144,17 @@ CODE_SAMPLE
             if (is_string($argValue['middleware'])) {
                 $argument = new String_($argValue['middleware']);
             } else {
+                // if any of the elements in the middleware array is not a string, return node as is
+                if (array_filter($argValue['middleware'], static fn ($value) => ! is_string($value)) !== []) {
+                    return $node;
+                }
+
+                /** @var list<string> $middleware */
+                $middleware = $argValue['middleware'];
+
                 $argument = new Array_(array_map(
                     static fn ($value) => new ArrayItem(new String_($value)),
-                    $argValue['middleware']
+                    $middleware
                 ));
             }
             $node = new MethodCall($node, 'middleware', [new Arg($argument)]);
@@ -164,6 +172,7 @@ CODE_SAMPLE
         Assert::isArray($routes);
         Assert::allString(array_keys($routes));
         Assert::allString($routes);
+        /** @var array<string, string> $routes */
         $this->routes = $routes;
 
         $namespace = $configuration[self::NAMESPACE] ?? self::DEFAULT_NAMESPACE;

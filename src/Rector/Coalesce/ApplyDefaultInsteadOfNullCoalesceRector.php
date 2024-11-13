@@ -90,13 +90,19 @@ CODE_SAMPLE
 
         $call = $node->left;
 
+        if ($call instanceof MethodCall) {
+            $objectType = $call->var;
+        } elseif ($call instanceof StaticCall) {
+            $objectType = $call->class;
+        } else {
+            $objectType = null;
+        }
+
         foreach ($this->applyDefaultWith as $applyDefaultWith) {
             $valid = false;
 
-            $objectType = $call->var ?? $call->class ?? null;
-
             if (
-                $applyDefaultWith->getObjectType() instanceof ObjectType &&
+                $applyDefaultWith->getObjectType() !== null &&
                 $objectType !== null &&
                 $this->isObjectType(
                     $objectType,

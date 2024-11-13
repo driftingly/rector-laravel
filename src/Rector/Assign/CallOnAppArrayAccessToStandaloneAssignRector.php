@@ -55,7 +55,7 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
      * @param  Expression  $node
      * @return array<int, Node>|null
      */
-    public function refactor(Node $node): array|null
+    public function refactor(Node $node): ?array
     {
         if (! $node->expr instanceof Assign) {
             return null;

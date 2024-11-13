@@ -114,7 +114,7 @@ CODE_SAMPLE
 
     private function isAllowedPattern(MethodCall $methodCall): bool
     {
-        $columnArg = $methodCall->args[0]->value ?? null;
+        $columnArg = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
 
         // If no patterns are specified, consider all column names as matching
         if ($this->allowedPatterns === []) {
@@ -150,12 +150,17 @@ CODE_SAMPLE
             return $methodCall;
         }
 
-        $columnVar = $methodCall->args[0]->value ?? null;
+        $columnVar = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
         if ($columnVar === null) {
             return $methodCall;
         }
 
-        $direction = $methodCall->args[1]->value->value ?? 'asc';
+        if (isset($methodCall->args[1]) && $methodCall->args[1] instanceof Arg && $methodCall->args[1]->value instanceof String_) {
+            $direction = $methodCall->args[1]->value->value;
+        } else {
+            $direction = 'asc';
+        }
+
         if ($this->isName($methodCall->name, 'orderByDesc')) {
             $newMethod = 'latest';
         } else {
