@@ -33,3 +33,6 @@ parameters:
 
         # Laravel Container not being recognized properly in some of the tests
         - '#Call to method needs\(\) on an unknown class Illuminate\\Contracts\\Container\\ContextualBindingBuilder#'
+
+        # No easy replacement for this check, it's also ignored in core Rector
+        - '#Doing instanceof PHPStan\\Type\\Generic\\GenericObjectType is error\-prone and deprecated#'
