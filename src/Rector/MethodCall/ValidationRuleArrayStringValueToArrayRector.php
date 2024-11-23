@@ -11,7 +11,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Return_;
-use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -139,7 +139,7 @@ CODE_SAMPLE
                 if ($changed) {
                     $hasChanged = true;
 
-                    return NodeTraverser::STOP_TRAVERSAL;
+                    return NodeVisitor::STOP_TRAVERSAL;
                 }
 
                 if (! $node instanceof Return_) {

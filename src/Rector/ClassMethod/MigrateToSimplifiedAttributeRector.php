@@ -22,7 +22,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
-use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractRector;
@@ -69,7 +69,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
             if ($newNode instanceof ClassMethod) {
                 $node->stmts[$key] = $newNode;
-            } elseif ($newNode === NodeTraverser::REMOVE_NODE) {
+            } elseif ($newNode === NodeVisitor::REMOVE_NODE) {
                 unset($node->stmts[$key]);
             }
         }
@@ -155,7 +155,7 @@ CODE_SAMPLE
         // is placed on the model and remove the mutator,
         // so we don't run the refactoring twice
         if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator($nodeName)) {
-            return NodeTraverser::REMOVE_NODE;
+            return NodeVisitor::REMOVE_NODE;
         }
 
         if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod) {
