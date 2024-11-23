@@ -240,10 +240,6 @@ CODE_SAMPLE
     {
         $argType = $this->getType($methodCall->getArgs()[0]->value);
 
-        if (! $argType->isClassStringType()->yes()) {
-            return null;
-        }
-
         $objectClassNames = $argType->getClassStringObjectType()->getObjectClassNames();
 
         if ($objectClassNames === []) {
@@ -322,10 +318,6 @@ CODE_SAMPLE
         }
 
         $argType = $this->getType($args[1]->value);
-
-        if (! $argType->isClassStringType()->yes()) {
-            return null;
-        }
 
         $objectClassNames = $argType->getClassStringObjectType()->getObjectClassNames();
 

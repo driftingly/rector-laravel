@@ -207,7 +207,7 @@ CODE_SAMPLE
                             new Arg(
                                 new Closure([
                                     'params' => $accessor->params,
-                                    'stmts' => $accessor->stmts,
+                                    'stmts' => $accessor->stmts ?? [],
                                 ]),
                                 false,
                                 false,
@@ -254,7 +254,7 @@ CODE_SAMPLE
                             new Arg(
                                 new Closure([
                                     'params' => $classMethod->params,
-                                    'stmts' => $statements,
+                                    'stmts' => $statements ?? [],
                                 ]),
                                 false,
                                 false,

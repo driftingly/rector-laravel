@@ -13,7 +13,7 @@ parameters:
         - */Source/*
         - *Source/*
 
-#    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
 
     ignoreErrors:
         # false positive
@@ -30,6 +30,7 @@ parameters:
 
         # Laravel Container not being recognized properly in some of the tests
         - '#Call to method needs\(\) on an unknown class Illuminate\\Contracts\\Container\\ContextualBindingBuilder#'
+        - '#Cannot call method give\(\) on mixed.#'
 
         # No easy replacement for this check, it's also ignored in core Rector
         - '#Doing instanceof PHPStan\\Type\\Generic\\GenericObjectType is error\-prone and deprecated#'

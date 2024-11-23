@@ -104,7 +104,7 @@ CODE_SAMPLE
             return null;
         }
 
-        static $objectType = new ObjectType(self::SHOULD_QUEUE_INTERFACE);
+        $objectType = new ObjectType(self::SHOULD_QUEUE_INTERFACE);
         $argumentType = $this->getType($call->args[0]->value);
 
         if (
