@@ -104,7 +104,7 @@ CODE_SAMPLE
             return null;
         }
 
-        static $objectType = new ObjectType(self::SHOULD_QUEUE_INTERFACE);
+        $objectType = new ObjectType(self::SHOULD_QUEUE_INTERFACE);
         $argumentType = $this->getType($call->args[0]->value);
 
         if (
@@ -136,15 +136,20 @@ CODE_SAMPLE
     private function isDispatchablesCall(MethodCall $methodCall): bool
     {
         $type = $this->getType($methodCall->var);
-        if (! $type instanceof ObjectType) {
+
+        if (! $type->isObject()->yes()) {
+            return false;
+        }
+
+        $objectClassNames = $type->getObjectClassNames();
+
+        if (count($objectClassNames) !== 1) {
             return false;
         }
 
         try {
             // Will trigger ClassNotFoundException if the class definition is not found
-            $reflection = $this->reflectionProvider->getClass(
-                $type->getClassName()
-            );
+            $reflection = $this->reflectionProvider->getClass($objectClassNames[0]);
 
             if ($reflection->hasTraitUse(self::DISPATCHABLE_TRAIT)) {
                 return true;

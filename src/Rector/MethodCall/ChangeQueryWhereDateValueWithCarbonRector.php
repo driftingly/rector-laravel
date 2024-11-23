@@ -78,8 +78,9 @@ CODE_SAMPLE
 
     /**
      * @param  Expression  $node
+     * @return array<int, Expression|Node>|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node): ?array
     {
         if (! $node->expr instanceof MethodCall) {
             return null;

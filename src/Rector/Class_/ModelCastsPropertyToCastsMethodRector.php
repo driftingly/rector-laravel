@@ -3,6 +3,7 @@
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\BuilderFactory;
+use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -90,7 +91,7 @@ CODE_SAMPLE,
                     ->setReturnType('array')
                     ->makeProtected();
 
-                if ($stmt->getDocComment() !== null) {
+                if ($stmt->getDocComment() instanceof Doc) {
                     $method->setDocComment($stmt->getDocComment());
                 }
 

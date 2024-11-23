@@ -14,8 +14,6 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
@@ -24,7 +22,8 @@ use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\PHPStan\ScopeFetcher;
+use Rector\Rector\AbstractRector;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use ReflectionClassConstant;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -34,7 +33,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorNewGenericsTest
  * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorOldGenericsTest
  */
-class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
+class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
     // Relation methods which are supported by this Rector.
     private const RELATION_METHODS = [
@@ -141,11 +140,13 @@ CODE_SAMPLE
         return [ClassMethod::class];
     }
 
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
         if (! $node instanceof ClassMethod) {
             return null;
         }
+
+        $scope = ScopeFetcher::fetch($node);
 
         if ($this->shouldSkipNode($node, $scope)) {
             return null;
@@ -239,21 +240,13 @@ CODE_SAMPLE
     {
         $argType = $this->getType($methodCall->getArgs()[0]->value);
 
-        if ($argType instanceof ConstantStringType && $argType->isClassStringType()->yes()) {
-            return $argType->getValue();
-        }
+        $objectClassNames = $argType->getClassStringObjectType()->getObjectClassNames();
 
-        if (! $argType instanceof GenericClassStringType) {
+        if ($objectClassNames === []) {
             return null;
         }
 
-        $modelType = $argType->getGenericType();
-
-        if (! $modelType instanceof ObjectType) {
-            return null;
-        }
-
-        return $modelType->getClassName();
+        return $objectClassNames[0];
     }
 
     private function getRelationMethodCall(ClassMethod $classMethod): ?MethodCall
@@ -326,21 +319,13 @@ CODE_SAMPLE
 
         $argType = $this->getType($args[1]->value);
 
-        if ($argType instanceof ConstantStringType && $argType->isClassStringType()->yes()) {
-            return $argType->getValue();
-        }
+        $objectClassNames = $argType->getClassStringObjectType()->getObjectClassNames();
 
-        if (! $argType instanceof GenericClassStringType) {
+        if ($objectClassNames === []) {
             return null;
         }
 
-        $modelType = $argType->getGenericType();
-
-        if (! $modelType instanceof ObjectType) {
-            return null;
-        }
-
-        return $modelType->getClassName();
+        return $objectClassNames[0];
     }
 
     private function areNativeTypeAndPhpDocReturnTypeEqual(

@@ -4,10 +4,10 @@ namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar;
@@ -126,7 +126,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return array<string, Node\Arg[]>|null
+     * @return array<string, list<Node\Arg>>|null
      */
     private function findQueryStringProperties(Property $property): ?array
     {
@@ -181,7 +181,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  Node\Arg[]  $args
+     * @param  list<Node\Arg>  $args
      */
     private function addUrlAttributeToProperty(Property $property, array $args): void
     {
@@ -197,7 +197,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return Node\Arg[]|null
+     * @return list<Node\Arg>|null
      */
     private function processArrayOptionsIntoArgs(Array_ $array): ?array
     {

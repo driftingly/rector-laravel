@@ -11,7 +11,8 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\PHPStan\ScopeFetcher;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -20,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \RectorLaravel\Tests\Rector\Class_\CashierStripeOptionsToStripeRector\CashierStripeOptionsToStripeRectorTest
  */
-final class CashierStripeOptionsToStripeRector extends AbstractScopeAwareRector
+final class CashierStripeOptionsToStripeRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
@@ -66,11 +67,13 @@ CODE_SAMPLE
         return [Class_::class];
     }
 
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
         if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;
         }
+
+        $scope = ScopeFetcher::fetch($node);
 
         if (! $this->usesBillableTrait($scope)) {
             return null;

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\Comment\Doc;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -21,7 +22,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
-use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractRector;
@@ -47,7 +48,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
     /**
      * @param  Class_  $node
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node): ?Node
     {
         if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;
@@ -68,7 +69,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
             if ($newNode instanceof ClassMethod) {
                 $node->stmts[$key] = $newNode;
-            } elseif ($newNode === NodeTraverser::REMOVE_NODE) {
+            } elseif ($newNode === NodeVisitor::REMOVE_NODE) {
                 unset($node->stmts[$key]);
             }
         }
@@ -154,7 +155,7 @@ CODE_SAMPLE
         // is placed on the model and remove the mutator,
         // so we don't run the refactoring twice
         if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod && $this->isMutator($nodeName)) {
-            return NodeTraverser::REMOVE_NODE;
+            return NodeVisitor::REMOVE_NODE;
         }
 
         if ($accessor instanceof ClassMethod && $mutator instanceof ClassMethod) {
@@ -194,7 +195,7 @@ CODE_SAMPLE
     ): ClassMethod {
         return new ClassMethod(new Identifier($attributeName), [
             'attrGroups' => [],
-            'flags' => Class_::MODIFIER_PROTECTED,
+            'flags' => Modifiers::PROTECTED,
             'params' => [],
             'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
             'stmts' => [
@@ -206,7 +207,7 @@ CODE_SAMPLE
                             new Arg(
                                 new Closure([
                                     'params' => $accessor->params,
-                                    'stmts' => $accessor->stmts,
+                                    'stmts' => $accessor->stmts ?? [],
                                 ]),
                                 false,
                                 false,
@@ -241,7 +242,7 @@ CODE_SAMPLE
     ): ClassMethod {
         return new ClassMethod(new Identifier($attributeName), [
             'attrGroups' => $classMethod->attrGroups,
-            'flags' => Class_::MODIFIER_PROTECTED,
+            'flags' => Modifiers::PROTECTED,
             'params' => [],
             'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
             'stmts' => [
@@ -253,7 +254,7 @@ CODE_SAMPLE
                             new Arg(
                                 new Closure([
                                     'params' => $classMethod->params,
-                                    'stmts' => $statements,
+                                    'stmts' => $statements ?? [],
                                 ]),
                                 false,
                                 false,

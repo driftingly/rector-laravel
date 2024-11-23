@@ -7,7 +7,7 @@ namespace RectorLaravel\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -78,8 +78,9 @@ CODE_SAMPLE
 
     /**
      * @param  Expression  $node
+     * @return NodeVisitor::REMOVE_NODE|null
      */
-    public function refactor(Node $node): int|Node|array|null
+    public function refactor(Node $node): ?int
     {
         if (! $node->expr instanceof FuncCall) {
             return null;
@@ -89,7 +90,7 @@ CODE_SAMPLE
             return null;
         }
 
-        return NodeTraverser::REMOVE_NODE;
+        return NodeVisitor::REMOVE_NODE;
     }
 
     /**

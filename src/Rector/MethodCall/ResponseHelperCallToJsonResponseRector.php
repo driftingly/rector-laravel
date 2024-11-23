@@ -59,7 +59,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($node->var->args) > 0) {
+        if ($node->var->args !== []) {
             return null;
         }
 

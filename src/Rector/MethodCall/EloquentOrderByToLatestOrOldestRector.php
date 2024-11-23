@@ -6,6 +6,7 @@ namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
@@ -109,12 +110,12 @@ CODE_SAMPLE
         return $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Database\Query\Builder'))
             && $methodCall->name instanceof Identifier
             && ($methodCall->name->name === 'orderBy' || $methodCall->name->name === 'orderByDesc')
-            && count($methodCall->args) > 0;
+            && $methodCall->args !== [];
     }
 
     private function isAllowedPattern(MethodCall $methodCall): bool
     {
-        $columnArg = $methodCall->args[0]->value ?? null;
+        $columnArg = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
 
         // If no patterns are specified, consider all column names as matching
         if ($this->allowedPatterns === []) {
@@ -150,12 +151,17 @@ CODE_SAMPLE
             return $methodCall;
         }
 
-        $columnVar = $methodCall->args[0]->value ?? null;
-        if ($columnVar === null) {
+        $columnVar = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
+        if (! $columnVar instanceof Expr) {
             return $methodCall;
         }
 
-        $direction = $methodCall->args[1]->value->value ?? 'asc';
+        if (isset($methodCall->args[1]) && $methodCall->args[1] instanceof Arg && $methodCall->args[1]->value instanceof String_) {
+            $direction = $methodCall->args[1]->value->value;
+        } else {
+            $direction = 'asc';
+        }
+
         if ($this->isName($methodCall->name, 'orderByDesc')) {
             $newMethod = 'latest';
         } else {

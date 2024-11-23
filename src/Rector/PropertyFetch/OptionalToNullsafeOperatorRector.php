@@ -132,6 +132,9 @@ CODE_SAMPLE
         return new NullsafeMethodCall($firstArg->value, $node->name, $node->args);
     }
 
+    /**
+     * @return PhpVersion::PHP_80
+     */
     public function provideMinPhpVersion(): int
     {
         return PhpVersion::PHP_80;

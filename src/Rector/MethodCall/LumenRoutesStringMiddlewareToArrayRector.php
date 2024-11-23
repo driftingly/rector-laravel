@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
 use Rector\Rector\AbstractRector;
@@ -137,9 +137,6 @@ CODE_SAMPLE)]
                 continue;
             }
             if (! $this->hasKeyName($item, $keyName)) {
-                continue;
-            }
-            if (! $array->items[$i] instanceof ArrayItem) {
                 continue;
             }
 
