@@ -22,7 +22,8 @@ use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\PHPStan\ScopeFetcher;
+use Rector\Rector\AbstractRector;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use ReflectionClassConstant;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -32,7 +33,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorNewGenericsTest
  * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorOldGenericsTest
  */
-class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
+class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
     // Relation methods which are supported by this Rector.
     private const RELATION_METHODS = [
@@ -139,11 +140,13 @@ CODE_SAMPLE
         return [ClassMethod::class];
     }
 
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
         if (! $node instanceof ClassMethod) {
             return null;
         }
+
+        $scope = ScopeFetcher::fetch($node);
 
         if ($this->shouldSkipNode($node, $scope)) {
             return null;
