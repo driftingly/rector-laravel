@@ -103,7 +103,7 @@ CODE_SAMPLE
 
             if (
                 $applyDefaultWith->getObjectType() !== null &&
-                $objectType !== null &&
+                $objectType instanceof Node &&
                 $this->isObjectType(
                     $objectType,
                     $applyDefaultWith->getObjectType()) &&

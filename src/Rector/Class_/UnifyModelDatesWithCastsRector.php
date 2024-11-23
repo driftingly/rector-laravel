@@ -6,8 +6,8 @@ namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Builder\Property as PropertyBuilder;
 use PhpParser\Node;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;

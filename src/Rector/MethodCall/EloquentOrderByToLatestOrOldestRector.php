@@ -6,6 +6,7 @@ namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
@@ -109,7 +110,7 @@ CODE_SAMPLE
         return $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Database\Query\Builder'))
             && $methodCall->name instanceof Identifier
             && ($methodCall->name->name === 'orderBy' || $methodCall->name->name === 'orderByDesc')
-            && count($methodCall->args) > 0;
+            && $methodCall->args !== [];
     }
 
     private function isAllowedPattern(MethodCall $methodCall): bool
@@ -151,7 +152,7 @@ CODE_SAMPLE
         }
 
         $columnVar = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
-        if ($columnVar === null) {
+        if (! $columnVar instanceof Expr) {
             return $methodCall;
         }
 

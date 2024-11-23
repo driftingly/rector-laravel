@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\Comment\Doc;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -194,7 +195,7 @@ CODE_SAMPLE
     ): ClassMethod {
         return new ClassMethod(new Identifier($attributeName), [
             'attrGroups' => [],
-            'flags' => Class_::MODIFIER_PROTECTED,
+            'flags' => Modifiers::PROTECTED,
             'params' => [],
             'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
             'stmts' => [
@@ -241,7 +242,7 @@ CODE_SAMPLE
     ): ClassMethod {
         return new ClassMethod(new Identifier($attributeName), [
             'attrGroups' => $classMethod->attrGroups,
-            'flags' => Class_::MODIFIER_PROTECTED,
+            'flags' => Modifiers::PROTECTED,
             'params' => [],
             'returnType' => new FullyQualified('Illuminate\\Database\\Eloquent\\Casts\\Attribute'),
             'stmts' => [
