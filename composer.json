@@ -5,7 +5,7 @@
     "description": "Rector upgrades rules for Laravel Framework",
     "require": {
         "php": ">=8.2",
-        "rector/rector": "dev-main as 1.2.10",
+        "rector/rector": "^2.0.0-rc1",
         "webmozart/assert": "^1.11"
     },
     "require-dev": {
