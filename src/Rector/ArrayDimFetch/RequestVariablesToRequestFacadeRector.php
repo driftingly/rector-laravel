@@ -26,7 +26,8 @@ class RequestVariablesToRequestFacadeRector extends AbstractRector
                     <<<'CODE_SAMPLE'
 $_GET['value'];
 $_POST['value'];
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                     <<<'CODE_SAMPLE'
 \Illuminate\Support\Facades\Request::input('value');
 \Illuminate\Support\Facades\Request::input('value');

@@ -36,6 +36,36 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
 {
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\TypeComparator\TypeComparator
+     */
+    private $typeComparator;
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\StaticTypeMapper\StaticTypeMapper
+     */
+    private $staticTypeMapper;
+    /**
+     * @readonly
+     * @var string
+     */
+    private $applicationClass = 'Illuminate\Foundation\Application';
     // Relation methods which are supported by this Rector.
     private const RELATION_METHODS = [
         'hasOne', 'hasOneThrough', 'morphOne',
@@ -50,16 +80,19 @@ class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector
     // Relation methods which need the class as TIntermediateModel.
     private const RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
 
-    private bool $shouldUseNewGenerics = false;
+    /**
+     * @var bool
+     */
+    private $shouldUseNewGenerics = false;
 
-    public function __construct(
-        private readonly TypeComparator $typeComparator,
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
-        private readonly BetterNodeFinder $betterNodeFinder,
-        private readonly StaticTypeMapper $staticTypeMapper,
-        private readonly string $applicationClass = 'Illuminate\Foundation\Application',
-    ) {
+    public function __construct(TypeComparator $typeComparator, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder, StaticTypeMapper $staticTypeMapper, string $applicationClass = 'Illuminate\Foundation\Application')
+    {
+        $this->typeComparator = $typeComparator;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->staticTypeMapper = $staticTypeMapper;
+        $this->applicationClass = $applicationClass;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -217,10 +250,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $genericTypeNode = new GenericTypeNode(
-            new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-            $this->getGenericTypes($relatedClass, $classForChildGeneric, $classForIntermediateGeneric),
-        );
+        $genericTypeNode = new GenericTypeNode(new FullyQualifiedIdentifierTypeNode($methodReturnTypeName), $this->getGenericTypes($relatedClass, $classForChildGeneric, $classForIntermediateGeneric));
 
         // Update or add return tag
         if ($phpDocInfo->getReturnTagValue() instanceof ReturnTagValueNode) {
@@ -260,7 +290,9 @@ CODE_SAMPLE
     {
         $node = $this->betterNodeFinder->findFirstInFunctionLikeScoped(
             $classMethod,
-            fn (Node $subNode): bool => $subNode instanceof Return_
+            function (Node $subNode) : bool {
+                return $subNode instanceof Return_;
+            }
         );
 
         if (! $node instanceof Return_) {
@@ -301,7 +333,7 @@ CODE_SAMPLE
 
         $classReflection = $scope->getClassReflection();
 
-        return $classReflection?->getName();
+        return ($nullsafeVariable1 = $classReflection) ? $nullsafeVariable1->getName() : null;
     }
 
     /**
@@ -360,10 +392,7 @@ CODE_SAMPLE
 
         $methodReturnTypePHPStanType = $this->staticTypeMapper->mapPhpParserNodePHPStanType($node);
 
-        return $this->typeComparator->areTypesEqual(
-            $methodReturnTypePHPStanType,
-            $phpDocPHPStanTypeWithoutGenerics,
-        );
+        return $this->typeComparator->areTypesEqual($methodReturnTypePHPStanType, $phpDocPHPStanTypeWithoutGenerics);
     }
 
     private function areGenericTypesEqual(

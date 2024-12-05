@@ -75,16 +75,10 @@ CODE_SAMPLE
             // Check if the condition is a negation
             if ($condition instanceof BooleanNot) {
                 // Create a new throw_unless function call
-                return new Expression(new FuncCall(new Name('abort_unless'), [
-                    new Arg($condition->expr),
-                    ...$abortCall->args,
-                ]));
+                return new Expression(new FuncCall(new Name('abort_unless'), array_merge([new Arg($condition->expr)], $abortCall->args)));
             } else {
                 // Create a new throw_if function call
-                return new Expression(new FuncCall(new Name('abort_if'), [
-                    new Arg($condition),
-                    ...$abortCall->args,
-                ]));
+                return new Expression(new FuncCall(new Name('abort_if'), array_merge([new Arg($condition)], $abortCall->args)));
             }
         }
 
@@ -100,7 +94,7 @@ CODE_SAMPLE
         $conditionVariables = [];
         $returnValue = false;
 
-        $this->traverseNodesWithCallable($condition, function (Node $node) use (&$conditionVariables): null {
+        $this->traverseNodesWithCallable($condition, function (Node $node) use (&$conditionVariables) {
             if ($node instanceof Assign) {
                 $conditionVariables[] = $this->getName($node->var);
             }
