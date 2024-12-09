@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Foundation\Support\Providers\EventServiceProvider')
     return;
 }
 
-class EventServiceProvider
-{
-}
+class EventServiceProvider {}

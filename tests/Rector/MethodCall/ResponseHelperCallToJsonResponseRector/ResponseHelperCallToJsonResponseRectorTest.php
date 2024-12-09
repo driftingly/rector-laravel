@@ -16,6 +16,9 @@ final class ResponseHelperCallToJsonResponseRectorTest extends AbstractRectorTes
         return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
+    /**
+     * @test
+     */
     #[Test]
     #[DataProvider('provideData')]
     public function test(string $filePath): void

@@ -29,8 +29,7 @@ final class AddParentBootToModelClassMethodRector extends AbstractRector
     public function __construct(
         private readonly StaticCallAnalyzer $staticCallAnalyzer,
         private readonly ReflectionResolver $reflectionResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -39,8 +39,7 @@ final class AddMockConsoleOutputFalseToConsoleTestsRector extends AbstractRector
         private readonly VisibilityManipulator $visibilityManipulator,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly ValueResolver $valueResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

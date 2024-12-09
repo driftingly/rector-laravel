@@ -4,7 +4,5 @@ namespace RectorLaravel\Tests\Rector\FuncCall\RemoveRedundantValueCallsRector\So
 
 class HelperObject
 {
-    public function store(): void
-    {
-    }
+    public function store(): void {}
 }

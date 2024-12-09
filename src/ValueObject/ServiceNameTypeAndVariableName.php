@@ -10,8 +10,7 @@ final readonly class ServiceNameTypeAndVariableName
         private string $serviceName,
         private string $type,
         private string $variableName
-    ) {
-    }
+    ) {}
 
     public function getServiceName(): string
     {

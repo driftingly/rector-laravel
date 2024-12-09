@@ -58,8 +58,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly StaticTypeMapper $staticTypeMapper,
         private readonly string $applicationClass = 'Illuminate\Foundation\Application',
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

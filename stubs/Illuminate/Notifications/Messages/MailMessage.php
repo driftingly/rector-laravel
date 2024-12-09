@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Notifications\Messages\MailMessage')) {
     return;
 }
 
-class MailMessage
-{
-}
+class MailMessage {}

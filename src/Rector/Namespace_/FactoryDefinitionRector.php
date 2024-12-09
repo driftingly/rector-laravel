@@ -33,8 +33,7 @@ final class FactoryDefinitionRector extends AbstractRector
 {
     public function __construct(
         private readonly ModelFactoryNodeFactory $modelFactoryNodeFactory
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

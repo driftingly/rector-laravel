@@ -35,8 +35,7 @@ final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
     public function __construct(
         private readonly DocBlockUpdater $docBlockUpdater,
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

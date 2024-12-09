@@ -7,19 +7,11 @@ if (class_exists('Illuminate\Foundation\Events\Dispatchable')) {
 }
 trait Dispatchable
 {
-    public static function dispatch(...$arguments)
-    {
-    }
+    public static function dispatch(...$arguments) {}
 
-    public static function dispatchIf($boolean, ...$arguments)
-    {
-    }
+    public static function dispatchIf($boolean, ...$arguments) {}
 
-    public static function dispatchUnless($boolean, ...$arguments)
-    {
-    }
+    public static function dispatchUnless($boolean, ...$arguments) {}
 
-    public static function broadcast()
-    {
-    }
+    public static function broadcast() {}
 }

@@ -22,8 +22,7 @@ class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
     public function __construct(
         private readonly ValueResolver $valueResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -98,8 +97,7 @@ CODE_SAMPLE
         }
 
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Str', $methodName, [
-            $functionCall->getArgs()[0]
-->value,
+            $functionCall->getArgs()[0]->value,
             $otherNode,
         ]);
     }

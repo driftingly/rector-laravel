@@ -6,8 +6,5 @@ class SomeClass
 {
     public int $foo;
 
-    public function something(bool $parameter = false): void
-    {
-
-    }
+    public function something(bool $parameter = false): void {}
 }

@@ -13,8 +13,7 @@ final readonly class StaticCallAnalyzer
 {
     public function __construct(
         private NodeNameResolver $nodeNameResolver
-    ) {
-    }
+    ) {}
 
     public function isParentCallNamed(Node $node, string $desiredMethodName): bool
     {

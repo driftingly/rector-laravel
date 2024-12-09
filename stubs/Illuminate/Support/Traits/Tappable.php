@@ -8,7 +8,5 @@ if (trait_exists('Illuminate\Support\Traits\Tappable')) {
 
 trait Tappable
 {
-    public function tap($callback = null)
-    {
-    }
+    public function tap($callback = null) {}
 }

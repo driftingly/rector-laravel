@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Mail\MailManager')) {
     return;
 }
 
-class MailManager
-{
-}
+class MailManager {}

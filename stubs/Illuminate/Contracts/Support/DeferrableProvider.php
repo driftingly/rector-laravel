@@ -8,6 +8,4 @@ if (interface_exists('Illuminate\Contracts\Support\DeferrableProvider')) {
     return;
 }
 
-interface DeferrableProvider
-{
-}
+interface DeferrableProvider {}

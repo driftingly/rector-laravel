@@ -26,10 +26,7 @@ final class LivewireComponentComputedMethodToComputedAttributeRector extends Abs
 
     private const METHOD_PATTERN = '/^get(?\'methodName\'[\w]*)Property$/';
 
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer)
-    {
-
-    }
+    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

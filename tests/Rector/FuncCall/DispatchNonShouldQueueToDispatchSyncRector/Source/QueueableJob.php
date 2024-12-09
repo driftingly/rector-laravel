@@ -4,6 +4,4 @@ namespace RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSy
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class QueueableJob implements ShouldQueue
-{
-}
+class QueueableJob implements ShouldQueue {}

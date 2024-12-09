@@ -36,8 +36,7 @@ final class ArgumentFuncCallToMethodCallRector extends AbstractRector implements
     public function __construct(
         private readonly ArrayTypeAnalyzer $arrayTypeAnalyzer,
         private readonly FuncCallStaticCallToMethodCallAnalyzer $funcCallStaticCallToMethodCallAnalyzer
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

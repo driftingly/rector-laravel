@@ -15,6 +15,4 @@ if (class_exists('Illuminate\Support\Collection')) {
  *
  * @implements \Illuminate\Support\Enumerable<TKey, TValue>
  */
-class Collection implements Enumerable
-{
-}
+class Collection implements Enumerable {}
