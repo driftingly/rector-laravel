@@ -9,8 +9,7 @@ final readonly class ReplaceServiceContainerCallArg
     public function __construct(
         private string|ClassConstFetch $oldService,
         private string|ClassConstFetch $newService
-    ) {
-    }
+    ) {}
 
     public function getOldService(): string|ClassConstFetch
     {

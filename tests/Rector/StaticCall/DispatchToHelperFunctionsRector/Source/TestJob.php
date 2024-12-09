@@ -11,6 +11,5 @@ class TestJob
     public function __construct(
         private string $param1,
         private string $param2,
-    ) {
-    }
+    ) {}
 }

@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Foundation\Testing\TestCase')) {
     return;
 }
 
-class TestCase
-{
-}
+class TestCase {}

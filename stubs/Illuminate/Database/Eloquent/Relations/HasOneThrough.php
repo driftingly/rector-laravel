@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Database\Eloquent\Relations\HasOneThrough')) {
     return;
 }
 
-class HasOneThrough extends Relation
-{
-}
+class HasOneThrough extends Relation {}

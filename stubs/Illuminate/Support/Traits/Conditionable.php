@@ -8,11 +8,7 @@ if (trait_exists('Illuminate\Support\Traits\Conditionable')) {
 
 trait Conditionable
 {
-    public function when($value = null, ?callable $callback = null, ?callable $default = null)
-    {
-    }
+    public function when($value = null, ?callable $callback = null, ?callable $default = null) {}
 
-    public function unless($value = null, ?callable $callback = null, ?callable $default = null)
-    {
-    }
+    public function unless($value = null, ?callable $callback = null, ?callable $default = null) {}
 }

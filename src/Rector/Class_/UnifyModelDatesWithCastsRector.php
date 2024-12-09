@@ -31,8 +31,7 @@ final class UnifyModelDatesWithCastsRector extends AbstractRector
         private readonly ClassInsertManipulator $classInsertManipulator,
         private readonly ValueResolver $valueResolver,
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

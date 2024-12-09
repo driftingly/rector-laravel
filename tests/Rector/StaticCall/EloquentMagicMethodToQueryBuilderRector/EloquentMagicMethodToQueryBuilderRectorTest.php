@@ -9,9 +9,7 @@ use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class User extends Model
-{
-}
+final class User extends Model {}
 
 final class EloquentMagicMethodToQueryBuilderRectorTest extends AbstractRectorTestCase
 {

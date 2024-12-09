@@ -27,8 +27,7 @@ class ModelCastsPropertyToCastsMethodRector extends AbstractRector
         protected BuilderFactory $builderFactory,
         protected PhpDocInfoFactory $phpDocInfoFactory,
         protected DocBlockUpdater $docBlockUpdater,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -6,6 +6,4 @@ if (class_exists('Laravel\Cashier\Billable')) {
     return;
 }
 
-trait Billable
-{
-}
+trait Billable {}

@@ -31,10 +31,7 @@ final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRec
 
     private const QUERY_STRING_PROPERTY_NAME = 'queryString';
 
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer)
-    {
-
-    }
+    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -13,8 +13,7 @@ final readonly class AddArgumentDefaultValue
         private string $method,
         private int $position,
         private mixed $defaultValue
-    ) {
-    }
+    ) {}
 
     public function getObjectType(): ObjectType
     {

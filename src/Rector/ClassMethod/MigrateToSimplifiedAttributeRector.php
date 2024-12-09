@@ -34,8 +34,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 {
     public function __construct(
         private readonly BetterNodeFinder $betterNodeFinder
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<class-string<Node>>

@@ -58,8 +58,7 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
         private readonly ReflectionResolver $reflectionResolver,
         private readonly RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer,
         private readonly ValueResolver $valueResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

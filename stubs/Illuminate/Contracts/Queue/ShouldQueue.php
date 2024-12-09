@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Contracts\Queue\ShouldQueue')) {
     return;
 }
 
-interface ShouldQueue
-{
-}
+interface ShouldQueue {}

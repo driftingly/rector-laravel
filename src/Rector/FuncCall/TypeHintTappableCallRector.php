@@ -25,8 +25,7 @@ class TypeHintTappableCallRector extends AbstractRector
     public function __construct(
         private readonly TypeComparator $typeComparator,
         private readonly StaticTypeMapper $staticTypeMapper
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -22,8 +22,7 @@ class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
     public function __construct(
         private readonly ValueResolver $valueResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

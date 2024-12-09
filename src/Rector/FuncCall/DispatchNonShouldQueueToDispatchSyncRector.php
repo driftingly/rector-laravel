@@ -33,9 +33,7 @@ class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
 
     private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
 
-    public function __construct(private readonly ReflectionProvider $reflectionProvider)
-    {
-    }
+    public function __construct(private readonly ReflectionProvider $reflectionProvider) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

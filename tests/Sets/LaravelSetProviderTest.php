@@ -28,7 +28,10 @@ final class LaravelSetProviderTest extends TestCase
         LaravelSetList::LARAVEL_110,
     ];
 
-    public function test_it_provides_sets(): void
+    /**
+     * @test
+     */
+    public function it_provides_sets(): void
     {
         $laravelSetProvider = new LaravelSetProvider;
 
@@ -38,7 +41,10 @@ final class LaravelSetProviderTest extends TestCase
         );
     }
 
-    public function test_it_returns_unique_sets(): void
+    /**
+     * @test
+     */
+    public function it_returns_unique_sets(): void
     {
         $laravelSetProvider = new LaravelSetProvider;
 
@@ -49,7 +55,10 @@ final class LaravelSetProviderTest extends TestCase
         Assert::assertCount(count($sets), $uniqueSets);
     }
 
-    public function test_it_provides_all_laravel_versions(): void
+    /**
+     * @test
+     */
+    public function it_provides_all_laravel_versions(): void
     {
         $laravelSetProvider = new LaravelSetProvider;
 

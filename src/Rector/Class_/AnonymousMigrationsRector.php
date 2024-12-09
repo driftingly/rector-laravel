@@ -24,8 +24,7 @@ final class AnonymousMigrationsRector extends AbstractRector
 {
     public function __construct(
         private readonly ClassAnalyzer $classAnalyzer
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

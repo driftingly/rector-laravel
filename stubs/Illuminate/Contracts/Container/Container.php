@@ -2,6 +2,4 @@
 
 namespace Illuminate\Contracts\Container;
 
-interface Container
-{
-}
+interface Container {}

@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Database\Eloquent\Relations\MorphTo')) {
     return;
 }
 
-class MorphTo extends BelongsTo
-{
-}
+class MorphTo extends BelongsTo {}

@@ -13,7 +13,5 @@ trait Dispatchable
      * @param  array  $chain
      * @return PendingChain
      */
-    public static function withChain($chain)
-    {
-    }
+    public static function withChain($chain) {}
 }

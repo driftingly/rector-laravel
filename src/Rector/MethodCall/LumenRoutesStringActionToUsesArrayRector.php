@@ -22,8 +22,7 @@ final class LumenRoutesStringActionToUsesArrayRector extends AbstractRector
 {
     public function __construct(
         private readonly LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

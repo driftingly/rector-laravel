@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Routing\ResponseFactory')) {
     return;
 }
 
-class ResponseFactory implements \Illuminate\Contracts\Routing\ResponseFactory
-{
-}
+class ResponseFactory implements \Illuminate\Contracts\Routing\ResponseFactory {}

@@ -24,8 +24,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
 {
     public function __construct(
         private readonly ReflectionProvider $reflectionProvider,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws PoorDocumentationException

@@ -17,8 +17,7 @@ final readonly class RouterRegisterNodeAnalyzer
     public function __construct(
         private NodeNameResolver $nodeNameResolver,
         private NodeTypeResolver $nodeTypeResolver
-    ) {
-    }
+    ) {}
 
     public function isRegisterMethodStaticCall(MethodCall|StaticCall $node): bool
     {

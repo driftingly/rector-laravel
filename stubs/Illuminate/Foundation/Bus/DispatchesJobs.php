@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Foundation\Bus\DispatchesJobs')) {
     return;
 }
 
-trait DispatchesJobs
-{
-}
+trait DispatchesJobs {}
