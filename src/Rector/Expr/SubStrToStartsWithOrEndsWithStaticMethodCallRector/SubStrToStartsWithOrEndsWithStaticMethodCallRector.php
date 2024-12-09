@@ -98,8 +98,7 @@ CODE_SAMPLE
         }
 
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Str', $methodName, [
-            $functionCall->getArgs()[0]
-->value,
+            $functionCall->getArgs()[0]->value,
             $otherNode,
         ]);
     }

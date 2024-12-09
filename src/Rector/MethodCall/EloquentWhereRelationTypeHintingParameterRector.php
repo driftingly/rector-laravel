@@ -96,8 +96,7 @@ CODE_SAMPLE
         ) ? 2 : 1;
 
         /** @var ArrowFunction|Closure $closure */
-        $closure = $node->getArgs()[$position]
-->value;
+        $closure = $node->getArgs()[$position]->value;
 
         if (! isset($closure->getParams()[0])) {
             return;
