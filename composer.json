@@ -16,7 +16,7 @@
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpstan/phpstan-webmozart-assert": "^2.0",
         "phpunit/phpunit": "^10.5",
-        "symplify/rule-doc-generator": "12.2.5",
+        "symplify/rule-doc-generator": "^12.2",
         "tightenco/duster": "^2.7"
     },
     "autoload": {
@@ -32,8 +32,6 @@
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --ansi",
-        "check-cs": "vendor/bin/duster lint",
-        "fix-cs": "vendor/bin/duster fix",
         "lint": "vendor/bin/duster lint",
         "fix": "vendor/bin/duster fix",
         "rector-dry-run": "vendor/bin/rector process --dry-run --ansi",
