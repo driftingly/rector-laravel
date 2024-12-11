@@ -13,7 +13,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\NodeVisitor;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

@@ -12,7 +12,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

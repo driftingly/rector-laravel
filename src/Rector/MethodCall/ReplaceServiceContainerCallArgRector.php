@@ -14,7 +14,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use RectorLaravel\ValueObject\ReplaceServiceContainerCallArg;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;

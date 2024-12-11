@@ -12,7 +12,7 @@ use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;

@@ -15,7 +15,7 @@ use PhpParser\Node\Stmt\Nop;
 use PHPStan\Type\ObjectType;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\AppAssignFactory;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;

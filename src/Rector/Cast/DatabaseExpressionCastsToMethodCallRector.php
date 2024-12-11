@@ -7,7 +7,7 @@ namespace RectorLaravel\Rector\Cast;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Cast\String_;
 use PhpParser\Node\Expr\StaticCall;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

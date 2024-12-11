@@ -6,7 +6,8 @@
     "require": {
         "php": ">=8.2",
         "rector/rector": "^2.0.0-rc2",
-        "webmozart/assert": "^1.11"
+        "webmozart/assert": "^1.11",
+        "symplify/rule-doc-generator-contracts": "^11.2"
     },
     "require-dev": {
         "nikic/php-parser": "^5.3",

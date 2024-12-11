@@ -25,7 +25,7 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

@@ -10,8 +10,8 @@ use PhpParser\Node\Param;
 use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
-use Rector\Rector\AbstractRector;
 use Rector\StaticTypeMapper\StaticTypeMapper;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

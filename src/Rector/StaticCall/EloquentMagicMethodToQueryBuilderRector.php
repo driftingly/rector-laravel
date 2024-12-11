@@ -11,7 +11,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use ReflectionException;
 use ReflectionMethod;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;

@@ -9,7 +9,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
