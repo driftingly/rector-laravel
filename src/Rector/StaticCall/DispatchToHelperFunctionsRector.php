@@ -22,10 +22,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DispatchToHelperFunctionsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
-
+    /**
+     * @readonly
+     * @var \PHPStan\Reflection\ReflectionProvider
+     */
+    private $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
     /**
      * @throws PoorDocumentationException
      */
@@ -42,7 +47,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
                     'ExampleJob::dispatch($email);',
                     'dispatch(new ExampleJob($email));'
                 ),
-            ],
+            ]
         );
     }
 
@@ -101,7 +106,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
 
         try {
             return $this->reflectionProvider->getClass($objectClassNames[0]);
-        } catch (ClassNotFoundException) {
+        } catch (ClassNotFoundException $exception) {
         }
 
         return null;
@@ -132,7 +137,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
             new Name($method),
             [
                 new Arg(new New_(new FullyQualified($class), $staticCall->args)),
-            ],
+            ]
         );
     }
 }

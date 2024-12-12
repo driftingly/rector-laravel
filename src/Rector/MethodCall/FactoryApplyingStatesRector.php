@@ -24,10 +24,15 @@ use Webmozart\Assert\Assert;
  */
 final class FactoryApplyingStatesRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {}
-
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Call the state methods directly instead of specify the name of state.', [
@@ -89,6 +94,8 @@ CODE_SAMPLE
             return (array) $this->valueResolver->getValue($args[0]->value);
         }
 
-        return array_map(fn ($arg) => $arg instanceof Arg ? $this->valueResolver->getValue($arg->value) : null, $args);
+        return array_map(function ($arg) {
+            return $arg instanceof Arg ? $this->valueResolver->getValue($arg->value) : null;
+        }, $args);
     }
 }

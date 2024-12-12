@@ -22,7 +22,7 @@ final class RemoveDumpDataDeadCodeRector extends AbstractRector implements Confi
     /**
      * @var string[]
      */
-    private array $dumpFunctionNames = ['dd', 'dump'];
+    private $dumpFunctionNames = ['dd', 'dump'];
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -62,7 +62,7 @@ class MyController
 }
 CODE_SAMPLE
                     ,
-                    ['dd', 'dump'],
+                    ['dd', 'dump']
                 ),
             ]
         );

@@ -23,12 +23,24 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ModelCastsPropertyToCastsMethodRector extends AbstractRector
 {
-    public function __construct(
-        protected BuilderFactory $builderFactory,
-        protected PhpDocInfoFactory $phpDocInfoFactory,
-        protected DocBlockUpdater $docBlockUpdater,
-    ) {}
-
+    /**
+     * @var \PhpParser\BuilderFactory
+     */
+    protected $builderFactory;
+    /**
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    protected $phpDocInfoFactory;
+    /**
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    protected $docBlockUpdater;
+    public function __construct(BuilderFactory $builderFactory, PhpDocInfoFactory $phpDocInfoFactory, DocBlockUpdater $docBlockUpdater)
+    {
+        $this->builderFactory = $builderFactory;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->docBlockUpdater = $docBlockUpdater;
+    }
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Refactor Model $casts property with casts() method', [
@@ -38,24 +50,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
 {
-    protected $casts = [
-        'age' => 'integer',
-    ];
+protected $casts = [
+'age' => 'integer',
+];
 }
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                 <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
 {
-    protected function casts(): array
-    {
-        return [
-            'age' => 'integer',
-        ];
-    }
+protected function casts(): array
+{
+return [
+'age' => 'integer',
+];
 }
-CODE_SAMPLE,
+}
+CODE_SAMPLE
+
             ),
         ]);
     }
@@ -110,7 +124,10 @@ CODE_SAMPLE,
         return null;
     }
 
-    private function restorePhpDoc(ClassMethod|Node $methodNode): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node $methodNode
+     */
+    private function restorePhpDoc($methodNode): void
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($methodNode);
 

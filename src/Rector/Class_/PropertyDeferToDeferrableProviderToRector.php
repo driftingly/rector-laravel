@@ -22,10 +22,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class PropertyDeferToDeferrableProviderToRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {}
-
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(

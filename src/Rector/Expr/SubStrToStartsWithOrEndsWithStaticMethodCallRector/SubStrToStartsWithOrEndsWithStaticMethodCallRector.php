@@ -20,10 +20,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {}
-
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Use Str::startsWith() or Str::endsWith() instead of substr() === $str', [
@@ -39,7 +44,7 @@ if (Str::startsWith($str, 'foo')) {
     // do something
 }
 CODE_SAMPLE
-                ,
+                
             ),
         ]);
     }
@@ -60,10 +65,12 @@ CODE_SAMPLE
 
         /** @var Expr\FuncCall|null $functionCall */
         $functionCall = array_values(
-            array_filter([$node->left, $node->right], fn ($node) => $node instanceof FuncCall && $this->isName(
-                $node,
-                'substr'
-            ))
+            array_filter([$node->left, $node->right], function ($node) {
+                return $node instanceof FuncCall && $this->isName(
+                    $node,
+                    'substr'
+                );
+            })
         )[0] ?? null;
 
         if (! $functionCall instanceof FuncCall) {
@@ -72,7 +79,9 @@ CODE_SAMPLE
 
         /** @var Expr $otherNode */
         $otherNode = array_values(
-            array_filter([$node->left, $node->right], static fn ($node) => $node !== $functionCall)
+            array_filter([$node->left, $node->right], static function ($node) use ($functionCall) {
+                return $node !== $functionCall;
+            })
         )[0] ?? null;
 
         // get the function call second argument value
