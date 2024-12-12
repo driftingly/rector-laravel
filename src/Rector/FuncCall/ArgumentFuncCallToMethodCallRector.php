@@ -14,8 +14,8 @@ use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeTypeResolver\TypeAnalyzer\ArrayTypeAnalyzer;
-use Rector\Rector\AbstractRector;
 use Rector\Transform\NodeAnalyzer\FuncCallStaticCallToMethodCallAnalyzer;
+use RectorLaravel\AbstractRector;
 use RectorLaravel\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface;
 use RectorLaravel\ValueObject\ArgumentFuncCallToMethodCall;
 use RectorLaravel\ValueObject\ArrayFuncCallToMethodCall;
@@ -36,8 +36,7 @@ final class ArgumentFuncCallToMethodCallRector extends AbstractRector implements
     public function __construct(
         private readonly ArrayTypeAnalyzer $arrayTypeAnalyzer,
         private readonly FuncCallStaticCallToMethodCallAnalyzer $funcCallStaticCallToMethodCallAnalyzer
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

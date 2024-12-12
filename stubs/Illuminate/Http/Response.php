@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Http\Response')) {
     return;
 }
 
-class Response extends SymfonyResponse
-{
-}
+class Response extends SymfonyResponse {}

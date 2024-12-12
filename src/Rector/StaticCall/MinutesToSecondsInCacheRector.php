@@ -10,8 +10,8 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Mul;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Scalar\LNumber;
-use Rector\Rector\AbstractRector;
+use PhpParser\Node\Scalar\Int_;
+use RectorLaravel\AbstractRector;
 use RectorLaravel\ValueObject\TypeToTimeMethodAndPosition;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -148,7 +148,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $mul = new Mul($argExpr, new LNumber(60));
+        $mul = new Mul($argExpr, new Int_(60));
         $node->args[$argumentPosition] = new Arg($mul);
 
         return $node;

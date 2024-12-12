@@ -18,9 +18,9 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
 use Rector\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -51,8 +51,7 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements C
 
     public function __construct(
         private readonly ValueResolver $valueResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -132,6 +131,9 @@ CODE_SAMPLE
         return new NullsafeMethodCall($firstArg->value, $node->name, $node->args);
     }
 
+    /**
+     * @return PhpVersion::PHP_80
+     */
     public function provideMinPhpVersion(): int
     {
         return PhpVersion::PHP_80;

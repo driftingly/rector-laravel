@@ -7,9 +7,9 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
-use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\PHPStan\ScopeFetcher;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -17,7 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \RectorLaravel\Tests\Rector\StaticCall\CarbonSetTestNowToTravelToRector\CarbonSetTestNowToTravelToRectorTest
  */
-final class CarbonSetTestNowToTravelToRector extends AbstractScopeAwareRector
+final class CarbonSetTestNowToTravelToRector extends AbstractRector
 {
     /**
      * @throws PoorDocumentationException
@@ -66,11 +66,13 @@ CODE_SAMPLE
         return [StaticCall::class];
     }
 
-    public function refactorWithScope(Node $node, Scope $scope): ?MethodCall
+    public function refactor(Node $node): ?MethodCall
     {
         if (! $node instanceof StaticCall) {
             return null;
         }
+
+        $scope = ScopeFetcher::fetch($node);
 
         if (! $scope->isInClass()) {
             return null;

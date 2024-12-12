@@ -4,10 +4,10 @@ namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar;
@@ -16,7 +16,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -31,10 +31,7 @@ final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRec
 
     private const QUERY_STRING_PROPERTY_NAME = 'queryString';
 
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer)
-    {
-
-    }
+    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -126,7 +123,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return array<string, Node\Arg[]>|null
+     * @return array<string, list<Node\Arg>>|null
      */
     private function findQueryStringProperties(Property $property): ?array
     {
@@ -181,7 +178,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  Node\Arg[]  $args
+     * @param  list<Node\Arg>  $args
      */
     private function addUrlAttributeToProperty(Property $property, array $args): void
     {
@@ -197,7 +194,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return Node\Arg[]|null
+     * @return list<Node\Arg>|null
      */
     private function processArrayOptionsIntoArgs(Array_ $array): ?array
     {

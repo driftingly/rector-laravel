@@ -12,8 +12,7 @@ final readonly class TypeToTimeMethodAndPosition
         private string $type,
         private string $methodName,
         private int $position
-    ) {
-    }
+    ) {}
 
     public function getObjectType(): ObjectType
     {

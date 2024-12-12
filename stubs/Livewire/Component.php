@@ -6,6 +6,4 @@ if (class_exists('Livewire\Component')) {
     return;
 }
 
-class Component
-{
-}
+class Component {}

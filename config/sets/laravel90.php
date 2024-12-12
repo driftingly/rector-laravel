@@ -12,6 +12,7 @@ use Rector\ValueObject\Visibility;
 use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 use RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector;
+use RectorLaravel\Rector\ClassMethod\MigrateToSimplifiedAttributeRector;
 use RectorLaravel\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector;
 
 // see https://laravel.com/docs/9.x/upgrade
@@ -106,4 +107,7 @@ return static function (RectorConfig $rectorConfig): void {
             // https://github.com/laravel/framework/commit/9894c2c64dc70f7dfda2ac46dfdaa8769ce4596a
             new MethodCallRename('Illuminate\Testing\TestResponse', 'assertDeleted', 'assertModelMissing'),
         ]);
+
+    // https://github.com/laravel/framework/commit/e0c2620b57be6416820ea7ca8e46fd2f71d2fe35
+    $rectorConfig->rule(MigrateToSimplifiedAttributeRector::class);
 };

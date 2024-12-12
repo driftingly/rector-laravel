@@ -8,6 +8,4 @@ if (interface_exists('Illuminate\Contracts\Cache\Store')) {
     return;
 }
 
-interface Store
-{
-}
+interface Store {}

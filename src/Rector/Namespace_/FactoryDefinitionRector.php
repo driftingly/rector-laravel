@@ -18,7 +18,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
 use Rector\PhpParser\Node\CustomNode\FileWithoutNamespace;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\ModelFactoryNodeFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -33,8 +33,7 @@ final class FactoryDefinitionRector extends AbstractRector
 {
     public function __construct(
         private readonly ModelFactoryNodeFactory $modelFactoryNodeFactory
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

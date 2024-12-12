@@ -10,7 +10,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use RectorLaravel\ValueObject\ApplyDefaultInsteadOfNullCoalesce;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -90,14 +90,20 @@ CODE_SAMPLE
 
         $call = $node->left;
 
+        if ($call instanceof MethodCall) {
+            $objectType = $call->var;
+        } elseif ($call instanceof StaticCall) {
+            $objectType = $call->class;
+        } else {
+            $objectType = null;
+        }
+
         foreach ($this->applyDefaultWith as $applyDefaultWith) {
             $valid = false;
 
-            $objectType = $call->var ?? $call->class ?? null;
-
             if (
-                $applyDefaultWith->getObjectType() instanceof ObjectType &&
-                $objectType !== null &&
+                $applyDefaultWith->getObjectType() !== null &&
+                $objectType instanceof Node &&
                 $this->isObjectType(
                     $objectType,
                     $applyDefaultWith->getObjectType()) &&

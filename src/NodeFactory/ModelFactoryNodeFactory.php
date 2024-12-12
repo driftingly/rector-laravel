@@ -38,8 +38,7 @@ final readonly class ModelFactoryNodeFactory
         private NodeFactory $nodeFactory,
         private ValueResolver $valueResolver,
         private SimpleCallableNodeTraverser $simpleCallableNodeTraverser
-    ) {
-    }
+    ) {}
 
     public function createEmptyFactory(string $name, Expr $expr): Class_
     {

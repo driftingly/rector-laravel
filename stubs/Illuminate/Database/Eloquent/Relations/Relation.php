@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Database\Eloquent\Relations\Relation')) {
     return;
 }
 
-abstract class Relation
-{
-}
+abstract class Relation {}

@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Database\Migrations\Migration')) {
     return;
 }
 
-class Migration
-{
-}
+class Migration {}

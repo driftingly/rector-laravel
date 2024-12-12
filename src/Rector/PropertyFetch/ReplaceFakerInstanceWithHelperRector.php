@@ -9,8 +9,8 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PHPStan\Reflection\ClassReflection;
-use Rector\Rector\AbstractRector;
 use Rector\Reflection\ReflectionResolver;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,8 +21,7 @@ final class ReplaceFakerInstanceWithHelperRector extends AbstractRector
 {
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

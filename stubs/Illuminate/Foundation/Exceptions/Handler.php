@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Foundation\Exceptions\Handler')) {
     return;
 }
 
-class Handler
-{
-}
+class Handler {}

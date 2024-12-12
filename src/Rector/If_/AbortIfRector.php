@@ -12,8 +12,8 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
-use PhpParser\NodeTraverser;
-use Rector\Rector\AbstractRector;
+use PhpParser\NodeVisitor;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -112,7 +112,7 @@ CODE_SAMPLE
             if ($node instanceof Variable && in_array($this->getName($node), $conditionVariables, true)) {
                 $returnValue = true;
 
-                return NodeTraverser::STOP_TRAVERSAL;
+                return NodeVisitor::STOP_TRAVERSAL;
             }
 
             return null;
