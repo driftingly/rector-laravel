@@ -265,6 +265,12 @@ CODE_SAMPLE
             return null;
         }
 
+        // Find deepest MethodCall, which is the first in code, to allow chaining:
+        // $this->hasMany(..)->orderBy(..)->with(..)
+        while ($methodCall->var instanceof MethodCall) {
+            $methodCall = $methodCall->var;
+        }
+
         // Called method should be one of the Laravel's relation methods
         if (! $this->doesMethodHasName($methodCall, self::RELATION_METHODS)) {
             return null;
