@@ -15,7 +15,7 @@ use PhpParser\Node\Stmt\Nop;
 use PHPStan\Type\ObjectType;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\AppAssignFactory;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -53,8 +53,9 @@ final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 
     /**
      * @param  Expression  $node
+     * @return array<int, Node>|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node): ?array
     {
         if (! $node->expr instanceof Assign) {
             return null;

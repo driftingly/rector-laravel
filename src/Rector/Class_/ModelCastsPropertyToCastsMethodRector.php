@@ -3,6 +3,7 @@
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\BuilderFactory;
+use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -13,7 +14,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -26,8 +27,7 @@ class ModelCastsPropertyToCastsMethodRector extends AbstractRector
         protected BuilderFactory $builderFactory,
         protected PhpDocInfoFactory $phpDocInfoFactory,
         protected DocBlockUpdater $docBlockUpdater,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -90,7 +90,7 @@ CODE_SAMPLE,
                     ->setReturnType('array')
                     ->makeProtected();
 
-                if ($stmt->getDocComment() !== null) {
+                if ($stmt->getDocComment() instanceof Doc) {
                     $method->setDocComment($stmt->getDocComment());
                 }
 

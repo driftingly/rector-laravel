@@ -14,28 +14,26 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\PHPStan\ScopeFetcher;
 use Rector\StaticTypeMapper\StaticTypeMapper;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use RectorLaravel\AbstractRector;
+use ReflectionClassConstant;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Webmozart\Assert\Assert;
 
 /**
  * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorNewGenericsTest
  * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorOldGenericsTest
  */
-class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector implements ConfigurableRectorInterface
+class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
     // Relation methods which are supported by this Rector.
     private const RELATION_METHODS = [
@@ -59,15 +57,15 @@ class AddGenericReturnTypeToRelationsRector extends AbstractScopeAwareRector imp
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly StaticTypeMapper $staticTypeMapper,
-    ) {
-    }
+        private readonly string $applicationClass = 'Illuminate\Foundation\Application',
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Add generic return type to relations in child of Illuminate\Database\Eloquent\Model',
             [
-                new ConfiguredCodeSample(
+                new CodeSample(
                     <<<'CODE_SAMPLE'
 use App\Account;
 use Illuminate\Database\Eloquent\Model;
@@ -96,9 +94,9 @@ class User extends Model
         return $this->hasMany(Account::class);
     }
 }
-CODE_SAMPLE,
-                    ['shouldUseNewGenerics' => false]),
-                new ConfiguredCodeSample(
+CODE_SAMPLE
+                ),
+                new CodeSample(
                     <<<'CODE_SAMPLE'
 use App\Account;
 use Illuminate\Database\Eloquent\Model;
@@ -127,8 +125,8 @@ class User extends Model
         return $this->hasMany(Account::class);
     }
 }
-CODE_SAMPLE,
-                    ['shouldUseNewGenerics' => true]),
+CODE_SAMPLE
+                ),
             ]
         );
     }
@@ -141,11 +139,13 @@ CODE_SAMPLE,
         return [ClassMethod::class];
     }
 
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
         if (! $node instanceof ClassMethod) {
             return null;
         }
+
+        $scope = ScopeFetcher::fetch($node);
 
         if ($this->shouldSkipNode($node, $scope)) {
             return null;
@@ -196,6 +196,9 @@ CODE_SAMPLE,
             return null;
         }
 
+        // Put here to make the check as late as possible
+        $this->setShouldUseNewGenerics();
+
         $classForChildGeneric = $this->getClassForChildGeneric($scope, $relationMethodCall);
         $classForIntermediateGeneric = $this->getClassForIntermediateGeneric($relationMethodCall);
 
@@ -232,43 +235,17 @@ CODE_SAMPLE,
         return $node;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function configure(array $configuration): void
-    {
-        if ($configuration === []) {
-            $this->shouldUseNewGenerics = false;
-
-            return;
-        }
-
-        Assert::count($configuration, 1);
-        Assert::keyExists($configuration, 'shouldUseNewGenerics');
-        Assert::boolean($configuration['shouldUseNewGenerics']);
-
-        $this->shouldUseNewGenerics = $configuration['shouldUseNewGenerics'];
-    }
-
     private function getRelatedModelClassFromMethodCall(MethodCall $methodCall): ?string
     {
         $argType = $this->getType($methodCall->getArgs()[0]->value);
 
-        if ($argType instanceof ConstantStringType && $argType->isClassStringType()->yes()) {
-            return $argType->getValue();
-        }
+        $objectClassNames = $argType->getClassStringObjectType()->getObjectClassNames();
 
-        if (! $argType instanceof GenericClassStringType) {
+        if ($objectClassNames === []) {
             return null;
         }
 
-        $modelType = $argType->getGenericType();
-
-        if (! $modelType instanceof ObjectType) {
-            return null;
-        }
-
-        return $modelType->getClassName();
+        return $objectClassNames[0];
     }
 
     private function getRelationMethodCall(ClassMethod $classMethod): ?MethodCall
@@ -286,6 +263,12 @@ CODE_SAMPLE,
 
         if (! $methodCall instanceof MethodCall) {
             return null;
+        }
+
+        // Find deepest MethodCall, which is the first in code, to allow chaining:
+        // $this->hasMany(..)->orderBy(..)->with(..)
+        while ($methodCall->var instanceof MethodCall) {
+            $methodCall = $methodCall->var;
         }
 
         // Called method should be one of the Laravel's relation methods
@@ -341,21 +324,13 @@ CODE_SAMPLE,
 
         $argType = $this->getType($args[1]->value);
 
-        if ($argType instanceof ConstantStringType && $argType->isClassStringType()->yes()) {
-            return $argType->getValue();
-        }
+        $objectClassNames = $argType->getClassStringObjectType()->getObjectClassNames();
 
-        if (! $argType instanceof GenericClassStringType) {
+        if ($objectClassNames === []) {
             return null;
         }
 
-        $modelType = $argType->getGenericType();
-
-        if (! $modelType instanceof ObjectType) {
-            return null;
-        }
-
-        return $modelType->getClassName();
+        return $objectClassNames[0];
     }
 
     private function areNativeTypeAndPhpDocReturnTypeEqual(
@@ -488,5 +463,14 @@ CODE_SAMPLE,
         }
 
         return $generics;
+    }
+
+    private function setShouldUseNewGenerics(): void
+    {
+        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
+
+        if (is_string($reflectionClassConstant->getValue())) {
+            $this->shouldUseNewGenerics = version_compare($reflectionClassConstant->getValue(), '11.15.0', '>=');
+        }
     }
 }

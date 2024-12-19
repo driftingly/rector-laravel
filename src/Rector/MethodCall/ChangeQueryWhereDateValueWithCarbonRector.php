@@ -15,7 +15,7 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -29,8 +29,7 @@ final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector
 {
     public function __construct(
         private readonly ValueResolver $valueResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -78,8 +77,9 @@ CODE_SAMPLE
 
     /**
      * @param  Expression  $node
+     * @return array<int, Expression|Node>|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node): ?array
     {
         if (! $node->expr instanceof MethodCall) {
             return null;

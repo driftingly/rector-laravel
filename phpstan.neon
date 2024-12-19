@@ -1,5 +1,3 @@
-includes:
-    - vendor/symplify/phpstan-rules/config/rector-rules.neon
 parameters:
     level: max
 
@@ -15,7 +13,7 @@ parameters:
         - */Source/*
         - *Source/*
 
-#    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
 
     ignoreErrors:
         # false positive
@@ -29,3 +27,10 @@ parameters:
         - '#Parameter \#1 \$node (.*?) of method RectorLaravel\\(.*?)\:\:(refactor|refactorWithScope)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Contract\\Rector\\RectorInterface\:\:refactor\(\)#'
 
         - '#Parameter \#1 \$className of method Rector\\Reflection\\ReflectionResolver\:\:resolveMethodReflection\(\) expects class\-string, string given#'
+
+        # Laravel Container not being recognized properly in some of the tests
+        - '#Call to method needs\(\) on an unknown class Illuminate\\Contracts\\Container\\ContextualBindingBuilder#'
+        - '#Cannot call method give\(\) on mixed.#'
+
+        # No easy replacement for this check, it's also ignored in core Rector
+        - '#Doing instanceof PHPStan\\Type\\Generic\\GenericObjectType is error\-prone and deprecated#'

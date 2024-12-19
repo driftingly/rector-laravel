@@ -20,8 +20,8 @@ use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\PHPUnit\NodeAnalyzer\SetUpMethodDecorator;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
-use Rector\Rector\AbstractRector;
 use Rector\ValueObject\MethodName;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -39,8 +39,7 @@ final class AddMockConsoleOutputFalseToConsoleTestsRector extends AbstractRector
         private readonly VisibilityManipulator $visibilityManipulator,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly ValueResolver $valueResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -12,8 +12,7 @@ use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\Type\ObjectType;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -25,8 +24,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
 {
     public function __construct(
         private readonly ReflectionProvider $reflectionProvider,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws PoorDocumentationException
@@ -91,14 +89,18 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
     private function getClassReflection(StaticCall $staticCall): ?ClassReflection
     {
         $type = $this->getType($staticCall->class);
-        if (! $type instanceof ObjectType) {
+        if (! $type->isObject()->yes()) {
+            return null;
+        }
+
+        $objectClassNames = $type->getObjectClassNames();
+
+        if (count($objectClassNames) !== 1) {
             return null;
         }
 
         try {
-            return $this->reflectionProvider->getClass(
-                $type->getClassName()
-            );
+            return $this->reflectionProvider->getClass($objectClassNames[0]);
         } catch (ClassNotFoundException) {
         }
 

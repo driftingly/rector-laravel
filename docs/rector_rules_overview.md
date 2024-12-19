@@ -63,8 +63,6 @@ Adds the `@extends` annotation to Factories.
 
 Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
 
-:wrench: **configure it!**
-
 - class: [`RectorLaravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddGenericReturnTypeToRelationsRector.php)
 
 ```diff
@@ -219,6 +217,21 @@ Replace `$app->environment() === 'local'` with `$app->environment('local')`
 ```diff
 -$app->environment() === 'production';
 +$app->environment('production');
+```
+
+<br>
+
+## ApplyDefaultInsteadOfNullCoalesceRector
+
+Apply default instead of null coalesce
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector`](../src/Rector/Coalesce/ApplyDefaultInsteadOfNullCoalesceRector.php)
+
+```diff
+-custom_helper('app.name') ?? 'Laravel';
++custom_helper('app.name', 'Laravel');
 ```
 
 <br>

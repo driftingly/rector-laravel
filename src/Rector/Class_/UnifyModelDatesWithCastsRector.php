@@ -6,8 +6,8 @@ namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Builder\Property as PropertyBuilder;
 use PhpParser\Node;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
@@ -15,7 +15,7 @@ use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\NodeManipulator\ClassInsertManipulator;
 use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -31,8 +31,7 @@ final class UnifyModelDatesWithCastsRector extends AbstractRector
         private readonly ClassInsertManipulator $classInsertManipulator,
         private readonly ValueResolver $valueResolver,
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

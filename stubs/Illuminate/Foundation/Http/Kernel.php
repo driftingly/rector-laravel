@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Foundation\Http\Kernel')) {
     return;
 }
 
-class Kernel
-{
-}
+class Kernel {}

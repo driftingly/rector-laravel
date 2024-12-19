@@ -11,7 +11,7 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -22,8 +22,7 @@ class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
     public function __construct(
         private readonly ValueResolver $valueResolver,
-    ) {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -98,8 +97,7 @@ CODE_SAMPLE
         }
 
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Str', $methodName, [
-            $functionCall->getArgs()[0]
-->value,
+            $functionCall->getArgs()[0]->value,
             $otherNode,
         ]);
     }

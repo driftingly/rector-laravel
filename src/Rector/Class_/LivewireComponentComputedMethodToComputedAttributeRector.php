@@ -11,7 +11,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -26,10 +26,7 @@ final class LivewireComponentComputedMethodToComputedAttributeRector extends Abs
 
     private const METHOD_PATTERN = '/^get(?\'methodName\'[\w]*)Property$/';
 
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer)
-    {
-
-    }
+    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

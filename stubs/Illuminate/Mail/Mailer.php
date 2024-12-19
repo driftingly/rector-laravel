@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Mail\Mailer')) {
     return;
 }
 
-class Mailer
-{
-}
+class Mailer {}

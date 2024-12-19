@@ -16,8 +16,7 @@ final readonly class LumenRouteRegisteringMethodAnalyzer
     public function __construct(
         private NodeTypeResolver $nodeTypeResolver,
         private NodeNameResolver $nodeNameResolver
-    ) {
-    }
+    ) {}
 
     public function isLumenRoutingClass(MethodCall $methodCall): bool
     {

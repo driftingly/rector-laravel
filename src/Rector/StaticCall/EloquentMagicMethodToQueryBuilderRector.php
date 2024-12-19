@@ -11,7 +11,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use ReflectionException;
 use ReflectionMethod;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -72,13 +72,14 @@ CODE_SAMPLE
     {
         $resolvedType = $this->nodeTypeResolver->getType($node->class);
 
-        // like for variables, example "$namespace"
-        // @phpstan-ignore-next-line
-        if (! method_exists($resolvedType, 'getClassName')) {
+        $classNames = $resolvedType->getObjectClassNames();
+
+        if ($classNames === []) {
             return null;
         }
 
-        $className = (string) $resolvedType->getClassName();
+        $className = $classNames[0];
+
         $originalClassName = $this->getName($node->class); // like "self" or "App\Models\User"
 
         if ($originalClassName === null) {

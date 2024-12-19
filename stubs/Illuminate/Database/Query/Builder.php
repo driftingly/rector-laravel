@@ -8,15 +8,9 @@ if (class_exists('Illuminate\Database\Query\Builder')) {
 
 class Builder
 {
-    public function publicMethodBelongsToQueryBuilder(): void
-    {
-    }
+    public function publicMethodBelongsToQueryBuilder(): void {}
 
-    protected function protectedMethodBelongsToQueryBuilder(): void
-    {
-    }
+    protected function protectedMethodBelongsToQueryBuilder(): void {}
 
-    private function privateMethodBelongsToQueryBuilder(): void
-    {
-    }
+    private function privateMethodBelongsToQueryBuilder(): void {}
 }

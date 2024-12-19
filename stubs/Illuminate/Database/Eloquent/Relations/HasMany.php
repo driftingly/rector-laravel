@@ -6,6 +6,4 @@ if (class_exists('Illuminate\Database\Eloquent\Relations\HasMany')) {
     return;
 }
 
-class HasMany extends Relation
-{
-}
+class HasMany extends Relation {}

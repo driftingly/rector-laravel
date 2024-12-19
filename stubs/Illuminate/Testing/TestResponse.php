@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Testing\TestResponse')) {
     return;
 }
 
-class TestResponse
-{
-}
+class TestResponse {}

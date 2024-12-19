@@ -8,6 +8,4 @@ if (class_exists('Illuminate\Support\ServiceProvider')) {
     return;
 }
 
-abstract class ServiceProvider
-{
-}
+abstract class ServiceProvider {}

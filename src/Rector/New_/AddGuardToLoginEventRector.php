@@ -11,7 +11,7 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -68,8 +68,9 @@ CODE_SAMPLE
 
     /**
      * @param  Expression  $node
+     * @return array<int, Expression|Node>|null
      */
-    public function refactor(Node $node): Node|array|int|null
+    public function refactor(Node $node): ?array
     {
         $newNode = $this->getNewNode($node);
 

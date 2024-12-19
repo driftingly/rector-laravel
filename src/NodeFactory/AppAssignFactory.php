@@ -17,8 +17,7 @@ final readonly class AppAssignFactory
 {
     public function __construct(
         private PhpDocInfoFactory $phpDocInfoFactory
-    ) {
-    }
+    ) {}
 
     public function createAssignExpression(
         ServiceNameTypeAndVariableName $serviceNameTypeAndVariableName,
