@@ -9,6 +9,4 @@ if (interface_exists('Illuminate\Contracts\Database\Query\Builder')) {
 /**
  * @mixin \Illuminate\Database\Query\Builder
  */
-interface Builder
-{
-}
+interface Builder {}

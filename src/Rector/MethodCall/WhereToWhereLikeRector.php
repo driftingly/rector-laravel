@@ -85,20 +85,17 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if ($node instanceof StaticCall) {
+        if ($node instanceof StaticCall &&
+            ! $this->isObjectType($node->class, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;
         }
 
-        return $this->refactorMethodCall($node);
-    }
-
-    private function refactorMethodCall(MethodCall $node): ?MethodCall
-    {
-        if (! $this->isObjectType($node->var, new ObjectType('Illuminate\Contracts\Database\Query\Builder'))) {
+        if ($node instanceof MethodCall &&
+            ! $this->isObjectType($node->var, new ObjectType('Illuminate\Contracts\Database\Query\Builder'))) {
             return null;
         }
 
-        if (! in_array($this->getLowercaseMethodCallName($node), array_keys(self::WHERE_LIKE_METHODS), true)) {
+        if (! in_array($this->getLowercaseCallName($node), array_keys(self::WHERE_LIKE_METHODS), true)) {
             return null;
         }
 
@@ -135,46 +132,46 @@ CODE_SAMPLE
         $this->usingPostgresDriver = $configuration[self::USING_POSTGRES_DRIVER];
     }
 
-    private function getLikeParameterUsedInQuery(MethodCall $methodCall): ?string
+    private function getLikeParameterUsedInQuery(MethodCall|StaticCall $call): ?string
     {
-        if (! $methodCall->args[1] instanceof Arg) {
+        if (! $call->args[1] instanceof Arg) {
             return null;
         }
 
-        if (! $methodCall->args[1]->value instanceof String_) {
+        if (! $call->args[1]->value instanceof String_) {
             return null;
         }
 
-        return strtolower($methodCall->args[1]->value->value);
+        return strtolower($call->args[1]->value->value);
     }
 
-    private function setNewNodeName(MethodCall $methodCall, string $likeParameter): void
+    private function setNewNodeName(MethodCall|StaticCall $call, string $likeParameter): void
     {
-        $newNodeName = self::WHERE_LIKE_METHODS[$this->getLowercaseMethodCallName($methodCall)];
+        $newNodeName = self::WHERE_LIKE_METHODS[$this->getLowercaseCallName($call)];
 
         if (str_contains($likeParameter, 'not')) {
             $newNodeName = str_replace('Like', 'NotLike', $newNodeName);
         }
 
-        $methodCall->name = new Identifier($newNodeName);
+        $call->name = new Identifier($newNodeName);
     }
 
-    private function setCaseSensitivity(MethodCall $methodCall, string $likeParameter): void
+    private function setCaseSensitivity(MethodCall|StaticCall $call, string $likeParameter): void
     {
         // Case sensitive query in MySQL
         if (in_array($likeParameter, ['like binary', 'not like binary'], true)) {
-            $methodCall->args[] = $this->getCaseSensitivityArgument($methodCall);
+            $call->args[] = $this->getCaseSensitivityArgument($call);
         }
 
         // Case sensitive query in Postgres
         if ($this->usingPostgresDriver && in_array($likeParameter, ['like', 'not like'], true)) {
-            $methodCall->args[] = $this->getCaseSensitivityArgument($methodCall);
+            $call->args[] = $this->getCaseSensitivityArgument($call);
         }
     }
 
-    private function getCaseSensitivityArgument(MethodCall $methodCall): Arg
+    private function getCaseSensitivityArgument(MethodCall|StaticCall $call): Arg
     {
-        if ($methodCall->args[2] instanceof Arg && $methodCall->args[2]->name instanceof Identifier) {
+        if ($call->args[2] instanceof Arg && $call->args[2]->name instanceof Identifier) {
             return new Arg(
                 new ConstFetch(new Name('true')),
                 name: new Identifier('caseSensitive')
@@ -184,8 +181,8 @@ CODE_SAMPLE
         return new Arg(new ConstFetch(new Name('true')));
     }
 
-    private function getLowercaseMethodCallName(MethodCall $methodCall): string
+    private function getLowercaseCallName(MethodCall|StaticCall $call): string
     {
-        return strtolower((string) $this->getName($methodCall->name));
+        return strtolower((string) $this->getName($call->name));
     }
 }

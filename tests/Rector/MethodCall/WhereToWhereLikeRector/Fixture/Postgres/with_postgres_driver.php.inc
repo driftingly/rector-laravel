@@ -1,12 +1,12 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\Fixture\Postgres;
 
 use Illuminate\Database\Query\Builder;
 
 class WithPostgresDriver
 {
-    public function run(Builder $query)
+    public function run(Builder $query, NonModel $nonQuery)
     {
         $query->where('name', 'like', 'Rector');
         $query->orWhere('name', 'like', 'Rector');
@@ -18,19 +18,23 @@ class WithPostgresDriver
         // Case Sensitivity
         $query->where('name', 'ilike', 'Rector');
         $query->where('name', 'not ilike', 'Rector');
+        $query->where('name', like: 'ilike', value: 'Rector');
+
+        // Invalid
+        $nonQuery->where('name', 'like', 'Rector');
     }
 }
 ?>
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\WhereToWhereLikeRector\Fixture\Postgres;
 
 use Illuminate\Database\Query\Builder;
 
 class WithPostgresDriver
 {
-    public function run(Builder $query)
+    public function run(Builder $query, NonModel $nonQuery)
     {
         $query->whereLike('name', 'Rector', true);
         $query->orWhereLike('name', 'Rector', true);
@@ -42,6 +46,10 @@ class WithPostgresDriver
         // Case Sensitivity
         $query->whereLike('name', 'Rector');
         $query->whereNotLike('name', 'Rector');
+        $query->whereLike('name', value: 'Rector');
+
+        // Invalid
+        $nonQuery->where('name', 'like', 'Rector');
     }
 }
 ?>
