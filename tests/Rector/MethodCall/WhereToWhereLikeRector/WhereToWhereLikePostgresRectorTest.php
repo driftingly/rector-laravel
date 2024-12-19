@@ -15,6 +15,9 @@ final class WhereToWhereLikePostgresRectorTest extends AbstractRectorTestCase
         return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/Postgres');
     }
 
+    /**
+     * @test
+     */
     #[DataProvider('provideData')]
     public function test(string $filePath): void
     {

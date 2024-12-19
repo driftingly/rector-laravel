@@ -13,7 +13,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -163,7 +163,7 @@ CODE_SAMPLE
 
     private function getCaseSensitivityArgument(MethodCall $methodCall): Arg
     {
-        if ($methodCall->args[2] instanceof Arg && $methodCall->args[2]->name !== null) {
+        if ($methodCall->args[2] instanceof Arg && $methodCall->args[2]->name instanceof Identifier) {
             return new Arg(
                 new ConstFetch(new Name('true')),
                 name: new Identifier('caseSensitive')

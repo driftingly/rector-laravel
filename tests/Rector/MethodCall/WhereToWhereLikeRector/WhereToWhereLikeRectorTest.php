@@ -15,6 +15,9 @@ final class WhereToWhereLikeRectorTest extends AbstractRectorTestCase
         return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/Default');
     }
 
+    /**
+     * @test
+     */
     #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
