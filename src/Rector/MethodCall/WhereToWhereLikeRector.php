@@ -37,8 +37,11 @@ final class WhereToWhereLikeRector extends AbstractRector implements Configurabl
 
     public function getRuleDefinition(): RuleDefinition
     {
+        $description = "Changes `where` method and static calls to `whereLike` calls in the Eloquent & Query Builder.\n\n"
+            . 'Can be configured for the Postgres driver with `[WhereToWhereLikeRector::USING_POSTGRES_DRIVER => true]`.';
+
         return new RuleDefinition(
-            'Changes `where` method calls to `whereLike` method calls in the Eloquent & Query Builder', [
+            $description, [
                 new ConfiguredCodeSample(
                     <<<'CODE_SAMPLE'
 $query->where('name', 'like', 'Rector');

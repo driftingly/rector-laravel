@@ -1,4 +1,4 @@
-# 72 Rules Overview
+# 73 Rules Overview
 
 ## AbortIfRector
 
@@ -1438,7 +1438,9 @@ Convert string validation rules into arrays for Laravel's Validator.
 
 ## WhereToWhereLikeRector
 
-Changes `where` method calls to `whereLike` method calls in the Eloquent & Query Builder
+Changes `where` method and static calls to `whereLike` calls in the Eloquent & Query Builder.
+
+Can be configured for the Postgres driver with `[WhereToWhereLikeRector::USING_POSTGRES_DRIVER => true]`.
 
 :wrench: **configure it!**
 
