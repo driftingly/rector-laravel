@@ -1,4 +1,4 @@
-# 72 Rules Overview
+# 73 Rules Overview
 
 ## AbortIfRector
 
@@ -1432,6 +1432,38 @@ Convert string validation rules into arrays for Laravel's Validator.
 -    'field' => 'required|nullable|string|max:255',
 +    'field' => ['required', 'nullable', 'string', 'max:255'],
  ]);
+```
+
+<br>
+
+## WhereToWhereLikeRector
+
+Changes `where` method and static calls to `whereLike` calls in the Eloquent & Query Builder.
+
+Can be configured for the Postgres driver with `[WhereToWhereLikeRector::USING_POSTGRES_DRIVER => true]`.
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\MethodCall\WhereToWhereLikeRector`](../src/Rector/MethodCall/WhereToWhereLikeRector.php)
+
+```diff
+-$query->where('name', 'like', 'Rector');
+-$query->orWhere('name', 'like', 'Rector');
+-$query->where('name', 'like binary', 'Rector');
++$query->whereLike('name', 'Rector');
++$query->orWhereLike('name', 'Rector');
++$query->whereLike('name', 'Rector', true);
+```
+
+<br>
+
+```diff
+-$query->where('name', 'ilike', 'Rector');
+-$query->orWhere('name', 'ilike', 'Rector');
+-$query->where('name', 'like', 'Rector');
++$query->whereLike('name', 'Rector');
++$query->orWhereLike('name', 'Rector');
++$query->whereLike('name', 'Rector', true);
 ```
 
 <br>
