@@ -11,6 +11,7 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\NodeVisitor;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\ValueObject\ReplaceRequestKeyAndMethodValue;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -61,23 +62,26 @@ CODE_SAMPLE
             return $this->processVariable($node);
         }
 
-        $key = $this->findAllKeys($node);
+        $replaceValue = $this->findAllKeys($node);
 
-        if (! is_string($key)) {
-            return NodeVisitor::DONT_TRAVERSE_CHILDREN;
+        if ($replaceValue instanceof ReplaceRequestKeyAndMethodValue) {
+            return $this->nodeFactory->createStaticCall(
+                'Illuminate\Support\Facades\Request',
+                $replaceValue->getMethod(),
+                [new Arg(new String_($replaceValue->getKey()))]
+            );
         }
 
-        return $this->nodeFactory->createStaticCall(
-            'Illuminate\Support\Facades\Request',
-            'input',
-            [new Arg(new String_($key))]
-        );
+        return $replaceValue;
     }
 
-    public function findAllKeys(ArrayDimFetch $arrayDimFetch): ?string
+    /**
+     * @return ReplaceRequestKeyAndMethodValue|1|null
+     */
+    public function findAllKeys(ArrayDimFetch $arrayDimFetch): ReplaceRequestKeyAndMethodValue|int|null
     {
         if (! $arrayDimFetch->dim instanceof Scalar) {
-            return null;
+            return NodeVisitor::DONT_TRAVERSE_CHILDREN;
         }
 
         $value = $this->getType($arrayDimFetch->dim)->getConstantScalarValues()[0] ?? null;
@@ -87,17 +91,32 @@ CODE_SAMPLE
         }
 
         if ($arrayDimFetch->var instanceof ArrayDimFetch) {
-            $key = $this->findAllKeys($arrayDimFetch->var);
+            $replaceValue = $this->findAllKeys($arrayDimFetch->var);
 
-            if ($key === null) {
-                return null;
+            if (! $replaceValue instanceof ReplaceRequestKeyAndMethodValue) {
+                return $replaceValue;
             }
 
-            return implode('.', [$key, $value]);
+            return new ReplaceRequestKeyAndMethodValue(implode('.', [$replaceValue->getKey(), $value]), $replaceValue->getMethod());
         }
 
         if ($this->isNames($arrayDimFetch->var, ['_GET', '_POST', '_REQUEST'])) {
-            return (string) $value;
+            if (! $arrayDimFetch->var instanceof Variable) {
+                return null;
+            }
+
+            $method = match ($arrayDimFetch->var->name) {
+                '_GET' => 'query',
+                '_POST' => 'post',
+                '_REQUEST' => 'input',
+                default => null,
+            };
+
+            if ($method === null) {
+                return null;
+            }
+
+            return new ReplaceRequestKeyAndMethodValue((string) $value, $method);
         }
 
         return null;
@@ -105,13 +124,20 @@ CODE_SAMPLE
 
     private function processVariable(Variable $variable): ?StaticCall
     {
-        if ($this->isNames($variable, ['_GET', '_POST', '_REQUEST'])) {
-            return $this->nodeFactory->createStaticCall(
-                'Illuminate\Support\Facades\Request',
-                'all',
-            );
+        $method = match ($variable->name) {
+            '_GET' => 'query',
+            '_POST' => 'post',
+            '_REQUEST' => 'all',
+            default => null,
+        };
+
+        if ($method === null) {
+            return null;
         }
 
-        return null;
+        return $this->nodeFactory->createStaticCall(
+            'Illuminate\Support\Facades\Request',
+            $method,
+        );
     }
 }
