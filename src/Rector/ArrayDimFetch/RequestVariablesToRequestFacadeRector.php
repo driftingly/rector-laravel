@@ -35,11 +35,11 @@ $_GET;
 $_REQUEST;
 CODE_SAMPLE,
                     <<<'CODE_SAMPLE'
+\Illuminate\Support\Facades\Request::query('value');
+\Illuminate\Support\Facades\Request::post('value');
 \Illuminate\Support\Facades\Request::input('value');
-\Illuminate\Support\Facades\Request::input('value');
-\Illuminate\Support\Facades\Request::input('value');
-\Illuminate\Support\Facades\Request::all();
-\Illuminate\Support\Facades\Request::all();
+\Illuminate\Support\Facades\Request::query();
+\Illuminate\Support\Facades\Request::post();
 \Illuminate\Support\Facades\Request::all();
 CODE_SAMPLE
                 ),
