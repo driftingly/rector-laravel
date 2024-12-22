@@ -1238,10 +1238,14 @@ Change request variable definition in Facade
 ```diff
 -$_GET['value'];
 -$_POST['value'];
+-$_REQUEST['value'];
 -$_POST;
 -$_GET;
+-$_REQUEST;
 +\Illuminate\Support\Facades\Request::input('value');
 +\Illuminate\Support\Facades\Request::input('value');
++\Illuminate\Support\Facades\Request::input('value');
++\Illuminate\Support\Facades\Request::all();
 +\Illuminate\Support\Facades\Request::all();
 +\Illuminate\Support\Facades\Request::all();
 ```

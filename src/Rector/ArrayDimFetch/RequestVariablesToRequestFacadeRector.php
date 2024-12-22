@@ -28,12 +28,16 @@ class RequestVariablesToRequestFacadeRector extends AbstractRector
                     <<<'CODE_SAMPLE'
 $_GET['value'];
 $_POST['value'];
+$_REQUEST['value'];
 $_POST;
 $_GET;
+$_REQUEST;
 CODE_SAMPLE,
                     <<<'CODE_SAMPLE'
 \Illuminate\Support\Facades\Request::input('value');
 \Illuminate\Support\Facades\Request::input('value');
+\Illuminate\Support\Facades\Request::input('value');
+\Illuminate\Support\Facades\Request::all();
 \Illuminate\Support\Facades\Request::all();
 \Illuminate\Support\Facades\Request::all();
 CODE_SAMPLE
@@ -92,7 +96,7 @@ CODE_SAMPLE
             return implode('.', [$key, $value]);
         }
 
-        if ($this->isNames($arrayDimFetch->var, ['_GET', '_POST'])) {
+        if ($this->isNames($arrayDimFetch->var, ['_GET', '_POST', '_REQUEST'])) {
             return (string) $value;
         }
 
@@ -101,7 +105,7 @@ CODE_SAMPLE
 
     private function processVariable(Variable $variable): ?StaticCall
     {
-        if ($this->isNames($variable, ['_GET', '_POST'])) {
+        if ($this->isNames($variable, ['_GET', '_POST', '_REQUEST'])) {
             return $this->nodeFactory->createStaticCall(
                 'Illuminate\Support\Facades\Request',
                 'all',
