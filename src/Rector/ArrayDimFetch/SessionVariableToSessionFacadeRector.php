@@ -13,7 +13,6 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Unset_;
-use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -69,6 +68,7 @@ CODE_SAMPLE
 
     /**
      * @param  ArrayDimFetch|Assign|FuncCall|Isset_|Unset_|Variable  $node
+     * @return StaticCall|Expression|1|null
      */
     public function refactor(Node $node): StaticCall|Expression|int|null
     {
@@ -100,42 +100,45 @@ CODE_SAMPLE
         return $this->processAssign($node);
     }
 
-    public function processDimFetch(ArrayDimFetch $node): StaticCall|int|null
+    /**
+     * @return StaticCall|1|null
+     */
+    public function processDimFetch(ArrayDimFetch $arrayDimFetch): StaticCall|int|null
     {
-        if (! $this->isName($node->var, '_SESSION')) {
+        if (! $this->isName($arrayDimFetch->var, '_SESSION')) {
             return null;
         }
 
-        if ($node->dim === null) {
+        if (! $arrayDimFetch->dim instanceof Expr) {
             return NodeVisitor::DONT_TRAVERSE_CHILDREN;
         }
 
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\Session', 'get', [
-            new Arg($node->dim),
+            new Arg($arrayDimFetch->dim),
         ]);
     }
 
-    private function processAssign(Assign $node): ?StaticCall
+    private function processAssign(Assign $assign): ?StaticCall
     {
-        $dimFetch = $node->var;
+        $dimFetch = $assign->var;
 
         if (! $dimFetch instanceof ArrayDimFetch || ! $this->isName($dimFetch->var, '_SESSION')) {
             return null;
         }
 
-        if ($dimFetch->dim === null) {
+        if (! $dimFetch->dim instanceof Expr) {
             return null;
         }
 
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\Session', 'put', [
             new Arg($dimFetch->dim),
-            new Arg($node->expr),
+            new Arg($assign->expr),
         ]);
     }
 
-    private function processFunction(FuncCall $node): ?StaticCall
+    private function processFunction(FuncCall $funcCall): ?StaticCall
     {
-        if (! $this->isNames($node, [
+        if (! $this->isNames($funcCall, [
             'session_regenerate_id',
             'session_unset',
             'session_destroy',
@@ -144,8 +147,8 @@ CODE_SAMPLE
             return null;
         }
 
-        $method = $this->getName($node);
-        $replacementMethod = match($method) {
+        $method = $this->getName($funcCall);
+        $replacementMethod = match ($method) {
             'session_regenerate_id' => 'regenerate',
             'session_unset' => 'flush',
             'session_destroy' => 'destroy',
@@ -160,13 +163,16 @@ CODE_SAMPLE
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\Session', $replacementMethod);
     }
 
-    private function processIsset(Isset_ $node): StaticCall|int|null
+    /**
+     * @return StaticCall|1|null
+     */
+    private function processIsset(Isset_ $isset): StaticCall|int|null
     {
-        if (count($node->vars) < 1) {
+        if (count($isset->vars) < 1) {
             return null;
         }
 
-        $var = $node->vars[0];
+        $var = $isset->vars[0];
 
         if (! $var instanceof ArrayDimFetch) {
             return null;
@@ -176,7 +182,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($var->dim === null) {
+        if (! $var->dim instanceof Expr) {
             return NodeVisitor::DONT_TRAVERSE_CHILDREN;
         }
 
@@ -185,13 +191,16 @@ CODE_SAMPLE
         ]);
     }
 
-    private function processUnset(Unset_ $node): StaticCall|int|null
+    /**
+     * @return StaticCall|1|null
+     */
+    private function processUnset(Unset_ $unset): StaticCall|int|null
     {
-        if (count($node->vars) < 1) {
+        if (count($unset->vars) < 1) {
             return null;
         }
 
-        $var = $node->vars[0];
+        $var = $unset->vars[0];
 
         if (! $var instanceof ArrayDimFetch) {
             return null;
@@ -201,7 +210,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($var->dim === null) {
+        if (! $var->dim instanceof Expr) {
             return NodeVisitor::DONT_TRAVERSE_CHILDREN;
         }
 
@@ -210,9 +219,9 @@ CODE_SAMPLE
         ]);
     }
 
-    private function processVariable(Variable $node): ?StaticCall
+    private function processVariable(Variable $variable): ?StaticCall
     {
-        if (! $this->isName($node, '_SESSION')) {
+        if (! $this->isName($variable, '_SESSION')) {
             return null;
         }
 

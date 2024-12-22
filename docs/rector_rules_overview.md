@@ -1,4 +1,4 @@
-# 73 Rules Overview
+# 74 Rules Overview
 
 ## AbortIfRector
 
@@ -1288,6 +1288,35 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 ```diff
 -Route::get('/users', 'UserController@index');
 +Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
+```
+
+<br>
+
+## SessionVariableToSessionFacadeRector
+
+Change PHP session usage to Session Facade methods
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\SessionVariableToSessionFacadeRector`](../src/Rector/ArrayDimFetch/SessionVariableToSessionFacadeRector.php)
+
+```diff
+-$_SESSION['key'];
+-$_SESSION['key'] = 'value';
+-$_SESSION;
+-session_regenerate_id();
+-session_unset();
+-session_destroy();
+-session_start();
+-unset($_SESSION['key']);
+-isset($_SESSION['key'])
++\Illuminate\Support\Facades\Session::get('key');
++\Illuminate\Support\Facades\Session::put('key', 'value');
++\Illuminate\Support\Facades\Session::all();
++\Illuminate\Support\Facades\Session::regenerate();
++\Illuminate\Support\Facades\Session::flush();
++\Illuminate\Support\Facades\Session::destroy();
++\Illuminate\Support\Facades\Session::start();
++\Illuminate\Support\Facades\Session::forget('key');
++\Illuminate\Support\Facades\Session::has('key');
 ```
 
 <br>
