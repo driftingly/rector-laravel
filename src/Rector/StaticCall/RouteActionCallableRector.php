@@ -91,7 +91,7 @@ CODE_SAMPLE
     /**
      * @param  MethodCall|StaticCall  $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): MethodCall|StaticCall|null
     {
         if (! $this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node)) {
             return null;
