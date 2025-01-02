@@ -1,4 +1,4 @@
-# 74 Rules Overview
+# 75 Rules Overview
 
 ## AbortIfRector
 
@@ -1296,6 +1296,19 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 ```diff
 -Route::get('/users', 'UserController@index');
 +Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
+```
+
+<br>
+
+## ServerVariableToRequestFacadeRector
+
+Change server variable to Request facade's server method
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector`](../src/Rector/ArrayDimFetch/ServerVariableToRequestFacadeRector.php)
+
+```diff
+-$_SERVER['VARIABLE'];
++\Illuminate\Support\Facade\Request::server('VARIABLE');
 ```
 
 <br>
