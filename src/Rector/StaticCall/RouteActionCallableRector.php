@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\StaticCall;
 
+use Illuminate\Support\Facades\Route;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
@@ -71,11 +72,19 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
             new ConfiguredCodeSample(
                 <<<'CODE_SAMPLE'
 Route::get('/users', 'UserController@index');
+
+Route::group(['namespace' => 'Admin'], function () {
+    Route::get('/users', 'UserController@index');
+})
 CODE_SAMPLE
 
                 ,
                 <<<'CODE_SAMPLE'
 Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
+
+Route::group(['namespace' => 'Admin'], function () {
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index']);
+})
 CODE_SAMPLE
                 ,
                 [
@@ -105,12 +114,26 @@ CODE_SAMPLE
 
             $namespace = $this->routerRegisterNodeAnalyzer->getGroupNamespace($node);
 
+            $groupNamespace = $node->getAttribute(self::NAMESPACE_ATTRIBUTE);
+
+            // if the route is in a namespace but can't be resolved to a value, don't continue
+            if (! is_string($groupNamespace) && ! is_null($groupNamespace)) {
+                return null;
+            }
+
+            if (is_string($groupNamespace)) {
+                $namespace = $groupNamespace . '\\' . $namespace;
+            }
+
             $this->traverseNodesWithCallable($node->args[1]->value, function (Node $node) use ($namespace): Node|int|null {
                 if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
                     return null;
                 }
 
-                if ($this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node)) {
+                if (
+                    $this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node) ||
+                    $this->routerRegisterNodeAnalyzer->isGroup($node->name)
+                ) {
                     $node->setAttribute(self::NAMESPACE_ATTRIBUTE, $namespace);
                 }
 
@@ -126,7 +149,7 @@ CODE_SAMPLE
 
         $groupNamespace = $node->getAttribute(self::NAMESPACE_ATTRIBUTE);
 
-        // if the route is in a namespace but can't be resolve to a value, don't continue
+        // if the route is in a namespace but can't be resolved to a value, don't continue
         if (! is_string($groupNamespace) && ! is_null($groupNamespace)) {
             return null;
         }
