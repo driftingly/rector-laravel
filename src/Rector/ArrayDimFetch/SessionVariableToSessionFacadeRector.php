@@ -38,7 +38,8 @@ session_destroy();
 session_start();
 unset($_SESSION['key']);
 isset($_SESSION['key'])
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                 <<<'CODE_SAMPLE'
 \Illuminate\Support\Facades\Session::get('key');
 \Illuminate\Support\Facades\Session::put('key', 'value');
@@ -70,7 +71,7 @@ CODE_SAMPLE
      * @param  ArrayDimFetch|Assign|FuncCall|Isset_|Unset_|Variable  $node
      * @return StaticCall|Expression|1|null
      */
-    public function refactor(Node $node): StaticCall|Expression|int|null
+    public function refactor(Node $node)
     {
         if ($node instanceof ArrayDimFetch) {
             return $this->processDimFetch($node);
@@ -103,7 +104,7 @@ CODE_SAMPLE
     /**
      * @return StaticCall|1|null
      */
-    public function processDimFetch(ArrayDimFetch $arrayDimFetch): StaticCall|int|null
+    public function processDimFetch(ArrayDimFetch $arrayDimFetch)
     {
         if (! $this->isName($arrayDimFetch->var, '_SESSION')) {
             return null;
@@ -148,13 +149,23 @@ CODE_SAMPLE
         }
 
         $method = $this->getName($funcCall);
-        $replacementMethod = match ($method) {
-            'session_regenerate_id' => 'regenerate',
-            'session_unset' => 'flush',
-            'session_destroy' => 'destroy',
-            'session_start' => 'start',
-            default => null,
-        };
+        switch ($method) {
+            case 'session_regenerate_id':
+                $replacementMethod = 'regenerate';
+                break;
+            case 'session_unset':
+                $replacementMethod = 'flush';
+                break;
+            case 'session_destroy':
+                $replacementMethod = 'destroy';
+                break;
+            case 'session_start':
+                $replacementMethod = 'start';
+                break;
+            default:
+                $replacementMethod = null;
+                break;
+        }
 
         if ($replacementMethod === null) {
             return null;
@@ -166,7 +177,7 @@ CODE_SAMPLE
     /**
      * @return StaticCall|1|null
      */
-    private function processIsset(Isset_ $isset): StaticCall|int|null
+    private function processIsset(Isset_ $isset)
     {
         if (count($isset->vars) < 1) {
             return null;
@@ -194,7 +205,7 @@ CODE_SAMPLE
     /**
      * @return StaticCall|1|null
      */
-    private function processUnset(Unset_ $unset): StaticCall|int|null
+    private function processUnset(Unset_ $unset)
     {
         if (count($unset->vars) < 1) {
             return null;

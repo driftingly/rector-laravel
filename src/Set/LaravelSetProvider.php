@@ -43,54 +43,43 @@ final class LaravelSetProvider implements SetProviderInterface
      */
     public function provide(): array
     {
-        return [
-            new Set(
-                self::GROUP_NAME,
-                'array/str func to static calls',
-                LaravelSetList::ARRAY_STR_FUNCTIONS_TO_STATIC_CALL
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Code quality',
-                LaravelSetList::LARAVEL_CODE_QUALITY
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Container strings to FQN types',
-                LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME,
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Replaces If statements with helpers',
-                LaravelSetList::LARAVEL_IF_HELPERS,
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Replace facades with service injection',
-                LaravelSetList::LARAVEL_STATIC_TO_INJECTION,
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Rename Alias to FQN Classes',
-                LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES,
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Replace Magic Methods to Query Builder',
-                LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER,
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Upgrade Legacy Factories to Modern Factories',
-                LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES,
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Livewire 3.0',
-                LivewireSetList::LIVEWIRE_30,
-            ),
-            ...$this->getLaravelVersions(),
-        ];
+        return array_merge([new Set(
+            self::GROUP_NAME,
+            'array/str func to static calls',
+            LaravelSetList::ARRAY_STR_FUNCTIONS_TO_STATIC_CALL
+        ), new Set(
+            self::GROUP_NAME,
+            'Code quality',
+            LaravelSetList::LARAVEL_CODE_QUALITY
+        ), new Set(
+            self::GROUP_NAME,
+            'Container strings to FQN types',
+            LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME
+        ), new Set(
+            self::GROUP_NAME,
+            'Replaces If statements with helpers',
+            LaravelSetList::LARAVEL_IF_HELPERS
+        ), new Set(
+            self::GROUP_NAME,
+            'Replace facades with service injection',
+            LaravelSetList::LARAVEL_STATIC_TO_INJECTION
+        ), new Set(
+            self::GROUP_NAME,
+            'Rename Alias to FQN Classes',
+            LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES
+        ), new Set(
+            self::GROUP_NAME,
+            'Replace Magic Methods to Query Builder',
+            LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER
+        ), new Set(
+            self::GROUP_NAME,
+            'Upgrade Legacy Factories to Modern Factories',
+            LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES
+        ), new Set(
+            self::GROUP_NAME,
+            'Livewire 3.0',
+            LivewireSetList::LIVEWIRE_30
+        )], $this->getLaravelVersions());
     }
 
     /**
@@ -104,7 +93,7 @@ final class LaravelSetProvider implements SetProviderInterface
             $versions[] = new Set(
                 self::GROUP_NAME,
                 'Laravel Framework 5.' . $index,
-                $version,
+                $version
             );
         }
 
@@ -112,7 +101,7 @@ final class LaravelSetProvider implements SetProviderInterface
             $versions[] = new Set(
                 self::GROUP_NAME,
                 'Laravel Framework ' . ($index + 6) . '.0',
-                $version,
+                $version
             );
         }
 

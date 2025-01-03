@@ -135,11 +135,17 @@ CODE_SAMPLE
                     continue;
                 }
 
-                $facade = match ($methodCall->name->name) {
-                    'expectsJobs' => 'Bus',
-                    'expectsEvents' => 'Event',
-                    default => null,
-                };
+                switch ($methodCall->name->name) {
+                    case 'expectsJobs':
+                        $facade = 'Bus';
+                        break;
+                    case 'expectsEvents':
+                        $facade = 'Event';
+                        break;
+                    default:
+                        $facade = null;
+                        break;
+                }
 
                 if ($facade === null) {
                     continue;

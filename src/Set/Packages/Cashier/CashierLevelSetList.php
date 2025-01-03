@@ -9,10 +9,10 @@ final class CashierLevelSetList
     /**
      * @var string
      */
-    final public const UP_TO_LARAVEL_CASHIER_130 = __DIR__ . '/../../../../config/sets/packages/cashier/level/up-to-cashier-13.php';
+    public const UP_TO_LARAVEL_CASHIER_130 = __DIR__ . '/../../../../config/sets/packages/cashier/level/up-to-cashier-13.php';
 
     /**
      * @var string
      */
-    final public const UP_TO_LARAVEL_CASHIER_140 = __DIR__ . '/../../../../config/sets/packages/cashier/level/up-to-cashier-14.php';
+    public const UP_TO_LARAVEL_CASHIER_140 = __DIR__ . '/../../../../config/sets/packages/cashier/level/up-to-cashier-14.php';
 }

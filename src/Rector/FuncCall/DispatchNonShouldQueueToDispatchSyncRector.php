@@ -25,15 +25,35 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
 {
-    private const string SHOULD_QUEUE_INTERFACE = 'Illuminate\Contracts\Queue\ShouldQueue';
+    /**
+     * @readonly
+     * @var \PHPStan\Reflection\ReflectionProvider
+     */
+    private $reflectionProvider;
+    /**
+     * @var string
+     */
+    private const SHOULD_QUEUE_INTERFACE = 'Illuminate\Contracts\Queue\ShouldQueue';
 
-    private const string BUS_FACADE = 'Illuminate\Support\Facades\Bus';
+    /**
+     * @var string
+     */
+    private const BUS_FACADE = 'Illuminate\Support\Facades\Bus';
 
-    private const string DISPATCHER_INTERFACE = 'Illuminate\Contracts\Bus\Dispatcher';
+    /**
+     * @var string
+     */
+    private const DISPATCHER_INTERFACE = 'Illuminate\Contracts\Bus\Dispatcher';
 
-    private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
+    /**
+     * @var string
+     */
+    private const DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
 
-    public function __construct(private readonly ReflectionProvider $reflectionProvider) {}
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -64,8 +84,9 @@ CODE_SAMPLE
 
     /**
      * @param  FuncCall|MethodCall|StaticCall  $node
+     * @return \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null
      */
-    public function refactor(Node $node): FuncCall|MethodCall|StaticCall|null
+    public function refactor(Node $node)
     {
         if (
             $this->isName($node->name, 'dispatch') &&
@@ -96,7 +117,11 @@ CODE_SAMPLE
         return null;
     }
 
-    private function processCall(FuncCall|MethodCall|StaticCall $call): FuncCall|MethodCall|StaticCall|null
+    /**
+     * @param \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $call
+     * @return \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null
+     */
+    private function processCall($call)
     {
         if (! $call->args[0] instanceof Arg) {
             return null;
@@ -117,7 +142,7 @@ CODE_SAMPLE
         if (
             ! ($call instanceof StaticCall && $this->isCallOnBusFacade($call)) && (
                 $this->getType(
-                    $call->args[0]->value,
+                    $call->args[0]->value
                 ) instanceof ClosureType ||
                 $call->args[0]->value instanceof Closure ||
                 $call->args[0]->value instanceof ArrowFunction
@@ -153,7 +178,7 @@ CODE_SAMPLE
                 return true;
             }
 
-        } catch (ClassNotFoundException) {
+        } catch (ClassNotFoundException $exception) {
         }
 
         return false;
@@ -163,9 +188,9 @@ CODE_SAMPLE
     {
         try {
             $reflection = $this->reflectionProvider->getClass(
-                $aliasedObjectType->getFullyQualifiedName(),
+                $aliasedObjectType->getFullyQualifiedName()
             );
-        } catch (ClassNotFoundException) {
+        } catch (ClassNotFoundException $exception) {
             return false;
         }
 
