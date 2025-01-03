@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\Fixtur
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['namespace' => 'Admin'], function () {
+Route::group(['namespace' => 'Some' . 'Namespace'], function () {
     Route::get('/users', 'SomeController@index');
 });
 
@@ -18,7 +18,7 @@ namespace RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\Fixtur
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['namespace' => 'Admin'], function () {
+Route::group(['namespace' => 'Some' . 'Namespace'], function () {
     Route::get('/users', 'SomeController@index');
 });
 

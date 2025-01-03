@@ -103,13 +103,15 @@ CODE_SAMPLE
                 return null;
             }
 
-            $this->traverseNodesWithCallable($node->args[1]->value, function (Node $node): Node|int|null {
+            $namespace = $this->routerRegisterNodeAnalyzer->getGroupNamespace($node);
+
+            $this->traverseNodesWithCallable($node->args[1]->value, function (Node $node) use ($namespace): Node|int|null {
                 if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
                     return null;
                 }
 
                 if ($this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node)) {
-                    $node->setAttribute(self::NAMESPACE_ATTRIBUTE, true);
+                    $node->setAttribute(self::NAMESPACE_ATTRIBUTE, $namespace);
                 }
 
                 return null;
@@ -122,9 +124,10 @@ CODE_SAMPLE
             return null;
         }
 
-        $hasGroupNamespace = (bool) $node->getAttribute(self::NAMESPACE_ATTRIBUTE, false);
+        $groupNamespace = $node->getAttribute(self::NAMESPACE_ATTRIBUTE);
 
-        if ($hasGroupNamespace) {
+        // if the route is in a namespace but can't be resolve to a value, don't continue
+        if (! is_string($groupNamespace) && ! is_null($groupNamespace)) {
             return null;
         }
 
@@ -141,7 +144,7 @@ CODE_SAMPLE
         $arg = $node->args[$position];
 
         $argValue = $this->valueResolver->getValue($arg->value);
-        $segments = $this->resolveControllerFromAction($argValue);
+        $segments = $this->resolveControllerFromAction($argValue, $groupNamespace);
         if ($segments === null) {
             return null;
         }
@@ -213,7 +216,7 @@ CODE_SAMPLE
     /**
      * @return array{string, string}|null
      */
-    private function resolveControllerFromAction(mixed $action): ?array
+    private function resolveControllerFromAction(mixed $action, ?string $groupNamespace = null): ?array
     {
         if (! $this->isActionString($action)) {
             return null;
@@ -230,6 +233,9 @@ CODE_SAMPLE
 
         [$controller, $method] = $segments;
         $namespace = $this->getNamespace($this->file->getFilePath());
+        if ($groupNamespace !== null) {
+            $namespace .= '\\' . $groupNamespace;
+        }
         if (! str_starts_with($controller, '\\')) {
             $controller = $namespace . '\\' . $controller;
         }
