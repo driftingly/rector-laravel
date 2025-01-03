@@ -45,6 +45,11 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
     /**
      * @var string
      */
+    final public const NAMESPACE_ATTRIBUTE = 'group_namespace';
+
+    /**
+     * @var string
+     */
     private const DEFAULT_NAMESPACE = 'App\Http\Controllers';
 
     private string $namespace = self::DEFAULT_NAMESPACE;
@@ -93,7 +98,33 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): MethodCall|StaticCall|null
     {
+        if ($this->routerRegisterNodeAnalyzer->isGroup($node->name)) {
+            if (! isset($node->args[1]) || ! $node->args[1] instanceof Arg) {
+                return null;
+            }
+
+            $this->traverseNodesWithCallable($node->args[1]->value, function (Node $node): Node|int|null {
+                if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
+                    return null;
+                }
+
+                if ($this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node)) {
+                    $node->setAttribute(self::NAMESPACE_ATTRIBUTE, true);
+                }
+
+                return null;
+            });
+
+            return null;
+        }
+
         if (! $this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node)) {
+            return null;
+        }
+
+        $hasGroupNamespace = (bool) $node->getAttribute(self::NAMESPACE_ATTRIBUTE, false);
+
+        if ($hasGroupNamespace) {
             return null;
         }
 

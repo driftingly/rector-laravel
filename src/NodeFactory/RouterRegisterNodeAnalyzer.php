@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace RectorLaravel\NodeFactory;
 
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
@@ -73,5 +77,41 @@ final readonly class RouterRegisterNodeAnalyzer
     public function isRegisterFallback(Identifier|Expr $name): bool
     {
         return $this->nodeNameResolver->isName($name, 'fallback');
+    }
+
+    public function isGroup(Identifier|Expr $name): bool
+    {
+        return $this->nodeNameResolver->isName($name, 'group');
+    }
+
+    public function getGroupNamespace(MethodCall|StaticCall $call): string|null|false
+    {
+        if (! isset($call->args[0]) || ! $call->args[0] instanceof Arg) {
+            return null;
+        }
+
+        $firstArg = $call->args[0]->value;
+        if (! $firstArg instanceof Array_) {
+            return null;
+        }
+
+        foreach ($firstArg->items as $item) {
+            if (! $item instanceof ArrayItem) {
+                continue;
+            }
+
+            if ($item->key instanceof String_ && $item->key->value === 'namespace') {
+
+                if ($item->value instanceof String_) {
+                    return $item->value->value;
+                }
+
+                // if we can't find the namespace value we specify it exists but is
+                // unreadable with false
+                return false;
+            }
+        }
+
+        return null;
     }
 }
