@@ -46,7 +46,7 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
     /**
      * @var string
      */
-    final public const NAMESPACE_ATTRIBUTE = 'group_namespace';
+    final public const NAMESPACE_ATTRIBUTE = 'laravel_route_group_namespace';
 
     /**
      * @var string
