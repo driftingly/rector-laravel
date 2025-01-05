@@ -15,27 +15,27 @@ final class LaravelSetProvider implements SetProviderInterface
      * @var string[]
      */
     private const LARAVEL_FIVE = [
-        LaravelSetList::LARAVEL_50,
-        LaravelSetList::LARAVEL_51,
-        LaravelSetList::LARAVEL_52,
-        LaravelSetList::LARAVEL_53,
-        LaravelSetList::LARAVEL_54,
-        LaravelSetList::LARAVEL_55,
-        LaravelSetList::LARAVEL_56,
-        LaravelSetList::LARAVEL_57,
         LaravelSetList::LARAVEL_58,
+        LaravelSetList::LARAVEL_57,
+        LaravelSetList::LARAVEL_56,
+        LaravelSetList::LARAVEL_55,
+        LaravelSetList::LARAVEL_54,
+        LaravelSetList::LARAVEL_53,
+        LaravelSetList::LARAVEL_52,
+        LaravelSetList::LARAVEL_51,
+        LaravelSetList::LARAVEL_50,
     ];
 
     /**
      * @var string[]
      */
     private const LARAVEL_POST_FIVE = [
-        LaravelSetList::LARAVEL_60,
-        LaravelSetList::LARAVEL_70,
-        LaravelSetList::LARAVEL_80,
-        LaravelSetList::LARAVEL_90,
-        LaravelSetList::LARAVEL_100,
         LaravelSetList::LARAVEL_110,
+        LaravelSetList::LARAVEL_100,
+        LaravelSetList::LARAVEL_90,
+        LaravelSetList::LARAVEL_80,
+        LaravelSetList::LARAVEL_70,
+        LaravelSetList::LARAVEL_60,
     ];
 
     /**
@@ -46,13 +46,18 @@ final class LaravelSetProvider implements SetProviderInterface
         return [
             new Set(
                 self::GROUP_NAME,
-                'array/str func to static calls',
-                LaravelSetList::ARRAY_STR_FUNCTIONS_TO_STATIC_CALL
+                'Code quality',
+                LaravelSetList::LARAVEL_CODE_QUALITY
             ),
             new Set(
                 self::GROUP_NAME,
-                'Code quality',
-                LaravelSetList::LARAVEL_CODE_QUALITY
+                'Collection improvements and simplifications',
+                LaravelSetList::LARAVEL_COLLECTION,
+            ),
+            new Set(
+                self::GROUP_NAME,
+                'Container array access to method calls',
+                LaravelSetList::LARAVEL_ARRAYACCESS_TO_METHOD_CALL,
             ),
             new Set(
                 self::GROUP_NAME,
@@ -61,7 +66,17 @@ final class LaravelSetProvider implements SetProviderInterface
             ),
             new Set(
                 self::GROUP_NAME,
-                'Replaces If statements with helpers',
+                'Rename Aliases to FQN Classes',
+                LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES,
+            ),
+            new Set(
+                self::GROUP_NAME,
+                'Replace array/str functions with static calls',
+                LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL
+            ),
+            new Set(
+                self::GROUP_NAME,
+                'Replace If statements with helpers',
                 LaravelSetList::LARAVEL_IF_HELPERS,
             ),
             new Set(
@@ -71,12 +86,7 @@ final class LaravelSetProvider implements SetProviderInterface
             ),
             new Set(
                 self::GROUP_NAME,
-                'Rename Alias to FQN Classes',
-                LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES,
-            ),
-            new Set(
-                self::GROUP_NAME,
-                'Replace Magic Methods to Query Builder',
+                'Replace Magic Methods with Query Builder',
                 LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER,
             ),
             new Set(
@@ -100,18 +110,18 @@ final class LaravelSetProvider implements SetProviderInterface
     {
         $versions = [];
 
-        foreach (self::LARAVEL_FIVE as $index => $version) {
-            $versions[] = new Set(
-                self::GROUP_NAME,
-                'Laravel Framework 5.' . $index,
-                $version,
-            );
-        }
-
         foreach (self::LARAVEL_POST_FIVE as $index => $version) {
             $versions[] = new Set(
                 self::GROUP_NAME,
                 'Laravel Framework ' . ($index + 6) . '.0',
+                $version,
+            );
+        }
+
+        foreach (self::LARAVEL_FIVE as $index => $version) {
+            $versions[] = new Set(
+                self::GROUP_NAME,
+                'Laravel Framework 5.' . $index,
                 $version,
             );
         }
