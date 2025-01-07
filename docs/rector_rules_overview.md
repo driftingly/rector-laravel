@@ -1296,6 +1296,11 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 ```diff
 -Route::get('/users', 'UserController@index');
 +Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
+
+ Route::group(['namespace' => 'Admin'], function () {
+-    Route::get('/users', 'UserController@index');
++    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index']);
+ })
 ```
 
 <br>
