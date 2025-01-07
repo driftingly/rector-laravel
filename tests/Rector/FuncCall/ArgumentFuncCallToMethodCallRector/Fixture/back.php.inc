@@ -23,7 +23,7 @@ namespace RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector
 
 class Back
 {
-    public function __construct(private \Illuminate\Routing\Redirector $redirector)
+    public function __construct(private readonly \Illuminate\Routing\Redirector $redirector)
     {
     }
     public function action()
