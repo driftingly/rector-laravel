@@ -18,7 +18,7 @@ namespace RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector
 
 class Broadcast
 {
-    public function __construct(private \Illuminate\Contracts\Broadcasting\Factory $broadcastingFactory)
+    public function __construct(private readonly \Illuminate\Contracts\Broadcasting\Factory $broadcastingFactory)
     {
     }
     public function action()
