@@ -18,7 +18,7 @@ namespace RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector
 
 class Auth
 {
-    public function __construct(private \Illuminate\Contracts\Auth\Guard $guard)
+    public function __construct(private readonly \Illuminate\Contracts\Auth\Guard $guard)
     {
     }
     public function action()

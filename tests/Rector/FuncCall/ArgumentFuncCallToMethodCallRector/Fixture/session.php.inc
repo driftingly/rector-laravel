@@ -20,7 +20,7 @@ namespace RectorLaravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector\
 
 class Session
 {
-    public function __construct(private \Illuminate\Session\SessionManager $sessionManager)
+    public function __construct(private readonly \Illuminate\Session\SessionManager $sessionManager)
     {
     }
     public function action()
