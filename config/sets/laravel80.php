@@ -13,7 +13,6 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
 use RectorLaravel\Rector\ClassMethod\AddArgumentDefaultValueRector;
 use RectorLaravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector;
-use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
 use RectorLaravel\ValueObject\AddArgumentDefaultValue;
 
 // see https://laravel.com/docs/8.x/upgrade
@@ -60,8 +59,4 @@ return static function (RectorConfig $rectorConfig): void {
             // https://github.com/laravel/framework/commit/f9374fa5fb0450721fb2f90e96adef9d409b112c
             new MethodCallRename('Illuminate\Testing\TestResponse', 'decodeResponseJson', 'json'),
         ]);
-
-    // https://laravel.com/docs/8.x/upgrade#automatic-controller-namespace-prefixing
-    $rectorConfig
-        ->ruleWithConfiguration(RouteActionCallableRector::class, []);
 };
