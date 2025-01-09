@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\StaticCall;
 
+use Illuminate\Support\Facades\Route;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
@@ -45,6 +46,11 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
     /**
      * @var string
      */
+    final public const NAMESPACE_ATTRIBUTE = 'laravel_route_group_namespace';
+
+    /**
+     * @var string
+     */
     private const DEFAULT_NAMESPACE = 'App\Http\Controllers';
 
     private string $namespace = self::DEFAULT_NAMESPACE;
@@ -66,11 +72,19 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
             new ConfiguredCodeSample(
                 <<<'CODE_SAMPLE'
 Route::get('/users', 'UserController@index');
+
+Route::group(['namespace' => 'Admin'], function () {
+    Route::get('/users', 'UserController@index');
+})
 CODE_SAMPLE
 
                 ,
                 <<<'CODE_SAMPLE'
 Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
+
+Route::group(['namespace' => 'Admin'], function () {
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index']);
+})
 CODE_SAMPLE
                 ,
                 [
@@ -91,9 +105,52 @@ CODE_SAMPLE
     /**
      * @param  MethodCall|StaticCall  $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): MethodCall|StaticCall|null
     {
+        if ($this->routerRegisterNodeAnalyzer->isGroup($node->name)) {
+            if (! isset($node->args[1]) || ! $node->args[1] instanceof Arg) {
+                return null;
+            }
+
+            $namespace = $this->routerRegisterNodeAnalyzer->getGroupNamespace($node);
+
+            $groupNamespace = $node->getAttribute(self::NAMESPACE_ATTRIBUTE);
+
+            // if the route is in a namespace but can't be resolved to a value, don't continue
+            if (! is_string($groupNamespace) && ! is_null($groupNamespace)) {
+                return null;
+            }
+
+            if (is_string($groupNamespace)) {
+                $namespace = $groupNamespace . '\\' . $namespace;
+            }
+
+            $this->traverseNodesWithCallable($node->args[1]->value, function (Node $node) use ($namespace): Node|int|null {
+                if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
+                    return null;
+                }
+
+                if (
+                    $this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node) ||
+                    $this->routerRegisterNodeAnalyzer->isGroup($node->name)
+                ) {
+                    $node->setAttribute(self::NAMESPACE_ATTRIBUTE, $namespace);
+                }
+
+                return null;
+            });
+
+            return null;
+        }
+
         if (! $this->routerRegisterNodeAnalyzer->isRegisterMethodStaticCall($node)) {
+            return null;
+        }
+
+        $groupNamespace = $node->getAttribute(self::NAMESPACE_ATTRIBUTE);
+
+        // if the route is in a namespace but can't be resolved to a value, don't continue
+        if (! is_string($groupNamespace) && ! is_null($groupNamespace)) {
             return null;
         }
 
@@ -110,7 +167,7 @@ CODE_SAMPLE
         $arg = $node->args[$position];
 
         $argValue = $this->valueResolver->getValue($arg->value);
-        $segments = $this->resolveControllerFromAction($argValue);
+        $segments = $this->resolveControllerFromAction($argValue, $groupNamespace);
         if ($segments === null) {
             return null;
         }
@@ -182,7 +239,7 @@ CODE_SAMPLE
     /**
      * @return array{string, string}|null
      */
-    private function resolveControllerFromAction(mixed $action): ?array
+    private function resolveControllerFromAction(mixed $action, ?string $groupNamespace = null): ?array
     {
         if (! $this->isActionString($action)) {
             return null;
@@ -199,6 +256,9 @@ CODE_SAMPLE
 
         [$controller, $method] = $segments;
         $namespace = $this->getNamespace($this->file->getFilePath());
+        if ($groupNamespace !== null) {
+            $namespace .= '\\' . $groupNamespace;
+        }
         if (! str_starts_with($controller, '\\')) {
             $controller = $namespace . '\\' . $controller;
         }

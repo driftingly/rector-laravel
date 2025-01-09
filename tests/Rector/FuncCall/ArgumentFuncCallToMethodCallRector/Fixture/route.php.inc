@@ -18,7 +18,7 @@ namespace RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector
 
 class Route
 {
-    public function __construct(private \Illuminate\Routing\UrlGenerator $urlGenerator)
+    public function __construct(private readonly \Illuminate\Routing\UrlGenerator $urlGenerator)
     {
     }
     public function action()

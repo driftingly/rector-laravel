@@ -19,7 +19,7 @@ namespace RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector
 
 class View
 {
-    public function __construct(private \Illuminate\Contracts\View\Factory $viewFactory)
+    public function __construct(private readonly \Illuminate\Contracts\View\Factory $viewFactory)
     {
     }
     public function action()
