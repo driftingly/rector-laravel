@@ -19,6 +19,26 @@ if (class_exists('Illuminate\Support\Enumerable')) {
 interface Enumerable
 {
     /**
+     * Determine if an item exists in the enumerable.
+     *
+     * @param  (callable(TValue, TKey): bool)|TValue|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $operator = null, $value = null);
+
+    /**
+     * Determine if an item is not contained in the collection.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function doesntContain($key, $operator = null, $value = null);
+
+    /**
      * Run a filter over each of the items.
      *
      * @param  (callable(TValue): bool)|null  $callback
