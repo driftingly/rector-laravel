@@ -1,4 +1,4 @@
-# 75 Rules Overview
+# 76 Rules Overview
 
 ## AbortIfRector
 
@@ -329,6 +329,24 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
 +        $this->get('/')->assertServiceUnavailable();
      }
  }
+```
+
+<br>
+
+## AvoidNegatedCollectionContainsOrDoesntContainRector
+
+Convert negated calls to `contains` to `doesntContain`, or vice versa.
+
+- class: [`RectorLaravel\Rector\BooleanNot\AvoidNegatedCollectionContainsOrDoesntContainRector`](../src/Rector/BooleanNot/AvoidNegatedCollectionContainsOrDoesntContainRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+ $collection = new Collection([0, 1, null, -1]);
+-! $collection->contains(fn (?int $number): bool => is_null($number));
+-! $collection->doesntContain(fn (?int $number) => $number > 0);
++$collection->doesntContain(fn (?int $number): bool => is_null($number));
++$collection->contains(fn (?int $number) => $number > 0);
 ```
 
 <br>
