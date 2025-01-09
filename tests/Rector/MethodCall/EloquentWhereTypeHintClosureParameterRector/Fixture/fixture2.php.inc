@@ -2,12 +2,9 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector\Fixture;
 
-class User extends \Illuminate\Database\Eloquent\Model
-{
+use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector\Source\FooModel;
 
-}
-
-User::where(function ($query) {
+FooModel::where(function ($query) {
     $query->where('id', 1)
         ->orWhere('id', 2);
 });
@@ -18,12 +15,9 @@ User::where(function ($query) {
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector\Fixture;
 
-class User extends \Illuminate\Database\Eloquent\Model
-{
+use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector\Source\FooModel;
 
-}
-
-User::where(function (\Illuminate\Contracts\Database\Query\Builder $query) {
+FooModel::where(function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('id', 1)
         ->orWhere('id', 2);
 });
