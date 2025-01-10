@@ -1,4 +1,4 @@
-# 76 Rules Overview
+# 77 Rules Overview
 
 ## AbortIfRector
 
@@ -1441,6 +1441,24 @@ Automatically type hints your tappable closures
 ```diff
 -(new Collection)->tap(function ($collection) {}
 +(new Collection)->tap(function (Collection $collection) {}
+```
+
+<br>
+
+## UnaliasCollectionMethodsRector
+
+Use the base collection methods instead of their aliases.
+
+- class: [`RectorLaravel\Rector\MethodCall\UnaliasCollectionMethodsRector`](../src/Rector/MethodCall/UnaliasCollectionMethodsRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+ $collection = new Collection([0, 1, null, -1]);
+-$collection->average();
+-$collection->some(fn (?int $number): bool => is_null($number));
++$collection->avg();
++$collection->contains(fn (?int $number): bool => is_null($number));
 ```
 
 <br>
