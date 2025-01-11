@@ -31,6 +31,9 @@ jobs:
             # copy PHP 7.2 composer
             -   run: cp build/composer-php-72.json composer.json
 
+            # run the tests against the downgraded rules
+            -   run: vendor/bin/phpunit tests
+
             # clear the dev files
             -   run: rm -rf build .github tests stubs phpstan.neon phpunit.xml
 
