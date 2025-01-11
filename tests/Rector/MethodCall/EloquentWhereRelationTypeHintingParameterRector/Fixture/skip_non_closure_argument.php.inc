@@ -2,19 +2,16 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Fixture;
 
+use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Source\FooModel;
+
 /** @var \Illuminate\Contracts\Database\Query\Builder $query */
 $query->whereHas('posts');
 $query->whereHas('posts', null);
 $query->whereHasMorph('posts', '', null);
 
-class User extends \Illuminate\Database\Eloquent\Model
-{
-
-}
-
-User::whereHas('posts');
-User::whereHas('posts', null);
-User::whereHasMorph('posts', '');
-User::whereHasMorph('posts', '', null);
+FooModel::whereHas('posts');
+FooModel::whereHas('posts', null);
+FooModel::whereHasMorph('posts', '');
+FooModel::whereHasMorph('posts', '', null);
 
 ?>
