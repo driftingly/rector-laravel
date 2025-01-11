@@ -95,7 +95,7 @@ CODE_SAMPLE
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
     {
-        return match (true) {
+        $isMatchingClass = match (true) {
             $node instanceof MethodCall && $this->isObjectType(
                 $node->var,
                 new ObjectType('Illuminate\Contracts\Database\Query\Builder')
@@ -105,6 +105,10 @@ CODE_SAMPLE
                 new ObjectType('Illuminate\Database\Eloquent\Model')
             ) => true,
             default => false,
-        } && $this->isNames($node->name, ['where', 'orWhere']);
+        };
+
+        $isMatchingMethod = $this->isNames($node->name, ['where', 'orWhere']);
+
+        return $isMatchingClass && $isMatchingMethod;
     }
 }

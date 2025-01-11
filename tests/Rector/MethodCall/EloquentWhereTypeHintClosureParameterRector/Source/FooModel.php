@@ -4,7 +4,4 @@ namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosurePara
 
 use Illuminate\Database\Eloquent\Model;
 
-class FooModel extends Model
-{
-
-}
+class FooModel extends Model {}

@@ -2,12 +2,9 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Fixture;
 
-class User extends \Illuminate\Database\Eloquent\Model
-{
+use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Source\FooModel;
 
-}
-
-User::whereHas('posts', function ($query) {
+FooModel::whereHas('posts', function ($query) {
     $query->where('is_published', true);
 });
 
@@ -17,12 +14,9 @@ User::whereHas('posts', function ($query) {
 
 namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Fixture;
 
-class User extends \Illuminate\Database\Eloquent\Model
-{
+use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Source\FooModel;
 
-}
-
-User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
+FooModel::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
     $query->where('is_published', true);
 });
 
