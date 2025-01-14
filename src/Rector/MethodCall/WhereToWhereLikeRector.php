@@ -106,6 +106,13 @@ CODE_SAMPLE
             return null;
         }
 
+        // Expressions are not supported with the `like` operator
+        if ($node->args[2] instanceof Arg &&
+            $this->isObjectType($node->args[2]->value, new ObjectType('Illuminate\Contracts\Database\Query\Expression'))
+        ) {
+            return null;
+        }
+
         $likeParameter = $this->getLikeParameterUsedInQuery($node);
 
         if (! in_array($likeParameter, ['like', 'like binary', 'ilike', 'not like', 'not like binary', 'not ilike'], true)) {
