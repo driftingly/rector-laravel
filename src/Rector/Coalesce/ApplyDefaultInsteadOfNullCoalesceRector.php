@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\Rector\Coalesce;
 
+use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
@@ -108,13 +109,13 @@ CODE_SAMPLE
                     $objectType,
                     $applyDefaultWith->getObjectType()) &&
                 $this->isName($call->name, $applyDefaultWith->getMethodName()) &&
-                !$node->right instanceof Node\Expr\Throw_
+                ! $node->right instanceof Throw_
             ) {
                 $valid = true;
             } elseif (
                 $applyDefaultWith->getObjectType() === null &&
                 $this->isName($call->name, $applyDefaultWith->getMethodName()) &&
-                !$node->right instanceof Node\Expr\Throw_
+                ! $node->right instanceof Throw_
             ) {
                 $valid = true;
             }
