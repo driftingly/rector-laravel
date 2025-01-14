@@ -33,6 +33,7 @@
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --ansi",
+        "test": "vendor/bin/phpunit tests",
         "lint": "vendor/bin/duster lint",
         "fix": "vendor/bin/duster fix",
         "rector-dry-run": "vendor/bin/rector process --dry-run --ansi",

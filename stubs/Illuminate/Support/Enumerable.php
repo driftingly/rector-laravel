@@ -19,6 +19,32 @@ if (class_exists('Illuminate\Support\Enumerable')) {
 interface Enumerable
 {
     /**
+     * Alias for the "avg" method.
+     *
+     * @param  (callable(TValue): float|int)|string|null  $callback
+     * @return float|int|null
+     */
+    public function average($callback = null);
+
+    /**
+     * Get the average value of a given key.
+     *
+     * @param  (callable(TValue): float|int)|string|null  $callback
+     * @return float|int|null
+     */
+    public function avg($callback = null);
+
+    /**
+     * Alias for the "contains" method.
+     *
+     * @param  (callable(TValue, TKey): bool)|TValue|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function some($key, $operator = null, $value = null);
+
+    /**
      * Determine if an item exists in the enumerable.
      *
      * @param  (callable(TValue, TKey): bool)|TValue|string  $key
