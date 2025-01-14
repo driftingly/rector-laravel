@@ -107,12 +107,14 @@ CODE_SAMPLE
                 $this->isObjectType(
                     $objectType,
                     $applyDefaultWith->getObjectType()) &&
-                $this->isName($call->name, $applyDefaultWith->getMethodName())
+                $this->isName($call->name, $applyDefaultWith->getMethodName()) &&
+                !$node->right instanceof Node\Expr\Throw_
             ) {
                 $valid = true;
             } elseif (
                 $applyDefaultWith->getObjectType() === null &&
-                $this->isName($call->name, $applyDefaultWith->getMethodName())
+                $this->isName($call->name, $applyDefaultWith->getMethodName()) &&
+                !$node->right instanceof Node\Expr\Throw_
             ) {
                 $valid = true;
             }
