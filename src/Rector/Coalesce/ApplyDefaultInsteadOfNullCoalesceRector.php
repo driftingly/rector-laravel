@@ -2,13 +2,13 @@
 
 namespace RectorLaravel\Rector\Coalesce;
 
-use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Throw_;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
