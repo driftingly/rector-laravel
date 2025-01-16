@@ -8,6 +8,7 @@ use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Throw_;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
@@ -107,12 +108,14 @@ CODE_SAMPLE
                 $this->isObjectType(
                     $objectType,
                     $applyDefaultWith->getObjectType()) &&
-                $this->isName($call->name, $applyDefaultWith->getMethodName())
+                $this->isName($call->name, $applyDefaultWith->getMethodName()) &&
+                ! $node->right instanceof Throw_
             ) {
                 $valid = true;
             } elseif (
                 $applyDefaultWith->getObjectType() === null &&
-                $this->isName($call->name, $applyDefaultWith->getMethodName())
+                $this->isName($call->name, $applyDefaultWith->getMethodName()) &&
+                ! $node->right instanceof Throw_
             ) {
                 $valid = true;
             }
