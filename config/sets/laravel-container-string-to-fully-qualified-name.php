@@ -45,7 +45,6 @@ return static function (RectorConfig $rectorConfig): void {
         'queue.listener' => 'Illuminate\Queue\Listener',
         'queue.failer' => 'Illuminate\Queue\Failed\DatabaseUuidFailedJobProvider',
         'migration.repository' => 'Illuminate\Database\Migrations\MigrationRepositoryInterface',
-        'migrator' => 'Illuminate\Database\Migrations\Migrator',
         'migration.creator' => 'Illuminate\Database\Migrations\MigrationCreator',
         'composer' => 'Illuminate\Support\Composer',
         'hash' => 'Illuminate\Hashing\HashManager',
