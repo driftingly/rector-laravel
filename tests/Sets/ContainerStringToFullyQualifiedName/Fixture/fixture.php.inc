@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\Tests\Sets\ContainerStringToFullyQualifiedName;
 
+app('events');
 app('log');
 app('router');
 app('url');
@@ -28,6 +29,7 @@ app('mailer');
 
 namespace RectorLaravel\Tests\Sets\ContainerStringToFullyQualifiedName;
 
+app(\Illuminate\Contracts\Events\Dispatcher::class);
 app(\Psr\Log\LoggerInterface::class);
 app(\Illuminate\Routing\Router::class);
 app(\Illuminate\Contracts\Routing\UrlGenerator::class);
