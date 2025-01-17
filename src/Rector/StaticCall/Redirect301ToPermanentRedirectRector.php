@@ -22,13 +22,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class Redirect301ToPermanentRedirectRector extends AbstractRector
 {
     /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    /**
      * @var ObjectType[]
      */
-    private array $routerObjectTypes = [];
+    private $routerObjectTypes = [];
 
     public function __construct(
-        private readonly ValueResolver $valueResolver,
+        ValueResolver $valueResolver
     ) {
+        $this->valueResolver = $valueResolver;
         $this->routerObjectTypes = [
             new ObjectType('Illuminate\Support\Facades\Route'),
             new ObjectType('Illuminate\Routing\Route'),

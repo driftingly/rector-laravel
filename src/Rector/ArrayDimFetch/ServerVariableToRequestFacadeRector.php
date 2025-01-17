@@ -22,7 +22,8 @@ class ServerVariableToRequestFacadeRector extends AbstractRector
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 $_SERVER['VARIABLE'];
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                 <<<'CODE_SAMPLE'
 \Illuminate\Support\Facade\Request::server('VARIABLE');
 CODE_SAMPLE

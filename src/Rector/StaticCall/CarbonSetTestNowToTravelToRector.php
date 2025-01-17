@@ -54,7 +54,7 @@ class SomeTest extends TestCase
 }
 CODE_SAMPLE
                 ),
-            ],
+            ]
         );
     }
 
@@ -97,7 +97,7 @@ CODE_SAMPLE
         return $this->nodeFactory->createMethodCall(
             new Variable('this'),
             'travelTo',
-            $args,
+            $args
         );
     }
 

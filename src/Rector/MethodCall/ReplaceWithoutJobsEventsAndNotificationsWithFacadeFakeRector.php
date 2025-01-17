@@ -26,12 +26,14 @@ class ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector extends Abstr
 $this->withoutJobs();
 $this->withoutEvents();
 $this->withoutNotifications();
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                     <<<'CODE_SAMPLE'
 \Illuminate\Support\Facades\Bus::fake();
 \Illuminate\Support\Facades\Event::fake();
 \Illuminate\Support\Facades\Notification::fake();
-CODE_SAMPLE,
+CODE_SAMPLE
+
                 ),
             ]
         );
@@ -59,12 +61,20 @@ CODE_SAMPLE,
             return null;
         }
 
-        $facade = match ($node->name->name) {
-            'withoutJobs' => 'Bus',
-            'withoutEvents' => 'Event',
-            'withoutNotifications' => 'Notification',
-            default => null,
-        };
+        switch ($node->name->name) {
+            case 'withoutJobs':
+                $facade = 'Bus';
+                break;
+            case 'withoutEvents':
+                $facade = 'Event';
+                break;
+            case 'withoutNotifications':
+                $facade = 'Notification';
+                break;
+            default:
+                $facade = null;
+                break;
+        }
 
         if ($facade === null) {
             return null;

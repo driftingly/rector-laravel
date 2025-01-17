@@ -55,7 +55,7 @@ class CommandWithComponents extends Command
     }
 }
 CODE_SAMPLE
-                ,
+                
             ),
         ]);
     }

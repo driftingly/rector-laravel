@@ -18,17 +18,23 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
 {
     /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    /**
      * @var string[]
      */
-    protected array $methodsToReplace = [
+    protected $methodsToReplace = [
         'assertSee' => 'assertSeeHtml',
         'assertDontSee' => 'assertDontSeeHtml',
         'assertSeeInOrder' => 'assertSeeHtmlInOrder',
     ];
 
-    public function __construct(
-        private readonly ValueResolver $valueResolver
-    ) {}
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

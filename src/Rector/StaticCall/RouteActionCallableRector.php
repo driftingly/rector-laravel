@@ -34,37 +34,56 @@ use Webmozart\Assert\Assert;
 final class RouteActionCallableRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
+     * @readonly
+     * @var \Rector\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeFactory\RouterRegisterNodeAnalyzer
+     */
+    private $routerRegisterNodeAnalyzer;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    /**
      * @var string
      */
-    final public const ROUTES = 'routes';
+    public const ROUTES = 'routes';
 
     /**
      * @var string
      */
-    final public const NAMESPACE = 'namespace';
+    public const NAMESPACE = 'namespace';
 
     /**
      * @var string
      */
-    final public const NAMESPACE_ATTRIBUTE = 'laravel_route_group_namespace';
+    public const NAMESPACE_ATTRIBUTE = 'laravel_route_group_namespace';
 
     /**
      * @var string
      */
     private const DEFAULT_NAMESPACE = 'App\Http\Controllers';
 
-    private string $namespace = self::DEFAULT_NAMESPACE;
+    /**
+     * @var string
+     */
+    private $namespace = self::DEFAULT_NAMESPACE;
 
     /**
      * @var array<string, string>
      */
-    private array $routes = [];
+    private $routes = [];
 
-    public function __construct(
-        private readonly ReflectionResolver $reflectionResolver,
-        private readonly RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer,
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    public function __construct(ReflectionResolver $reflectionResolver, RouterRegisterNodeAnalyzer $routerRegisterNodeAnalyzer, ValueResolver $valueResolver)
+    {
+        $this->reflectionResolver = $reflectionResolver;
+        $this->routerRegisterNodeAnalyzer = $routerRegisterNodeAnalyzer;
+        $this->valueResolver = $valueResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -104,8 +123,9 @@ CODE_SAMPLE
 
     /**
      * @param  MethodCall|StaticCall  $node
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null
      */
-    public function refactor(Node $node): MethodCall|StaticCall|null
+    public function refactor(Node $node)
     {
         if ($this->routerRegisterNodeAnalyzer->isGroup($node->name)) {
             if (! isset($node->args[1]) || ! $node->args[1] instanceof Arg) {
@@ -125,7 +145,7 @@ CODE_SAMPLE
                 $namespace = $groupNamespace . '\\' . $namespace;
             }
 
-            $this->traverseNodesWithCallable($node->args[1]->value, function (Node $node) use ($namespace): Node|int|null {
+            $this->traverseNodesWithCallable($node->args[1]->value, function (Node $node) use ($namespace) {
                 if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
                     return null;
                 }
@@ -201,7 +221,9 @@ CODE_SAMPLE
                 $argument = new String_($argValue['middleware']);
             } else {
                 // if any of the elements in the middleware array is not a string, return node as is
-                if (array_filter($argValue['middleware'], static fn ($value) => ! is_string($value)) !== []) {
+                if (array_filter($argValue['middleware'], static function ($value) {
+                    return ! is_string($value);
+                }) !== []) {
                     return $node;
                 }
 
@@ -209,7 +231,9 @@ CODE_SAMPLE
                 $middleware = $argValue['middleware'];
 
                 $argument = new Array_(array_map(
-                    static fn ($value) => new ArrayItem(new String_($value)),
+                    static function ($value) {
+                        return new ArrayItem(new String_($value));
+                    },
                     $middleware
                 ));
             }
@@ -238,8 +262,9 @@ CODE_SAMPLE
 
     /**
      * @return array{string, string}|null
+     * @param mixed $action
      */
-    private function resolveControllerFromAction(mixed $action, ?string $groupNamespace = null): ?array
+    private function resolveControllerFromAction($action, ?string $groupNamespace = null): ?array
     {
         if (! $this->isActionString($action)) {
             return null;
@@ -259,14 +284,17 @@ CODE_SAMPLE
         if ($groupNamespace !== null) {
             $namespace .= '\\' . $groupNamespace;
         }
-        if (! str_starts_with($controller, '\\')) {
+        if (strncmp($controller, '\\', strlen('\\')) !== 0) {
             $controller = $namespace . '\\' . $controller;
         }
 
         return [$controller, $method];
     }
 
-    private function getActionPosition(Identifier|Expr $name): int
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Expr $name
+     */
+    private function getActionPosition($name): int
     {
         if ($this->routerRegisterNodeAnalyzer->isRegisterFallback($name)) {
             return 0;
@@ -279,7 +307,10 @@ CODE_SAMPLE
         return 1;
     }
 
-    private function isActionString(mixed $action): bool
+    /**
+     * @param mixed $action
+     */
+    private function isActionString($action): bool
     {
         if (! is_string($action)) {
             if (! is_array($action)) {
@@ -292,7 +323,7 @@ CODE_SAMPLE
             return in_array('uses', $keys, true) && array_diff($keys, ['as', 'middleware', 'uses']) === [];
         }
 
-        return str_contains($action, '@');
+        return strpos($action, '@') !== false;
     }
 
     private function getNamespace(string $filePath): string

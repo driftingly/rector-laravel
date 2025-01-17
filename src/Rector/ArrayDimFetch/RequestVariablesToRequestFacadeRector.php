@@ -33,7 +33,8 @@ $_REQUEST['value'];
 $_POST;
 $_GET;
 $_REQUEST;
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                     <<<'CODE_SAMPLE'
 \Illuminate\Support\Facades\Request::query('value');
 \Illuminate\Support\Facades\Request::post('value');
@@ -56,7 +57,7 @@ CODE_SAMPLE
      * @param  ArrayDimFetch|Variable  $node
      * @return StaticCall|1|null
      */
-    public function refactor(Node $node): StaticCall|int|null
+    public function refactor(Node $node)
     {
         if ($node instanceof Variable) {
             return $this->processVariable($node);
@@ -78,7 +79,7 @@ CODE_SAMPLE
     /**
      * @return ReplaceRequestKeyAndMethodValue|1|null
      */
-    public function findAllKeys(ArrayDimFetch $arrayDimFetch): ReplaceRequestKeyAndMethodValue|int|null
+    public function findAllKeys(ArrayDimFetch $arrayDimFetch)
     {
         if (! $arrayDimFetch->dim instanceof Scalar) {
             return NodeVisitor::DONT_TRAVERSE_CHILDREN;
@@ -105,12 +106,20 @@ CODE_SAMPLE
                 return null;
             }
 
-            $method = match ($arrayDimFetch->var->name) {
-                '_GET' => 'query',
-                '_POST' => 'post',
-                '_REQUEST' => 'input',
-                default => null,
-            };
+            switch ($arrayDimFetch->var->name) {
+                case '_GET':
+                    $method = 'query';
+                    break;
+                case '_POST':
+                    $method = 'post';
+                    break;
+                case '_REQUEST':
+                    $method = 'input';
+                    break;
+                default:
+                    $method = null;
+                    break;
+            }
 
             if ($method === null) {
                 return null;
@@ -124,12 +133,20 @@ CODE_SAMPLE
 
     private function processVariable(Variable $variable): ?StaticCall
     {
-        $method = match ($variable->name) {
-            '_GET' => 'query',
-            '_POST' => 'post',
-            '_REQUEST' => 'all',
-            default => null,
-        };
+        switch ($variable->name) {
+            case '_GET':
+                $method = 'query';
+                break;
+            case '_POST':
+                $method = 'post';
+                break;
+            case '_REQUEST':
+                $method = 'all';
+                break;
+            default:
+                $method = null;
+                break;
+        }
 
         if ($method === null) {
             return null;
@@ -137,7 +154,7 @@ CODE_SAMPLE
 
         return $this->nodeFactory->createStaticCall(
             'Illuminate\Support\Facades\Request',
-            $method,
+            $method
         );
     }
 }

@@ -35,9 +35,14 @@ use Webmozart\Assert\Assert;
 final class OptionalToNullsafeOperatorRector extends AbstractRector implements ConfigurableRectorInterface, MinPhpVersionInterface
 {
     /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    /**
      * @var string
      */
-    final public const EXCLUDE_METHODS = 'exclude_methods';
+    public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var array<class-string<Expr>>
@@ -47,11 +52,12 @@ final class OptionalToNullsafeOperatorRector extends AbstractRector implements C
     /**
      * @var string[]
      */
-    private array $excludeMethods = [];
+    private $excludeMethods = [];
 
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

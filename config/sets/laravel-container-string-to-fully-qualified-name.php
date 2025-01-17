@@ -54,15 +54,17 @@ return static function (RectorConfig $rectorConfig): void {
     ];
 
     $ruleConfig = array_map(
-        fn (string $service, string $interface) => new ReplaceServiceContainerCallArg(
-            $service,
-            new ClassConstFetch(
-                new FullyQualified($interface),
-                'class'
-            )
-        ),
+        function (string $service, string $interface) {
+            return new ReplaceServiceContainerCallArg(
+                $service,
+                new ClassConstFetch(
+                    new FullyQualified($interface),
+                    'class'
+                )
+            );
+        },
         array_keys($servicesMap),
-        $servicesMap,
+        $servicesMap
     );
 
     $rectorConfig->ruleWithConfiguration(

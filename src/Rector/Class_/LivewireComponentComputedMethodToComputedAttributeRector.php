@@ -20,13 +20,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LivewireComponentComputedMethodToComputedAttributeRector extends AbstractRector
 {
+    /**
+     * @readonly
+     * @var \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer
+     */
+    private $phpAttributeAnalyzer;
     private const COMPUTED_ATTRIBUTE = 'Livewire\Attributes\Computed';
 
     private const COMPONENT_CLASS = 'Livewire\Component';
 
     private const METHOD_PATTERN = '/^get(?\'methodName\'[\w]*)Property$/';
 
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+    public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer)
+    {
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -38,11 +46,12 @@ use Livewire\Component;
 
 class MyComponent extends Component
 {
-    public function getFooBarProperty()
-    {
-    }
+public function getFooBarProperty()
+{
 }
-CODE_SAMPLE,
+}
+CODE_SAMPLE
+,
                     <<<'CODE_SAMPLE'
 use Livewire\Component;
 

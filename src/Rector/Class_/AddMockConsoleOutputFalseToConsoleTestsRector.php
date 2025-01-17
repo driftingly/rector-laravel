@@ -33,13 +33,39 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddMockConsoleOutputFalseToConsoleTestsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PropertyFetchAnalyzer $propertyFetchAnalyzer,
-        private readonly SetUpMethodDecorator $setUpMethodDecorator,
-        private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly BetterNodeFinder $betterNodeFinder,
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    /**
+     * @readonly
+     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
+     */
+    private $propertyFetchAnalyzer;
+    /**
+     * @readonly
+     * @var \Rector\PHPUnit\NodeAnalyzer\SetUpMethodDecorator
+     */
+    private $setUpMethodDecorator;
+    /**
+     * @readonly
+     * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
+     */
+    private $visibilityManipulator;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(PropertyFetchAnalyzer $propertyFetchAnalyzer, SetUpMethodDecorator $setUpMethodDecorator, VisibilityManipulator $visibilityManipulator, BetterNodeFinder $betterNodeFinder, ValueResolver $valueResolver)
+    {
+        $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
+        $this->setUpMethodDecorator = $setUpMethodDecorator;
+        $this->visibilityManipulator = $visibilityManipulator;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->valueResolver = $valueResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

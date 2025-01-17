@@ -38,7 +38,7 @@ $query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) 
     $query->where('id', 1);
 });
 CODE_SAMPLE
-                    ,
+                    
                 ),
             ]
         );
@@ -64,7 +64,10 @@ CODE_SAMPLE
         return null;
     }
 
-    private function isWhereMethodWithClosureOrArrowFunction(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function isWhereMethodWithClosureOrArrowFunction($node): bool
     {
         if (! $this->expectedObjectTypeAndMethodCall($node)) {
             return false;
@@ -74,7 +77,10 @@ CODE_SAMPLE
         ! ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): void
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function changeClosureParamType($node): void
     {
         /** @var ArrowFunction|Closure $closure */
         $closure = $node->getArgs()[0]
@@ -93,19 +99,28 @@ CODE_SAMPLE
         $param->type = new FullyQualified('Illuminate\Contracts\Database\Query\Builder');
     }
 
-    private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function expectedObjectTypeAndMethodCall($node): bool
     {
-        $isMatchingClass = match (true) {
-            $node instanceof MethodCall && $this->isObjectType(
+        switch (true) {
+            case $node instanceof MethodCall && $this->isObjectType(
                 $node->var,
                 new ObjectType('Illuminate\Contracts\Database\Query\Builder')
-            ) => true,
-            $node instanceof StaticCall && $this->isObjectType(
+            ):
+                $isMatchingClass = true;
+                break;
+            case $node instanceof StaticCall && $this->isObjectType(
                 $node->class,
                 new ObjectType('Illuminate\Database\Eloquent\Model')
-            ) => true,
-            default => false,
-        };
+            ):
+                $isMatchingClass = true;
+                break;
+            default:
+                $isMatchingClass = false;
+                break;
+        }
 
         $isMatchingMethod = $this->isNames($node->name, ['where', 'orWhere']);
 

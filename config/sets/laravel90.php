@@ -28,7 +28,7 @@ return static function (RectorConfig $rectorConfig): void {
             'path',
             '',
             null,
-            ArgumentAddingScope::SCOPE_CLASS_METHOD,
+            ArgumentAddingScope::SCOPE_CLASS_METHOD
         ),
         ]);
 
@@ -41,7 +41,7 @@ return static function (RectorConfig $rectorConfig): void {
             'path',
             '',
             null,
-            ArgumentAddingScope::SCOPE_CLASS_METHOD,
+            ArgumentAddingScope::SCOPE_CLASS_METHOD
         ),
         ]);
 
@@ -54,7 +54,7 @@ return static function (RectorConfig $rectorConfig): void {
             'attribute',
             null,
             null,
-            ArgumentAddingScope::SCOPE_CLASS_METHOD,
+            ArgumentAddingScope::SCOPE_CLASS_METHOD
         ),
         ]);
 

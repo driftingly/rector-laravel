@@ -29,7 +29,7 @@ CODE_SAMPLE
                     <<<'CODE_SAMPLE'
 \Illuminate\Support\Sleep::sleep(5);
 CODE_SAMPLE
-                    ,
+                    
                 ),
             ]
         );
