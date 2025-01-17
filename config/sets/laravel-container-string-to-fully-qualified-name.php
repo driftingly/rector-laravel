@@ -12,6 +12,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
     $servicesMap = [
+        'events' => 'Illuminate\Contracts\Events\Dispatcher',
         'config' => 'Illuminate\Contracts\Config\Repository',
         'log' => 'Psr\Log\LoggerInterface',
         'router' => 'Illuminate\Routing\Router',
