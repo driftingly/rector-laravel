@@ -21,10 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddParentBootToModelClassMethodRector extends AbstractRector
 {
-    /**
-     * @var string
-     */
-    private const BOOT = 'boot';
+    private const string BOOT = 'boot';
 
     public function __construct(
         private readonly StaticCallAnalyzer $staticCallAnalyzer,

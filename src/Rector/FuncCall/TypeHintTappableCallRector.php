@@ -20,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class TypeHintTappableCallRector extends AbstractRector
 {
-    private const TAPPABLE_TRAIT = 'Illuminate\Support\Traits\Tappable';
+    private const string TAPPABLE_TRAIT = 'Illuminate\Support\Traits\Tappable';
 
     public function __construct(
         private readonly TypeComparator $typeComparator,

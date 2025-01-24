@@ -9,12 +9,12 @@ use RectorLaravel\Set\Packages\Livewire\LivewireSetList;
 
 final class LaravelSetProvider implements SetProviderInterface
 {
-    private const GROUP_NAME = 'laravel';
+    private const string GROUP_NAME = 'laravel';
 
     /**
      * @var string[]
      */
-    private const LARAVEL_FIVE = [
+    private const array LARAVEL_FIVE = [
         LaravelSetList::LARAVEL_58,
         LaravelSetList::LARAVEL_57,
         LaravelSetList::LARAVEL_56,
@@ -29,7 +29,7 @@ final class LaravelSetProvider implements SetProviderInterface
     /**
      * @var string[]
      */
-    private const LARAVEL_POST_FIVE = [
+    private const array LARAVEL_POST_FIVE = [
         LaravelSetList::LARAVEL_110,
         LaravelSetList::LARAVEL_100,
         LaravelSetList::LARAVEL_90,

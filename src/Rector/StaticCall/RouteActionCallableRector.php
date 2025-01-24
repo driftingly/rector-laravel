@@ -33,25 +33,13 @@ use Webmozart\Assert\Assert;
  */
 final class RouteActionCallableRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    /**
-     * @var string
-     */
-    final public const ROUTES = 'routes';
+    final public const string ROUTES = 'routes';
 
-    /**
-     * @var string
-     */
-    final public const NAMESPACE = 'namespace';
+    final public const string NAMESPACE = 'namespace';
 
-    /**
-     * @var string
-     */
-    final public const NAMESPACE_ATTRIBUTE = 'laravel_route_group_namespace';
+    final public const string NAMESPACE_ATTRIBUTE = 'laravel_route_group_namespace';
 
-    /**
-     * @var string
-     */
-    private const DEFAULT_NAMESPACE = 'App\Http\Controllers';
+    private const string DEFAULT_NAMESPACE = 'App\Http\Controllers';
 
     private string $namespace = self::DEFAULT_NAMESPACE;
 

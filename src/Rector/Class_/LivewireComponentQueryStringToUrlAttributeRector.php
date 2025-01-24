@@ -25,11 +25,11 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector
 {
-    private const URL_ATTRIBUTE = 'Livewire\Attributes\Url';
+    private const string URL_ATTRIBUTE = 'Livewire\Attributes\Url';
 
-    private const COMPONENT_CLASS = 'Livewire\Component';
+    private const string COMPONENT_CLASS = 'Livewire\Component';
 
-    private const QUERY_STRING_PROPERTY_NAME = 'queryString';
+    private const string QUERY_STRING_PROPERTY_NAME = 'queryString';
 
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
 

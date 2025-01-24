@@ -21,10 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class FactoryFuncCallToStaticCallRector extends AbstractRector
 {
-    /**
-     * @var string
-     */
-    private const FACTORY = 'factory';
+    private const string FACTORY = 'factory';
 
     public function getRuleDefinition(): RuleDefinition
     {
