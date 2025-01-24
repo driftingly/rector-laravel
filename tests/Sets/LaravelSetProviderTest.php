@@ -10,7 +10,7 @@ use RectorLaravel\Set\LaravelSetProvider;
 
 final class LaravelSetProviderTest extends TestCase
 {
-    private const LARAVEL_VERSION_SETS = [
+    private const array LARAVEL_VERSION_SETS = [
         LaravelSetList::LARAVEL_50,
         LaravelSetList::LARAVEL_51,
         LaravelSetList::LARAVEL_52,

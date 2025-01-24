@@ -36,7 +36,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
     // Relation methods which are supported by this Rector.
-    private const RELATION_METHODS = [
+    private const array RELATION_METHODS = [
         'hasOne', 'hasOneThrough', 'morphOne',
         'belongsTo', 'morphTo',
         'hasMany', 'hasManyThrough', 'morphMany',
@@ -44,10 +44,10 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
     ];
 
     // Relation methods which need the class as TChildModel.
-    private const RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
+    private const array RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
 
     // Relation methods which need the class as TIntermediateModel.
-    private const RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
+    private const array RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
 
     private bool $shouldUseNewGenerics = false;
 

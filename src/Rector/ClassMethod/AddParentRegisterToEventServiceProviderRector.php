@@ -21,10 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddParentRegisterToEventServiceProviderRector extends AbstractRector
 {
-    /**
-     * @var string
-     */
-    private const REGISTER = 'register';
+    private const string REGISTER = 'register';
 
     public function __construct(
         private readonly StaticCallAnalyzer $staticCallAnalyzer,

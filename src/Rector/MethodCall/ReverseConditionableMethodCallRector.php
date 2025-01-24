@@ -17,7 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ReverseConditionableMethodCallRector extends AbstractRector
 {
-    private const CONDITIONABLE_TRAIT = 'Illuminate\Support\Traits\Conditionable';
+    private const string CONDITIONABLE_TRAIT = 'Illuminate\Support\Traits\Conditionable';
 
     public function getRuleDefinition(): RuleDefinition
     {
