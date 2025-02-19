@@ -15,6 +15,10 @@ $app->bind(SomeInterface::class, function (): SomeClass {
     return new SomeClass();
 });
 
+$app->singleton(SomeInterface::class, function () {
+    return new SomeClass();
+});
+
 ?>
 -----
 <?php
@@ -31,6 +35,10 @@ $app->bind(function (): \RectorLaravel\Tests\Rector\MethodCall\ContainerBindConc
 });
 
 $app->bind(function (): \RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector\Source\SomeInterface {
+    return new SomeClass();
+});
+
+$app->singleton(function (): \RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector\Source\SomeInterface {
     return new SomeClass();
 });
 
