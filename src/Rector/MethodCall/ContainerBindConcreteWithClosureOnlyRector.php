@@ -3,14 +3,24 @@
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\Rector\AbstractRector;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Generic\GenericClassStringType;
+use Rector\StaticTypeMapper\StaticTypeMapper;
+use Rector\TypeDeclaration\TypeInferer\ReturnTypeInferer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class ContainerBindConcreteWithClosureOnlyRector extends AbstractRector
+final class ContainerBindConcreteWithClosureOnlyRector extends AbstractRector
 {
+    public function __construct(
+        private readonly ReturnTypeInferer $returnTypeInferer,
+        private readonly StaticTypeMapper $staticTypeMapper,
+    )
+    {
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -65,7 +75,7 @@ CODE_SAMPLE
         if (! $concreteNode instanceof Node\Expr\Closure) {
             return null;
         }
-        $abstractFromConcrete = $this->getType($concreteNode)->getReturnType();
+        $abstractFromConcrete = $this->returnTypeInferer->inferFunctionLike($concreteNode);
 
         if (! $abstract instanceof GenericClassStringType) {
             return null;
@@ -73,21 +83,17 @@ CODE_SAMPLE
 
         $abstractObjectType = $abstract->getClassStringObjectType();
 
-        var_dump([
-            $abstractObjectType,
-            $abstractFromConcrete,
-            $abstractObjectType->equals($abstractFromConcrete),
-            $abstractFromConcrete->isSuperTypeOf($abstractObjectType)->no(),
-        ]);
-
-        if (! $abstractObjectType->equals($abstractFromConcrete)
-        && $abstractFromConcrete->isSuperTypeOf($abstractObjectType)->no()) {
+        if ($abstractFromConcrete->isSuperTypeOf($abstractObjectType)->no()) {
             return null;
         }
 
-        if ($abstractFromConcrete === null) {
+        // set the concrete's return type of the closure to from what's determined in PHPStan
+        $returnTypeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($abstractObjectType, TypeKind::RETURN);
+        if (! $returnTypeNode instanceof Node) {
             return null;
         }
+
+        $concreteNode->returnType = $returnTypeNode;
 
         $args = $node->getArgs();
         return $this->nodeFactory->createMethodCall(

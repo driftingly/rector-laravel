@@ -7,7 +7,7 @@ use RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRe
 use RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector\Source\SomeInterface;
 
 /** @var Container $app */
-$app->bind(SomeInterface::class, function (): SomeInterface {
+$app->bind(SomeInterface::class, function (): SomeClass {
     return new SomeClass();
 })
 
@@ -22,7 +22,7 @@ use RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRe
 use RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector\Source\SomeInterface;
 
 /** @var Container $app */
-$app->bind(function (): SomeInterface {
+$app->bind(function (): \RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector\Source\SomeInterface {
     return new SomeClass();
 })
 
