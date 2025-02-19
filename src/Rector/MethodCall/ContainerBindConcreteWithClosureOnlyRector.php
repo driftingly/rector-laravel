@@ -3,10 +3,13 @@
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Const_;
+use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\Rector\AbstractRector;
-use PHPStan\Type\ObjectType;
-use PHPStan\Type\Generic\GenericClassStringType;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use Rector\TypeDeclaration\TypeInferer\ReturnTypeInferer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -17,9 +20,7 @@ final class ContainerBindConcreteWithClosureOnlyRector extends AbstractRector
     public function __construct(
         private readonly ReturnTypeInferer $returnTypeInferer,
         private readonly StaticTypeMapper $staticTypeMapper,
-    )
-    {
-    }
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -45,13 +46,13 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [Node\Expr\MethodCall::class];
+        return [MethodCall::class];
     }
 
     /**
-     * @param Node\Expr\MethodCall $node
+     * @param  MethodCall  $node
      */
-    public function refactor(Node $node): ?Node\Expr\MethodCall
+    public function refactor(Node $node): ?MethodCall
     {
         if (! $this->isNames($node->name, ['bind', 'singleton', 'bindIf', 'singletonIf'])) {
             return null;
@@ -69,19 +70,21 @@ CODE_SAMPLE
             return null;
         }
 
-        $abstract = $this->getType($node->getArgs()[0]->value);
+        $type = $this->getType($node->getArgs()[0]->value);
+        $classString = $node->getArgs()[0]->value;
         $concreteNode = $node->getArgs()[1]->value;
 
-        if (! $concreteNode instanceof Node\Expr\Closure) {
+        if (! $concreteNode instanceof Closure) {
             return null;
         }
         $abstractFromConcrete = $this->returnTypeInferer->inferFunctionLike($concreteNode);
 
-        if (! $abstract instanceof GenericClassStringType) {
+        if ($classString instanceof Const_
+        && $this->isName($classString, 'class')) {
             return null;
         }
 
-        $abstractObjectType = $abstract->getClassStringObjectType();
+        $abstractObjectType = $type->getClassStringObjectType();
 
         if ($abstractFromConcrete->isSuperTypeOf($abstractObjectType)->no()) {
             return null;
@@ -96,10 +99,9 @@ CODE_SAMPLE
         $concreteNode->returnType = $returnTypeNode;
 
         $args = $node->getArgs();
-        return $this->nodeFactory->createMethodCall(
-            $node->var,
-            $node->name,
-            array_splice($args, 1),
-        );
+
+        $node->args = array_splice($args, 1);
+
+        return $node;
     }
 }

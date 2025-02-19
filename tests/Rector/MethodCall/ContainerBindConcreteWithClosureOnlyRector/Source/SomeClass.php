@@ -2,7 +2,4 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector\Source;
 
-class SomeClass implements SomeInterface
-{
-
-}
+class SomeClass implements SomeInterface {}
