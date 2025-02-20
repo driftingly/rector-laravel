@@ -18,8 +18,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class ContainerBindConcreteWithClosureOnlyRector extends AbstractRector
 {
     public function __construct(
-        private readonly ReturnTypeInferer $returnTypeInfer,
-        private readonly StaticTypeMapper  $staticTypeMapper,
+        private readonly ReturnTypeInferer $returnTypeInferer,
+        private readonly StaticTypeMapper $staticTypeMapper,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -77,7 +77,7 @@ CODE_SAMPLE
         if (! $concreteNode instanceof Closure) {
             return null;
         }
-        $abstractFromConcrete = $this->returnTypeInfer->inferFunctionLike($concreteNode);
+        $abstractFromConcrete = $this->returnTypeInferer->inferFunctionLike($concreteNode);
 
         if ($classString instanceof Const_
         && $this->isName($classString, 'class')) {
