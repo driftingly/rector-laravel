@@ -70,7 +70,12 @@ CODE_SAMPLE
             $replacement = 'contains';
         } elseif ($this->isName($name, 'average')) {
             $replacement = 'avg';
-        } else {
+        } elseif ($this->isName($name, 'unlessEmpty')) {
+            $replacement = 'whenNotEmpty';
+        } elseif ($this->isName($name, 'unlessNotEmpty')) {
+            $replacement = 'whenEmpty';
+        }
+         else {
             return null;
         }
 
