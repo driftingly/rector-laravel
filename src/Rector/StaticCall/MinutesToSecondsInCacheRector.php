@@ -24,20 +24,11 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class MinutesToSecondsInCacheRector extends AbstractRector
 {
-    /**
-     * @var string
-     */
-    private const PUT = 'put';
+    private const string PUT = 'put';
 
-    /**
-     * @var string
-     */
-    private const ADD = 'add';
+    private const string ADD = 'add';
 
-    /**
-     * @var string
-     */
-    private const REMEMBER = 'remember';
+    private const string REMEMBER = 'remember';
 
     /**
      * @var TypeToTimeMethodAndPosition[]

@@ -6,13 +6,7 @@ namespace RectorLaravel\Set\Packages\Cashier;
 
 final class CashierSetList
 {
-    /**
-     * @var string
-     */
-    final public const LARAVEL_CASHIER_130 = __DIR__ . '/../../../../config/sets/packages/cashier/cashier-13.php';
+    final public const string LARAVEL_CASHIER_130 = __DIR__ . '/../../../../config/sets/packages/cashier/cashier-13.php';
 
-    /**
-     * @var string
-     */
-    final public const LARAVEL_CASHIER_140 = __DIR__ . '/../../../../config/sets/packages/cashier/cashier-14.php';
+    final public const string LARAVEL_CASHIER_140 = __DIR__ . '/../../../../config/sets/packages/cashier/cashier-14.php';
 }

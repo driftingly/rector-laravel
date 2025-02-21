@@ -28,9 +28,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
 {
-    private const EXTENDS_TAG_NAME = '@extends';
+    private const string EXTENDS_TAG_NAME = '@extends';
 
-    private const FACTORY_CLASS_NAME = 'Illuminate\Database\Eloquent\Factories\Factory';
+    private const string FACTORY_CLASS_NAME = 'Illuminate\Database\Eloquent\Factories\Factory';
 
     public function __construct(
         private readonly DocBlockUpdater $docBlockUpdater,

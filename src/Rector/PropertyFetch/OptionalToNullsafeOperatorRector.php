@@ -34,15 +34,12 @@ use Webmozart\Assert\Assert;
  */
 final class OptionalToNullsafeOperatorRector extends AbstractRector implements ConfigurableRectorInterface, MinPhpVersionInterface
 {
-    /**
-     * @var string
-     */
-    final public const EXCLUDE_METHODS = 'exclude_methods';
+    final public const string EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var array<class-string<Expr>>
      */
-    private const SKIP_VALUE_TYPES = [ConstFetch::class, Scalar::class, Array_::class, ClassConstFetch::class];
+    private const array SKIP_VALUE_TYPES = [ConstFetch::class, Scalar::class, Array_::class, ClassConstFetch::class];
 
     /**
      * @var string[]

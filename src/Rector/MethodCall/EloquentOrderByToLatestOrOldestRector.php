@@ -24,10 +24,7 @@ use Webmozart\Assert\Assert;
  */
 class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    /**
-     * @var string
-     */
-    final public const ALLOWED_PATTERNS = 'allowed_patterns';
+    final public const string ALLOWED_PATTERNS = 'allowed_patterns';
 
     /**
      * @var string[]
