@@ -6,7 +6,6 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
@@ -24,7 +23,7 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
         $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
         $staticCall = new StaticCall(
-            new Name('Illuminate\Support\Facades\DB'),
+            new FullyQualified('Illuminate\Support\Facades\DB'),
             'table',
             [new Arg(new String_('table'))]
         );
@@ -43,7 +42,7 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
         $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
         $staticCall = new StaticCall(
-            new Name('UserLand\SomeFacade'),
+            new FullyQualified('UserLand\SomeFacade'),
             'someCall',
             []
         );
@@ -62,7 +61,7 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
         $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
         $staticCall = new StaticCall(
-            new Name('Illuminate\Support\Facades\DB'),
+            new FullyQualified('Illuminate\Support\Facades\DB'),
             'table',
             [new Arg(new String_('table'))]
         );
@@ -78,7 +77,7 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
         $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
         $staticCall = new StaticCall(
-            new Name('SomeClass'),
+            new FullyQualified('SomeClass'),
             'table',
             [new Arg(new String_('table'))]
         );
@@ -94,7 +93,7 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
         $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
         $staticCall = new StaticCall(
-            new Name('Illuminate\Support\Facades\DB'),
+            new FullyQualified('Illuminate\Support\Facades\DB'),
             'table',
             [new Arg(new String_('table'))]
         );
@@ -137,7 +136,7 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
         $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
         $staticCall = new StaticCall(
-            new Name('Illuminate\Database\DatabaseManager'),
+            new FullyQualified('Illuminate\Database\DatabaseManager'),
             'table',
             [new Arg(new String_('table'))]
         );
