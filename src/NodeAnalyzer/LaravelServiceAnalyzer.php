@@ -4,11 +4,11 @@ namespace RectorLaravel\NodeAnalyzer;
 
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Name;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
-use PHPStan\Type\ObjectType;
-use Rector\PHPStan\ScopeFetcher;
 use ReflectionMethod;
 
 final class LaravelServiceAnalyzer
@@ -21,31 +21,25 @@ final class LaravelServiceAnalyzer
     ];
 
     public function __construct(
-        private NodeTypeResolver $nodeTypeResolver,
-        private NodeNameResolver $nodeNameResolver,
-        private \PHPStan\Reflection\ReflectionProvider $reflectionProvider
-    )
-    {
-    }
+        private readonly NodeTypeResolver $nodeTypeResolver,
+        private readonly NodeNameResolver $nodeNameResolver,
+        private readonly ReflectionProvider $reflectionProvider
+    ) {}
 
     /**
-     * @param array<string, class-string> $services
+     * @param  array<string, class-string>  $services
      */
     public function defineServices(array $services, bool $merge = false): static
     {
-        if ($merge) {
-            $this->services = array_merge($this->services, $services);
-        } else {
-            $this->services = $services;
-        }
+        $this->services = $merge ? array_merge($this->services, $services) : $services;
 
         return $this;
     }
 
-    public function getFacadeOrigin(StaticCall $node): ?ObjectType
+    public function getFacadeOrigin(StaticCall $staticCall): ?ObjectType
     {
-        $classType = $this->nodeTypeResolver->getType($node->class);
-        $className = $this->nodeNameResolver->getName($node->class);
+        $classType = $this->nodeTypeResolver->getType($staticCall->class);
+        $className = $this->nodeNameResolver->getName($staticCall->class);
         if (! is_string($className)) {
             return null;
         }
@@ -54,13 +48,13 @@ final class LaravelServiceAnalyzer
             return null;
         }
 
-        $reflection = new ReflectionMethod($className, 'getFacadeAccessor');
+        $reflectionMethod = new ReflectionMethod($className, 'getFacadeAccessor');
 
-        if (! $reflection->isStatic() || $reflection->getNumberOfParameters() > 0) {
+        if (! $reflectionMethod->isStatic() || $reflectionMethod->getNumberOfParameters() > 0) {
             return null;
         }
-        $reflection->setAccessible(true);
-        $origin = $reflection->invoke(null);
+        $reflectionMethod->setAccessible(true);
+        $origin = $reflectionMethod->invoke(null);
         if (! is_string($origin)) {
             return null;
         }
@@ -87,7 +81,7 @@ final class LaravelServiceAnalyzer
         if ($node instanceof StaticCall && $this->isFacadeCall($node)) {
             $facadeOriginObjectType = $this->getFacadeOrigin($node);
 
-            if ($facadeOriginObjectType === null) {
+            if (! $facadeOriginObjectType instanceof Type || $facadeOriginObjectType->isObject()->no()) {
                 return false;
             }
 
@@ -99,10 +93,10 @@ final class LaravelServiceAnalyzer
         return $this->nodeTypeResolver->isObjectType($node->var, $objectType);
     }
 
-    public function isFacadeCall(StaticCall $node): bool
+    public function isFacadeCall(StaticCall $staticCall): bool
     {
         return $this->nodeTypeResolver->isObjectType(
-            $node->class,
+            $staticCall->class,
             new ObjectType('Illuminate\Support\Facades\Facade')
         );
     }

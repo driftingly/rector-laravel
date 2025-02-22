@@ -2,9 +2,11 @@
 
 namespace UserLand;
 
+use Illuminate\Support\Facades\Facade;
+
 require_once __DIR__ . '/../Illuminate/Support/Facades/Facade.php';
 
-class SomeFacade extends \Illuminate\Support\Facades\Facade
+class SomeFacade extends Facade
 {
     /**
      * Get the registered name of the component.

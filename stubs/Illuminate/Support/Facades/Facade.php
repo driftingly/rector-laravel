@@ -6,7 +6,4 @@ if (class_exists('\Illuminate\Support\Facades\Facade')) {
     return;
 }
 
-abstract class Facade
-{
-
-}
+abstract class Facade {}

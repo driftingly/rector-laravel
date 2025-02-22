@@ -8,93 +8,109 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\Expression;
-use Rector\NodeTypeResolver\PHPStan\Scope\PHPStanNodeScopeResolver;
+use PHPStan\Type\ObjectType;
+use PHPUnit\Framework\Assert;
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
 use RectorLaravel\NodeAnalyzer\LaravelServiceAnalyzer;
-use PHPStan\Analyser\MutatingScope;
-use PHPStan\Type\ObjectType;
 
 class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
 {
-    public function testItCanFindTheProxyOriginOfTheFacadeWithStringAccessor(): void
+    /**
+     * @test
+     */
+    public function it_can_find_the_proxy_origin_of_the_facade_with_string_accessor(): void
     {
-        $analyzer = $this->make(LaravelServiceAnalyzer::class);
+        $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
-        $facadeCall = new StaticCall(
+        $staticCall = new StaticCall(
             new Name('Illuminate\Support\Facades\DB'),
             'table',
             [new Arg(new String_('table'))]
         );
 
-        $objectType = $analyzer->getFacadeOrigin($facadeCall);
+        $objectType = $laravelServiceAnalyzer->getFacadeOrigin($staticCall);
 
-        $this->assertInstanceOf(ObjectType::class, $objectType);
-        $this->assertSame('Illuminate\Database\DatabaseManager', $objectType->getClassName());
+        Assert::assertInstanceOf(ObjectType::class, $objectType);
+        Assert::assertSame('Illuminate\Database\DatabaseManager', $objectType->getClassName());
     }
 
-    public function testItCanFindTheProxyOriginOfTheFacadeWithDirectClassAccessor(): void
+    /**
+     * @test
+     */
+    public function it_can_find_the_proxy_origin_of_the_facade_with_direct_class_accessor(): void
     {
-        $analyzer = $this->make(LaravelServiceAnalyzer::class);
+        $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
-        $facadeCall = new StaticCall(
+        $staticCall = new StaticCall(
             new Name('UserLand\SomeFacade'),
             'someCall',
             []
         );
 
-        $objectType = $analyzer->getFacadeOrigin($facadeCall);
+        $objectType = $laravelServiceAnalyzer->getFacadeOrigin($staticCall);
 
-        $this->assertInstanceOf(ObjectType::class, $objectType);
-        $this->assertSame('UserLand\SomeService', $objectType->getClassName());
+        Assert::assertInstanceOf(ObjectType::class, $objectType);
+        Assert::assertSame('UserLand\SomeService', $objectType->getClassName());
     }
 
-    public function testItCanDetectTheStaticCallIsMadeViaFacade(): void
+    /**
+     * @test
+     */
+    public function it_can_detect_the_static_call_is_made_via_facade(): void
     {
-        $analyzer = $this->make(LaravelServiceAnalyzer::class);
+        $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
-        $facadeCall = new StaticCall(
+        $staticCall = new StaticCall(
             new Name('Illuminate\Support\Facades\DB'),
             'table',
             [new Arg(new String_('table'))]
         );
 
-        $this->assertTrue($analyzer->isFacadeCall($facadeCall));
+        Assert::assertTrue($laravelServiceAnalyzer->isFacadeCall($staticCall));
     }
 
-    public function testItCanDetectTheStaticCallIsNotMadeViaFacade(): void
+    /**
+     * @test
+     */
+    public function it_can_detect_the_static_call_is_not_made_via_facade(): void
     {
-        $analyzer = $this->make(LaravelServiceAnalyzer::class);
+        $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
-        $facadeCall = new StaticCall(
+        $staticCall = new StaticCall(
             new Name('SomeClass'),
             'table',
             [new Arg(new String_('table'))]
         );
 
-        $this->assertFalse($analyzer->isFacadeCall($facadeCall));
+        Assert::assertFalse($laravelServiceAnalyzer->isFacadeCall($staticCall));
     }
 
-    public function testItCanMatchFacadeCallsToTheUnderlyingService(): void
+    /**
+     * @test
+     */
+    public function it_can_match_facade_calls_to_the_underlying_service(): void
     {
-        $analyzer = $this->make(LaravelServiceAnalyzer::class);
+        $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
-        $facadeCall = new StaticCall(
+        $staticCall = new StaticCall(
             new Name('Illuminate\Support\Facades\DB'),
             'table',
             [new Arg(new String_('table'))]
         );
 
-        $this->assertTrue($analyzer->isMatchingCall(
-            $facadeCall,
+        Assert::assertTrue($laravelServiceAnalyzer->isMatchingCall(
+            $staticCall,
             new ObjectType('Illuminate\Database\DatabaseManager'),
             'table',
         ));
     }
 
-    public function testItCanMatchDirectCallsToTheServiceByMethodCall(): void
+    /**
+     * @test
+     */
+    public function it_can_match_direct_calls_to_the_service_by_method_call(): void
     {
-        $analyzer = $this->make(LaravelServiceAnalyzer::class);
+        $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
         $methodCall = new MethodCall(
             new Variable('db'),
@@ -102,25 +118,28 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
             [new Arg(new String_('table'))]
         );
 
-        $this->assertTrue($analyzer->isMatchingCall(
+        Assert::assertTrue($laravelServiceAnalyzer->isMatchingCall(
             $methodCall,
             new ObjectType('Illuminate\Database\DatabaseManager'),
             'table',
         ));
     }
 
-    public function testItCanDoesNotMatchStaticCalls(): void
+    /**
+     * @test
+     */
+    public function it_can_does_not_match_static_calls(): void
     {
-        $analyzer = $this->make(LaravelServiceAnalyzer::class);
+        $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
-        $methodCall = new StaticCall(
+        $staticCall = new StaticCall(
             new Name('Illuminate\Database\DatabaseManager'),
             'table',
             [new Arg(new String_('table'))]
         );
 
-        $this->assertFalse($analyzer->isMatchingCall(
-            $methodCall,
+        Assert::assertFalse($laravelServiceAnalyzer->isMatchingCall(
+            $staticCall,
             new ObjectType('Illuminate\Database\DatabaseManager'),
             'table',
         ));
