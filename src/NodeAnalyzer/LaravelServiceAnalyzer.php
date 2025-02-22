@@ -4,6 +4,7 @@ namespace RectorLaravel\NodeAnalyzer;
 
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Name;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use PHPStan\Type\ObjectType;
@@ -27,6 +28,9 @@ final class LaravelServiceAnalyzer
     {
     }
 
+    /**
+     * @param array<string, class-string> $services
+     */
     public function defineServices(array $services, bool $merge = false): static
     {
         if ($merge) {
@@ -41,7 +45,10 @@ final class LaravelServiceAnalyzer
     public function getFacadeOrigin(StaticCall $node): ?ObjectType
     {
         $classType = $this->nodeTypeResolver->getType($node->class);
-        $className = $node->class->name;
+        $className = $this->nodeNameResolver->getName($node->class);
+        if (! is_string($className)) {
+            return null;
+        }
 
         if ($classType->hasMethod('getFacadeAccessor')->no()) {
             return null;
@@ -54,6 +61,9 @@ final class LaravelServiceAnalyzer
         }
         $reflection->setAccessible(true);
         $origin = $reflection->invoke(null);
+        if (! is_string($origin)) {
+            return null;
+        }
 
         if ($this->reflectionProvider->hasClass($origin)) {
             return new ObjectType($origin);
