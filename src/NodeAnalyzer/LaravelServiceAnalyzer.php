@@ -23,7 +23,7 @@ final class LaravelServiceAnalyzer
     public function __construct(
         private readonly NodeTypeResolver $nodeTypeResolver,
         private readonly NodeNameResolver $nodeNameResolver,
-        private readonly ReflectionProvider $reflectionProvider
+        private readonly ReflectionProvider $reflectionProvider,
     ) {}
 
     /**

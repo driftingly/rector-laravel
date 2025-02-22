@@ -4,9 +4,10 @@ namespace NodeAnalyzer;
 
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use PHPUnit\Framework\Assert;
@@ -113,7 +114,10 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
         $laravelServiceAnalyzer = $this->make(LaravelServiceAnalyzer::class);
 
         $methodCall = new MethodCall(
-            new Variable('db'),
+            new New_(
+                new FullyQualified('Illuminate\Database\DatabaseManager'),
+                []
+            ),
             'table',
             [new Arg(new String_('table'))]
         );
