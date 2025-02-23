@@ -141,10 +141,14 @@ CODE_SAMPLE
     private function removeAndReplaceMethodCalls(ClassMethod $node, array $expectedMethodCalls, array $classes, string $facade): ClassMethod
     {
         $first = true;
-        $this->traverseNodesWithCallable($node, function (Node $node) use (&$first, $expectedMethodCalls, $classes, $facade): StaticCall|int|null {
+        $this->traverseNodesWithCallable($node, function (Node $node) use (&$first, $expectedMethodCalls, $classes, $facade): Expression|int|null {
             $match = false;
+            if (! $node instanceof Expression) {
+                return null;
+            }
+
             foreach ($expectedMethodCalls as $methodCall) {
-                if ($this->nodeComparator->areNodesEqual($node, $methodCall)) {
+                if ($this->nodeComparator->areNodesEqual($node->expr, $methodCall)) {
                     $match = true;
                     break;
                 }
@@ -156,7 +160,7 @@ CODE_SAMPLE
 
             if ($first) {
                 $first = false;
-                return $this->dispatchableTestsMethodsFactory->makeFacadeFakeCall($classes, $facade);
+                return new Expression($this->dispatchableTestsMethodsFactory->makeFacadeFakeCall($classes, $facade));
             }
 
             return NodeVisitor::REMOVE_NODE;
