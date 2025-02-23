@@ -34,6 +34,9 @@ class ModelAnalyzer
         return $table;
     }
 
+    /**
+     * @param class-string<Model> $class
+     */
     public function getPrimaryKey(string $class): ?string
     {
         $classReflection = $this->getClass($class);
