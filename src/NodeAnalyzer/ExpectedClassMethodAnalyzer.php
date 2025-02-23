@@ -54,7 +54,7 @@ class ExpectedClassMethodAnalyzer
         }
 
         $expectedItems = $this->findClasses($expectedMethodCalls);
-        $notExpectedItems = $this->findClasses($expectedMethodCalls);
+        $notExpectedItems = $this->findClasses($notExpectedMethodCalls);
 
         return new ExpectedClassMethodMethodCalls(
             $expectedMethodCalls,
@@ -77,17 +77,16 @@ class ExpectedClassMethodAnalyzer
             &$notExpectedMethodCalls,
             &$reasonsToNotContinue,
         ): void {
-            var_dump('here');
             if (! $node instanceof MethodCall) {
                 return;
             }
 
-            if ($this->nodeNameResolver->isName($node, 'expectsEvents')) {
+            if ($this->nodeNameResolver->isName($node->name, 'expectsEvents')) {
                 $expectedMethodCalls[] = $node;
                 return;
             }
 
-            if ($this->nodeNameResolver->isName($node, 'doesntExpectEvents')) {
+            if ($this->nodeNameResolver->isName($node->name, 'doesntExpectEvents')) {
                 $notExpectedMethodCalls[] = $node;
             }
 
@@ -101,7 +100,7 @@ class ExpectedClassMethodAnalyzer
         }
 
         $expectedItems = $this->findClasses($expectedMethodCalls);
-        $notExpectedItems = $this->findClasses($expectedMethodCalls);
+        $notExpectedItems = $this->findClasses($notExpectedMethodCalls);
 
         return new ExpectedClassMethodMethodCalls(
             $expectedMethodCalls,

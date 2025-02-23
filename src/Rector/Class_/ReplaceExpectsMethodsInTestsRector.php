@@ -114,8 +114,6 @@ CODE_SAMPLE
                 continue;
             }
 
-            var_dump($result->getExpectedItems());
-
             if ($result->isActionable()) {
                 $this->fixUpClassMethod($classMethod, $result, 'Illuminate\Support\Facades\Event');
             }
@@ -134,7 +132,7 @@ CODE_SAMPLE
         $node->stmts = array_merge(
             $node->stmts,
             $this->dispatchableTestsMethodsFactory->assertStatements($result->getExpectedItems(), $facade),
-            $this->dispatchableTestsMethodsFactory->assertStatements($result->getNotExpectedItems(), $facade)
+            $this->dispatchableTestsMethodsFactory->assertNotStatements($result->getNotExpectedItems(), $facade)
         );
 
         return $node;
@@ -158,16 +156,10 @@ CODE_SAMPLE
 
             if ($first) {
                 $first = false;
-//                \RectorPrefix202502\dump_node($node);
-                $static = $this->dispatchableTestsMethodsFactory->makeFacadeFakeCall($classes, $facade);
-//                \RectorPrefix202502\dump_node($static);
-
-                return $static;
+                return $this->dispatchableTestsMethodsFactory->makeFacadeFakeCall($classes, $facade);
             }
 
-//            \RectorPrefix202502\dump_node($node);
-
-            return null;
+            return NodeVisitor::REMOVE_NODE;
         });
 
         return $node;
