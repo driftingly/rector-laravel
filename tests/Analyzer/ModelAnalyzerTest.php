@@ -8,21 +8,51 @@ use RectorLaravel\NodeAnalyzer\ModelAnalyzer;
 
 class ModelAnalyzerTest extends AbstractLazyTestCase
 {
-    public function test_it_can_retrieve_the_table_name(): void
+    /**
+     * @test
+     */
+    public function it_can_retrieve_the_table_name(): void
     {
-        $analyzer = $this->make(ModelAnalyzer::class);
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
 
-        $result = $analyzer->getTable('RectorLaravel\Tests\Analyzer\Source\SomeModel');
+        $result = $modelAnalyzer->getTable('RectorLaravel\Tests\Analyzer\Source\SomeModel');
 
         Assert::assertSame('<default_table_mechanism>', $result);
     }
 
-    public function test_it_can_retrieve_the_key_name(): void
+    /**
+     * @test
+     */
+    public function it_can_retrieve_the_custom_table_name(): void
     {
-        $analyzer = $this->make(ModelAnalyzer::class);
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
 
-        $result = $analyzer->getPrimaryKey('RectorLaravel\Tests\Analyzer\Source\SomeModel');
+        $result = $modelAnalyzer->getTable('RectorLaravel\Tests\Analyzer\Source\SomeModelWithCustomTableAndPrimaryKey');
+
+        Assert::assertSame('custom_table', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_retrieve_the_key_name(): void
+    {
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
+
+        $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\Analyzer\Source\SomeModel');
 
         Assert::assertSame('id', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_retrieve_the_custom_key_name(): void
+    {
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
+
+        $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\Analyzer\Source\SomeModelWithCustomTableAndPrimaryKey');
+
+        Assert::assertSame('uuid', $result);
     }
 }

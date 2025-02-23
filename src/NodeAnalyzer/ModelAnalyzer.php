@@ -2,24 +2,23 @@
 
 namespace RectorLaravel\NodeAnalyzer;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 
 class ModelAnalyzer
 {
-    public function __construct
-    (
+    public function __construct(
         private readonly ReflectionProvider $reflectionProvider
-    )
-    {
-    }
+    ) {}
 
     /**
      * Returns the table name of a model
      *
-     * @param class-string<Model> $class
-     * @throws \Exception
+     * @param  class-string<Model>  $class
+     *
+     * @throws Exception
      */
     public function getTable(string $class): ?string
     {
@@ -50,23 +49,24 @@ class ModelAnalyzer
     }
 
     /**
-     * @param class-string<Model> $class
-     * @throws \Exception
+     * @param  class-string<Model>  $class
+     *
+     * @throws Exception
      */
     private function getClass(string $class): ClassReflection
     {
         if (! $this->reflectionProvider->hasClass($class)) {
-            throw new \Exception('Class not found');
+            throw new Exception('Class not found');
         }
 
         $classReflection = $this->reflectionProvider->getClass($class);
 
         if (! $classReflection->isClass()) {
-            throw new \Exception('Class is not class');
+            throw new Exception('Class is not class');
         }
 
         if (! $classReflection->isSubclassOf(Model::class)) {
-            throw new \Exception('Class is not subclass of Model');
+            throw new Exception('Class is not subclass of Model');
         }
 
         return $classReflection;
