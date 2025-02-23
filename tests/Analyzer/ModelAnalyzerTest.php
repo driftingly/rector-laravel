@@ -1,10 +1,10 @@
 <?php
 
-namespace RectorLaravel\Tests\Unit\ReflectionAnalyzer;
+namespace RectorLaravel\Tests\Analyzer;
 
 use PHPUnit\Framework\Assert;
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
-use RectorLaravel\ReflectionAnalyzer\ModelAnalyzer;
+use RectorLaravel\NodeAnalyzer\ModelAnalyzer;
 
 class ModelAnalyzerTest extends AbstractLazyTestCase
 {
@@ -12,7 +12,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
     {
         $analyzer = $this->make(ModelAnalyzer::class);
 
-        $result = $analyzer->getTable('RectorLaravel\Tests\Fixtures\ReflectionAnalyzer\FooBar');
+        $result = $analyzer->getTable('RectorLaravel\Tests\Analyzer\Source\SomeModel');
 
         Assert::assertSame('<default_table_mechanism>', $result);
     }
@@ -21,7 +21,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
     {
         $analyzer = $this->make(ModelAnalyzer::class);
 
-        $result = $analyzer->getPrimaryKey('RectorLaravel\Tests\Fixtures\ReflectionAnalyzer\FooBar');
+        $result = $analyzer->getPrimaryKey('RectorLaravel\Tests\Analyzer\Source\SomeModel');
 
         Assert::assertSame('id', $result);
     }

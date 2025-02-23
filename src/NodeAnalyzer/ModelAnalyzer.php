@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\ReflectionAnalyzer;
+namespace RectorLaravel\NodeAnalyzer;
 
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
