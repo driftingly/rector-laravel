@@ -34,22 +34,22 @@ final readonly class ExpectedClassMethodAnalyzer
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
             &$reasonsToNotContinue,
-        ): void {
+        ): array|int|\PhpParser\Node|null {
             if (! $node instanceof MethodCall) {
-                return;
+                return null;
             }
 
             if (! $this->nodeTypeResolver->isObjectType(
                 $node->var,
                 new ObjectType('Illuminate\Foundation\Testing\TestCase')
             )) {
-                return;
+                return null;
             }
 
             if ($this->nodeNameResolver->isName($node->name, 'expectsJobs')) {
                 $expectedMethodCalls[] = $node;
 
-                return;
+                return null;
             }
 
             if ($this->nodeNameResolver->isName($node->name, 'doesntExpectJobs')) {
@@ -59,6 +59,8 @@ final readonly class ExpectedClassMethodAnalyzer
             if ($node->isFirstClassCallable()) {
                 $reasonsToNotContinue = true;
             }
+
+            return null;
         });
 
         if ($reasonsToNotContinue) {
@@ -88,22 +90,22 @@ final readonly class ExpectedClassMethodAnalyzer
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
             &$reasonsToNotContinue,
-        ): void {
+        ): array|int|\PhpParser\Node|null {
             if (! $node instanceof MethodCall) {
-                return;
+                return null;
             }
 
             if (! $this->nodeTypeResolver->isObjectType(
                 $node->var,
                 new ObjectType('Illuminate\Foundation\Testing\TestCase')
             )) {
-                return;
+                return null;
             }
 
             if ($this->nodeNameResolver->isName($node->name, 'expectsEvents')) {
                 $expectedMethodCalls[] = $node;
 
-                return;
+                return null;
             }
 
             if ($this->nodeNameResolver->isName($node->name, 'doesntExpectEvents')) {
@@ -113,6 +115,8 @@ final readonly class ExpectedClassMethodAnalyzer
             if ($node->isFirstClassCallable()) {
                 $reasonsToNotContinue = true;
             }
+
+            return null;
         });
 
         if ($reasonsToNotContinue) {
@@ -138,6 +142,9 @@ final readonly class ExpectedClassMethodAnalyzer
     {
         $items = [];
         foreach ($methodCalls as $methodCall) {
+            if (! $methodCall->args[0] instanceof Node\Arg) {
+                continue;
+            }
             $value = $methodCall->args[0]->value;
             if ($value instanceof String_) {
                 $items[] = $value;

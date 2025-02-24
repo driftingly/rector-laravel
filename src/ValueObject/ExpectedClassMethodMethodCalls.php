@@ -49,7 +49,7 @@ final readonly class ExpectedClassMethodMethodCalls
     }
 
     /**
-     * @return list<String_|ClassConstFetch>
+     * @return array<int<0, max>, \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Scalar\String_>
      */
     public function getItemsToFake(): array
     {
@@ -57,7 +57,7 @@ final readonly class ExpectedClassMethodMethodCalls
     }
 
     /**
-     * @return list<String_|ClassConstFetch>
+     * @return array<int<0, max>, \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Scalar\String_>
      */
     public function getExpectedItems(): array
     {
@@ -65,10 +65,10 @@ final readonly class ExpectedClassMethodMethodCalls
     }
 
     /**
-     * @return list<String_|ClassConstFetch>
+     * @return array<int<0, max>, \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Scalar\String_>
      */
     public function getNotExpectedItems(): array
     {
-        return array_unique($this->notExpectedItems);
+        return array_unique($this->notExpectedItems, SORT_REGULAR);
     }
 }

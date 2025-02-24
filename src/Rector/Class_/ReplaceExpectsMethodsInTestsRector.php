@@ -111,18 +111,24 @@ CODE_SAMPLE
         ClassMethod $classMethod,
         ExpectedClassMethodMethodCalls $expectedClassMethodMethodCalls,
         string $facade
-    ): ClassMethod {
+    ): void {
         $this->removeAndReplaceMethodCalls($classMethod, $expectedClassMethodMethodCalls->getAllMethodCalls(), $expectedClassMethodMethodCalls->getItemsToFake(), $facade);
-        $classMethod->stmts = array_merge(
-            $classMethod->stmts,
-            $this->dispatchableTestsMethodsFactory->assertStatements($expectedClassMethodMethodCalls->getExpectedItems(), $facade),
-            $this->dispatchableTestsMethodsFactory->assertNotStatements($expectedClassMethodMethodCalls->getNotExpectedItems(), $facade)
-        );
 
-        return $classMethod;
+        $statements = [
+            ...($classMethod->stmts ?? []),
+            ...$this->dispatchableTestsMethodsFactory->assertStatements($expectedClassMethodMethodCalls->getExpectedItems(), $facade),
+            ...$this->dispatchableTestsMethodsFactory->assertNotStatements($expectedClassMethodMethodCalls->getNotExpectedItems(), $facade),
+        ];
+
+        $classMethod->stmts = $statements;
+
     }
 
-    private function removeAndReplaceMethodCalls(ClassMethod $classMethod, array $expectedMethodCalls, array $classes, string $facade): ClassMethod
+    /**
+     * @param  Node\Expr\MethodCall[]  $expectedMethodCalls
+     * @param  array<int<0, max>, \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Scalar\String_>  $classes
+     */
+    private function removeAndReplaceMethodCalls(ClassMethod $classMethod, array $expectedMethodCalls, array $classes, string $facade): void
     {
         $first = true;
         $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$first, $expectedMethodCalls, $classes, $facade): Expression|int|null {
@@ -151,6 +157,5 @@ CODE_SAMPLE
             return NodeVisitor::REMOVE_NODE;
         });
 
-        return $classMethod;
     }
 }
