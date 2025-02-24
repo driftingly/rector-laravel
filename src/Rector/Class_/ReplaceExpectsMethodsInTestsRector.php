@@ -5,20 +5,9 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
-use PhpParser\Node\ArrayItem;
-use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ClassConstFetch;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
@@ -34,11 +23,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class ReplaceExpectsMethodsInTestsRector extends AbstractRector
 {
     public function __construct(
-        private ExpectedClassMethodAnalyzer $expectedClassMethodAnalyzer,
-        private DispatchableTestsMethodsFactory $dispatchableTestsMethodsFactory,
-    )
-    {
-    }
+        private readonly ExpectedClassMethodAnalyzer $expectedClassMethodAnalyzer,
+        private readonly DispatchableTestsMethodsFactory $dispatchableTestsMethodsFactory,
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -95,8 +82,6 @@ CODE_SAMPLE
             return null;
         }
 
-        $changes = false;
-
         foreach ($node->getMethods() as $classMethod) {
             $result = $this->expectedClassMethodAnalyzer->findExpectedJobCallsWithClassMethod($classMethod);
 
@@ -123,32 +108,31 @@ CODE_SAMPLE
     }
 
     private function fixUpClassMethod(
-        ClassMethod $node,
-        ExpectedClassMethodMethodCalls $result,
+        ClassMethod $classMethod,
+        ExpectedClassMethodMethodCalls $expectedClassMethodMethodCalls,
         string $facade
-    ): ClassMethod
-    {
-        $this->removeAndReplaceMethodCalls($node, $result->getAllMethodCalls(), $result->getItemsToFake(), $facade);
-        $node->stmts = array_merge(
-            $node->stmts,
-            $this->dispatchableTestsMethodsFactory->assertStatements($result->getExpectedItems(), $facade),
-            $this->dispatchableTestsMethodsFactory->assertNotStatements($result->getNotExpectedItems(), $facade)
+    ): ClassMethod {
+        $this->removeAndReplaceMethodCalls($classMethod, $expectedClassMethodMethodCalls->getAllMethodCalls(), $expectedClassMethodMethodCalls->getItemsToFake(), $facade);
+        $classMethod->stmts = array_merge(
+            $classMethod->stmts,
+            $this->dispatchableTestsMethodsFactory->assertStatements($expectedClassMethodMethodCalls->getExpectedItems(), $facade),
+            $this->dispatchableTestsMethodsFactory->assertNotStatements($expectedClassMethodMethodCalls->getNotExpectedItems(), $facade)
         );
 
-        return $node;
+        return $classMethod;
     }
 
-    private function removeAndReplaceMethodCalls(ClassMethod $node, array $expectedMethodCalls, array $classes, string $facade): ClassMethod
+    private function removeAndReplaceMethodCalls(ClassMethod $classMethod, array $expectedMethodCalls, array $classes, string $facade): ClassMethod
     {
         $first = true;
-        $this->traverseNodesWithCallable($node, function (Node $node) use (&$first, $expectedMethodCalls, $classes, $facade): Expression|int|null {
+        $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$first, $expectedMethodCalls, $classes, $facade): Expression|int|null {
             $match = false;
             if (! $node instanceof Expression) {
                 return null;
             }
 
-            foreach ($expectedMethodCalls as $methodCall) {
-                if ($this->nodeComparator->areNodesEqual($node->expr, $methodCall)) {
+            foreach ($expectedMethodCalls as $expectedMethodCall) {
+                if ($this->nodeComparator->areNodesEqual($node->expr, $expectedMethodCall)) {
                     $match = true;
                     break;
                 }
@@ -160,12 +144,13 @@ CODE_SAMPLE
 
             if ($first) {
                 $first = false;
+
                 return new Expression($this->dispatchableTestsMethodsFactory->makeFacadeFakeCall($classes, $facade));
             }
 
             return NodeVisitor::REMOVE_NODE;
         });
 
-        return $node;
+        return $classMethod;
     }
 }
