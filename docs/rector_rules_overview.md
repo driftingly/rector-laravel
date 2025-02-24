@@ -1137,7 +1137,7 @@ Replace expectJobs and expectEvents methods in tests
 -        $this->expectsEvents(\App\Events\SomeEvent::class);
 -        $this->doesntExpectEvents(\App\Events\SomeOtherEvent::class);
 +        \Illuminate\Support\Facades\Bus::fake([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
-+        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class]);
++        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class, \App\Events\SomeOtherEvent::class]);
 
          $this->get('/');
 +
