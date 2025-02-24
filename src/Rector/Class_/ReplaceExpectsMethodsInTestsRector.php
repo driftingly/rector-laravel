@@ -40,6 +40,7 @@ class SomethingTest extends TestCase
     {
         $this->expectsJobs([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
         $this->expectsEvents(\App\Events\SomeEvent::class);
+        $this->doesntExpectEvents(\App\Events\SomeOtherEvent::class);
 
         $this->get('/');
     }
@@ -61,6 +62,7 @@ class SomethingTest extends TestCase
         \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeJob::class);
         \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeOtherJob::class);
         \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\SomeEvent::class);
+        \Illuminate\Support\Facades\Event::assertNotDispatched(\App\Events\SomeOtherEvent::class);
     }
 }
 CODE_SAMPLE
