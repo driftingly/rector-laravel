@@ -444,7 +444,7 @@ Renames the Billable `stripeOptions()` to `stripe().`
 
 ## ChangeQueryWhereDateValueWithCarbonRector
 
-Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Database\Eloquent\Model`
+Refactor `whereDate()` queries to include both date and time comparisons with Carbon
 
 - class: [`RectorLaravel\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector`](../src/Rector/MethodCall/ChangeQueryWhereDateValueWithCarbonRector.php)
 
