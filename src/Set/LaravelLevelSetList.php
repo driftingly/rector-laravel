@@ -33,4 +33,6 @@ final class LaravelLevelSetList
     final public const string UP_TO_LARAVEL_100 = __DIR__ . '/../../config/sets/level/up-to-laravel-100.php';
 
     final public const string UP_TO_LARAVEL_110 = __DIR__ . '/../../config/sets/level/up-to-laravel-110.php';
+
+    final public const string UP_TO_LARAVEL_120 = __DIR__ . '/../../config/sets/level/up-to-laravel-120.php';
 }
