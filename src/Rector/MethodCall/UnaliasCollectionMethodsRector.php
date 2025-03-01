@@ -74,8 +74,7 @@ CODE_SAMPLE
             $replacement = 'whenNotEmpty';
         } elseif ($this->isName($name, 'unlessNotEmpty')) {
             $replacement = 'whenEmpty';
-        }
-         else {
+        } else {
             return null;
         }
 
