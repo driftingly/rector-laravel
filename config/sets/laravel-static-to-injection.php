@@ -111,7 +111,6 @@ return static function (RectorConfig $rectorConfig): void {
                 'Illuminate\Translation\Translator',
                 '*'
             ),
-            new StaticCallToMethodCall('Illuminate\Support\Facades\Log', '*', 'Illuminate\Log\LogManager', '*'),
             new StaticCallToMethodCall('Illuminate\Support\Facades\Mail', '*', 'Illuminate\Mail\Mailer', '*'),
             new StaticCallToMethodCall(
                 'Illuminate\Support\Facades\Notification',
