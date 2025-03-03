@@ -79,4 +79,26 @@ interface Enumerable
      * @return static
      */
     public function reject($callback = true);
+
+    /**
+     * Apply the callback unless the collection is empty.
+     *
+     * @template TUnlessEmptyReturnType
+     *
+     * @param  callable($this): TUnlessEmptyReturnType  $callback
+     * @param  (callable($this): TUnlessEmptyReturnType)|null  $default
+     * @return $this|TUnlessEmptyReturnType
+     */
+    public function unlessEmpty();
+
+    /**
+     * Apply the callback unless the collection is not empty.
+     *
+     * @template TUnlessNotEmptyReturnType
+     *
+     * @param  callable($this): TUnlessNotEmptyReturnType  $callback
+     * @param  (callable($this): TUnlessNotEmptyReturnType)|null  $default
+     * @return $this|TUnlessNotEmptyReturnType
+     */
+    public function unlessNotEmpty();
 }
