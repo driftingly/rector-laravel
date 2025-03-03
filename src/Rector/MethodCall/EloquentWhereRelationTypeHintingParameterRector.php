@@ -11,8 +11,8 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
-use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,6 +21,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
 {
+    public function __construct(private QueryBuilderAnalyzer $queryBuilderAnalyzer)
+    {
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -113,32 +117,23 @@ CODE_SAMPLE
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
     {
-        $isMatchingClass = match (true) {
-            $node instanceof MethodCall && $this->isObjectType(
-                $node->var,
-                new ObjectType('Illuminate\Contracts\Database\Query\Builder')
-            ) => true,
-            $node instanceof StaticCall && $this->isObjectType(
-                $node->class,
-                new ObjectType('Illuminate\Database\Eloquent\Model')
-            ) => true,
-            default => false,
-        };
+        static $methods = [
+            'whereHas',
+            'orWhereHas',
+            'whereDoesntHave',
+            'orWhereDoesntHave',
+            'whereHasMorph',
+            'orWhereHasMorph',
+            'whereDoesntHaveMorph',
+            'orWhereDoesntHaveMorph',
+        ];
 
-        $isMatchingMethod = $this->isNames(
-            $node->name,
-            [
-                'whereHas',
-                'orWhereHas',
-                'whereDoesntHave',
-                'orWhereDoesntHave',
-                'whereHasMorph',
-                'orWhereHasMorph',
-                'whereDoesntHaveMorph',
-                'orWhereDoesntHaveMorph',
-            ]
-        );
+        foreach ($methods as $method) {
+            if ($this->queryBuilderAnalyzer->isMatchingCall($node, $method)) {
+                return true;
+            }
+        }
 
-        return $isMatchingClass && $isMatchingMethod;
+        return false;
     }
 }

@@ -15,6 +15,7 @@ use PhpParser\Node\VariadicPlaceholder;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -25,6 +26,10 @@ use Webmozart\Assert\Assert;
 class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements ConfigurableRectorInterface
 {
     final public const string ALLOWED_PATTERNS = 'allowed_patterns';
+
+    public function __construct(private QueryBuilderAnalyzer $queryBuilderAnalyzer)
+    {
+    }
 
     /**
      * @var string[]
@@ -104,10 +109,8 @@ CODE_SAMPLE
     {
         // Check if it's a method call to `orderBy`
 
-        return $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Database\Query\Builder'))
-            && $methodCall->name instanceof Identifier
-            && ($methodCall->name->name === 'orderBy' || $methodCall->name->name === 'orderByDesc')
-            && $methodCall->args !== [];
+        return $this->queryBuilderAnalyzer->isMatchingCall($methodCall, 'orderBy')
+            || $this->queryBuilderAnalyzer->isMatchingCall($methodCall, 'orderByDesc');
     }
 
     private function isAllowedPattern(MethodCall $methodCall): bool
