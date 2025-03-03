@@ -12,7 +12,6 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\VariadicPlaceholder;
-use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
@@ -27,14 +26,12 @@ class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements Co
 {
     final public const string ALLOWED_PATTERNS = 'allowed_patterns';
 
-    public function __construct(private QueryBuilderAnalyzer $queryBuilderAnalyzer)
-    {
-    }
-
     /**
      * @var string[]
      */
     private array $allowedPatterns = [];
+
+    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

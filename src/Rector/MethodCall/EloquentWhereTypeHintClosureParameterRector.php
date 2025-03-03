@@ -11,7 +11,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
-use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -22,9 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class EloquentWhereTypeHintClosureParameterRector extends AbstractRector
 {
-    public function __construct(private QueryBuilderAnalyzer $queryBuilderAnalyzer)
-    {
-    }
+    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -21,9 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
 {
-    public function __construct(private QueryBuilderAnalyzer $queryBuilderAnalyzer)
-    {
-    }
+    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
