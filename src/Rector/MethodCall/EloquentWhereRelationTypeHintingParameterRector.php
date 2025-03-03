@@ -21,6 +21,20 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
 {
+    /**
+     * @var string[]
+     */
+    private const array METHODS = [
+        'whereHas',
+        'orWhereHas',
+        'whereDoesntHave',
+        'orWhereDoesntHave',
+        'whereHasMorph',
+        'orWhereHasMorph',
+        'whereDoesntHaveMorph',
+        'orWhereDoesntHaveMorph',
+    ];
+
     public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -115,18 +129,7 @@ CODE_SAMPLE
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
     {
-        static $methods = [
-            'whereHas',
-            'orWhereHas',
-            'whereDoesntHave',
-            'orWhereDoesntHave',
-            'whereHasMorph',
-            'orWhereHasMorph',
-            'whereDoesntHaveMorph',
-            'orWhereDoesntHaveMorph',
-        ];
-
-        foreach ($methods as $method) {
+        foreach (self::METHODS as $method) {
             if ($this->queryBuilderAnalyzer->isMatchingCall($node, $method)) {
                 return true;
             }
