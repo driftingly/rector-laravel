@@ -30,6 +30,7 @@ final class LaravelSetProvider implements SetProviderInterface
      * @var string[]
      */
     private const array LARAVEL_POST_FIVE = [
+        LaravelSetList::LARAVEL_120,
         LaravelSetList::LARAVEL_110,
         LaravelSetList::LARAVEL_100,
         LaravelSetList::LARAVEL_90,
