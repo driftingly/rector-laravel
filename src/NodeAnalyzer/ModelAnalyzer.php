@@ -35,7 +35,7 @@ class ModelAnalyzer
     }
 
     /**
-     * @param class-string<Model> $class
+     * @param  class-string<Model>  $class
      */
     public function getPrimaryKey(string $class): ?string
     {
