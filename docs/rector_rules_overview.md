@@ -444,7 +444,7 @@ Renames the Billable `stripeOptions()` to `stripe().`
 
 ## ChangeQueryWhereDateValueWithCarbonRector
 
-Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Database\Eloquent\Model`
+Refactor `whereDate()` queries to include both date and time comparisons with Carbon
 
 - class: [`RectorLaravel\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector`](../src/Rector/MethodCall/ChangeQueryWhereDateValueWithCarbonRector.php)
 
@@ -1459,8 +1459,12 @@ Use the base collection methods instead of their aliases.
  $collection = new Collection([0, 1, null, -1]);
 -$collection->average();
 -$collection->some(fn (?int $number): bool => is_null($number));
+-$collection->unlessEmpty(fn(Collection $collection) => $collection->push('Foo'));
+-$collection->unlessNotEmpty(fn(Collection $collection) => $collection->push('Foo'));
 +$collection->avg();
 +$collection->contains(fn (?int $number): bool => is_null($number));
++$collection->whenNotEmpty(fn(Collection $collection) => $collection->push('Foo'));
++$collection->whenEmpty(fn(Collection $collection) => $collection->push('Foo'));
 ```
 
 <br>
