@@ -5,20 +5,18 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
-use PhpParser\Node\ArrayItem;
-use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\ExpectedClassMethodAnalyzer;
+use RectorLaravel\NodeFactory\DispatchableTestsMethodsFactory;
+use RectorLaravel\ValueObject\ExpectedClassMethodMethodCalls;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -27,6 +25,11 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ReplaceExpectsMethodsInTestsRector extends AbstractRector
 {
+    public function __construct(
+        private readonly ExpectedClassMethodAnalyzer $expectedClassMethodAnalyzer,
+        private readonly DispatchableTestsMethodsFactory $dispatchableTestsMethodsFactory,
+    ) {}
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Replace expectJobs and expectEvents methods in tests', [
@@ -40,6 +43,7 @@ class SomethingTest extends TestCase
     {
         $this->expectsJobs([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
         $this->expectsEvents(\App\Events\SomeEvent::class);
+        $this->doesntExpectEvents(\App\Events\SomeOtherEvent::class);
 
         $this->get('/');
     }
@@ -54,13 +58,14 @@ class SomethingTest extends TestCase
     public function testSomething()
     {
         \Illuminate\Support\Facades\Bus::fake([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
-        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class]);
+        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class, \App\Events\SomeOtherEvent::class]);
 
         $this->get('/');
 
         \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeJob::class);
         \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeOtherJob::class);
         \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\SomeEvent::class);
+        \Illuminate\Support\Facades\Event::assertNotDispatched(\App\Events\SomeOtherEvent::class);
     }
 }
 CODE_SAMPLE
@@ -82,98 +87,80 @@ CODE_SAMPLE
             return null;
         }
 
-        $changes = false;
-
-        // loop over all methods in class
         foreach ($node->getMethods() as $classMethod) {
-            // loop over all statements in method
+            $result = $this->expectedClassMethodAnalyzer->findExpectedJobCallsWithClassMethod($classMethod);
 
-            $assertions = [];
-            foreach ($classMethod->getStmts() ?? [] as $index => $stmt) {
-                // if statement is not a method call, skip
-                if (! $stmt instanceof Expression) {
-                    continue;
-                }
-
-                if (! $stmt->expr instanceof MethodCall) {
-                    continue;
-                }
-
-                $methodCall = $stmt->expr;
-
-                // if method call is not expectsJobs or expectsEvents, skip
-                if (! $this->isNames($methodCall->name, ['expectsJobs', 'expectsEvents'])) {
-                    continue;
-                }
-
-                // if method call is not in the form $this->expectsJobs(...), skip
-                if (! $methodCall->var instanceof Variable || ! $this->isName($methodCall->var, 'this')) {
-                    continue;
-                }
-
-                if ($methodCall->args === []) {
-                    continue;
-                }
-
-                // if the method call has a string constant as the first argument,
-                // convert it to an array
-                if ($methodCall->args[0] instanceof Arg && (
-                    $methodCall->args[0]->value instanceof ClassConstFetch ||
-                    $methodCall->args[0]->value instanceof String_
-                )) {
-                    $args = new Array_([new ArrayItem($methodCall->args[0]->value)]);
-                } elseif (
-                    $methodCall->args[0] instanceof Arg &&
-                    $methodCall->args[0]->value instanceof Array_
-                ) {
-                    $args = $methodCall->args[0]->value;
-                } else {
-                    continue;
-                }
-
-                if (! $methodCall->name instanceof Identifier) {
-                    continue;
-                }
-
-                $facade = match ($methodCall->name->name) {
-                    'expectsJobs' => 'Bus',
-                    'expectsEvents' => 'Event',
-                    default => null,
-                };
-
-                if ($facade === null) {
-                    continue;
-                }
-
-                $replacement = new Expression(new StaticCall(
-                    new FullyQualified('Illuminate\Support\Facades\\' . $facade),
-                    'fake',
-                    [new Arg($args)]
-                ));
-
-                $classMethod->stmts[$index] = $replacement;
-
-                // generate assertDispatched calls for each argument
-                foreach ($args->items as $item) {
-                    if ($item === null) {
-                        continue;
-                    }
-
-                    $assertions[] = new Expression(new StaticCall(
-                        new FullyQualified('Illuminate\Support\Facades\\' . $facade),
-                        'assertDispatched',
-                        [new Arg($item->value)]
-                    ));
-                }
-
-                $changes = true;
+            if (! $result instanceof ExpectedClassMethodMethodCalls) {
+                continue;
             }
 
-            foreach ($assertions as $assertion) {
-                $classMethod->stmts[] = $assertion;
+            if ($result->isActionable()) {
+                $this->fixUpClassMethod($classMethod, $result, 'Illuminate\Support\Facades\Bus');
+            }
+
+            $result = $this->expectedClassMethodAnalyzer->findExpectedEventCallsWithClassMethod($classMethod);
+
+            if (! $result instanceof ExpectedClassMethodMethodCalls) {
+                continue;
+            }
+
+            if ($result->isActionable()) {
+                $this->fixUpClassMethod($classMethod, $result, 'Illuminate\Support\Facades\Event');
             }
         }
 
-        return $changes ? $node : null;
+        return $node;
+    }
+
+    private function fixUpClassMethod(
+        ClassMethod $classMethod,
+        ExpectedClassMethodMethodCalls $expectedClassMethodMethodCalls,
+        string $facade
+    ): void {
+        $this->removeAndReplaceMethodCalls($classMethod, $expectedClassMethodMethodCalls->getAllMethodCalls(), $expectedClassMethodMethodCalls->getItemsToFake(), $facade);
+
+        $statements = [
+            ...($classMethod->stmts ?? []),
+            ...$this->dispatchableTestsMethodsFactory->assertStatements($expectedClassMethodMethodCalls->getExpectedItems(), $facade),
+            ...$this->dispatchableTestsMethodsFactory->assertNotStatements($expectedClassMethodMethodCalls->getNotExpectedItems(), $facade),
+        ];
+
+        $classMethod->stmts = $statements;
+
+    }
+
+    /**
+     * @param  MethodCall[]  $expectedMethodCalls
+     * @param  array<int<0, max>, ClassConstFetch|String_>  $classes
+     */
+    private function removeAndReplaceMethodCalls(ClassMethod $classMethod, array $expectedMethodCalls, array $classes, string $facade): void
+    {
+        $first = true;
+        $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$first, $expectedMethodCalls, $classes, $facade): Expression|int|null {
+            $match = false;
+            if (! $node instanceof Expression) {
+                return null;
+            }
+
+            foreach ($expectedMethodCalls as $expectedMethodCall) {
+                if ($this->nodeComparator->areNodesEqual($node->expr, $expectedMethodCall)) {
+                    $match = true;
+                    break;
+                }
+            }
+
+            if ($match === false) {
+                return null;
+            }
+
+            if ($first) {
+                $first = false;
+
+                return new Expression($this->dispatchableTestsMethodsFactory->makeFacadeFakeCall($classes, $facade));
+            }
+
+            return NodeVisitor::REMOVE_NODE;
+        });
+
     }
 }
