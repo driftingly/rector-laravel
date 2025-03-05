@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
@@ -127,8 +130,8 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  Node\Expr\MethodCall[]  $expectedMethodCalls
-     * @param  array<int<0, max>, \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Scalar\String_>  $classes
+     * @param  MethodCall[]  $expectedMethodCalls
+     * @param  array<int<0, max>, ClassConstFetch|String_>  $classes
      */
     private function removeAndReplaceMethodCalls(ClassMethod $classMethod, array $expectedMethodCalls, array $classes, string $facade): void
     {

@@ -14,7 +14,7 @@ use PhpParser\Node\Stmt\Expression;
 class DispatchableTestsMethodsFactory
 {
     /**
-     * @param  array<int<0, max>, \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Scalar\String_>  $items
+     * @param  array<int<0, max>, ClassConstFetch|String_>  $items
      */
     public function makeFacadeFakeCall(array $items, string $facade): StaticCall
     {
@@ -26,7 +26,7 @@ class DispatchableTestsMethodsFactory
     }
 
     /**
-     * @param  array<int<0, max>, \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Scalar\String_>  $items
+     * @param  array<int<0, max>, ClassConstFetch|String_>  $items
      * @return Expression[]
      */
     public function assertStatements(array $items, string $facade): array
@@ -39,7 +39,7 @@ class DispatchableTestsMethodsFactory
     }
 
     /**
-     * @param  array<int<0, max>, \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Scalar\String_>  $items
+     * @param  array<int<0, max>, ClassConstFetch|String_>  $items
      * @return Expression[]
      */
     public function assertNotStatements(array $items, string $facade): array

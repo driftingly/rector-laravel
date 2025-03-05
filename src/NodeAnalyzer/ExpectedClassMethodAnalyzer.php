@@ -3,6 +3,7 @@
 namespace RectorLaravel\NodeAnalyzer;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
@@ -34,7 +35,7 @@ final readonly class ExpectedClassMethodAnalyzer
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
             &$reasonsToNotContinue,
-        ): array|int|\PhpParser\Node|null {
+        ): array|int|Node|null {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -90,7 +91,7 @@ final readonly class ExpectedClassMethodAnalyzer
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
             &$reasonsToNotContinue,
-        ): array|int|\PhpParser\Node|null {
+        ): array|int|Node|null {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -142,7 +143,7 @@ final readonly class ExpectedClassMethodAnalyzer
     {
         $items = [];
         foreach ($methodCalls as $methodCall) {
-            if (! $methodCall->args[0] instanceof Node\Arg) {
+            if (! $methodCall->args[0] instanceof Arg) {
                 continue;
             }
             $value = $methodCall->args[0]->value;
