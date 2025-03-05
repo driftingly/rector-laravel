@@ -153,6 +153,10 @@ CODE_SAMPLE
             return $methodCall;
         }
 
+        if (isset($methodCall->args[1]) && (! $methodCall->args[1] instanceof Arg || ! $methodCall->args[1]->value instanceof String_)) {
+            return $methodCall;
+        }
+
         if (isset($methodCall->args[1]) && $methodCall->args[1] instanceof Arg && $methodCall->args[1]->value instanceof String_) {
             $direction = $methodCall->args[1]->value->value;
         } else {
@@ -164,22 +168,22 @@ CODE_SAMPLE
         } else {
             $newMethod = $direction === 'asc' ? 'oldest' : 'latest';
         }
-        if ($columnVar instanceof String_ && $columnVar->value === 'created_at') {
-            $methodCall->name = new Identifier($newMethod);
-            $methodCall->args = [];
 
-            return $methodCall;
-        }
+        return $this->createMethodCall($methodCall, $newMethod, $columnVar);
+    }
 
-        if ($columnVar instanceof String_) {
-            $methodCall->name = new Identifier($newMethod);
-            $methodCall->args = [new Arg(new String_($columnVar->value))];
-
-            return $methodCall;
+    private function createMethodCall(MethodCall $methodCall, string $newMethod, Expr $expr): MethodCall
+    {
+        if ($expr instanceof String_ && $expr->value === 'created_at') {
+            $args = [];
+        } elseif ($expr instanceof String_) {
+            $args = [new Arg(new String_($expr->value))];
+        } else {
+            $args = [new Arg($expr)];
         }
 
         $methodCall->name = new Identifier($newMethod);
-        $methodCall->args = [new Arg($columnVar)];
+        $methodCall->args = $args;
 
         return $methodCall;
     }
