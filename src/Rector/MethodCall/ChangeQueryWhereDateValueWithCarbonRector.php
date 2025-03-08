@@ -34,7 +34,7 @@ final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Add parent::boot(); call to boot() class method in child of Illuminate\Database\Eloquent\Model',
+            'Refactor whereDate() queries to include both date and time comparisons with Carbon',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
