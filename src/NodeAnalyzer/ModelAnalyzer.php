@@ -68,7 +68,7 @@ class ModelAnalyzer
             throw new Exception('Class is not class');
         }
 
-        if (! $classReflection->isSubclassOf(Model::class)) {
+        if (! $classReflection->isSubclassOfClass($this->reflectionProvider->getClass(Model::class))) {
             throw new Exception('Class is not subclass of Model');
         }
 

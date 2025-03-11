@@ -169,7 +169,7 @@ CODE_SAMPLE
             return false;
         }
 
-        return $reflection->isSubclassOf(self::SHOULD_QUEUE_INTERFACE);
+        return $reflection->isSubclassOfClass($this->reflectionProvider->getClass(self::SHOULD_QUEUE_INTERFACE));
     }
 
     private function isCallOnBusFacade(StaticCall $staticCall): bool
