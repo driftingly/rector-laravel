@@ -67,7 +67,7 @@ use Illuminate\Foundation\Testing\TestCase;
 
 final class SomeTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
