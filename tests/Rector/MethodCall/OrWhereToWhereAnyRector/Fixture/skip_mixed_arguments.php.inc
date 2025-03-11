@@ -2,13 +2,13 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class SkipMixedArguments
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
+        $users = $builder
             ->where('active', true)
             ->orWhere('type', 'LIKE', '%admin%')  // LIKE operator
             ->orWhere('role', '=', 'admin')       // = operator

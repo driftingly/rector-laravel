@@ -2,14 +2,13 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class WithMethodChain
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
-            ->select('id', 'name')
+        $users = $builder
             ->where('active', true)
             ->orWhere('type', 'LIKE', '%admin%')
             ->orWhere('role', 'LIKE', '%admin%')
@@ -25,14 +24,13 @@ class WithMethodChain
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class WithMethodChain
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
-            ->select('id', 'name')->where('active', true)->whereAny(['type', 'role'], 'LIKE', '%admin%')
+        $users = $builder->where('active', true)->whereAny(['type', 'role'], 'LIKE', '%admin%')
             ->orderBy('name')
             ->limit(10)
             ->get();

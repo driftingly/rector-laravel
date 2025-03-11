@@ -10,13 +10,14 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\OrWhereToWhereAnyRector\OrWhereToWhereAnyRectorTest
+ * @see \RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\OrWhereToWhereAnyRectorTest
  */
 final class OrWhereToWhereAnyRector extends AbstractRector
 {
@@ -27,7 +28,7 @@ final class OrWhereToWhereAnyRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Transforms sequences of orWhere() calls into whereAny()',
+            'Transforms sequences of orWhere() calls into whereAny() in query builder.',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
@@ -62,8 +63,11 @@ CODE_SAMPLE
             return null;
         }
 
-        // Skip if this isn't an orWhere call
         if (! $this->isName($node->name, 'orWhere')) {
+            return null;
+        }
+
+        if (! $this->isObjectType($node->var, new ObjectType('Illuminate\Contracts\Database\Query\Builder'))) {
             return null;
         }
 
@@ -78,6 +82,7 @@ CODE_SAMPLE
                     return null;
                 }
                 $orWhereCalls[] = $current;
+                $baseQuery = $current->var;
             } else {
                 $baseQuery = $current;
                 break;
@@ -86,7 +91,7 @@ CODE_SAMPLE
         }
 
         // Need at least 2 orWhere calls to transform
-        if (count($orWhereCalls) < 2 || ! $baseQuery instanceof MethodCall) {
+        if (count($orWhereCalls) < 2) {
             return null;
         }
 

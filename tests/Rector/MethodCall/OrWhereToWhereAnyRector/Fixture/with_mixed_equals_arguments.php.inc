@@ -2,13 +2,13 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class WithMixedEqualsArguments
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
+        $users = $builder
             ->where('active', true)
             ->orWhere('type', 'admin')
             ->orWhere('role', '=', 'admin')
@@ -22,13 +22,13 @@ class WithMixedEqualsArguments
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class WithMixedEqualsArguments
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')->where('active', true)->whereAny(['type', 'role'], '=', 'admin')
+        $users = $builder->where('active', true)->whereAny(['type', 'role'], '=', 'admin')
             ->get();
     }
 }

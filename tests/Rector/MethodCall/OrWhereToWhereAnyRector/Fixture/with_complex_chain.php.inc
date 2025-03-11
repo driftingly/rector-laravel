@@ -2,18 +2,17 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class WithComplexChain
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
-            ->select('*')
-            ->join('roles', 'users.role_id', '=', 'roles.id')
+        $users = $builder
             ->where('users.active', true)
             ->orWhere('users.type', 'LIKE', '%admin%')
             ->orWhere('users.role', 'LIKE', '%admin%')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
             ->orderBy('users.created_at', 'desc')
             ->groupBy('users.id')
             ->having('count(*)', '>', 1)
@@ -27,15 +26,14 @@ class WithComplexChain
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class WithComplexChain
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
-            ->select('*')
-            ->join('roles', 'users.role_id', '=', 'roles.id')->where('users.active', true)->whereAny(['users.type', 'users.role'], 'LIKE', '%admin%')
+        $users = $builder->where('users.active', true)->whereAny(['users.type', 'users.role'], 'LIKE', '%admin%')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
             ->orderBy('users.created_at', 'desc')
             ->groupBy('users.id')
             ->having('count(*)', '>', 1)

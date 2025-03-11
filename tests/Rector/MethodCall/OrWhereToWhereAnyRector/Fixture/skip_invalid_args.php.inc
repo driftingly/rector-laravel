@@ -2,13 +2,13 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class SkipInvalidArgs
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
+        $users = $builder
             ->where('active', true)
             ->orWhere()  // invalid - no args
             ->orWhere('type')  // invalid - one arg

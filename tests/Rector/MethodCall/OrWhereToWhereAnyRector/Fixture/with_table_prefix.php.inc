@@ -2,13 +2,13 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class WithTablePrefix
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users as u')->where('u.active', true)
+        $users = $builder->where('u.active', true)
             ->orWhere('u.type', 'LIKE', '%admin%')
             ->orWhere('u.role', 'LIKE', '%admin%')
             ->get();
@@ -21,13 +21,13 @@ class WithTablePrefix
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class WithTablePrefix
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users as u')->where('u.active', true)->whereAny(['u.type', 'u.role'], 'LIKE', '%admin%')
+        $users = $builder->where('u.active', true)->whereAny(['u.type', 'u.role'], 'LIKE', '%admin%')
             ->get();
     }
 }

@@ -2,13 +2,13 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class MultipleWhereChains
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
+        $users = $builder
             ->where('active', true)
             ->orWhere('name', 'LIKE', 'John%')
             ->orWhere('email', 'LIKE', 'John%')
@@ -25,13 +25,13 @@ class MultipleWhereChains
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class MultipleWhereChains
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')->where('active', true)->whereAny(['name', 'email'], 'LIKE', 'John%')->where('age', '>', 18)->whereAny(['city', 'country'], '=', 'London')
+        $users = $builder->where('active', true)->whereAny(['name', 'email'], 'LIKE', 'John%')->where('age', '>', 18)->whereAny(['city', 'country'], '=', 'London')
             ->get();
     }
 }

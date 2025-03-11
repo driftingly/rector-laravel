@@ -1,4 +1,4 @@
-# 77 Rules Overview
+# 78 Rules Overview
 
 ## AbortIfRector
 
@@ -925,6 +925,23 @@ Convert simple calls to optional helper to use the nullsafe operator
 +$user?->id;
  // macro methods
  optional($user)->present()->getKey();
+```
+
+<br>
+
+## OrWhereToWhereAnyRector
+
+Transforms sequences of `orWhere()` calls into `whereAny()` in query builder.
+
+- class: [`RectorLaravel\Rector\MethodCall\OrWhereToWhereAnyRector`](../src/Rector/MethodCall/OrWhereToWhereAnyRector.php)
+
+```diff
+ $query->where('active', true)
+-    ->orWhere('name', 'LIKE', 'Example%')
+-    ->orWhere('email', 'LIKE', 'Example%')
+-    ->orWhere('phone', 'LIKE', 'Example%')
++    ->whereAny(['name', 'email', 'phone'], 'LIKE', 'Example%')
+     ->get();
 ```
 
 <br>

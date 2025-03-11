@@ -2,13 +2,13 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class BasicEqualsOperator
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')
+        $users = $builder
             ->where('active', true)
             ->orWhere('type', 'admin')
             ->orWhere('role', 'admin')
@@ -23,13 +23,13 @@ class BasicEqualsOperator
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class BasicEqualsOperator
 {
-    public function run()
+    public function run(Builder $builder)
     {
-        $users = DB::table('users')->where('active', true)->whereAny(['type', 'role', 'level'], '=', 'admin')
+        $users = $builder->where('active', true)->whereAny(['type', 'role', 'level'], '=', 'admin')
             ->get();
     }
 }

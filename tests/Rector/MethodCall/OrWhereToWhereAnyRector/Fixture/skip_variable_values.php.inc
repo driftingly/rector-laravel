@@ -2,14 +2,14 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class SkipVariableValues
 {
-    public function run()
+    public function run(Builder $builder)
     {
         $searchTerm = 'admin';
-        $users = DB::table('users')
+        $users = $builder
             ->where('active', true)
             ->orWhere('type', $searchTerm)
             ->orWhere('role', 'admin')  // Mixed static and variable values

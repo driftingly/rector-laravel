@@ -2,14 +2,19 @@
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
-DB::table('users')
-    ->where('active', true)
-    ->orWhere('name', 'LIKE', 'Example%')
-    ->orWhere('email', 'LIKE', 'Example%')
-    ->orWhere('phone', 'LIKE', 'Example%')
-    ->get();
+class BasicLikeOperator
+{
+    public function run(Builder $builder)
+    {
+        $users = $builder
+            ->orWhere('name', 'LIKE', 'Example%')
+            ->orWhere('email', 'LIKE', 'Example%')
+            ->orWhere('phone', 'LIKE', 'Example%')
+            ->get();
+    }
+}
 
 ?>
 -----
@@ -17,9 +22,15 @@ DB::table('users')
 
 namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Database\Query\Builder;
 
-DB::table('users')->where('active', true)->whereAny(['name', 'email', 'phone'], 'LIKE', 'Example%')
-    ->get();
+class BasicLikeOperator
+{
+    public function run(Builder $builder)
+    {
+        $users = $builder->whereAny(['name', 'email', 'phone'], 'LIKE', 'Example%')
+            ->get();
+    }
+}
 
 ?>
