@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\OrWhereToWhereAnyRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +26,7 @@ class MultipleSeparateChains
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\OrWhereToWhereAnyRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
 use Illuminate\Support\Facades\DB;
 

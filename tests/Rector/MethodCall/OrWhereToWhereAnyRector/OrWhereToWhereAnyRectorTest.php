@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\OrWhereToWhereAnyRector;
+namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;

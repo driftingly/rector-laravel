@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Rector;
+namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -23,6 +23,30 @@ final class OrWhereToWhereAnyRector extends AbstractRector
     public function __construct(
         private readonly ValueResolver $valueResolver
     ) {}
+
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition(
+            'Transforms sequences of orWhere() calls into whereAny()',
+            [
+                new CodeSample(
+                    <<<'CODE_SAMPLE'
+$query->where('active', true)
+    ->orWhere('name', 'LIKE', 'Example%')
+    ->orWhere('email', 'LIKE', 'Example%')
+    ->orWhere('phone', 'LIKE', 'Example%')
+    ->get();
+CODE_SAMPLE
+                    ,
+                    <<<'CODE_SAMPLE'
+$query->where('active', true)
+    ->whereAny(['name', 'email', 'phone'], 'LIKE', 'Example%')
+    ->get();
+CODE_SAMPLE
+                ),
+            ]
+        );
+    }
 
     /**
      * @return array<class-string<Node>>
@@ -103,30 +127,6 @@ final class OrWhereToWhereAnyRector extends AbstractRector
             $baseQuery,
             'whereAny',
             [$columnsArray, $operator, $value]
-        );
-    }
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition(
-            'Transforms sequences of orWhere() calls into whereAny() for better readability and performance',
-            [
-                new CodeSample(
-                    <<<'CODE_SAMPLE'
-$query->where('active', true)
-    ->orWhere('name', 'LIKE', 'Example%')
-    ->orWhere('email', 'LIKE', 'Example%')
-    ->orWhere('phone', 'LIKE', 'Example%')
-    ->get();
-CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
-$query->where('active', true)
-    ->whereAny(['name', 'email', 'phone'], 'LIKE', 'Example%')
-    ->get();
-CODE_SAMPLE
-                ),
-            ]
         );
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\OrWhereToWhereAnyRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +23,7 @@ class WithMethodChain
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\OrWhereToWhereAnyRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\OrWhereToWhereAnyRector\Fixture;
 
 use Illuminate\Support\Facades\DB;
 
