@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
@@ -14,14 +16,12 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * Transforms sequences of orWhere() calls into whereAny() for better readability and performance
- *
  * @see \RectorLaravel\Tests\Rector\OrWhereToWhereAnyRector\OrWhereToWhereAnyRectorTest
  */
 final class OrWhereToWhereAnyRector extends AbstractRector
 {
     public function __construct(
-        private readonly ValueResolver $valueResolver,
+        private readonly ValueResolver $valueResolver
     ) {}
 
     /**
@@ -32,11 +32,12 @@ final class OrWhereToWhereAnyRector extends AbstractRector
         return [MethodCall::class];
     }
 
-    /**
-     * @param  MethodCall  $node
-     */
     public function refactor(Node $node): ?Node
     {
+        if (! $node instanceof MethodCall) {
+            return null;
+        }
+
         // Skip if this isn't an orWhere call
         if (! $this->isName($node->name, 'orWhere')) {
             return null;
@@ -49,8 +50,7 @@ final class OrWhereToWhereAnyRector extends AbstractRector
 
         while ($current instanceof MethodCall) {
             if ($this->isName($current->name, 'orWhere')) {
-                $args = $current->args;
-                if (count($args) < 2) {
+                if (! $this->isValidOrWhereCall($current)) {
                     return null;
                 }
                 $orWhereCalls[] = $current;
@@ -62,27 +62,41 @@ final class OrWhereToWhereAnyRector extends AbstractRector
         }
 
         // Need at least 2 orWhere calls to transform
-        if (count($orWhereCalls) < 2 || ! $baseQuery) {
+        if (count($orWhereCalls) < 2 || ! $baseQuery instanceof MethodCall) {
             return null;
         }
 
         // Check if all orWhere calls use the same operator and value
-        $firstCall = end($orWhereCalls);
-        $operator = count($firstCall->args) === 2 ? '=' : $this->valueResolver->getValue($firstCall->args[1]->value);
-        $value = count($firstCall->args) === 2 ? $firstCall->args[1]->value : $firstCall->args[2]->value;
+        $methodCall = end($orWhereCalls);
+        if (! $this->isValidOrWhereCall($methodCall)) {
+            return null;
+        }
 
-        // Create the array of column names
+        $operator = $this->getOperator($methodCall);
+        $value = $this->getValue($methodCall);
+        if (! $value instanceof Expr) {
+            return null;
+        }
+
         $columnsArray = new Array_;
-        foreach (array_reverse($orWhereCalls) as $call) {
-            $args = $call->args;
-            $currentOperator = count($args) === 2 ? '=' : $this->valueResolver->getValue($args[1]->value);
-            $currentValue = count($args) === 2 ? $args[1]->value : $args[2]->value;
 
-            if ($currentOperator !== $operator || ! $this->nodeComparator->areNodesEqual($currentValue, $value)) {
+        foreach (array_reverse($orWhereCalls) as $call) {
+            if (! $this->isValidOrWhereCall($call)) {
                 return null;
             }
 
-            $columnsArray->items[] = new ArrayItem($args[0]->value);
+            $currentOperator = $this->getOperator($call);
+            $currentValue = $this->getValue($call);
+            $column = $this->getColumn($call);
+
+            if ($currentOperator !== $operator ||
+                ! $currentValue instanceof Expr ||
+                ! $column instanceof Expr ||
+                ! $this->nodeComparator->areNodesEqual($currentValue, $value)) {
+                return null;
+            }
+
+            $columnsArray->items[] = new ArrayItem($column);
         }
 
         return $this->nodeFactory->createMethodCall(
@@ -114,5 +128,58 @@ CODE_SAMPLE
                 ),
             ]
         );
+    }
+
+    private function isValidOrWhereCall(MethodCall $methodCall): bool
+    {
+        if (count($methodCall->args) < 2) {
+            return false;
+        }
+
+        foreach ($methodCall->args as $arg) {
+            if (! $arg instanceof Arg) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function getOperator(MethodCall $methodCall): string
+    {
+        if (! isset($methodCall->args[1]) || ! $methodCall->args[1] instanceof Arg) {
+            return '=';
+        }
+
+        if (count($methodCall->args) === 2) {
+            return '=';
+        }
+
+        $operatorValue = $this->valueResolver->getValue($methodCall->args[1]->value);
+
+        return is_string($operatorValue) ? $operatorValue : '=';
+    }
+
+    private function getValue(MethodCall $methodCall): ?Expr
+    {
+        if (! isset($methodCall->args[1]) || ! $methodCall->args[1] instanceof Arg) {
+            return null;
+        }
+
+        $valueArg = count($methodCall->args) === 2 ? $methodCall->args[1] : $methodCall->args[2];
+        if (! $valueArg instanceof Arg) {
+            return null;
+        }
+
+        return $valueArg->value;
+    }
+
+    private function getColumn(MethodCall $methodCall): ?Expr
+    {
+        if (! isset($methodCall->args[0]) || ! $methodCall->args[0] instanceof Arg) {
+            return null;
+        }
+
+        return $methodCall->args[0]->value;
     }
 }
