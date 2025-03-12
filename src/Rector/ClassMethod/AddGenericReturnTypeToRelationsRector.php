@@ -14,6 +14,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
@@ -57,6 +58,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly StaticTypeMapper $staticTypeMapper,
+        private readonly ReflectionProvider $reflectionProvider,
         private readonly string $applicationClass = 'Illuminate\Foundation\Application',
     ) {}
 
@@ -426,7 +428,8 @@ CODE_SAMPLE
             return true;
         }
 
-        return ! $classReflection->isTrait() && ! $classReflection->isSubclassOf('Illuminate\Database\Eloquent\Model');
+        return ! $classReflection->isTrait()
+            && ! $classReflection->isSubclassOfClass($this->reflectionProvider->getClass('Illuminate\Database\Eloquent\Model'));
     }
 
     /**
