@@ -72,6 +72,53 @@ return RectorConfig::configure()
 | [LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-legacy-factories-to-classes.php)                           | Migrates Eloquent legacy model factories (with closures) into class based factories.<br/>https://laravel.com/docs/8.x/releases#model-factory-classes                                                                                             |
 | [LaravelSetList::LARAVEL_STATIC_TO_INJECTION](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-static-to-injection.php)                                           | Replaces Laravel's Facades with Dependency Injection.<br/>https://tomasvotruba.com/blog/2019/03/04/how-to-turn-laravel-from-static-to-dependency-injection-in-one-day/<br/>https://laravel.com/docs/11.x/facades#facades-vs-dependency-injection |
 
+## Creating New Rules
+
+The package includes a command to generate the scaffolding needed for creating new rules. This makes it easier to add rules without having to manually create all the necessary files.
+
+To create a new rule, you can run the command directly with PHP:
+
+```bash
+php commands/make-rule.php YourRuleName
+```
+
+Or use the composer script with the `--` separator to pass arguments:
+
+```bash
+composer make:rule -- YourRuleName
+```
+
+This will generate a new rule class in `src/Rector/` along with the corresponding test files.
+
+### Command Options
+
+The command supports the following options:
+
+- `--configurable` or `-c`: Create a configurable rule that implements `ConfigurableRectorInterface`
+- `--directory=DIR` or `-d DIR`: Place the rule in a subdirectory of src/Rector (e.g., `If_`)
+
+### Examples
+
+Create a simple rule:
+```bash
+php commands/make-rule.php RemoveOldMethod
+```
+
+Create a configurable rule:
+```bash
+php commands/make-rule.php RenameMethod --configurable
+```
+
+Create a rule in the If_ subdirectory:
+```bash
+php commands/make-rule.php ConvertIfToWhen --directory=If_
+```
+
+When using the composer script, remember to add `--` before the arguments:
+```bash
+composer make:rule -- ConvertIfToWhen --directory=If_ --configurable
+```
+
 ## Contributors
 
 Thank you everyone who works so hard on improving this package:
