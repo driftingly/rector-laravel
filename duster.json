@@ -6,6 +6,7 @@
     ],
     "exclude": [
         "tests/Rector/**/**/Fixture",
-        "tests/Sets/**/Fixture"
+        "tests/Sets/**/Fixture",
+        "templates"
     ]
 }

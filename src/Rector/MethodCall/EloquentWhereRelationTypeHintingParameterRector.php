@@ -11,8 +11,8 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
-use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,6 +21,22 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
 {
+    /**
+     * @var string[]
+     */
+    private const array METHODS = [
+        'whereHas',
+        'orWhereHas',
+        'whereDoesntHave',
+        'orWhereDoesntHave',
+        'whereHasMorph',
+        'orWhereHasMorph',
+        'whereDoesntHaveMorph',
+        'orWhereDoesntHaveMorph',
+    ];
+
+    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -113,32 +129,12 @@ CODE_SAMPLE
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
     {
-        $isMatchingClass = match (true) {
-            $node instanceof MethodCall && $this->isObjectType(
-                $node->var,
-                new ObjectType('Illuminate\Contracts\Database\Query\Builder')
-            ) => true,
-            $node instanceof StaticCall && $this->isObjectType(
-                $node->class,
-                new ObjectType('Illuminate\Database\Eloquent\Model')
-            ) => true,
-            default => false,
-        };
+        foreach (self::METHODS as $method) {
+            if ($this->queryBuilderAnalyzer->isMatchingCall($node, $method)) {
+                return true;
+            }
+        }
 
-        $isMatchingMethod = $this->isNames(
-            $node->name,
-            [
-                'whereHas',
-                'orWhereHas',
-                'whereDoesntHave',
-                'orWhereDoesntHave',
-                'whereHasMorph',
-                'orWhereHasMorph',
-                'whereDoesntHaveMorph',
-                'orWhereDoesntHaveMorph',
-            ]
-        );
-
-        return $isMatchingClass && $isMatchingMethod;
+        return false;
     }
 }

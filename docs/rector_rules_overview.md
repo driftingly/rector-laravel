@@ -133,7 +133,7 @@ Add "$this->mockConsoleOutput = false"; to console tests that work with output c
 
  final class SomeTest extends TestCase
  {
-+    public function setUp(): void
++    protected function setUp(): void
 +    {
 +        parent::setUp();
 +

@@ -9,6 +9,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -20,7 +21,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class ReplaceFakerInstanceWithHelperRector extends AbstractRector
 {
     public function __construct(
-        private readonly ReflectionResolver $reflectionResolver
+        private readonly ReflectionResolver $reflectionResolver,
+        private readonly ReflectionProvider $reflectionProvider,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -78,7 +80,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $classReflection->isSubclassOf('Illuminate\Database\Eloquent\Factories\Factory')) {
+        if (! $classReflection->isSubclassOfClass($this->reflectionProvider->getClass('Illuminate\Database\Eloquent\Factories\Factory'))) {
             return null;
         }
 

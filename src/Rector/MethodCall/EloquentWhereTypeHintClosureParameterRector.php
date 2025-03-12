@@ -11,8 +11,8 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
-use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,6 +21,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class EloquentWhereTypeHintClosureParameterRector extends AbstractRector
 {
+    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -95,20 +97,7 @@ CODE_SAMPLE
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
     {
-        $isMatchingClass = match (true) {
-            $node instanceof MethodCall && $this->isObjectType(
-                $node->var,
-                new ObjectType('Illuminate\Contracts\Database\Query\Builder')
-            ) => true,
-            $node instanceof StaticCall && $this->isObjectType(
-                $node->class,
-                new ObjectType('Illuminate\Database\Eloquent\Model')
-            ) => true,
-            default => false,
-        };
-
-        $isMatchingMethod = $this->isNames($node->name, ['where', 'orWhere']);
-
-        return $isMatchingClass && $isMatchingMethod;
+        return $this->queryBuilderAnalyzer->isMatchingCall($node, 'where')
+            || $this->queryBuilderAnalyzer->isMatchingCall($node, 'orWhere');
     }
 }

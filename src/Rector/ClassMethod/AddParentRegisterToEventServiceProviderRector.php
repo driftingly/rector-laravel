@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\StaticCallAnalyzer;
@@ -26,6 +27,7 @@ final class AddParentRegisterToEventServiceProviderRector extends AbstractRector
     public function __construct(
         private readonly StaticCallAnalyzer $staticCallAnalyzer,
         private readonly ReflectionResolver $reflectionResolver,
+        private readonly ReflectionProvider $reflectionProvider,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -81,7 +83,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $classReflection->isSubclassOf('Illuminate\Foundation\Support\Providers\EventServiceProvider')) {
+        if (! $classReflection->isSubclassOfClass($this->reflectionProvider->getClass('Illuminate\Foundation\Support\Providers\EventServiceProvider'))) {
             return null;
         }
 

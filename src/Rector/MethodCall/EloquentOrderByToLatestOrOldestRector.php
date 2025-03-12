@@ -12,9 +12,9 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\VariadicPlaceholder;
-use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -30,6 +30,8 @@ class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements Co
      * @var string[]
      */
     private array $allowedPatterns = [];
+
+    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -104,10 +106,8 @@ CODE_SAMPLE
     {
         // Check if it's a method call to `orderBy`
 
-        return $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Database\Query\Builder'))
-            && $methodCall->name instanceof Identifier
-            && ($methodCall->name->name === 'orderBy' || $methodCall->name->name === 'orderByDesc')
-            && $methodCall->args !== [];
+        return $this->queryBuilderAnalyzer->isMatchingCall($methodCall, 'orderBy')
+            || $this->queryBuilderAnalyzer->isMatchingCall($methodCall, 'orderByDesc');
     }
 
     private function isAllowedPattern(MethodCall $methodCall): bool
@@ -153,6 +153,10 @@ CODE_SAMPLE
             return $methodCall;
         }
 
+        if (isset($methodCall->args[1]) && (! $methodCall->args[1] instanceof Arg || ! $methodCall->args[1]->value instanceof String_)) {
+            return $methodCall;
+        }
+
         if (isset($methodCall->args[1]) && $methodCall->args[1] instanceof Arg && $methodCall->args[1]->value instanceof String_) {
             $direction = $methodCall->args[1]->value->value;
         } else {
@@ -164,22 +168,22 @@ CODE_SAMPLE
         } else {
             $newMethod = $direction === 'asc' ? 'oldest' : 'latest';
         }
-        if ($columnVar instanceof String_ && $columnVar->value === 'created_at') {
-            $methodCall->name = new Identifier($newMethod);
-            $methodCall->args = [];
 
-            return $methodCall;
-        }
+        return $this->createMethodCall($methodCall, $newMethod, $columnVar);
+    }
 
-        if ($columnVar instanceof String_) {
-            $methodCall->name = new Identifier($newMethod);
-            $methodCall->args = [new Arg(new String_($columnVar->value))];
-
-            return $methodCall;
+    private function createMethodCall(MethodCall $methodCall, string $newMethod, Expr $expr): MethodCall
+    {
+        if ($expr instanceof String_ && $expr->value === 'created_at') {
+            $args = [];
+        } elseif ($expr instanceof String_) {
+            $args = [new Arg(new String_($expr->value))];
+        } else {
+            $args = [new Arg($expr)];
         }
 
         $methodCall->name = new Identifier($newMethod);
-        $methodCall->args = [new Arg($columnVar)];
+        $methodCall->args = $args;
 
         return $methodCall;
     }
