@@ -19,15 +19,5 @@ foreach ($argv as $i => $arg) {
     }
 }
 
-// If no rule name provided, show usage
-if (empty($ruleName)) {
-    echo PHP_EOL . 'Please provide the name of the rule!' . PHP_EOL;
-    echo 'Usage: php commands/make-rule.php [options] RuleName' . PHP_EOL;
-    echo 'Usage with directory: php commands/make-rule.php [options] Directory/RuleName' . PHP_EOL;
-    echo 'Options:' . PHP_EOL;
-    echo '  --configurable, -c                Create a configurable rule' . PHP_EOL;
-    exit(1);
-}
-
 $command = new \RectorLaravel\Commands\MakeRuleCommand;
 exit($command->execute($ruleName, $configurable));

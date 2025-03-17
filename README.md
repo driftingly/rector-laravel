@@ -74,15 +74,7 @@ return RectorConfig::configure()
 
 ## Creating New Rules
 
-The package includes a command to generate the scaffolding needed for creating new rules. This makes it easier to add rules without having to manually create all the necessary files.
-
-To create a new rule, you can run the command directly with PHP:
-
-```bash
-php commands/make-rule.php YourRuleName
-```
-
-Or use the composer script with the `--` separator to pass arguments:
+You can create a new rule using the composer script:
 
 ```bash
 composer make:rule -- YourRuleName
@@ -92,54 +84,19 @@ This will generate a new rule class in `src/Rector/` along with the correspondin
 
 ### Command Options
 
-The command supports the following options:
-
 - `--configurable` or `-c`: Create a configurable rule that implements `ConfigurableRectorInterface`
 
 ### Directory Structure
 
-You can specify a subdirectory structure by including slashes in the rule name. The rule will be placed in the corresponding directory structure, and the namespaces will be adjusted accordingly:
+You can specify a subdirectory structure by including slashes in the rule name:
 
 ```bash
-php commands/make-rule.php If_/ConvertIfToWhen
+composer make:rule -- If_/ConvertIfToWhen
 ```
 
 This will create a rule in the `src/Rector/If_/` directory with the namespace `RectorLaravel\Rector\If_`.
 
-You can use multiple levels of directories:
-
-```bash
-php commands/make-rule.php If_/Nested/Deep/ConvertIfToWhen
-```
-
-This will create a rule in the `src/Rector/If_/Nested/Deep/` directory with the namespace `RectorLaravel\Rector\If_\Nested\Deep`.
-
-### Examples
-
-Create a simple rule:
-```bash
-php commands/make-rule.php RemoveOldMethod
-```
-
-Create a configurable rule:
-```bash
-php commands/make-rule.php RenameMethod --configurable
-```
-
-Create a rule in the If_ subdirectory:
-```bash
-php commands/make-rule.php If_/ConvertIfToWhen
-```
-
-Create a deeply nested rule:
-```bash
-php commands/make-rule.php If_/Condition/Complex/ConvertToMatch --configurable
-```
-
-When using the composer script, remember to add `--` before the arguments:
-```bash
-composer make:rule -- If_/ConvertIfToWhen --configurable
-```
+Remember to always add `--` before the arguments when using the composer script. This separator tells Composer that the following arguments should be passed to the script rather than being interpreted as Composer arguments.
 
 ## Contributors
 

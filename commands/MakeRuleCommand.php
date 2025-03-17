@@ -17,6 +17,7 @@ use Rector\Console\Command\CustomRuleCommand;
 final class MakeRuleCommand
 {
     private bool $configurable = false;
+    private ?string $directory = null;
 
     private const string TEMPLATE_DIR = __DIR__ . '/../templates';
 
@@ -24,11 +25,6 @@ final class MakeRuleCommand
     {
         $this->configurable = $configurable;
 
-        return $this->generateFiles($ruleName);
-    }
-
-    private function generateFiles(string $ruleName): int
-    {
         // Validate rule name
         if (empty($ruleName)) {
             echo PHP_EOL . 'Rule name must not be empty.' . PHP_EOL;
@@ -36,14 +32,13 @@ final class MakeRuleCommand
         }
 
         // Extract directory and rule name if format contains slashes like "Directory/SubDir/More/RuleName"
-        $directory = null;
         if (str_contains($ruleName, '/')) {
             $parts = explode('/', $ruleName);
             // The last part is the rule name
             $ruleName = array_pop($parts);
             // All other parts form the directory path
             if (!empty($parts)) {
-                $directory = implode('/', $parts) . '/';
+                $this->directory = implode('/', $parts) . '/';
             }
         }
 
@@ -52,19 +47,37 @@ final class MakeRuleCommand
         $testsNamespace = 'RectorLaravel\\Tests\\Rector';
 
         // Add directory to namespace if provided
-        if ($directory !== null) {
+        if ($this->directory !== null) {
             // Clean directory name (ensure it ends with a backslash for paths but not for namespace)
-            $cleanDir = rtrim($directory, '\\/');
-            $directory = $cleanDir . '/';
+            $cleanDir = rtrim($this->directory, '\\/');
+            $this->directory = $cleanDir . '/';
             $namespaceDir = str_replace('/', '\\', $cleanDir);
             $rulesNamespace .= '\\' . $namespaceDir;
             $testsNamespace .= '\\' . $namespaceDir;
         }
 
         $currentDirectory = getcwd();
+        $testDir = $this->getTestDir($rectorName);
+
         $generatedFilePaths = [];
 
-        // Generate the rule class file - select the appropriate template based on configurability
+        $generatedFilePaths[] = $this->createRule($rectorName, $rulesNamespace, $testsNamespace, $currentDirectory);
+
+        $generatedFilePaths[] = $this->createTest($testDir, $currentDirectory, $rectorName, $rulesNamespace, $testsNamespace);
+
+        $generatedFilePaths[] = $this->createTestFixture($testDir, $currentDirectory, $rectorName, $testsNamespace);
+
+        $generatedFilePaths[] = $this->createTestConfig($testDir, $currentDirectory, $rectorName, $rulesNamespace);
+
+        echo 'Generated files:' . PHP_EOL . PHP_EOL . "\t";
+        echo implode(PHP_EOL . "\t", array_filter($generatedFilePaths)) . PHP_EOL;
+
+        return 0;
+    }
+
+    private function createRule(string $rectorName, string $rulesNamespace, string $testsNamespace, false|string $currentDirectory): ?string
+    {
+        $ruleFilePath = null;
         $ruleTemplateFile = $this->configurable
             ? self::TEMPLATE_DIR . '/configurable-rule.php.template'
             : self::TEMPLATE_DIR . '/non-configurable-rule.php.template';
@@ -78,25 +91,22 @@ final class MakeRuleCommand
 
             // Create the rule file path
             $ruleFilePath = 'src/Rector/';
-            if ($directory !== null) {
-                $ruleFilePath .= $directory;
+            if ($this->directory !== null) {
+                $ruleFilePath .= $this->directory;
             }
             $ruleFilePath .= $rectorName . '.php';
 
             // Ensure directory exists
             $this->ensureDirectoryExists($currentDirectory . '/' . dirname($ruleFilePath));
             FileSystem::write($currentDirectory . '/' . $ruleFilePath, $newContent, null);
-            $generatedFilePaths[] = $ruleFilePath;
         }
 
-        // Create test directory structure
-        $testDir = 'tests/Rector/';
-        if ($directory !== null) {
-            $testDir .= $directory;
-        }
-        $testDir .= $rectorName;
+        return $ruleFilePath;
+    }
 
-        // Create test file
+    private function createTest(string $testDir, false|string $currentDirectory, string $rectorName, string $rulesNamespace, string $testsNamespace): ?string
+    {
+        $testFilePath = null;
         $testTemplateFile = self::TEMPLATE_DIR . '/test.php.template';
 
         if (file_exists($testTemplateFile)) {
@@ -108,10 +118,14 @@ final class MakeRuleCommand
             $testFilePath = $testDir . '/' . $rectorName . 'Test.php';
             $this->ensureDirectoryExists($currentDirectory . '/' . dirname($testFilePath));
             FileSystem::write($currentDirectory . '/' . $testFilePath, $newContent, null);
-            $generatedFilePaths[] = $testFilePath;
         }
 
-        // Create fixture directory
+        return $testFilePath;
+    }
+
+    private function createTestFixture(string $testDir, false|string $currentDirectory, string $rectorName, string $testsNamespace): ?string
+    {
+        $fixtureFilePath = null;
         $fixtureDir = $testDir . '/Fixture';
         $this->ensureDirectoryExists($currentDirectory . '/' . $fixtureDir);
 
@@ -125,10 +139,14 @@ final class MakeRuleCommand
 
             $fixtureFilePath = $fixtureDir . '/some_class.php.inc';
             FileSystem::write($currentDirectory . '/' . $fixtureFilePath, $fixtureContents, null);
-            $generatedFilePaths[] = $fixtureFilePath;
         }
 
-        // Create config directory
+        return $fixtureFilePath;
+    }
+
+    private function createTestConfig(string $testDir, false|string $currentDirectory, string $rectorName, string $rulesNamespace): ?string
+    {
+        $configFilePath = null;
         $configDir = $testDir . '/config';
         $this->ensureDirectoryExists($currentDirectory . '/' . $configDir);
 
@@ -144,13 +162,9 @@ final class MakeRuleCommand
 
             $configFilePath = $configDir . '/configured_rule.php';
             FileSystem::write($currentDirectory . '/' . $configFilePath, $configContents, null);
-            $generatedFilePaths[] = $configFilePath;
         }
 
-        echo 'Generated files:' . PHP_EOL . PHP_EOL . "\t";
-        echo implode(PHP_EOL . "\t", $generatedFilePaths) . PHP_EOL;
-
-        return 0;
+        return $configFilePath;
     }
 
     private function getRuleName(string $ruleName): string
@@ -160,6 +174,17 @@ final class MakeRuleCommand
         }
 
         return ucfirst($ruleName);
+    }
+
+    private function getTestDir(string $rectorName): string
+    {
+        $testDir = 'tests/Rector/';
+
+        if ($this->directory !== null) {
+            $testDir .= $this->directory;
+        }
+
+        return $testDir . $rectorName;
     }
 
     private function replaceNameVariable(string $rectorName, string $contents): string
