@@ -95,7 +95,24 @@ This will generate a new rule class in `src/Rector/` along with the correspondin
 The command supports the following options:
 
 - `--configurable` or `-c`: Create a configurable rule that implements `ConfigurableRectorInterface`
-- `--directory=DIR` or `-d DIR`: Place the rule in a subdirectory of src/Rector (e.g., `If_`)
+
+### Directory Structure
+
+You can specify a subdirectory structure by including slashes in the rule name. The rule will be placed in the corresponding directory structure, and the namespaces will be adjusted accordingly:
+
+```bash
+php commands/make-rule.php If_/ConvertIfToWhen
+```
+
+This will create a rule in the `src/Rector/If_/` directory with the namespace `RectorLaravel\Rector\If_`.
+
+You can use multiple levels of directories:
+
+```bash
+php commands/make-rule.php If_/Nested/Deep/ConvertIfToWhen
+```
+
+This will create a rule in the `src/Rector/If_/Nested/Deep/` directory with the namespace `RectorLaravel\Rector\If_\Nested\Deep`.
 
 ### Examples
 
@@ -111,12 +128,17 @@ php commands/make-rule.php RenameMethod --configurable
 
 Create a rule in the If_ subdirectory:
 ```bash
-php commands/make-rule.php ConvertIfToWhen --directory=If_
+php commands/make-rule.php If_/ConvertIfToWhen
+```
+
+Create a deeply nested rule:
+```bash
+php commands/make-rule.php If_/Condition/Complex/ConvertToMatch --configurable
 ```
 
 When using the composer script, remember to add `--` before the arguments:
 ```bash
-composer make:rule -- ConvertIfToWhen --directory=If_ --configurable
+composer make:rule -- If_/ConvertIfToWhen --configurable
 ```
 
 ## Contributors

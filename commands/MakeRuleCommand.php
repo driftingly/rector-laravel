@@ -6,35 +6,45 @@ namespace RectorLaravel\Commands;
 
 use Nette\Utils\FileSystem;
 use Rector\Console\Command\CustomRuleCommand;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Generates scaffolding for a new Rector rule
+ *
+ * Modified version of
+ *
+ * @see CustomRuleCommand
  */
 final class MakeRuleCommand
 {
     private bool $configurable = false;
-    private ?string $directory = null;
 
-    private const TEMPLATE_DIR = __DIR__ . '/../templates/new-rule';
-    private const CONFIGURABLE_TEMPLATE_DIR = __DIR__ . '/../templates/new-rule/configurable';
-    private const NON_CONFIGURABLE_TEMPLATE_DIR = __DIR__ . '/../templates/new-rule/non-configurable';
+    private const string TEMPLATE_DIR = __DIR__ . '/../templates';
 
-    public function execute(string $ruleName, array $options = []): int
+    public function execute(string $ruleName, bool $configurable = false): int
     {
-        $this->configurable = $options['configurable'] ?? false;
-        $this->directory = $options['directory'] ?? null;
-        
-        return $this->executeGeneration($ruleName);
+        $this->configurable = $configurable;
+
+        return $this->generateFiles($ruleName);
     }
 
-    private function executeGeneration(string $ruleName): int
+    private function generateFiles(string $ruleName): int
     {
         // Validate rule name
-        if (!$this->validateRuleName($ruleName)) {
-            echo PHP_EOL . 'Invalid rule name. Rule name must be in PascalCase and not empty.' . PHP_EOL;
+        if (empty($ruleName)) {
+            echo PHP_EOL . 'Rule name must not be empty.' . PHP_EOL;
             return 1;
+        }
+
+        // Extract directory and rule name if format contains slashes like "Directory/SubDir/More/RuleName"
+        $directory = null;
+        if (str_contains($ruleName, '/')) {
+            $parts = explode('/', $ruleName);
+            // The last part is the rule name
+            $ruleName = array_pop($parts);
+            // All other parts form the directory path
+            if (!empty($parts)) {
+                $directory = implode('/', $parts) . '/';
+            }
         }
 
         $rectorName = $this->getRuleName($ruleName);
@@ -42,50 +52,37 @@ final class MakeRuleCommand
         $testsNamespace = 'RectorLaravel\\Tests\\Rector';
 
         // Add directory to namespace if provided
-        if ($this->directory !== null) {
+        if ($directory !== null) {
             // Clean directory name (ensure it ends with a backslash for paths but not for namespace)
-            $cleanDir = rtrim($this->directory, '\\/');
-            $this->directory = $cleanDir . '/';
+            $cleanDir = rtrim($directory, '\\/');
+            $directory = $cleanDir . '/';
             $namespaceDir = str_replace('/', '\\', $cleanDir);
             $rulesNamespace .= '\\' . $namespaceDir;
             $testsNamespace .= '\\' . $namespaceDir;
         }
 
-        echo PHP_EOL . "Using namespaces:" . PHP_EOL;
-        echo "  Rule namespace: $rulesNamespace" . PHP_EOL;
-        echo "  Test namespace: $testsNamespace" . PHP_EOL . PHP_EOL;
-
         $currentDirectory = getcwd();
         $generatedFilePaths = [];
 
-        // Select template directory based on configurable flag
-        $templateDir = $this->configurable ? self::CONFIGURABLE_TEMPLATE_DIR : self::NON_CONFIGURABLE_TEMPLATE_DIR;
-        
-        // Fall back to standard template directory if specific directory does not exist
-        if (!is_dir($templateDir)) {
-            $templateDir = self::TEMPLATE_DIR;
-        }
+        // Generate the rule class file - select the appropriate template based on configurability
+        $ruleTemplateFile = $this->configurable
+            ? self::TEMPLATE_DIR . '/configurable-rule.php.template'
+            : self::TEMPLATE_DIR . '/non-configurable-rule.php.template';
 
-        // Generate the rule class file
-        $ruleTemplateFile = $templateDir . '/src/Rector/__NAME__.php';
-        if (!file_exists($ruleTemplateFile)) {
-            $ruleTemplateFile = self::TEMPLATE_DIR . '/src/Rector/__NAME__.php';
-        }
-        
         if (file_exists($ruleTemplateFile)) {
             $contents = file_get_contents($ruleTemplateFile);
-            
+
             $newContent = $this->replaceNameVariable($rectorName, $contents);
             $newContent = $this->replaceNamespaceVariable($rulesNamespace, $newContent);
             $newContent = $this->replaceTestsNamespaceVariable($testsNamespace, $newContent);
-            
+
             // Create the rule file path
             $ruleFilePath = 'src/Rector/';
-            if ($this->directory !== null) {
-                $ruleFilePath .= $this->directory;
+            if ($directory !== null) {
+                $ruleFilePath .= $directory;
             }
             $ruleFilePath .= $rectorName . '.php';
-            
+
             // Ensure directory exists
             $this->ensureDirectoryExists($currentDirectory . '/' . dirname($ruleFilePath));
             FileSystem::write($currentDirectory . '/' . $ruleFilePath, $newContent, null);
@@ -94,64 +91,57 @@ final class MakeRuleCommand
 
         // Create test directory structure
         $testDir = 'tests/Rector/';
-        if ($this->directory !== null) {
-            $testDir .= $this->directory;
+        if ($directory !== null) {
+            $testDir .= $directory;
         }
         $testDir .= $rectorName;
-            
+
         // Create test file
-        $testTemplateFile = $templateDir . '/tests/Rector/__NAME__/__NAME__Test.php';
-        if (!file_exists($testTemplateFile)) {
-            $testTemplateFile = self::TEMPLATE_DIR . '/tests/Rector/__NAME__/__NAME__Test.php';
-        }
-        
+        $testTemplateFile = self::TEMPLATE_DIR . '/test.php.template';
+
         if (file_exists($testTemplateFile)) {
             $contents = file_get_contents($testTemplateFile);
             $newContent = $this->replaceNameVariable($rectorName, $contents);
             $newContent = $this->replaceNamespaceVariable($rulesNamespace, $newContent);
             $newContent = $this->replaceTestsNamespaceVariable($testsNamespace, $newContent);
-            
+
             $testFilePath = $testDir . '/' . $rectorName . 'Test.php';
             $this->ensureDirectoryExists($currentDirectory . '/' . dirname($testFilePath));
             FileSystem::write($currentDirectory . '/' . $testFilePath, $newContent, null);
             $generatedFilePaths[] = $testFilePath;
         }
-            
+
         // Create fixture directory
         $fixtureDir = $testDir . '/Fixture';
         $this->ensureDirectoryExists($currentDirectory . '/' . $fixtureDir);
-            
+
         // Create fixture file from template
-        $fixtureTemplateFile = $templateDir . '/tests/Rector/__NAME__/Fixture/some_class.php.inc';
-        if (!file_exists($fixtureTemplateFile)) {
-            $fixtureTemplateFile = self::TEMPLATE_DIR . '/tests/Rector/__NAME__/Fixture/some_class.php.inc';
-        }
-        
+        $fixtureTemplateFile = self::TEMPLATE_DIR . '/fixture.php.inc.template';
+
         if (file_exists($fixtureTemplateFile)) {
             $fixtureContents = file_get_contents($fixtureTemplateFile);
             $fixtureContents = $this->replaceNameVariable($rectorName, $fixtureContents);
             $fixtureContents = $this->replaceTestsNamespaceVariable($testsNamespace, $fixtureContents);
-            
+
             $fixtureFilePath = $fixtureDir . '/some_class.php.inc';
             FileSystem::write($currentDirectory . '/' . $fixtureFilePath, $fixtureContents, null);
             $generatedFilePaths[] = $fixtureFilePath;
         }
-            
+
         // Create config directory
         $configDir = $testDir . '/config';
         $this->ensureDirectoryExists($currentDirectory . '/' . $configDir);
-            
-        // Create config file from template - use the appropriate template based on configurable flag
-        $configTemplateFile = $templateDir . '/tests/Rector/__NAME__/config/configured_rule.php';
-        if (!file_exists($configTemplateFile)) {
-            $configTemplateFile = self::TEMPLATE_DIR . '/tests/Rector/__NAME__/config/configured_rule.php';
-        }
-        
+
+        // Create config file from template - select based on configurability
+        $configTemplateFile = $this->configurable
+            ? self::TEMPLATE_DIR . '/configurable-config.php.template'
+            : self::TEMPLATE_DIR . '/non-configurable-config.php.template';
+
         if (file_exists($configTemplateFile)) {
             $configContents = file_get_contents($configTemplateFile);
             $configContents = $this->replaceNameVariable($rectorName, $configContents);
             $configContents = $this->replaceNamespaceVariable($rulesNamespace, $configContents);
-            
+
             $configFilePath = $configDir . '/configured_rule.php';
             FileSystem::write($currentDirectory . '/' . $configFilePath, $configContents, null);
             $generatedFilePaths[] = $configFilePath;
@@ -170,20 +160,6 @@ final class MakeRuleCommand
         }
 
         return ucfirst($ruleName);
-    }
-
-    private function validateRuleName(string $ruleName): bool
-    {
-        if (empty($ruleName)) {
-            return false;
-        }
-
-        // Check if PascalCase (first character uppercase)
-        if (!ctype_upper($ruleName[0])) {
-            return false;
-        }
-
-        return true;
     }
 
     private function replaceNameVariable(string $rectorName, string $contents): string
