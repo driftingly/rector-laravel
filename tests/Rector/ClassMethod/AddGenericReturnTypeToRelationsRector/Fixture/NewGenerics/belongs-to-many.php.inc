@@ -11,7 +11,7 @@ class User extends Model
 {
     public function websites(): BelongsToMany
     {
-        return $this->hasMany(Website::class);
+        return $this->belongsToMany(Website::class);
     }
 }
 
@@ -33,7 +33,7 @@ class User extends Model
      */
     public function websites(): BelongsToMany
     {
-        return $this->hasMany(Website::class);
+        return $this->belongsToMany(Website::class);
     }
 }
 
