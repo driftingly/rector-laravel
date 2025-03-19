@@ -51,6 +51,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
     private const array RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
 
     private bool $shouldUseNewGenerics = false;
+    private bool $shouldUsePivotGeneric = false;
 
     public function __construct(
         private readonly TypeComparator $typeComparator,
@@ -200,6 +201,7 @@ CODE_SAMPLE
 
         // Put here to make the check as late as possible
         $this->setShouldUseNewGenerics();
+        $this->setShouldUsePivotGeneric();
 
         $classForChildGeneric = $this->getClassForChildGeneric($scope, $relationMethodCall);
         $classForIntermediateGeneric = $this->getClassForIntermediateGeneric($relationMethodCall);
@@ -469,11 +471,13 @@ CODE_SAMPLE
 
             $generics[] = new IdentifierTypeNode('$this');
 
-            if ($this->isObjectType(
-                $node,
-                new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany')
-            )) {
-                $generics[] = new FullyQualifiedIdentifierTypeNode('\Illuminate\Database\Eloquent\Relations\Pivot');
+            if ($this->shouldUsePivotGeneric) {
+                if ($this->isObjectType(
+                    $node,
+                    new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany')
+                )) {
+                    $generics[] = new FullyQualifiedIdentifierTypeNode('\Illuminate\Database\Eloquent\Relations\Pivot');
+                }
             }
         }
 
@@ -486,6 +490,15 @@ CODE_SAMPLE
 
         if (is_string($reflectionClassConstant->getValue())) {
             $this->shouldUseNewGenerics = version_compare($reflectionClassConstant->getValue(), '11.15.0', '>=');
+        }
+    }
+
+    private function setShouldUsePivotGeneric(): void
+    {
+        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
+
+        if (is_string($reflectionClassConstant->getValue())) {
+            $this->shouldUsePivotGeneric = version_compare($reflectionClassConstant->getValue(), '12.3.0', '>=');
         }
     }
 }
