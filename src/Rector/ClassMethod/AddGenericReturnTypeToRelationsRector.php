@@ -405,8 +405,8 @@ CODE_SAMPLE
         $phpDocHasIntermediateGeneric = count($phpDocTypes) === 3;
 
         if ($classForIntermediateGeneric === null && ! $phpDocHasIntermediateGeneric) {
-            // If there is only one generic, it means method is using the old format. We should update it.
-            if (count($phpDocTypes) === 1) {
+            // If there are less than three generics, it means method is using the old format. We should update it.
+            if (count($phpDocTypes) < 3 {
                 return false;
             }
 
