@@ -221,7 +221,12 @@ CODE_SAMPLE
 
         $genericTypeNode = new GenericTypeNode(
             new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-            $this->getGenericTypes($relatedClass, $classForChildGeneric, $classForIntermediateGeneric),
+            $this->getGenericTypes(
+                $node->getReturnType(),
+                $relatedClass,
+                $classForChildGeneric,
+                $classForIntermediateGeneric
+            ),
         );
 
         // Update or add return tag
@@ -449,7 +454,7 @@ CODE_SAMPLE
     /**
      * @return IdentifierTypeNode[]
      */
-    private function getGenericTypes(string $relatedClass, ?string $childClass, ?string $intermediateClass): array
+    private function getGenericTypes(Node $node, string $relatedClass, ?string $childClass, ?string $intermediateClass): array
     {
         $generics = [new FullyQualifiedIdentifierTypeNode($relatedClass)];
 
@@ -463,6 +468,13 @@ CODE_SAMPLE
             }
 
             $generics[] = new IdentifierTypeNode('$this');
+
+            if ($this->isObjectType(
+                $node,
+                new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany')
+            )) {
+                $generics[] = new FullyQualifiedIdentifierTypeNode('\Illuminate\Database\Eloquent\Relations\Pivot');
+            }
         }
 
         return $generics;
