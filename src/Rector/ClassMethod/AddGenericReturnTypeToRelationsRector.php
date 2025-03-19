@@ -222,7 +222,7 @@ CODE_SAMPLE
         $genericTypeNode = new GenericTypeNode(
             new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
             $this->getGenericTypes(
-                $node->getReturnType(),
+                $methodReturnType,
                 $relatedClass,
                 $classForChildGeneric,
                 $classForIntermediateGeneric
