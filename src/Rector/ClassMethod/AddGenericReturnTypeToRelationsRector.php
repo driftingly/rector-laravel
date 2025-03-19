@@ -471,13 +471,11 @@ CODE_SAMPLE
 
             $generics[] = new IdentifierTypeNode('$this');
 
-            if ($this->shouldUsePivotGeneric) {
-                if ($this->isObjectType(
-                    $node,
-                    new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany')
-                )) {
-                    $generics[] = new FullyQualifiedIdentifierTypeNode('\Illuminate\Database\Eloquent\Relations\Pivot');
-                }
+            if ($this->shouldUsePivotGeneric && $this->isObjectType(
+                $node,
+                new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany')
+            )) {
+                $generics[] = new FullyQualifiedIdentifierTypeNode('\Illuminate\Database\Eloquent\Relations\Pivot');
             }
         }
 
