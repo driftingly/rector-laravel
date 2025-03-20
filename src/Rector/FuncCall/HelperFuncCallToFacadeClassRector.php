@@ -59,12 +59,12 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isName($node->name, 'app')) {
+        if (! $this->isNames($node->name, ['app', 'resolve'])) {
             return null;
         }
 
         if (count($node->args) !== 1) {
-            return null;
+            return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\App', 'make', $node->args);
         }
 
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\App', 'get', $node->args);
