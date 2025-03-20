@@ -12,6 +12,6 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/pull/54628
     $rectorConfig->rule(ContainerBindConcreteWithClosureOnlyRector::class);
-
+    // https://github.com/laravel/framework/pull/54450
     $rectorConfig->rule(ScopeNamedClassMethodToScopeAttributedClassMethodRector::class);
 };
