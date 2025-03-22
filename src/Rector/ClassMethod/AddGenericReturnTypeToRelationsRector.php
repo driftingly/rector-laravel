@@ -51,6 +51,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
     private const array RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
 
     private bool $shouldUseNewGenerics = false;
+    private bool $shouldUsePivotGeneric = false;
 
     public function __construct(
         private readonly TypeComparator $typeComparator,
@@ -200,6 +201,7 @@ CODE_SAMPLE
 
         // Put here to make the check as late as possible
         $this->setShouldUseNewGenerics();
+        $this->setShouldUsePivotGeneric();
 
         $classForChildGeneric = $this->getClassForChildGeneric($scope, $relationMethodCall);
         $classForIntermediateGeneric = $this->getClassForIntermediateGeneric($relationMethodCall);
@@ -221,7 +223,12 @@ CODE_SAMPLE
 
         $genericTypeNode = new GenericTypeNode(
             new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-            $this->getGenericTypes($relatedClass, $classForChildGeneric, $classForIntermediateGeneric),
+            $this->getGenericTypes(
+                $methodReturnType,
+                $relatedClass,
+                $classForChildGeneric,
+                $classForIntermediateGeneric
+            ),
         );
 
         // Update or add return tag
@@ -400,8 +407,8 @@ CODE_SAMPLE
         $phpDocHasIntermediateGeneric = count($phpDocTypes) === 3;
 
         if ($classForIntermediateGeneric === null && ! $phpDocHasIntermediateGeneric) {
-            // If there is only one generic, it means method is using the old format. We should update it.
-            if (count($phpDocTypes) === 1) {
+            // If there are less than three generics, it means method is using the old format. We should update it.
+            if (count($phpDocTypes) < 3) {
                 return false;
             }
 
@@ -449,7 +456,7 @@ CODE_SAMPLE
     /**
      * @return IdentifierTypeNode[]
      */
-    private function getGenericTypes(string $relatedClass, ?string $childClass, ?string $intermediateClass): array
+    private function getGenericTypes(Node $node, string $relatedClass, ?string $childClass, ?string $intermediateClass): array
     {
         $generics = [new FullyQualifiedIdentifierTypeNode($relatedClass)];
 
@@ -463,6 +470,13 @@ CODE_SAMPLE
             }
 
             $generics[] = new IdentifierTypeNode('$this');
+
+            if ($this->shouldUsePivotGeneric && $this->isObjectType(
+                $node,
+                new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany')
+            )) {
+                $generics[] = new FullyQualifiedIdentifierTypeNode('\Illuminate\Database\Eloquent\Relations\Pivot');
+            }
         }
 
         return $generics;
@@ -474,6 +488,15 @@ CODE_SAMPLE
 
         if (is_string($reflectionClassConstant->getValue())) {
             $this->shouldUseNewGenerics = version_compare($reflectionClassConstant->getValue(), '11.15.0', '>=');
+        }
+    }
+
+    private function setShouldUsePivotGeneric(): void
+    {
+        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
+
+        if (is_string($reflectionClassConstant->getValue())) {
+            $this->shouldUsePivotGeneric = version_compare($reflectionClassConstant->getValue(), '12.3.0', '>=');
         }
     }
 }
