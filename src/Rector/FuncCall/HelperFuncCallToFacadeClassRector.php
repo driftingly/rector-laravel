@@ -38,7 +38,7 @@ class SomeClass
 {
     public function run()
     {
-        return \Illuminate\Support\Facades\App::get('translator')->trans('value');
+        return \Illuminate\Support\Facades\App::make('translator')->trans('value');
     }
 }
 CODE_SAMPLE
@@ -63,10 +63,10 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($node->args) !== 1) {
+        if (count($node->args) > 0) {
             return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\App', 'make', $node->args);
         }
 
-        return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\App', 'get', $node->args);
+        return null;
     }
 }
