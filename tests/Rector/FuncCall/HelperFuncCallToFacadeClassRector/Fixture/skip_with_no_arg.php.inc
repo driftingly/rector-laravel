@@ -2,10 +2,10 @@
 
 namespace RectorLaravel\Tests\Rector\FuncCall\HelperFuncCallToFacadeClassRector\Fixture;
 
-class SkipWithArgs
+class SkipWithNoArg
 {
     public function run()
     {
-        return app('translator', 'some');
+        return app()->isProduction();
     }
 }
