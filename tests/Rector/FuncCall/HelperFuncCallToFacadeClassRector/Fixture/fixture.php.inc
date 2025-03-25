@@ -20,7 +20,7 @@ class Fixture
 {
     public function run()
     {
-        return \Illuminate\Support\Facades\App::get('translator')->trans('value');
+        return \Illuminate\Support\Facades\App::make('translator')->trans('value');
     }
 }
 
