@@ -1,8 +1,17 @@
+# This file was partly modified by the lean package validator (http://git.io/lean-package-validator).
+
 .editorconfig export-ignore
 .gitattributes export-ignore
+.github/ export-ignore
 .gitignore export-ignore
+banner.png export-ignore
+docs/ export-ignore
 duster.json export-ignore
+LICENSE export-ignore
 phpstan.neon export-ignore
 phpunit.xml export-ignore
-stubs export-ignore
-tests export-ignore
+pint.json export-ignore
+README.md export-ignore
+rector.php export-ignore
+stubs/ export-ignore
+tests/ export-ignore
