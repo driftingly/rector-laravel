@@ -68,19 +68,31 @@ CODE_SAMPLE
             return null;
         }
 
+        if (! $node->args[1] instanceof Arg) {
+            return null;
+        }
+
+        $functionLike = $node->args[1]->value;
+
         if (
-            (! $node->args[1]->value instanceof Closure
-            && ! $node->args[1]->value instanceof ArrowFunction)
-            || ! isset($node->args[1]->value->params[0])
+            (! $functionLike instanceof Closure
+            && ! $functionLike instanceof ArrowFunction)
+            || ! isset($functionLike->params[0])
         ) {
+            return null;
+        }
+
+        if (! $node->args[0] instanceof Arg) {
             return null;
         }
 
         $type = $this->getType($node->args[0]->value);
 
         $classString = match (true) {
+            /** @phpstan-ignore method.notFound */
             $type->isClassString()->yes() => $type->getClassStringObjectType()->getClassName(),
             $type->isString()->yes()
+                /** @phpstan-ignore method.notFound */
                 && $type->getClassStringObjectType()->isObject()->yes() => $type->getClassStringObjectType()->getClassName(),
             default => null,
         };
@@ -89,13 +101,11 @@ CODE_SAMPLE
             return null;
         }
 
-        return $this->refactorClosure($node, $classString);
+        return $this->refactorClosure($node, $functionLike, $classString);
     }
 
-    public function refactorClosure(StaticCall $staticCall, string $class): StaticCall
+    public function refactorClosure(StaticCall $staticCall, Closure|ArrowFunction $closure, string $class): StaticCall
     {
-        $closure = $staticCall->args[1]->value;
-
         $closure->params[0]->type = new FullyQualified($class);
 
         $staticCall->args = [
