@@ -4,7 +4,4 @@ namespace RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelations
 
 use Illuminate\Database\Eloquent\Model;
 
-class SomeModel extends Model
-{
-
-}
+class SomeModel extends Model {}
