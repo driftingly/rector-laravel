@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Tests\Commands;
 
-use Nette\Utils\FileSystem;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RectorLaravel\Commands\MakeRuleCommand;
 
@@ -20,7 +18,7 @@ final class MakeRuleCommandTest extends TestCase
         parent::setUp();
 
         // Create a temp directory for testing
-        if (!is_dir(self::TEMP_DIR)) {
+        if (! is_dir(self::TEMP_DIR)) {
             mkdir(self::TEMP_DIR, 0777, true);
         }
 
@@ -28,7 +26,10 @@ final class MakeRuleCommandTest extends TestCase
         $this->removeDirectory(self::TEMP_DIR);
         mkdir(self::TEMP_DIR, 0777, true);
 
-        $this->makeRuleCommand = new MakeRuleCommand();
+        $this->makeRuleCommand = new MakeRuleCommand;
+
+        // Start output buffering
+        ob_start();
     }
 
     protected function tearDown(): void
@@ -36,13 +37,19 @@ final class MakeRuleCommandTest extends TestCase
         // Clean up after tests
         $this->removeDirectory(self::TEMP_DIR);
 
+        // Clean the output buffer
+        ob_end_clean();
+
         parent::tearDown();
     }
 
-    public function testExecuteCreatesNonConfigurableRule(): void
+    /**
+     * @test
+     */
+    public function execute_creates_non_configurable_rule(): void
     {
         // Change to temp directory for file operations
-        $originalDir = getcwd();
+        $originalDir = (string) getcwd();
         chdir(self::TEMP_DIR);
 
         try {
@@ -50,33 +57,36 @@ final class MakeRuleCommandTest extends TestCase
             $result = $this->makeRuleCommand->execute('TestRule');
 
             // Assert successful execution
-            $this->assertSame(0, $result);
+            self::assertSame(0, $result);
 
             // Check that expected files were created
-            $this->assertFileExists(self::TEMP_DIR . '/src/Rector/TestRuleRector.php');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/TestRuleRectorTest.php');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/Fixture/some_class.php.inc');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/config/configured_rule.php');
+            self::assertFileExists(self::TEMP_DIR . '/src/Rector/TestRuleRector.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/TestRuleRectorTest.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/Fixture/some_class.php.inc');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/config/configured_rule.php');
 
             // Check content of main rule file
-            $ruleContent = file_get_contents(self::TEMP_DIR . '/src/Rector/TestRuleRector.php');
-            $this->assertStringContainsString('namespace RectorLaravel\\Rector;', $ruleContent);
-            $this->assertStringContainsString('final class TestRuleRector extends AbstractRector', $ruleContent);
-            $this->assertStringNotContainsString('implements ConfigurableRectorInterface', $ruleContent);
+            $ruleContent = (string) file_get_contents(self::TEMP_DIR . '/src/Rector/TestRuleRector.php');
+            self::assertStringContainsString('namespace RectorLaravel\\Rector;', $ruleContent);
+            self::assertStringContainsString('final class TestRuleRector extends AbstractRector', $ruleContent);
+            self::assertStringNotContainsString('implements ConfigurableRectorInterface', $ruleContent);
 
             // Check content of config file
-            $configContent = file_get_contents(self::TEMP_DIR . '/tests/Rector/TestRuleRector/config/configured_rule.php');
-            $this->assertStringContainsString('$rectorConfig->rule(TestRuleRector::class);', $configContent);
-            $this->assertStringNotContainsString('$rectorConfig->ruleWithConfiguration', $configContent);
+            $configContent = (string) file_get_contents(self::TEMP_DIR . '/tests/Rector/TestRuleRector/config/configured_rule.php');
+            self::assertStringContainsString('$rectorConfig->rule(TestRuleRector::class);', $configContent);
+            self::assertStringNotContainsString('$rectorConfig->ruleWithConfiguration', $configContent);
         } finally {
             chdir($originalDir);
         }
     }
 
-    public function testExecuteCreatesConfigurableRule(): void
+    /**
+     * @test
+     */
+    public function execute_creates_configurable_rule(): void
     {
         // Change to temp directory for file operations
-        $originalDir = getcwd();
+        $originalDir = (string) getcwd();
         chdir(self::TEMP_DIR);
 
         try {
@@ -84,33 +94,36 @@ final class MakeRuleCommandTest extends TestCase
             $result = $this->makeRuleCommand->execute('ConfigRule', true);
 
             // Assert successful execution
-            $this->assertSame(0, $result);
+            self::assertSame(0, $result);
 
             // Check that expected files were created
-            $this->assertFileExists(self::TEMP_DIR . '/src/Rector/ConfigRuleRector.php');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/ConfigRuleRectorTest.php');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/Fixture/some_class.php.inc');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/config/configured_rule.php');
+            self::assertFileExists(self::TEMP_DIR . '/src/Rector/ConfigRuleRector.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/ConfigRuleRectorTest.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/Fixture/some_class.php.inc');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/config/configured_rule.php');
 
             // Check content of main rule file
-            $ruleContent = file_get_contents(self::TEMP_DIR . '/src/Rector/ConfigRuleRector.php');
-            $this->assertStringContainsString('namespace RectorLaravel\\Rector;', $ruleContent);
-            $this->assertStringContainsString('final class ConfigRuleRector extends AbstractRector implements ConfigurableRectorInterface', $ruleContent);
-            $this->assertStringContainsString('public function configure(array $configuration): void', $ruleContent);
-            $this->assertStringContainsString('ConfiguredCodeSample', $ruleContent);
+            $ruleContent = (string) file_get_contents(self::TEMP_DIR . '/src/Rector/ConfigRuleRector.php');
+            self::assertStringContainsString('namespace RectorLaravel\\Rector;', $ruleContent);
+            self::assertStringContainsString('final class ConfigRuleRector extends AbstractRector implements ConfigurableRectorInterface', $ruleContent);
+            self::assertStringContainsString('public function configure(array $configuration): void', $ruleContent);
+            self::assertStringContainsString('ConfiguredCodeSample', $ruleContent);
 
             // Check content of config file
-            $configContent = file_get_contents(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/config/configured_rule.php');
-            $this->assertStringContainsString('$rectorConfig->ruleWithConfiguration(ConfigRuleRector::class, [\'option\' => \'value\']);', $configContent);
+            $configContent = (string) file_get_contents(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/config/configured_rule.php');
+            self::assertStringContainsString('$rectorConfig->ruleWithConfiguration(ConfigRuleRector::class, [\'option\' => \'value\']);', $configContent);
         } finally {
             chdir($originalDir);
         }
     }
 
-    public function testExecuteWithDirectoryOption(): void
+    /**
+     * @test
+     */
+    public function execute_with_directory_option(): void
     {
         // Change to temp directory for file operations
-        $originalDir = getcwd();
+        $originalDir = (string) getcwd();
         chdir(self::TEMP_DIR);
 
         try {
@@ -118,37 +131,43 @@ final class MakeRuleCommandTest extends TestCase
             $result = $this->makeRuleCommand->execute('ClassMethod/ClassRule');
 
             // Assert successful execution
-            $this->assertSame(0, $result);
+            self::assertSame(0, $result);
 
             // Check that expected files were created in the correct directory
-            $this->assertFileExists(self::TEMP_DIR . '/src/Rector/ClassMethod/ClassRuleRector.php');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/ClassRuleRectorTest.php');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/Fixture/some_class.php.inc');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/config/configured_rule.php');
+            self::assertFileExists(self::TEMP_DIR . '/src/Rector/ClassMethod/ClassRuleRector.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/ClassRuleRectorTest.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/Fixture/some_class.php.inc');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/config/configured_rule.php');
 
             // Check namespace in the rule file
-            $ruleContent = file_get_contents(self::TEMP_DIR . '/src/Rector/ClassMethod/ClassRuleRector.php');
-            $this->assertStringContainsString('namespace RectorLaravel\\Rector\\ClassMethod;', $ruleContent);
+            $ruleContent = (string) file_get_contents(self::TEMP_DIR . '/src/Rector/ClassMethod/ClassRuleRector.php');
+            self::assertStringContainsString('namespace RectorLaravel\\Rector\\ClassMethod;', $ruleContent);
 
             // Check namespace in the test file
-            $testContent = file_get_contents(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/ClassRuleRectorTest.php');
-            $this->assertStringContainsString('namespace RectorLaravel\\Tests\\Rector\\ClassMethod\\ClassRuleRector;', $testContent);
+            $testContent = (string) file_get_contents(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/ClassRuleRectorTest.php');
+            self::assertStringContainsString('namespace RectorLaravel\\Tests\\Rector\\ClassMethod\\ClassRuleRector;', $testContent);
         } finally {
             chdir($originalDir);
         }
     }
 
-    public function testRuleNameValidation(): void
+    /**
+     * @test
+     */
+    public function rule_name_validation(): void
     {
         // Test with empty rule name
         $result = $this->makeRuleCommand->execute('');
-        $this->assertSame(1, $result, 'Empty rule name should be rejected');
+        self::assertSame(1, $result, 'Empty rule name should be rejected');
     }
 
-    public function testAddingSuffixToRuleName(): void
+    /**
+     * @test
+     */
+    public function rule_name_does_not_need_suffix(): void
     {
         // Change to temp directory for file operations
-        $originalDir = getcwd();
+        $originalDir = (string) getcwd();
         chdir(self::TEMP_DIR);
 
         try {
@@ -156,28 +175,42 @@ final class MakeRuleCommandTest extends TestCase
             $result = $this->makeRuleCommand->execute('Simple');
 
             // Assert successful execution
-            $this->assertSame(0, $result);
+            self::assertSame(0, $result);
 
             // Check that files were created with "Rector" suffix
-            $this->assertFileExists(self::TEMP_DIR . '/src/Rector/SimpleRector.php');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/SimpleRector/SimpleRectorTest.php');
+            self::assertFileExists(self::TEMP_DIR . '/src/Rector/SimpleRector.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/SimpleRector/SimpleRectorTest.php');
 
             // Check that files were not created without suffix
-            $this->assertFileDoesNotExist(self::TEMP_DIR . '/src/Rector/Simple.php');
-            $this->assertFileDoesNotExist(self::TEMP_DIR . '/tests/Rector/Simple/SimpleTest.php');
+            self::assertFileDoesNotExist(self::TEMP_DIR . '/src/Rector/Simple.php');
+            self::assertFileDoesNotExist(self::TEMP_DIR . '/tests/Rector/Simple/SimpleTest.php');
+        } finally {
+            chdir($originalDir);
+        }
+    }
 
+    /**
+     * @test
+     */
+    public function rule_name_can_have_valid_suffix(): void
+    {
+        // Change to temp directory for file operations
+        $originalDir = (string) getcwd();
+        chdir(self::TEMP_DIR);
+
+        try {
             // Execute with rule name already having "Rector" suffix
             $result = $this->makeRuleCommand->execute('CompleteRector');
 
             // Assert successful execution
-            $this->assertSame(0, $result);
+            self::assertSame(0, $result);
 
             // Check that files were created correctly without duplicating suffix
-            $this->assertFileExists(self::TEMP_DIR . '/src/Rector/CompleteRector.php');
-            $this->assertFileExists(self::TEMP_DIR . '/tests/Rector/CompleteRector/CompleteRectorTest.php');
+            self::assertFileExists(self::TEMP_DIR . '/src/Rector/CompleteRector.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/CompleteRector/CompleteRectorTest.php');
 
             // Check that files were not created with duplicated suffix
-            $this->assertFileDoesNotExist(self::TEMP_DIR . '/src/Rector/CompleteRectorRector.php');
+            self::assertFileDoesNotExist(self::TEMP_DIR . '/src/Rector/CompleteRectorRector.php');
         } finally {
             chdir($originalDir);
         }
@@ -188,7 +221,7 @@ final class MakeRuleCommandTest extends TestCase
      */
     private function removeDirectory(string $directory): void
     {
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             return;
         }
 

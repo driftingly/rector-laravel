@@ -9,11 +9,13 @@ $ruleName = '';
 
 // Parse options
 foreach ($argv as $i => $arg) {
-    if ($i === 0) continue; // Skip script name
+    if ($i === 0) {
+        continue;
+    } // Skip script name
 
     if ($arg === '--configurable' || $arg === '-c') {
         $configurable = true;
-    } elseif (empty($ruleName) && !str_starts_with($arg, '-')) {
+    } elseif (empty($ruleName) && ! str_starts_with($arg, '-')) {
         // If it's not an option, and we don't have a rule name yet, it's the rule name
         $ruleName = $arg;
     }
