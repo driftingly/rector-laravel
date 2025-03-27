@@ -615,11 +615,22 @@ Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `w
 
 ## EloquentWhereTypeHintClosureParameterRector
 
-Change typehint of closure parameter in where method of Eloquent Builder
+Change typehint of closure parameter in where method of Eloquent or Query Builder
 
 - class: [`RectorLaravel\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector`](../src/Rector/MethodCall/EloquentWhereTypeHintClosureParameterRector.php)
 
 ```diff
+ /** @var \Illuminate\Contracts\Database\Query\Builder $query */
+-$query->where(function ($query) {
++$query->where(function (\Illuminate\Contracts\Database\Query\Builder $query) {
+     $query->where('id', 1);
+ });
+```
+
+<br>
+
+```diff
+ /** @var \Illuminate\Contracts\Database\Eloquent\Builder $query */
 -$query->where(function ($query) {
 +$query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
      $query->where('id', 1);
@@ -726,7 +737,7 @@ Change `app()` func calls to facade calls
      public function run()
      {
 -        return app('translator')->trans('value');
-+        return \Illuminate\Support\Facades\App::get('translator')->trans('value');
++        return \Illuminate\Support\Facades\App::make('translator')->trans('value');
      }
  }
 ```

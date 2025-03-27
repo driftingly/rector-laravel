@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
+use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -26,16 +27,34 @@ class EloquentWhereTypeHintClosureParameterRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Change typehint of closure parameter in where method of Eloquent Builder',
+            'Change typehint of closure parameter in where method of Eloquent or Query Builder',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
+/** @var \Illuminate\Contracts\Database\Query\Builder $query */
 $query->where(function ($query) {
     $query->where('id', 1);
 });
 CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
+/** @var \Illuminate\Contracts\Database\Query\Builder $query */
+$query->where(function (\Illuminate\Contracts\Database\Query\Builder $query) {
+    $query->where('id', 1);
+});
+CODE_SAMPLE
+                    ,
+                ),
+                new CodeSample(
+                    <<<'CODE_SAMPLE'
+/** @var \Illuminate\Contracts\Database\Eloquent\Builder $query */
+$query->where(function ($query) {
+    $query->where('id', 1);
+});
+CODE_SAMPLE
+                    ,
+                    <<<'CODE_SAMPLE'
+/** @var \Illuminate\Contracts\Database\Eloquent\Builder $query */
 $query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
     $query->where('id', 1);
 });
@@ -92,7 +111,15 @@ CODE_SAMPLE
             return;
         }
 
-        $param->type = new FullyQualified('Illuminate\Contracts\Database\Query\Builder');
+        $classOrVar = $node instanceof MethodCall
+            ? $node->var
+            : $node->class;
+
+        $type = $this->isObjectType($classOrVar, new ObjectType('Illuminate\Database\Eloquent\Model'))
+            ? 'Illuminate\Contracts\Database\Eloquent\Builder'
+            : 'Illuminate\Contracts\Database\Query\Builder';
+
+        $param->type = new FullyQualified($type);
     }
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
