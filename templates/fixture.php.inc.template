@@ -2,7 +2,10 @@
 
 namespace __TESTS_NAMESPACE__\__NAME__\Fixture;
 
-// @todo fill code before
+class SomeClass
+{
+    // before
+}
 
 ?>
 -----
@@ -10,6 +13,9 @@ namespace __TESTS_NAMESPACE__\__NAME__\Fixture;
 
 namespace __TESTS_NAMESPACE__\__NAME__\Fixture;
 
-// @todo fill code after
+class SomeClass
+{
+    // after
+}
 
 ?>

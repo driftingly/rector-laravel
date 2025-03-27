@@ -19,8 +19,7 @@
         "phpunit/phpunit": "^10.5",
         "symplify/rule-doc-generator": "^12.2",
         "tightenco/duster": "^3.1",
-        "nette/utils": "^4.0",
-        "symfony/finder": "^7.2"
+        "nette/utils": "^4.0"
     },
     "autoload": {
         "psr-4": {

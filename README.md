@@ -72,6 +72,32 @@ return RectorConfig::configure()
 | [LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-legacy-factories-to-classes.php)                           | Migrates Eloquent legacy model factories (with closures) into class based factories.<br/>https://laravel.com/docs/8.x/releases#model-factory-classes                                                                                             |
 | [LaravelSetList::LARAVEL_STATIC_TO_INJECTION](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-static-to-injection.php)                                           | Replaces Laravel's Facades with Dependency Injection.<br/>https://tomasvotruba.com/blog/2019/03/04/how-to-turn-laravel-from-static-to-dependency-injection-in-one-day/<br/>https://laravel.com/docs/11.x/facades#facades-vs-dependency-injection |
 
+## Creating New Rules
+
+You can create a new rule using the composer script:
+
+```bash
+composer make:rule -- YourRuleName
+```
+
+This will generate a new rule class in `src/Rector/` along with the corresponding test files.
+
+### Command Options
+
+- `--configurable` or `-c`: Create a configurable rule that implements `ConfigurableRectorInterface`
+
+### Directory Structure
+
+You can specify a subdirectory structure by including slashes in the rule name:
+
+```bash
+composer make:rule -- If_/ConvertIfToWhen
+```
+
+This will create a rule in the `src/Rector/If_/` directory with the namespace `RectorLaravel\Rector\If_`.
+
+Remember to always add `--` before the arguments when using the composer script. This separator tells Composer that the following arguments should be passed to the script rather than being interpreted as Composer arguments.
+
 ## Contributors
 
 Thank you everyone who works so hard on improving this package:
