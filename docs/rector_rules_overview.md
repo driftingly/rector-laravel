@@ -726,7 +726,7 @@ Change `app()` func calls to facade calls
      public function run()
      {
 -        return app('translator')->trans('value');
-+        return \Illuminate\Support\Facades\App::get('translator')->trans('value');
++        return \Illuminate\Support\Facades\App::make('translator')->trans('value');
      }
  }
 ```
