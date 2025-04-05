@@ -22,13 +22,32 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddParentRegisterToEventServiceProviderRector extends AbstractRector
 {
-    private const string REGISTER = 'register';
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeAnalyzer\StaticCallAnalyzer
+     */
+    private $staticCallAnalyzer;
+    /**
+     * @readonly
+     * @var \Rector\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+    /**
+     * @readonly
+     * @var \PHPStan\Reflection\ReflectionProvider
+     */
+    private $reflectionProvider;
+    /**
+     * @var string
+     */
+    private const REGISTER = 'register';
 
-    public function __construct(
-        private readonly StaticCallAnalyzer $staticCallAnalyzer,
-        private readonly ReflectionResolver $reflectionResolver,
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
+    public function __construct(StaticCallAnalyzer $staticCallAnalyzer, ReflectionResolver $reflectionResolver, ReflectionProvider $reflectionProvider)
+    {
+        $this->staticCallAnalyzer = $staticCallAnalyzer;
+        $this->reflectionResolver = $reflectionResolver;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

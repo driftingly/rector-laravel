@@ -24,14 +24,25 @@ use Webmozart\Assert\Assert;
  */
 class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    final public const string ALLOWED_PATTERNS = 'allowed_patterns';
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer
+     */
+    private $queryBuilderAnalyzer;
+    /**
+     * @var string
+     */
+    public const ALLOWED_PATTERNS = 'allowed_patterns';
 
     /**
      * @var string[]
      */
-    private array $allowedPatterns = [];
+    private $allowedPatterns = [];
 
-    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
+    public function __construct(QueryBuilderAnalyzer $queryBuilderAnalyzer)
+    {
+        $this->queryBuilderAnalyzer = $queryBuilderAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -21,10 +21,12 @@ class ReplaceAssertTimesSendWithAssertSentTimesRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_SAMPLE'
 Notification::assertTimesSent(1, SomeNotification::class);
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                 <<<'CODE_SAMPLE'
 Notification::assertSentTimes(SomeNotification::class, 1);
-CODE_SAMPLE,
+CODE_SAMPLE
+
             ),
         ]);
     }

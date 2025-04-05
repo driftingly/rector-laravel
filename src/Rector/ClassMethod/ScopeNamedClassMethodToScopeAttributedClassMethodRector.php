@@ -22,12 +22,26 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends AbstractRector
 {
-    private const string SCOPE_ATTRIBUTE = 'Illuminate\Database\Eloquent\Attributes\Scope';
+    /**
+     * @readonly
+     * @var \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer
+     */
+    private $phpAttributeAnalyzer;
+    /**
+     * @readonly
+     * @var \PHPStan\Reflection\ReflectionProvider
+     */
+    private $reflectionProvider;
+    /**
+     * @var string
+     */
+    private const SCOPE_ATTRIBUTE = 'Illuminate\Database\Eloquent\Attributes\Scope';
 
-    public function __construct(
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
+    public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer, ReflectionProvider $reflectionProvider)
+    {
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -37,12 +51,13 @@ final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends Abst
                 <<<'CODE_SAMPLE'
 class User extends Model
 {
-    public function scopeActive($query)
-    {
-        return $query->where('active', 1);
-    }
+public function scopeActive($query)
+{
+return $query->where('active', 1);
 }
-CODE_SAMPLE,
+}
+CODE_SAMPLE
+,
                 <<<'CODE_SAMPLE'
 class User extends Model
 {
@@ -84,7 +99,7 @@ CODE_SAMPLE
         foreach ($node->getMethods() as $classMethod) {
             $name = $this->getName($classMethod);
             // make sure it starts with scope and the next character is upper case
-            if (! str_starts_with($name, 'scope') || ! ctype_upper(substr($name, 5, 1))) {
+            if (strncmp($name, 'scope', strlen('scope')) !== 0 || ! ctype_upper(substr($name, 5, 1))) {
                 continue;
             }
 

@@ -23,10 +23,12 @@ class RefactorBlueprintGeometryColumnsRector extends AbstractRector
             'refactors calls with the pre Laravel 11 methods for blueprint geometry columns',
             [new CodeSample(<<<'CODE_SAMPLE'
 $blueprint->point('coordinates')->spatialIndex();
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                 <<<'CODE_SAMPLE'
 $blueprint->geometry('coordinates', 'point')->spatialIndex();
-CODE_SAMPLE,
+CODE_SAMPLE
+
             )]
         );
     }

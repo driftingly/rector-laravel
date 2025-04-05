@@ -15,13 +15,29 @@ use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 use RectorLaravel\ValueObject\ExpectedClassMethodMethodCalls;
 
-final readonly class ExpectedClassMethodAnalyzer
+final class ExpectedClassMethodAnalyzer
 {
-    public function __construct(
-        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser,
-        private NodeNameResolver $nodeNameResolver,
-        private NodeTypeResolver $nodeTypeResolver,
-    ) {}
+    /**
+     * @readonly
+     * @var \Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser
+     */
+    private $simpleCallableNodeTraverser;
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\NodeTypeResolver
+     */
+    private $nodeTypeResolver;
+    public function __construct(SimpleCallableNodeTraverser $simpleCallableNodeTraverser, NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver)
+    {
+        $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodeTypeResolver = $nodeTypeResolver;
+    }
 
     public function findExpectedJobCallsWithClassMethod(ClassMethod $classMethod): ?ExpectedClassMethodMethodCalls
     {
@@ -34,8 +50,8 @@ final readonly class ExpectedClassMethodAnalyzer
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod, function (Node $node) use (
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
-            &$reasonsToNotContinue,
-        ): array|int|Node|null {
+            &$reasonsToNotContinue
+        ) {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -90,8 +106,8 @@ final readonly class ExpectedClassMethodAnalyzer
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod, function (Node $node) use (
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
-            &$reasonsToNotContinue,
-        ): array|int|Node|null {
+            &$reasonsToNotContinue
+        ) {
             if (! $node instanceof MethodCall) {
                 return null;
             }

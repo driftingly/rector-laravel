@@ -25,10 +25,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ReplaceExpectsMethodsInTestsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ExpectedClassMethodAnalyzer $expectedClassMethodAnalyzer,
-        private readonly DispatchableTestsMethodsFactory $dispatchableTestsMethodsFactory,
-    ) {}
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeAnalyzer\ExpectedClassMethodAnalyzer
+     */
+    private $expectedClassMethodAnalyzer;
+    /**
+     * @readonly
+     * @var \RectorLaravel\NodeFactory\DispatchableTestsMethodsFactory
+     */
+    private $dispatchableTestsMethodsFactory;
+    public function __construct(ExpectedClassMethodAnalyzer $expectedClassMethodAnalyzer, DispatchableTestsMethodsFactory $dispatchableTestsMethodsFactory)
+    {
+        $this->expectedClassMethodAnalyzer = $expectedClassMethodAnalyzer;
+        $this->dispatchableTestsMethodsFactory = $dispatchableTestsMethodsFactory;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -119,11 +130,7 @@ CODE_SAMPLE
     ): void {
         $this->removeAndReplaceMethodCalls($classMethod, $expectedClassMethodMethodCalls->getAllMethodCalls(), $expectedClassMethodMethodCalls->getItemsToFake(), $facade);
 
-        $statements = [
-            ...($classMethod->stmts ?? []),
-            ...$this->dispatchableTestsMethodsFactory->assertStatements($expectedClassMethodMethodCalls->getExpectedItems(), $facade),
-            ...$this->dispatchableTestsMethodsFactory->assertNotStatements($expectedClassMethodMethodCalls->getNotExpectedItems(), $facade),
-        ];
+        $statements = array_merge($classMethod->stmts ?? [], $this->dispatchableTestsMethodsFactory->assertStatements($expectedClassMethodMethodCalls->getExpectedItems(), $facade), $this->dispatchableTestsMethodsFactory->assertNotStatements($expectedClassMethodMethodCalls->getNotExpectedItems(), $facade));
 
         $classMethod->stmts = $statements;
 
@@ -136,7 +143,7 @@ CODE_SAMPLE
     private function removeAndReplaceMethodCalls(ClassMethod $classMethod, array $expectedMethodCalls, array $classes, string $facade): void
     {
         $first = true;
-        $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$first, $expectedMethodCalls, $classes, $facade): Expression|int|null {
+        $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$first, $expectedMethodCalls, $classes, $facade) {
             $match = false;
             if (! $node instanceof Expression) {
                 return null;

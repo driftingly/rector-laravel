@@ -20,12 +20,26 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class TypeHintTappableCallRector extends AbstractRector
 {
-    private const string TAPPABLE_TRAIT = 'Illuminate\Support\Traits\Tappable';
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\TypeComparator\TypeComparator
+     */
+    private $typeComparator;
+    /**
+     * @readonly
+     * @var \Rector\StaticTypeMapper\StaticTypeMapper
+     */
+    private $staticTypeMapper;
+    /**
+     * @var string
+     */
+    private const TAPPABLE_TRAIT = 'Illuminate\Support\Traits\Tappable';
 
-    public function __construct(
-        private readonly TypeComparator $typeComparator,
-        private readonly StaticTypeMapper $staticTypeMapper
-    ) {}
+    public function __construct(TypeComparator $typeComparator, StaticTypeMapper $staticTypeMapper)
+    {
+        $this->typeComparator = $typeComparator;
+        $this->staticTypeMapper = $staticTypeMapper;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -34,14 +48,16 @@ class TypeHintTappableCallRector extends AbstractRector
             [
                 new CodeSample(<<<'CODE_SAMPLE'
 tap($collection, function ($collection) {}
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                     <<<'CODE_SAMPLE'
 tap($collection, function (Collection $collection) {}
 CODE_SAMPLE
                 ),
                 new CodeSample(<<<'CODE_SAMPLE'
 (new Collection)->tap(function ($collection) {}
-CODE_SAMPLE,
+CODE_SAMPLE
+,
                     <<<'CODE_SAMPLE'
 (new Collection)->tap(function (Collection $collection) {}
 CODE_SAMPLE

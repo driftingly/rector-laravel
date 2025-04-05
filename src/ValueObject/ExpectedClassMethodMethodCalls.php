@@ -7,8 +7,28 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
 use Webmozart\Assert\Assert;
 
-final readonly class ExpectedClassMethodMethodCalls
+final class ExpectedClassMethodMethodCalls
 {
+    /**
+     * @var MethodCall[]
+     * @readonly
+     */
+    private $expectedMethodCalls = [];
+    /**
+     * @var list<String_|ClassConstFetch>
+     * @readonly
+     */
+    private $expectedItems = [];
+    /**
+     * @var MethodCall[]
+     * @readonly
+     */
+    private $notExpectedMethodCalls = [];
+    /**
+     * @var list<String_|ClassConstFetch>
+     * @readonly
+     */
+    private $notExpectedItems = [];
     /**
      * @param  MethodCall[]  $expectedMethodCalls
      * @param  list<String_|ClassConstFetch>  $expectedItems
@@ -16,11 +36,15 @@ final readonly class ExpectedClassMethodMethodCalls
      * @param  list<String_|ClassConstFetch>  $notExpectedItems
      */
     public function __construct(
-        private array $expectedMethodCalls = [],
-        private array $expectedItems = [],
-        private array $notExpectedMethodCalls = [],
-        private array $notExpectedItems = []
+        array $expectedMethodCalls = [],
+        array $expectedItems = [],
+        array $notExpectedMethodCalls = [],
+        array $notExpectedItems = []
     ) {
+        $this->expectedMethodCalls = $expectedMethodCalls;
+        $this->expectedItems = $expectedItems;
+        $this->notExpectedMethodCalls = $notExpectedMethodCalls;
+        $this->notExpectedItems = $notExpectedItems;
         Assert::allIsInstanceOf($this->expectedMethodCalls, MethodCall::class);
         Assert::allIsInstanceOf($this->notExpectedMethodCalls, MethodCall::class);
         Assert::allIsInstanceOfAny($this->expectedItems, [String_::class, ClassConstFetch::class]);

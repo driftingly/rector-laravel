@@ -36,8 +36,46 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\TypeComparator\TypeComparator
+     */
+    private $typeComparator;
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\StaticTypeMapper\StaticTypeMapper
+     */
+    private $staticTypeMapper;
+    /**
+     * @readonly
+     * @var \PHPStan\Reflection\ReflectionProvider
+     */
+    private $reflectionProvider;
+    /**
+     * @readonly
+     * @var string
+     */
+    private $applicationClass = 'Illuminate\Foundation\Application';
     // Relation methods which are supported by this Rector.
-    private const array RELATION_METHODS = [
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_METHODS = [
         'hasOne', 'hasOneThrough', 'morphOne',
         'belongsTo', 'morphTo',
         'hasMany', 'hasManyThrough', 'morphMany',
@@ -45,22 +83,32 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
     ];
 
     // Relation methods which need the class as TChildModel.
-    private const array RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
 
     // Relation methods which need the class as TIntermediateModel.
-    private const array RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
 
-    private bool $shouldUseNewGenerics = false;
+    /**
+     * @var bool
+     */
+    private $shouldUseNewGenerics = false;
 
-    public function __construct(
-        private readonly TypeComparator $typeComparator,
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
-        private readonly BetterNodeFinder $betterNodeFinder,
-        private readonly StaticTypeMapper $staticTypeMapper,
-        private readonly ReflectionProvider $reflectionProvider,
-        private readonly string $applicationClass = 'Illuminate\Foundation\Application',
-    ) {}
+    public function __construct(TypeComparator $typeComparator, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder, StaticTypeMapper $staticTypeMapper, ReflectionProvider $reflectionProvider, string $applicationClass = 'Illuminate\Foundation\Application')
+    {
+        $this->typeComparator = $typeComparator;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->staticTypeMapper = $staticTypeMapper;
+        $this->reflectionProvider = $reflectionProvider;
+        $this->applicationClass = $applicationClass;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -221,7 +269,7 @@ CODE_SAMPLE
 
         $genericTypeNode = new GenericTypeNode(
             new FullyQualifiedIdentifierTypeNode($methodReturnTypeName),
-            $this->getGenericTypes($relatedClass, $classForChildGeneric, $classForIntermediateGeneric),
+            $this->getGenericTypes($relatedClass, $classForChildGeneric, $classForIntermediateGeneric)
         );
 
         // Update or add return tag
@@ -254,7 +302,9 @@ CODE_SAMPLE
     {
         $node = $this->betterNodeFinder->findFirstInFunctionLikeScoped(
             $classMethod,
-            fn (Node $subNode): bool => $subNode instanceof Return_
+            function (Node $subNode): bool {
+                return $subNode instanceof Return_;
+            }
         );
 
         if (! $node instanceof Return_) {
@@ -301,7 +351,7 @@ CODE_SAMPLE
 
         $classReflection = $scope->getClassReflection();
 
-        return $classReflection?->getName();
+        return ($nullsafeVariable1 = $classReflection) ? $nullsafeVariable1->getName() : null;
     }
 
     /**
@@ -354,7 +404,7 @@ CODE_SAMPLE
 
         return $this->typeComparator->areTypesEqual(
             $methodReturnTypePHPStanType,
-            $phpDocPHPStanTypeWithoutGenerics,
+            $phpDocPHPStanTypeWithoutGenerics
         );
     }
 

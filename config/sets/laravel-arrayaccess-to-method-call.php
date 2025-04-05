@@ -15,28 +15,28 @@ return static function (RectorConfig $rectorConfig): void {
             [
                 new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Foundation\Application'),
-                    'make',
+                    'make'
                 ),
                 new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Contracts\Foundation\Application'),
-                    'make',
+                    'make'
                 ),
                 new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Config\Repository'),
-                    'get',
+                    'get'
                 ),
                 new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Contracts\Config\Repository'),
-                    'make',
+                    'make'
                 ),
                 new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Contracts\Container\Container\Application'),
-                    'make',
+                    'make'
                 ),
                 new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Contracts\Container\Container'),
-                    'make',
+                    'make'
                 ),
-            ],
+            ]
         );
 };

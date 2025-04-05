@@ -24,16 +24,25 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class MinutesToSecondsInCacheRector extends AbstractRector
 {
-    private const string PUT = 'put';
+    /**
+     * @var string
+     */
+    private const PUT = 'put';
 
-    private const string ADD = 'add';
+    /**
+     * @var string
+     */
+    private const ADD = 'add';
 
-    private const string REMEMBER = 'remember';
+    /**
+     * @var string
+     */
+    private const REMEMBER = 'remember';
 
     /**
      * @var TypeToTimeMethodAndPosition[]
      */
-    private array $typeToTimeMethodsAndPositions = [];
+    private $typeToTimeMethodsAndPositions = [];
 
     public function __construct()
     {
@@ -125,11 +134,15 @@ CODE_SAMPLE
         return $node;
     }
 
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall $node
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|null
+     */
     private function processArgumentOnPosition(
-        StaticCall|MethodCall $node,
+        $node,
         Expr $argExpr,
         int $argumentPosition
-    ): StaticCall|MethodCall|null {
+    ) {
         if (! $this->nodeTypeResolver->isNumberType($argExpr)) {
             return null;
         }

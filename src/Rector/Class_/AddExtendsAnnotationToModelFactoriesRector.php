@@ -28,14 +28,31 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
 {
-    private const string EXTENDS_TAG_NAME = '@extends';
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+    /**
+     * @var string
+     */
+    private const EXTENDS_TAG_NAME = '@extends';
 
-    private const string FACTORY_CLASS_NAME = 'Illuminate\Database\Eloquent\Factories\Factory';
+    /**
+     * @var string
+     */
+    private const FACTORY_CLASS_NAME = 'Illuminate\Database\Eloquent\Factories\Factory';
 
-    public function __construct(
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
-    ) {}
+    public function __construct(DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory)
+    {
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

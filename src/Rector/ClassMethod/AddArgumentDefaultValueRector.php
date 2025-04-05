@@ -21,12 +21,15 @@ use Webmozart\Assert\Assert;
  */
 final class AddArgumentDefaultValueRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    final public const string ADDED_ARGUMENTS = 'added_arguments';
+    /**
+     * @var string
+     */
+    public const ADDED_ARGUMENTS = 'added_arguments';
 
     /**
      * @var AddArgumentDefaultValue[]
      */
-    private array $addedArguments = [];
+    private $addedArguments = [];
 
     public function getRuleDefinition(): RuleDefinition
     {

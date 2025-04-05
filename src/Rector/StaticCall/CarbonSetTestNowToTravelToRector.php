@@ -20,7 +20,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CarbonSetTestNowToTravelToRector extends AbstractRector
 {
-    public function __construct(private readonly ReflectionProvider $reflectionProvider) {}
+    /**
+     * @readonly
+     * @var \PHPStan\Reflection\ReflectionProvider
+     */
+    private $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * @throws PoorDocumentationException
@@ -57,7 +65,7 @@ class SomeTest extends TestCase
 }
 CODE_SAMPLE
                 ),
-            ],
+            ]
         );
     }
 
@@ -100,7 +108,7 @@ CODE_SAMPLE
         return $this->nodeFactory->createMethodCall(
             new Variable('this'),
             'travelTo',
-            $args,
+            $args
         );
     }
 

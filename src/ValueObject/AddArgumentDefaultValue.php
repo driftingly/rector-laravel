@@ -6,14 +6,38 @@ namespace RectorLaravel\ValueObject;
 
 use PHPStan\Type\ObjectType;
 
-final readonly class AddArgumentDefaultValue
+final class AddArgumentDefaultValue
 {
-    public function __construct(
-        private string $class,
-        private string $method,
-        private int $position,
-        private mixed $defaultValue
-    ) {}
+    /**
+     * @readonly
+     * @var string
+     */
+    private $class;
+    /**
+     * @readonly
+     * @var string
+     */
+    private $method;
+    /**
+     * @readonly
+     * @var int
+     */
+    private $position;
+    /**
+     * @readonly
+     * @var mixed
+     */
+    private $defaultValue;
+    /**
+     * @param mixed $defaultValue
+     */
+    public function __construct(string $class, string $method, int $position, $defaultValue)
+    {
+        $this->class = $class;
+        $this->method = $method;
+        $this->position = $position;
+        $this->defaultValue = $defaultValue;
+    }
 
     public function getObjectType(): ObjectType
     {
@@ -30,7 +54,10 @@ final readonly class AddArgumentDefaultValue
         return $this->position;
     }
 
-    public function getDefaultValue(): mixed
+    /**
+     * @return mixed
+     */
+    public function getDefaultValue()
     {
         return $this->defaultValue;
     }
