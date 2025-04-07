@@ -9,14 +9,12 @@ use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration;
 use RectorLaravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
-use RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector;
 
 // https://laravel-news.com/laravel-5-8-deprecates-string-and-array-helpers
 // https://github.com/laravel/framework/pull/26898
 // see: https://laravel.com/docs/5.8/upgrade
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/laravel-array-str-functions-to-static-call.php');
-    $rectorConfig->rule(MinutesToSecondsInCacheRector::class);
 
     $rectorConfig
         ->ruleWithConfiguration(
