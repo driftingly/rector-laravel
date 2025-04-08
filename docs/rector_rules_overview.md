@@ -1,4 +1,4 @@
-# 78 Rules Overview
+# 79 Rules Overview
 
 ## AbortIfRector
 
@@ -329,6 +329,21 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
 +        $this->get('/')->assertServiceUnavailable();
      }
  }
+```
+
+<br>
+
+## AssertWithClassStringToTypeHintedClosureRector
+
+Changes assert calls to use a type hinted closure.
+
+- class: [`RectorLaravel\Rector\StaticCall\AssertWithClassStringToTypeHintedClosureRector`](../src/Rector/StaticCall/AssertWithClassStringToTypeHintedClosureRector.php)
+
+```diff
+-Bus::assertDispatched(OrderCreated::class, function ($job) {
++Bus::assertDispatched(function (OrderCreated $job) {
+     return true;
+ });
 ```
 
 <br>
@@ -711,7 +726,7 @@ Change `app()` func calls to facade calls
      public function run()
      {
 -        return app('translator')->trans('value');
-+        return \Illuminate\Support\Facades\App::get('translator')->trans('value');
++        return \Illuminate\Support\Facades\App::make('translator')->trans('value');
      }
  }
 ```
