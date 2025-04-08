@@ -34,6 +34,6 @@ final class AddGenericReturnTypeToRelationsRectorNewGenericsTest extends Abstrac
 
     public function version(): string
     {
-        return '11.15.0';
+        return '12.3.0';
     }
 }

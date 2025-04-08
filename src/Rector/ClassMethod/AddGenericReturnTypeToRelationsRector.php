@@ -492,10 +492,9 @@ CODE_SAMPLE
 
     private function setShouldUsePivotGeneric(): void
     {
-        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
-
-        if (is_string($reflectionClassConstant->getValue())) {
-            $this->shouldUsePivotGeneric = version_compare($reflectionClassConstant->getValue(), '12.3.0', '>=');
-        }
+        $this->shouldUsePivotGeneric = $this->applicationAnalyzer->isVersion(
+            '>=',
+            '12.3.0'
+        );
     }
 }
