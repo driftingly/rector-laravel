@@ -26,7 +26,7 @@ use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use RectorLaravel\AbstractRector;
-use ReflectionClassConstant;
+use RectorLaravel\NodeAnalyzer\ApplicationAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -60,7 +60,7 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly StaticTypeMapper $staticTypeMapper,
         private readonly ReflectionProvider $reflectionProvider,
-        private readonly string $applicationClass = 'Illuminate\Foundation\Application',
+        private readonly ApplicationAnalyzer $applicationAnalyzer,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -484,19 +484,17 @@ CODE_SAMPLE
 
     private function setShouldUseNewGenerics(): void
     {
-        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
-
-        if (is_string($reflectionClassConstant->getValue())) {
-            $this->shouldUseNewGenerics = version_compare($reflectionClassConstant->getValue(), '11.15.0', '>=');
-        }
+        $this->shouldUseNewGenerics = $this->applicationAnalyzer->isVersion(
+            '>=',
+            '11.15.0'
+        );
     }
 
     private function setShouldUsePivotGeneric(): void
     {
-        $reflectionClassConstant = new ReflectionClassConstant($this->applicationClass, 'VERSION');
-
-        if (is_string($reflectionClassConstant->getValue())) {
-            $this->shouldUsePivotGeneric = version_compare($reflectionClassConstant->getValue(), '12.3.0', '>=');
-        }
+        $this->shouldUsePivotGeneric = $this->applicationAnalyzer->isVersion(
+            '>=',
+            '12.3.0'
+        );
     }
 }

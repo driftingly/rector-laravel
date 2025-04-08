@@ -13,6 +13,8 @@ if (class_exists('Illuminate\Foundation\Application')) {
 
 class Application extends Container implements ApplicationContract
 {
+    const VERSION = '12.0.0';
+
     public function tagged(string $tagName): iterable
     {
         return [];
