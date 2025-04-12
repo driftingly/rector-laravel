@@ -17,7 +17,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosurePara
 
 use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector\Source\FooModel;
 
-FooModel::where(function (\Illuminate\Contracts\Database\Query\Builder $query) {
+FooModel::where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
     $query->where('id', 1)
         ->orWhere('id', 2);
 });
