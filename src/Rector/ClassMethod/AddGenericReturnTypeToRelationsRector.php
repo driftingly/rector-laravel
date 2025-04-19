@@ -376,6 +376,8 @@ CODE_SAMPLE
             $returnTagValueNode->type,
             $node
         );
+        $relationUsesPivots = $this->typeComparator->isSubtype($phpDocPHPStanType, new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany'))
+            || $this->typeComparator->isSubtype($phpDocPHPStanType, new ObjectType('Illuminate\Database\Eloquent\Relations\MorphToMany'));
 
         if (! $phpDocPHPStanType instanceof GenericObjectType) {
             return false;
@@ -386,8 +388,12 @@ CODE_SAMPLE
             return false;
         }
 
-        if (! $this->typeComparator->areTypesEqual($phpDocTypes[0], new ObjectType($relatedClass))) {
-            return false;
+        if (
+            $this->typeComparator->areTypesEqual($phpDocTypes[0], new ObjectType($relatedClass))
+            && $phpDocTypes[1] instanceof ThisType
+            && ! $relationUsesPivots
+        ) {
+            return true;
         }
 
         if (! $this->shouldUseNewGenerics) {
@@ -404,19 +410,21 @@ CODE_SAMPLE
             return $this->typeComparator->areTypesEqual($phpDocTypes[1], new ObjectType($classForChildGeneric));
         }
 
-        $phpDocHasIntermediateGeneric = count($phpDocTypes) === 3;
-
-        if ($classForIntermediateGeneric === null && ! $phpDocHasIntermediateGeneric) {
+        if ($classForIntermediateGeneric === null && $relationUsesPivots) {
             // If there are less than three generics, it means method is using the old format. We should update it.
             if (count($phpDocTypes) < 3) {
                 return false;
             }
 
             // We want to convert the existing relationship definition to use `$this` as the second generic
-            return $phpDocTypes[1] instanceof ThisType;
+            // but only if the PHPDoc Tag doesn't look valid already
+            return
+                $this->typeComparator->areTypesEqual($phpDocTypes[0], new ObjectType($relatedClass))
+                && $phpDocTypes[1] instanceof ThisType
+                && $this->typeComparator->isSubtype($phpDocTypes[2], new ObjectType('Illuminate\Database\Eloquent\Relations\Pivot'));
         }
 
-        if ($classForIntermediateGeneric === null || ! $phpDocHasIntermediateGeneric) {
+        if ($classForIntermediateGeneric === null) {
             return false;
         }
 
