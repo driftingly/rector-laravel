@@ -112,7 +112,9 @@ CODE_SAMPLE
 
     private function isAllowedPattern(MethodCall $methodCall): bool
     {
-        $columnArg = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
+        $columnArg = $methodCall->args !== [] && $methodCall->args[0] instanceof Arg
+            ? $methodCall->args[0]->value
+            : null;
 
         // If no patterns are specified, consider all column names as matching
         if ($this->allowedPatterns === []) {
@@ -142,19 +144,19 @@ CODE_SAMPLE
         return false;
     }
 
-    private function convertOrderByToLatest(MethodCall $methodCall): MethodCall
+    private function convertOrderByToLatest(MethodCall $methodCall): ?MethodCall
     {
         if (! isset($methodCall->args[0]) && ! $methodCall->args[0] instanceof VariadicPlaceholder) {
-            return $methodCall;
+            return null;
         }
 
         $columnVar = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
         if (! $columnVar instanceof Expr) {
-            return $methodCall;
+            return null;
         }
 
         if (isset($methodCall->args[1]) && (! $methodCall->args[1] instanceof Arg || ! $methodCall->args[1]->value instanceof String_)) {
-            return $methodCall;
+            return null;
         }
 
         if (isset($methodCall->args[1]) && $methodCall->args[1] instanceof Arg && $methodCall->args[1]->value instanceof String_) {

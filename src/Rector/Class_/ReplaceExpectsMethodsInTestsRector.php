@@ -87,6 +87,8 @@ CODE_SAMPLE
             return null;
         }
 
+        $hasChanged = false;
+
         foreach ($node->getMethods() as $classMethod) {
             $result = $this->expectedClassMethodAnalyzer->findExpectedJobCallsWithClassMethod($classMethod);
 
@@ -96,6 +98,7 @@ CODE_SAMPLE
 
             if ($result->isActionable()) {
                 $this->fixUpClassMethod($classMethod, $result, 'Illuminate\Support\Facades\Bus');
+                $hasChanged = true;
             }
 
             $result = $this->expectedClassMethodAnalyzer->findExpectedEventCallsWithClassMethod($classMethod);
@@ -106,10 +109,14 @@ CODE_SAMPLE
 
             if ($result->isActionable()) {
                 $this->fixUpClassMethod($classMethod, $result, 'Illuminate\Support\Facades\Event');
+                $hasChanged = true;
             }
         }
 
-        return $node;
+        return $hasChanged
+            ? $node
+            : null;
+
     }
 
     private function fixUpClassMethod(

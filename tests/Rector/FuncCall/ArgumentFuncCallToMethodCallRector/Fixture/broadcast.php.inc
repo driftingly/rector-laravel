@@ -18,12 +18,12 @@ namespace RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector
 
 class Broadcast
 {
-    public function __construct(private readonly \Illuminate\Contracts\Broadcasting\Factory $broadcastingFactory)
+    public function __construct(private readonly \Illuminate\Contracts\Broadcasting\Factory $factory)
     {
     }
     public function action()
     {
-        return $this->broadcastingFactory->event('template.blade');
+        return $this->factory->event('template.blade');
     }
 }
 

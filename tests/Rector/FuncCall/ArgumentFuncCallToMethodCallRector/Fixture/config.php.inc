@@ -23,17 +23,17 @@ namespace RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector
 
 class Config
 {
-    public function __construct(private readonly \Illuminate\Contracts\Config\Repository $configRepository)
+    public function __construct(private readonly \Illuminate\Contracts\Config\Repository $repository)
     {
     }
     public function actionGet()
     {
-        $value = $this->configRepository->get('value');
+        $value = $this->repository->get('value');
     }
 
     public function actionSet($value)
     {
-        $this->configRepository->set(['value' => $value]);
+        $this->repository->set(['value' => $value]);
     }
 }
 
