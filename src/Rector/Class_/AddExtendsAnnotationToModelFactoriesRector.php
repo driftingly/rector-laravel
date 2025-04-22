@@ -83,6 +83,8 @@ CODE_SAMPLE
             return null;
         }
 
+        $hasChanged = false;
+
         foreach ($node->stmts as $stmt) {
             if (! $stmt instanceof Property) {
                 continue;
@@ -92,32 +94,36 @@ CODE_SAMPLE
                 continue;
             }
 
-            $this->addExtendsPhpDocTag($node, $stmt);
-
-            $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
+            $hasChanged = $this->addExtendsPhpDocTag($node, $stmt);
 
             break;
         }
 
-        return $node;
+        if ($hasChanged) {
+            $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
+
+            return $node;
+        }
+
+        return null;
     }
 
-    public function addExtendsPhpDocTag(Node $node, Property $property): void
+    private function addExtendsPhpDocTag(Node $node, Property $property): bool
     {
         if ($property->props === []) {
-            return;
+            return false;
         }
 
         $modelName = $this->getModelName($property->props[0]->default);
 
         if ($modelName === null) {
-            return;
+            return false;
         }
 
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
 
         if ($phpDocInfo->hasByName(self::EXTENDS_TAG_NAME)) {
-            return;
+            return false;
         }
 
         $phpDocTagNode = new PhpDocTagNode(self::EXTENDS_TAG_NAME, new ExtendsTagValueNode(
@@ -129,6 +135,8 @@ CODE_SAMPLE
         ));
 
         $phpDocInfo->addPhpDocTagNode($phpDocTagNode);
+
+        return true;
     }
 
     private function getModelName(?Expr $expr): ?string

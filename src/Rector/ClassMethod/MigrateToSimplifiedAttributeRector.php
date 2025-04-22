@@ -55,6 +55,8 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
         $classMethods = $node->getMethods();
 
+        $hasChanged = false;
+
         foreach ($node->stmts as $key => $stmt) {
             if (! $stmt instanceof ClassMethod) {
                 continue;
@@ -68,12 +70,17 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
             if ($newNode instanceof ClassMethod) {
                 $node->stmts[$key] = $newNode;
+                $hasChanged = true;
             } elseif ($newNode === NodeVisitor::REMOVE_NODE) {
                 unset($node->stmts[$key]);
+                $hasChanged = true;
             }
         }
 
-        return $node;
+        return $hasChanged
+            ? $node
+            : null;
+
     }
 
     public function getRuleDefinition(): RuleDefinition
