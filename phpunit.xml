@@ -6,6 +6,7 @@
     colors="true"
     executionOrder="defects"
     cacheDirectory=".phpunit.cache"
+    displayDetailsOnTestsThatTriggerWarnings="true"
 >
     <testsuites>
         <testsuite name="main">

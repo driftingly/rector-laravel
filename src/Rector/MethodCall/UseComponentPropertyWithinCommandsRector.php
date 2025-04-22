@@ -78,22 +78,35 @@ CODE_SAMPLE
             return null;
         }
 
+        $hasChanged = false;
+
         foreach ($node->stmts as $key => $stmt) {
             if (! $stmt instanceof ClassMethod) {
                 continue;
             }
 
-            $node->stmts[$key] = $this->refactorClassMethod($stmt);
+            $changedClassMethod = $this->refactorClassMethod($stmt);
+
+            if ($changedClassMethod instanceof ClassMethod) {
+                $node->stmts[$key] = $changedClassMethod;
+
+                $hasChanged = true;
+            }
         }
 
-        return $node;
+        return $hasChanged
+            ? $node
+            : null;
+
     }
 
-    private function refactorClassMethod(ClassMethod $classMethod): ClassMethod
+    private function refactorClassMethod(ClassMethod $classMethod): ?ClassMethod
     {
         if ($classMethod->stmts === null) {
-            return $classMethod;
+            return null;
         }
+
+        $hasChanged = false;
 
         foreach ($classMethod->stmts as $stmt) {
             if (! $stmt instanceof Expression) {
@@ -123,8 +136,12 @@ CODE_SAMPLE
 
             $stmt->expr->var =
                 new PropertyFetch(new Variable('this'), 'components');
+
+            $hasChanged = true;
         }
 
-        return $classMethod;
+        return $hasChanged
+            ? $classMethod
+            : null;
     }
 }
