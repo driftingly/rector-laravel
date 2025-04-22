@@ -112,7 +112,9 @@ CODE_SAMPLE
 
     private function isAllowedPattern(MethodCall $methodCall): bool
     {
-        $columnArg = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
+        $columnArg = $methodCall->args !== [] && $methodCall->args[0] instanceof Arg
+            ? $methodCall->args[0]->value
+            : null;
 
         // If no patterns are specified, consider all column names as matching
         if ($this->allowedPatterns === []) {
