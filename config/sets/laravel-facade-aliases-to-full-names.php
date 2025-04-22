@@ -18,6 +18,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Bus' => 'Illuminate\Support\Facades\Bus',
         'Cache' => 'Illuminate\Support\Facades\Cache',
         'Config' => 'Illuminate\Support\Facades\Config',
+        'Context' => 'Illuminate\Support\Facades\Context',
         'Cookie' => 'Illuminate\Support\Facades\Cookie',
         'Crypt' => 'Illuminate\Support\Facades\Crypt',
         'Date' => 'Illuminate\Support\Facades\Date',
