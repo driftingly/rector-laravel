@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 class SomeClass extends Model
 {
     #[\Illuminate\Database\Eloquent\Attributes\Scope]
-    public function someMethod()
+    protected function someMethod()
     {
 
     }
