@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\ClassMethod;
 
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
@@ -98,6 +99,7 @@ CODE_SAMPLE
                 continue;
             }
 
+            $classMethod->flags = Modifiers::PROTECTED;
             $classMethod->name = new Identifier($newName);
             $classMethod->attrGroups[] = new AttributeGroup([new Attribute(new FullyQualified(self::SCOPE_ATTRIBUTE))]);
             $changes = true;
