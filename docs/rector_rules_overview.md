@@ -1288,12 +1288,18 @@ Change request variable definition in Facade
 -$_POST;
 -$_GET;
 -$_REQUEST;
+-isset($_GET['value']);
+-isset($_POST['value']);
+-isset($_REQUEST['value']);
 +\Illuminate\Support\Facades\Request::query('value');
 +\Illuminate\Support\Facades\Request::post('value');
 +\Illuminate\Support\Facades\Request::input('value');
 +\Illuminate\Support\Facades\Request::query();
 +\Illuminate\Support\Facades\Request::post();
 +\Illuminate\Support\Facades\Request::all();
++\Illuminate\Support\Facades\Request::query('value') !== null;
++\Illuminate\Support\Facades\Request::post('value') !== null;
++\Illuminate\Support\Facades\Request::exists('value');
 ```
 
 <br>
