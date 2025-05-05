@@ -60,6 +60,10 @@ CODE_SAMPLE
             return $this->refactorClassMethod($node);
         }
 
+        if ($node instanceof MethodCall && $this->isName($node->name, 'validate')) {
+            return $this->refactorValidateCall($node);
+        }
+
         return $this->refactorCall($node);
     }
 
@@ -120,6 +124,30 @@ CODE_SAMPLE
         }
 
         return $this->processValidationRules($rulesArgument) ? $node : null;
+    }
+
+    private function refactorValidateCall(MethodCall $methodCall): ?MethodCall
+    {
+        if (! $this->isObjectType($methodCall->var, new ObjectType('Illuminate\Http\Request'))) {
+            return null;
+        }
+
+        if ($methodCall->args === []) {
+            return null;
+        }
+
+        if (! $methodCall->args[0] instanceof Arg) {
+            return null;
+        }
+
+        // The first argument should be the rules array
+        $rulesArgument = $methodCall->args[0]->value;
+
+        if (! $rulesArgument instanceof Array_) {
+            return null;
+        }
+
+        return $this->processValidationRules($rulesArgument) ? $methodCall : null;
     }
 
     private function refactorClassMethod(ClassLike $classLike): ?ClassLike
