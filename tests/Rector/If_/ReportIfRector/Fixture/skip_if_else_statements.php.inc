@@ -1,25 +1,25 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\If_\AbortIfRector\Fixture;
+namespace RectorLaravel\Tests\Rector\If_\ReportIfRector\Fixture;
 
 class SkipIfElseStatements
 {
     public function run($condition)
     {
         if ($condition) {
-            abort(404);
+            report(new Exception());
         } else {
             echo 'hello';
         }
 
         if ($condition) {
-            abort(404);
+            report(new Exception());
         } else if ($condition + 1) {
             echo 'hello';
         }
 
         if ($condition) {
-            abort(404);
+            report(new Exception());
         } elseif ($condition + 1) {
             echo 'hello';
         }
