@@ -55,6 +55,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if ($node->else !== null || $node->elseifs !== []) {
+            return null;
+        }
+
         $ifStmts = $node->stmts;
 
         // Check if there's a single throw statement inside the if
