@@ -11,9 +11,11 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\NodeVisitor;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -55,6 +57,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if ($node->else instanceof Else_ || $node->elseifs !== []) {
+            return null;
+        }
+
         $ifStmts = $node->stmts;
 
         // Check if there's a single throw statement inside the if
@@ -72,17 +78,26 @@ CODE_SAMPLE
         // Check if the condition is a negation
         if ($condition instanceof BooleanNot) {
             // Create a new throw_unless function call
-            return new Expression(new FuncCall(new Name('throw_unless'), [
+            $funcCall = new FuncCall(new Name('throw_unless'), [
                 new Arg($condition->expr),
                 new Arg($throwExpr->expr),
-            ]));
+            ]);
         } else {
             // Create a new throw_if function call
-            return new Expression(new FuncCall(new Name('throw_if'), [
+            $funcCall = new FuncCall(new Name('throw_if'), [
                 new Arg($condition),
                 new Arg($throwExpr->expr),
-            ]));
+            ]);
         }
+
+        $expression = new Expression($funcCall);
+
+        $comments = array_merge($node->getComments(), $ifStmts[0]->getComments());
+        if ($comments !== []) {
+            $expression->setAttribute(AttributeKey::COMMENTS, $comments);
+        }
+
+        return $expression;
     }
 
     /**
