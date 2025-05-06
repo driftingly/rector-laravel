@@ -2,7 +2,6 @@
 
 namespace RectorLaravel\Rector\If_;
 
-use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -11,9 +10,11 @@ use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\NodeVisitor;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -80,17 +81,26 @@ CODE_SAMPLE
             // Check if the condition is a negation
             if ($condition instanceof BooleanNot) {
                 // Create a new throw_unless function call
-                return new Expression(new FuncCall(new Name('abort_unless'), [
+                $funcCall = new FuncCall(new Name('abort_unless'), [
                     new Arg($condition->expr),
                     ...$abortCall->args,
-                ]));
+                ]);
             } else {
                 // Create a new throw_if function call
-                return new Expression(new FuncCall(new Name('abort_if'), [
+                $funcCall = new FuncCall(new Name('abort_if'), [
                     new Arg($condition),
                     ...$abortCall->args,
-                ]));
+                ]);
             }
+
+            $expression = new Expression($funcCall);
+
+            $comments = array_merge($node->getComments(), $ifStmts[0]->getComments());
+            if ($comments !== []) {
+                $expression->setAttribute(AttributeKey::COMMENTS, $comments);
+            }
+
+            return $expression;
         }
 
         return null;
