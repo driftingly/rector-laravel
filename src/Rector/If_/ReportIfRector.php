@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\Rector\If_;
 
+use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -54,7 +55,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($node->else !== null || $node->elseifs !== []) {
+        if ($node->else instanceof Else_ || $node->elseifs !== []) {
             return null;
         }
 
