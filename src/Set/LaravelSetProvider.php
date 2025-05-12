@@ -111,18 +111,20 @@ final class LaravelSetProvider implements SetProviderInterface
     {
         $versions = [];
 
+        $totalPostFive = count(self::LARAVEL_POST_FIVE);
         foreach (self::LARAVEL_POST_FIVE as $index => $version) {
             $versions[] = new Set(
                 self::GROUP_NAME,
-                'Laravel Framework ' . ($index + 6) . '.0',
+                'Laravel Framework ' . ($totalPostFive - $index + 5) . '.0',
                 $version,
             );
         }
 
+        $totalFive = count(self::LARAVEL_FIVE);
         foreach (self::LARAVEL_FIVE as $index => $version) {
             $versions[] = new Set(
                 self::GROUP_NAME,
-                'Laravel Framework 5.' . $index,
+                'Laravel Framework 5.' . ($totalFive - $index - 1),
                 $version,
             );
         }
