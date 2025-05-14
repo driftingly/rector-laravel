@@ -20,10 +20,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceFakerInstanceWithHelperRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ReflectionResolver $reflectionResolver,
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
+    /**
+     * @readonly
+     */
+    private ReflectionResolver $reflectionResolver;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    public function __construct(ReflectionResolver $reflectionResolver, ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionResolver = $reflectionResolver;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -105,7 +114,11 @@ CODE_SAMPLE
         return null;
     }
 
-    private function refactorPropertyFetch(MethodCall|PropertyFetch $node): MethodCall|PropertyFetch|null
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch $node
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch|null
+     */
+    private function refactorPropertyFetch($node)
     {
         if (! $node->var instanceof PropertyFetch) {
             return null;

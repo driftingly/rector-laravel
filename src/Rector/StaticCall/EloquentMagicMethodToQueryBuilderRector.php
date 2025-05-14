@@ -23,7 +23,10 @@ use Webmozart\Assert\Assert;
  */
 final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    final public const string EXCLUDE_METHODS = 'exclude_methods';
+    /**
+     * @var string
+     */
+    public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var string[]
@@ -137,7 +140,7 @@ CODE_SAMPLE
 
         try {
             $reflectionMethod = new ReflectionMethod($className, $methodName);
-        } catch (ReflectionException) {
+        } catch (ReflectionException $exception) {
             return true; // method does not exist => is magic method
         }
 
@@ -158,7 +161,7 @@ CODE_SAMPLE
             if ($reflectionMethod->isStatic()) {
                 return false;
             }
-        } catch (ReflectionException) {
+        } catch (ReflectionException $exception) {
             return false; // method does not exist => is magic method
         }
 

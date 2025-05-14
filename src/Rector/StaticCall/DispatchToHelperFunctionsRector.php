@@ -22,9 +22,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DispatchToHelperFunctionsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * @throws PoorDocumentationException
@@ -101,7 +106,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
 
         try {
             return $this->reflectionProvider->getClass($objectClassNames[0]);
-        } catch (ClassNotFoundException) {
+        } catch (ClassNotFoundException $exception) {
         }
 
         return null;
