@@ -390,6 +390,7 @@ CODE_SAMPLE
 
         if (
             $this->typeComparator->areTypesEqual($phpDocTypes[0], new ObjectType($relatedClass))
+            && count($phpDocTypes) > 1
             && $phpDocTypes[1] instanceof ThisType
             && ! $relationUsesPivots
         ) {
