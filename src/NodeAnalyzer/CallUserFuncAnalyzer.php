@@ -2,13 +2,11 @@
 
 namespace RectorLaravel\NodeAnalyzer;
 
-use PhpParser\Builder\Method;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar\String_;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
@@ -19,10 +17,7 @@ final readonly class CallUserFuncAnalyzer
     public function __construct(
         private NodeNameResolver $nodeNameResolver,
         private NodeTypeResolver $nodeTypeResolver,
-    )
-    {
-
-    }
+    ) {}
 
     public function isCallUserFuncCall(FuncCall $funcCall): bool
     {
@@ -31,7 +26,7 @@ final readonly class CallUserFuncAnalyzer
 
     public function canDetermineMethodFromCallable(FuncCall $funcCall): bool
     {
-        return ($funcCall->args[0] ?? false)
+        return isset($funcCall->args[0]) && $funcCall->args[0] instanceof Arg
             && (
                 $funcCall->args[0]->value instanceof Array_
                 || (
@@ -53,15 +48,16 @@ final readonly class CallUserFuncAnalyzer
             return null;
         }
 
-        $args = $funcCall->args[1]->value ?? new Array_([]);
+        $args = $funcCall->getArgs()[1]->value ?? new Array_([]);
+        $funcArgs = $funcCall->getArgs();
 
         if ($this->nodeNameResolver->isName($funcCall, 'call_user_func')) {
-            $args = $this->argsToArray(array_splice($funcCall->args, 1));
+            $args = $this->argsToArray(array_splice($funcArgs, 1));
         }
 
         if ($firstArg->value instanceof Array_) {
 
-            if (count($firstArg->value->items) <> 2) {
+            if (count($firstArg->value->items) !== 2) {
                 return null;
             }
 
@@ -82,19 +78,24 @@ final readonly class CallUserFuncAnalyzer
             return null;
         }
 
+        if (is_null($this->nodeNameResolver->getName($firstArg->value->name))) {
+            return null;
+        }
+
         return new ForwardingCall(
             $firstArg->value->var,
-            new String_($firstArg->value->name->name),
+            new String_($this->nodeNameResolver->getName($firstArg->value->name)),
             $args
         );
     }
 
     /**
-     * @param Arg[] $args
-     * @return Array_
+     * @param  Arg[]  $args
      */
     private function argsToArray(array $args): Array_
     {
-        return new Array_(array_map(fn(Arg $arg) => new ArrayItem($arg->value), $args));
+        return new Array_(
+            array_map(fn (Arg $arg) => new ArrayItem($arg->value), $args)
+        );
     }
 }

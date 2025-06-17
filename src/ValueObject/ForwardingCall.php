@@ -10,15 +10,12 @@ final readonly class ForwardingCall
         private Expr $object,
         private Expr $method,
         private Expr $args,
-    )
-    {
-    }
+    ) {}
 
     public function getObject(): Expr
     {
         return $this->object;
     }
-
 
     public function getMethod(): Expr
     {

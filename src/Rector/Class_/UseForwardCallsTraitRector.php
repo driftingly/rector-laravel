@@ -20,9 +20,7 @@ final class UseForwardCallsTraitRector extends AbstractRector
 {
     const FORWARD_CALLS_TRAIT = 'Illuminate\Support\Traits\ForwardCalls';
 
-    public function __construct(private CallUserFuncAnalyzer $callUserFuncAnalyzer)
-    {
-    }
+    public function __construct(private CallUserFuncAnalyzer $callUserFuncAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -77,9 +75,6 @@ CODE_SAMPLE
         return $node;
     }
 
-    /**
-     * @param Class_ $class
-     */
     public function hasCallUserFunctionCalls(Class_ $class): bool
     {
         $found = false;
@@ -127,11 +122,11 @@ CODE_SAMPLE
 
         $node->stmts = [
             new TraitUse([new Node\Name\FullyQualified(self::FORWARD_CALLS_TRAIT)]),
-            ...$node->stmts
+            ...$node->stmts,
         ];
     }
 
-    private function refactorFunctionCalls(Node|Class_ $node): void
+    private function refactorFunctionCalls(Class_ $node): void
     {
         $this->traverseNodesWithCallable($node->stmts, function (Node $node): ?Node {
             if (! $node instanceof Node\Expr\FuncCall) {
