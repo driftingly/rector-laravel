@@ -25,14 +25,14 @@ final class UseForwardCallsTraitRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Replaces the use of call_user_function method with the CallForwarding trait',
+            'Replaces the use of `call_user_func` and `call_user_func_array` method with the CallForwarding trait',
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 class SomeClass
 {
     public function __call($method, $parameters)
     {
-        return call_user_function_array([$this->foo, $method], $parameters);
+        return call_user_func_array([$this->foo, $method], $parameters);
     }
 }
 CODE_SAMPLE,
