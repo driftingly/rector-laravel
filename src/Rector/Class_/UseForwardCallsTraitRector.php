@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitor;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\CallUserFuncAnalyzer;
+use RectorLaravel\ValueObject\ForwardingCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -18,9 +24,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class UseForwardCallsTraitRector extends AbstractRector
 {
-    const FORWARD_CALLS_TRAIT = 'Illuminate\Support\Traits\ForwardCalls';
+    private const string FORWARD_CALLS_TRAIT = 'Illuminate\Support\Traits\ForwardCalls';
 
-    public function __construct(private CallUserFuncAnalyzer $callUserFuncAnalyzer) {}
+    public function __construct(private readonly CallUserFuncAnalyzer $callUserFuncAnalyzer) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -80,7 +86,7 @@ CODE_SAMPLE
         $found = false;
 
         $this->traverseNodesWithCallable($class->stmts, function (Node $node) use (&$found): ?int {
-            if (! $node instanceof Node\Expr\FuncCall) {
+            if (! $node instanceof FuncCall) {
                 return null;
             }
 
@@ -103,9 +109,9 @@ CODE_SAMPLE
         return $found;
     }
 
-    private function addCallForwardingTrait(Class_ $node): void
+    private function addCallForwardingTrait(Class_ $class): void
     {
-        $traitUses = $node->getTraitUses();
+        $traitUses = $class->getTraitUses();
 
         if (count($traitUses) > 0) {
             foreach ($traitUses as $traitUse) {
@@ -115,38 +121,38 @@ CODE_SAMPLE
                     }
                 }
             }
-            $traitUses[0]->traits[] = new Node\Name\FullyQualified(self::FORWARD_CALLS_TRAIT);
+            $traitUses[0]->traits[] = new FullyQualified(self::FORWARD_CALLS_TRAIT);
 
             return;
         }
 
-        $node->stmts = [
-            new TraitUse([new Node\Name\FullyQualified(self::FORWARD_CALLS_TRAIT)]),
-            ...$node->stmts,
+        $class->stmts = [
+            new TraitUse([new FullyQualified(self::FORWARD_CALLS_TRAIT)]),
+            ...$class->stmts,
         ];
     }
 
-    private function refactorFunctionCalls(Class_ $node): void
+    private function refactorFunctionCalls(Class_ $class): void
     {
-        $this->traverseNodesWithCallable($node->stmts, function (Node $node): ?Node {
-            if (! $node instanceof Node\Expr\FuncCall) {
+        $this->traverseNodesWithCallable($class->stmts, function (Node $node): ?Node {
+            if (! $node instanceof FuncCall) {
                 return null;
             }
 
             if ($this->callUserFuncAnalyzer->isCallUserFuncCall($node)) {
                 $forwardCall = $this->callUserFuncAnalyzer->getForwardedMethod($node);
 
-                if ($forwardCall === null) {
+                if (! $forwardCall instanceof ForwardingCall) {
                     return null;
                 }
 
-                return new Node\Expr\MethodCall(
-                    new Node\Expr\Variable('this'),
+                return new MethodCall(
+                    new Variable('this'),
                     'forwardCallTo',
                     [
-                        new Node\Arg($forwardCall->getObject()),
-                        new Node\Arg($forwardCall->getMethod()),
-                        new Node\Arg($forwardCall->getArgs()),
+                        new Arg($forwardCall->getObject()),
+                        new Arg($forwardCall->getMethod()),
+                        new Arg($forwardCall->getArgs()),
                     ]
                 );
             }
