@@ -9,6 +9,8 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Name;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -19,9 +21,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \RectorLaravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector\FactoryFuncCallToStaticCallRectorTest
  */
-final class FactoryFuncCallToStaticCallRector extends AbstractRector
+final class FactoryFuncCallToStaticCallRector extends AbstractRector implements ConfigurableRectorInterface
 {
     private const string FACTORY = 'factory';
+
+    /**
+     * @var mixed[]
+     */
+    private array $allowList = [];
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -37,6 +44,11 @@ User::factory();
 CODE_SAMPLE
             ),
         ]);
+    }
+
+    public function configure(array $configuration): void
+    {
+        $this->allowList = $configuration;
     }
 
     /**
@@ -70,6 +82,10 @@ CODE_SAMPLE
         }
 
         $model = $firstArgValue->class;
+
+        if ($model instanceof Name && $this->allowList !== [] && ! in_array($model->toString(), $this->allowList, true)) {
+            return null;
+        }
 
         // create model
         if (! isset($node->args[1])) {
