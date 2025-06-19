@@ -83,7 +83,7 @@ CODE_SAMPLE
 
         $model = $firstArgValue->class;
 
-        if ($model instanceof Name && $this->allowList !== [] && ! in_array($model->toString(), $this->allowList, true)) {
+        if ($model instanceof Name && ! $this->isAllowedByAllowList($model->toString())) {
             return null;
         }
 
@@ -94,5 +94,10 @@ CODE_SAMPLE
 
         // create models of a given type
         return new StaticCall($model, self::FACTORY, [$node->args[1]]);
+    }
+
+    private function isAllowedByAllowList(string $name): bool
+    {
+        return $this->allowList === [] || in_array($name, $this->allowList, true);
     }
 }

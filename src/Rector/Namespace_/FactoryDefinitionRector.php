@@ -120,7 +120,7 @@ CODE_SAMPLE
                 continue;
             }
 
-            if ($this->allowList !== [] && ! in_array($name->toString(), $this->allowList, true)) {
+            if (! $this->isAllowedByAllowList($name->toString())) {
                 return null;
             }
 
@@ -179,6 +179,11 @@ CODE_SAMPLE
         }
 
         return $expr->class;
+    }
+
+    private function isAllowedByAllowList(string $name): bool
+    {
+        return $this->allowList === [] || in_array($name, $this->allowList, true);
     }
 
     private function createFactory(string $name, Expr $expr): Class_
