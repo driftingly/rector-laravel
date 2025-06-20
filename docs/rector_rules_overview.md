@@ -59,6 +59,26 @@ Adds the `@extends` annotation to Factories.
 
 <br>
 
+## AddHasFactoryToModelsRector
+
+Adds the `HasFactory` trait to Models.
+
+- class: [`RectorLaravel\Rector\Class_\AddHasFactoryToModelsRector`](../src/Rector/Class_/AddHasFactoryToModelsRector.php)
+
+```diff
+ namespace App\Models;
+
+ use Illuminate\Database\Eloquent\Factories\Factory;
+ use Illuminate\Database\Eloquent\Model;
+
+ class User extends Model
+ {
++    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+ }
+```
+
+<br>
+
 ## AddGenericReturnTypeToRelationsRector
 
 Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`

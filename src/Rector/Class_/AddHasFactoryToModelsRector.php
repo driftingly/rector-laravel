@@ -13,7 +13,7 @@ use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use Rector\Reflection\ReflectionResolver;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -38,7 +38,7 @@ final class AddHasFactoryToModelsRector extends AbstractRector implements Config
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Adds the HasFactory trait to Models.', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,7 +55,7 @@ class User extends Model
 {
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 }
-CODE_SAMPLE
+CODE_SAMPLE, ['App\Models\User']
             ),
         ]);
     }
