@@ -63,6 +63,8 @@ Adds the `@extends` annotation to Factories.
 
 Adds the `HasFactory` trait to Models.
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\Class_\AddHasFactoryToModelsRector`](../src/Rector/Class_/AddHasFactoryToModelsRector.php)
 
 ```diff
