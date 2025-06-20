@@ -23,6 +23,7 @@ use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\ModelFactoryNodeFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @changelog https://laravel.com/docs/7.x/database-testing#writing-factories
@@ -33,7 +34,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class FactoryDefinitionRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var mixed[]
+     * @var string[]
      */
     private array $allowList = [];
 
@@ -78,6 +79,7 @@ CODE_SAMPLE
 
     public function configure(array $configuration): void
     {
+        Assert::allString($configuration);
         $this->allowList = $configuration;
     }
 
@@ -120,7 +122,7 @@ CODE_SAMPLE
                 continue;
             }
 
-            if (! $this->isAllowedByAllowList($name->toString())) {
+            if (! $this->isAllowedByAllowList($name)) {
                 return null;
             }
 
@@ -181,9 +183,9 @@ CODE_SAMPLE
         return $expr->class;
     }
 
-    private function isAllowedByAllowList(string $name): bool
+    private function isAllowedByAllowList(Node $node): bool
     {
-        return $this->allowList === [] || in_array($name, $this->allowList, true);
+        return $this->allowList === [] || $this->isNames($node, $this->allowList);
     }
 
     private function createFactory(string $name, Expr $expr): Class_
