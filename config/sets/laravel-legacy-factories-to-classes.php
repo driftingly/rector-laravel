@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\Class_\AddHasFactoryToModelsRector;
 use RectorLaravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector;
 use RectorLaravel\Rector\MethodCall\FactoryApplyingStatesRector;
 use RectorLaravel\Rector\Namespace_\FactoryDefinitionRector;
@@ -13,6 +14,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://laravel.com/docs/7.x/database-testing#writing-factories
     // https://laravel.com/docs/8.x/database-testing#defining-model-factories
     $rectorConfig->rule(FactoryDefinitionRector::class);
+    $rectorConfig->rule(AddHasFactoryToModelsRector::class);
 
     // https://laravel.com/docs/7.x/database-testing#using-factories
     // https://laravel.com/docs/8.x/database-testing#creating-models-using-factories
