@@ -20,7 +20,8 @@ use Webmozart\Assert\Assert;
 /**
  * @changelog https://github.com/laravel/framework/pull/39310
  *
- * @see \RectorLaravel\Tests\Rector\Class_\RemoveModelPropertyFromFactoriesRector\RemoveModelPropertyFromFactoriesRectorTest
+ * @see \RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector\AddHasFactoryToModelsRectorTest
+ * @see \RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRectorConfiguredTest\AddHasFactoryToModelsRectorConfiguredTest
  */
 final class AddHasFactoryToModelsRector extends AbstractRector implements ConfigurableRectorInterface
 {

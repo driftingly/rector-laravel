@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\RemoveModelPropertyFromFactoriesRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector;
 
 use Illuminate\Database\Eloquent\Model;
 
