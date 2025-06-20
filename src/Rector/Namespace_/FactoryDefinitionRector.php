@@ -17,11 +17,13 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\PhpParser\Node\CustomNode\FileWithoutNamespace;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\ModelFactoryNodeFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @changelog https://laravel.com/docs/7.x/database-testing#writing-factories
@@ -29,8 +31,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\FactoryDefinitionRectorTest
  */
-final class FactoryDefinitionRector extends AbstractRector
+final class FactoryDefinitionRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    /**
+     * @var string[]
+     */
+    private array $allowList = [];
+
     public function __construct(
         private readonly ModelFactoryNodeFactory $modelFactoryNodeFactory
     ) {}
@@ -70,6 +77,12 @@ CODE_SAMPLE
         ]);
     }
 
+    public function configure(array $configuration): void
+    {
+        Assert::allString($configuration);
+        $this->allowList = $configuration;
+    }
+
     /**
      * @return array<class-string<Node>>
      */
@@ -107,6 +120,10 @@ CODE_SAMPLE
             $name = $this->getNameFromClassConstFetch($firstArg->value);
             if (! $name instanceof Name) {
                 continue;
+            }
+
+            if (! $this->isAllowedByAllowList($name)) {
+                return null;
             }
 
             if (! isset($factories[$name->toString()])) {
@@ -164,6 +181,11 @@ CODE_SAMPLE
         }
 
         return $expr->class;
+    }
+
+    private function isAllowedByAllowList(Node $node): bool
+    {
+        return $this->allowList === [] || $this->isNames($node, $this->allowList);
     }
 
     private function createFactory(string $name, Expr $expr): Class_
