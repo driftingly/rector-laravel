@@ -10,6 +10,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use Rector\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -20,9 +21,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \RectorLaravel\Tests\Rector\Class_\RemoveModelPropertyFromFactoriesRector\RemoveModelPropertyFromFactoriesRectorTest
  */
-final class AddHasFactoryToModelsRector extends AbstractRector
+final class AddHasFactoryToModelsRector extends AbstractRector implements ConfigurableRectorInterface
 {
     private const string TRAIT_NAME = 'Illuminate\Database\Eloquent\Factories\HasFactory';
+
+    /**
+     * @var mixed[]
+     */
+    private array $allowList = [];
 
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver,
@@ -53,6 +59,11 @@ CODE_SAMPLE
         ]);
     }
 
+    public function configure(array $configuration): void
+    {
+        $this->allowList = $configuration;
+    }
+
     /**
      * @return array<class-string<Node>>
      */
@@ -81,6 +92,10 @@ CODE_SAMPLE
     {
         if (! $this->isObjectType($class, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;
+        }
+
+        if ($this->allowList !== [] && ! $this->isNames($class, $this->allowList)) {
+            return false;
         }
 
         $classReflection = $this->reflectionResolver->resolveClassReflection($class);
