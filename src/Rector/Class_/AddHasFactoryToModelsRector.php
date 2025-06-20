@@ -15,6 +15,7 @@ use Rector\Rector\AbstractRector;
 use Rector\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @changelog https://github.com/laravel/framework/pull/39310
@@ -26,7 +27,7 @@ final class AddHasFactoryToModelsRector extends AbstractRector implements Config
     private const string TRAIT_NAME = 'Illuminate\Database\Eloquent\Factories\HasFactory';
 
     /**
-     * @var mixed[]
+     * @var string[]
      */
     private array $allowList = [];
 
@@ -61,6 +62,7 @@ CODE_SAMPLE
 
     public function configure(array $configuration): void
     {
+        Assert::allString($configuration);
         $this->allowList = $configuration;
     }
 
@@ -91,11 +93,11 @@ CODE_SAMPLE
     private function shouldSkipClass(Class_ $class): bool
     {
         if (! $this->isObjectType($class, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
-            return null;
+            return false;
         }
 
         if ($this->allowList !== [] && ! $this->isNames($class, $this->allowList)) {
-            return false;
+            return true;
         }
 
         $classReflection = $this->reflectionResolver->resolveClassReflection($class);
