@@ -93,7 +93,7 @@ CODE_SAMPLE, ['App\Models\User']
     private function shouldSkipClass(Class_ $class): bool
     {
         if (! $this->isObjectType($class, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
-            return false;
+            return true;
         }
 
         if ($this->allowList !== [] && ! $this->isNames($class, $this->allowList)) {
@@ -102,7 +102,7 @@ CODE_SAMPLE, ['App\Models\User']
 
         $classReflection = $this->reflectionResolver->resolveClassReflection($class);
         if (! $classReflection instanceof ClassReflection) {
-            return false;
+            return true;
         }
 
         return $classReflection->hasTraitUse(self::TRAIT_NAME);
