@@ -9,11 +9,11 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Name;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @changelog https://laravel.com/docs/7.x/database-testing#creating-models
@@ -26,7 +26,7 @@ final class FactoryFuncCallToStaticCallRector extends AbstractRector implements 
     private const string FACTORY = 'factory';
 
     /**
-     * @var mixed[]
+     * @var string[]
      */
     private array $allowList = [];
 
@@ -48,6 +48,7 @@ CODE_SAMPLE
 
     public function configure(array $configuration): void
     {
+        Assert::allString($configuration);
         $this->allowList = $configuration;
     }
 
@@ -83,7 +84,7 @@ CODE_SAMPLE
 
         $model = $firstArgValue->class;
 
-        if ($model instanceof Name && ! $this->isAllowedByAllowList($model->toString())) {
+        if (! $this->isAllowedByAllowList($model)) {
             return null;
         }
 
@@ -96,8 +97,8 @@ CODE_SAMPLE
         return new StaticCall($model, self::FACTORY, [$node->args[1]]);
     }
 
-    private function isAllowedByAllowList(string $name): bool
+    private function isAllowedByAllowList(Node $node): bool
     {
-        return $this->allowList === [] || in_array($name, $this->allowList, true);
+        return $this->allowList === [] || $this->isNames($node, $this->allowList);
     }
 }
