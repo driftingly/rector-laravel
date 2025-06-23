@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture\Configured;
 
 use App\User;
 use Faker\Generator as Faker;
@@ -26,7 +26,7 @@ $factory->define(Account::class, function (\Faker\Generator $faker) {
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture\Configured;
 
 use App\User;
 use Faker\Generator as Faker;

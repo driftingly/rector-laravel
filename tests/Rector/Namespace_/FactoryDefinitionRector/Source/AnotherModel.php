@@ -2,4 +2,4 @@
 
 namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source;
 
-class Model {}
+class AnotherModel {}
