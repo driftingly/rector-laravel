@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture\Configured;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory = 1;

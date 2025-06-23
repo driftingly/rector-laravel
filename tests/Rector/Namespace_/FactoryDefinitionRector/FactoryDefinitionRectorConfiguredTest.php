@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRectorConfiguredNoMatch;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class FactoryDefinitionRectorConfiguredNoMatchTest extends AbstractRectorTestCase
+final class FactoryDefinitionRectorConfiguredTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/Configured');
     }
 
     /**
@@ -26,6 +26,6 @@ final class FactoryDefinitionRectorConfiguredNoMatchTest extends AbstractRectorT
 
     public function provideConfigFilePath(): string
     {
-        return __DIR__ . '/config/configured_rule.php';
+        return __DIR__ . '/config/configured_rule_with_configuration.php';
     }
 }

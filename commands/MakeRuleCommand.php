@@ -134,7 +134,7 @@ final class MakeRuleCommand
     private function createTestFixture(string $rectorName): ?string
     {
         $fixtureFilePath = null;
-        $fixtureDir = $this->testDir . '/Fixture';
+        $fixtureDir = $this->testDir . '/Configured';
         $this->ensureDirectoryExists($this->currentDirectory . '/' . $fixtureDir);
 
         // Create fixture file from template
@@ -168,7 +168,7 @@ final class MakeRuleCommand
             $configContents = $this->replaceNameVariable($rectorName, $configContents);
             $configContents = $this->replaceNamespaceVariable($configContents);
 
-            $configFilePath = $configDir . '/configured_rule.php';
+            $configFilePath = $configDir . '/configured_rule_without_configuration.php';
             FileSystem::write($this->currentDirectory . '/' . $configFilePath, $configContents, null);
         }
 
