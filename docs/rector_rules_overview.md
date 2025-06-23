@@ -1,4 +1,4 @@
-# 79 Rules Overview
+# 80 Rules Overview
 
 ## AbortIfRector
 
@@ -1560,6 +1560,27 @@ Use `$this->components` property within commands
 +        $this->components->line('A line!');
 +        $this->components->info('Info!');
 +        $this->components->error('Error!');
+     }
+ }
+```
+
+<br>
+
+## UseForwardCallsTraitRector
+
+Replaces the use of `call_user_func` and `call_user_func_array` method with the CallForwarding trait
+
+- class: [`RectorLaravel\Rector\Class_\UseForwardCallsTraitRector`](../src/Rector/Class_/UseForwardCallsTraitRector.php)
+
+```diff
+ class SomeClass
+ {
++    use ForwardCalls;
++
+     public function __call($method, $parameters)
+     {
+-        return call_user_func_array([$this->foo, $method], $parameters);
++        return $this->forwardCallTo($this->foo, $method, $parameters);
      }
  }
 ```
