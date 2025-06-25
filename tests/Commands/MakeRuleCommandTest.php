@@ -62,8 +62,8 @@ final class MakeRuleCommandTest extends TestCase
             // Check that expected files were created
             self::assertFileExists(self::TEMP_DIR . '/src/Rector/TestRuleRector.php');
             self::assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/TestRuleRectorTest.php');
-            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/Fixture/some_class.php.inc');
-            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/config/configured_rule.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/Configured/some_class.php.inc');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/TestRuleRector/config/configured_rule_without_configuration.php');
 
             // Check content of main rule file
             $ruleContent = (string) file_get_contents(self::TEMP_DIR . '/src/Rector/TestRuleRector.php');
@@ -72,7 +72,7 @@ final class MakeRuleCommandTest extends TestCase
             self::assertStringNotContainsString('implements ConfigurableRectorInterface', $ruleContent);
 
             // Check content of config file
-            $configContent = (string) file_get_contents(self::TEMP_DIR . '/tests/Rector/TestRuleRector/config/configured_rule.php');
+            $configContent = (string) file_get_contents(self::TEMP_DIR . '/tests/Rector/TestRuleRector/config/configured_rule_without_configuration.php');
             self::assertStringContainsString('$rectorConfig->rule(TestRuleRector::class);', $configContent);
             self::assertStringNotContainsString('$rectorConfig->ruleWithConfiguration', $configContent);
         } finally {
@@ -99,8 +99,8 @@ final class MakeRuleCommandTest extends TestCase
             // Check that expected files were created
             self::assertFileExists(self::TEMP_DIR . '/src/Rector/ConfigRuleRector.php');
             self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/ConfigRuleRectorTest.php');
-            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/Fixture/some_class.php.inc');
-            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/config/configured_rule.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/Configured/some_class.php.inc');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/config/configured_rule_without_configuration.php');
 
             // Check content of main rule file
             $ruleContent = (string) file_get_contents(self::TEMP_DIR . '/src/Rector/ConfigRuleRector.php');
@@ -110,7 +110,7 @@ final class MakeRuleCommandTest extends TestCase
             self::assertStringContainsString('ConfiguredCodeSample', $ruleContent);
 
             // Check content of config file
-            $configContent = (string) file_get_contents(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/config/configured_rule.php');
+            $configContent = (string) file_get_contents(self::TEMP_DIR . '/tests/Rector/ConfigRuleRector/config/configured_rule_without_configuration.php');
             self::assertStringContainsString('$rectorConfig->ruleWithConfiguration(ConfigRuleRector::class, [\'option\' => \'value\']);', $configContent);
         } finally {
             chdir($originalDir);
@@ -136,8 +136,8 @@ final class MakeRuleCommandTest extends TestCase
             // Check that expected files were created in the correct directory
             self::assertFileExists(self::TEMP_DIR . '/src/Rector/ClassMethod/ClassRuleRector.php');
             self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/ClassRuleRectorTest.php');
-            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/Fixture/some_class.php.inc');
-            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/config/configured_rule.php');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/Configured/some_class.php.inc');
+            self::assertFileExists(self::TEMP_DIR . '/tests/Rector/ClassMethod/ClassRuleRector/config/configured_rule_without_configuration.php');
 
             // Check namespace in the rule file
             $ruleContent = (string) file_get_contents(self::TEMP_DIR . '/src/Rector/ClassMethod/ClassRuleRector.php');

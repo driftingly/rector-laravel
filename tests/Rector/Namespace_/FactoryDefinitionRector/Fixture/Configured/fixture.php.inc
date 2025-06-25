@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture\Configured;
 
 use RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model;
 
@@ -35,7 +35,7 @@ $factory->afterCreating(Model::class, function ($user, $faker) {
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Fixture\Configured;
 
 use RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source\Model;
 class ModelFactory extends \Illuminate\Database\Eloquent\Factories\Factory

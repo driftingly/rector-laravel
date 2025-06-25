@@ -686,6 +686,8 @@ Call the state methods directly instead of specify the name of state.
 
 Upgrade legacy factories to support classes.
 
+:wrench: **configure it!**
+
 - class: [`RectorLaravel\Rector\Namespace_\FactoryDefinitionRector`](../src/Rector/Namespace_/FactoryDefinitionRector.php)
 
 ```diff
@@ -715,6 +717,8 @@ Upgrade legacy factories to support classes.
 ## FactoryFuncCallToStaticCallRector
 
 Use the static factory method instead of global factory function.
+
+:wrench: **configure it!**
 
 - class: [`RectorLaravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector`](../src/Rector/FuncCall/FactoryFuncCallToStaticCallRector.php)
 
