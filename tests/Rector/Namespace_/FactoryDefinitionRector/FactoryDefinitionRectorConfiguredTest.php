@@ -8,11 +8,11 @@ use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class FactoryDefinitionRectorTest extends AbstractRectorTestCase
+final class FactoryDefinitionRectorConfiguredTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/WithoutConfiguration');
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/Configured');
     }
 
     /**
@@ -26,6 +26,6 @@ final class FactoryDefinitionRectorTest extends AbstractRectorTestCase
 
     public function provideConfigFilePath(): string
     {
-        return __DIR__ . '/config/configured_rule_without_configuration.php';
+        return __DIR__ . '/config/configured_rule_with_configuration.php';
     }
 }

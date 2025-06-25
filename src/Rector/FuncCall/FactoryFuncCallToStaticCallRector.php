@@ -9,9 +9,11 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @changelog https://laravel.com/docs/7.x/database-testing#creating-models
@@ -19,9 +21,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \RectorLaravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector\FactoryFuncCallToStaticCallRectorTest
  */
-final class FactoryFuncCallToStaticCallRector extends AbstractRector
+final class FactoryFuncCallToStaticCallRector extends AbstractRector implements ConfigurableRectorInterface
 {
     private const string FACTORY = 'factory';
+
+    /**
+     * @var string[]
+     */
+    private array $allowList = [];
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -37,6 +44,12 @@ User::factory();
 CODE_SAMPLE
             ),
         ]);
+    }
+
+    public function configure(array $configuration): void
+    {
+        Assert::allString($configuration);
+        $this->allowList = $configuration;
     }
 
     /**
@@ -71,6 +84,10 @@ CODE_SAMPLE
 
         $model = $firstArgValue->class;
 
+        if (! $this->isAllowedByAllowList($model)) {
+            return null;
+        }
+
         // create model
         if (! isset($node->args[1])) {
             return new StaticCall($model, self::FACTORY);
@@ -78,5 +95,10 @@ CODE_SAMPLE
 
         // create models of a given type
         return new StaticCall($model, self::FACTORY, [$node->args[1]]);
+    }
+
+    private function isAllowedByAllowList(Node $node): bool
+    {
+        return $this->allowList === [] || $this->isNames($node, $this->allowList);
     }
 }
