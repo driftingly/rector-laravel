@@ -5,6 +5,7 @@ namespace RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\
 use RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\Source\TestJob;
 
 TestJob::dispatch('param1', 'param2');
+TestJob::dispatchSync('param1', 'param2');
 -----
 <?php
 
@@ -13,3 +14,4 @@ namespace RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\
 use RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\Source\TestJob;
 
 dispatch(new \RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\Source\TestJob('param1', 'param2'));
+dispatch_sync(new \RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\Source\TestJob('param1', 'param2'));
