@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRectorConfigured;
+namespace RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -12,7 +12,7 @@ final class AddHasFactoryToModelsRectorConfiguredTest extends AbstractRectorTest
 {
     public static function provideData(): Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/Configured');
     }
 
     /**
@@ -26,6 +26,6 @@ final class AddHasFactoryToModelsRectorConfiguredTest extends AbstractRectorTest
 
     public function provideConfigFilePath(): string
     {
-        return __DIR__ . '/config/configured_rule.php';
+        return __DIR__ . '/config/configured_rule_with_configuration.php';
     }
 }

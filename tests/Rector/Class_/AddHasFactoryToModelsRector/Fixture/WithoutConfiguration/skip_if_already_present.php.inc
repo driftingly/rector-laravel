@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector;
+namespace RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector\Fixture\WithoutConfiguration;
 
 use Illuminate\Database\Eloquent\Model;
 
