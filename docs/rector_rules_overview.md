@@ -1372,7 +1372,7 @@ Changes model scope methods to use the scope attribute
  {
 -    public function scopeActive($query)
 +    #[\Illuminate\Database\Eloquent\Attributes\Scope]
-+    protected function active($query)
++    public function active($query)
      {
          return $query->where('active', 1);
      }
