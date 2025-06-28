@@ -1,4 +1,4 @@
-# 80 Rules Overview
+# 81 Rules Overview
 
 ## AbortIfRector
 
@@ -725,6 +725,39 @@ Use the static factory method instead of global factory function.
 ```diff
 -factory(User::class);
 +User::factory();
+```
+
+<br>
+
+## FilledAndBlankToTypedComparisonRector
+
+Replaces `filled()` and `blank()` with typed comparison.
+
+- class: [`RectorLaravel\Rector\FuncCall\FilledAndBlankToTypedComparisonRector`](../src/Rector/FuncCall/FilledAndBlankToTypedComparisonRector.php)
+
+```diff
+-filled($array);
+-blank($array);
++$array !== [];
++$array === [];
+```
+
+<br>
+
+```diff
+-filled($string);
+-blank($string);
++$string !== '';
++$string === '';
+```
+
+<br>
+
+```diff
+-filled($nullableClass);
+-blank($nullableClass);
++$nullableClass instanceOf ClassName;
++! $nullableClass instanceof ClassName;
 ```
 
 <br>
