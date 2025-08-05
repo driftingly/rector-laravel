@@ -48,7 +48,7 @@ CODE_SAMPLE,
 class User extends Model
 {
     #[\Illuminate\Database\Eloquent\Attributes\Scope]
-    public function active($query)
+    protected function active($query)
     {
         return $query->where('active', 1);
     }
