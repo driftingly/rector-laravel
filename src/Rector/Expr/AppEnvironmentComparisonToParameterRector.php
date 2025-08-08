@@ -45,7 +45,10 @@ CODE_SAMPLE
         return [Expr::class];
     }
 
-    public function refactor(Node $node): MethodCall|StaticCall|null
+    /**
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null
+     */
+    public function refactor(Node $node)
     {
         if (! $node instanceof Identical && ! $node instanceof Equal) {
             return null;
@@ -85,22 +88,29 @@ CODE_SAMPLE
         return $methodCall;
     }
 
-    private function validMethodCall(MethodCall|StaticCall $methodCall): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $methodCall
+     */
+    private function validMethodCall($methodCall): bool
     {
-        return match (true) {
-            $methodCall instanceof MethodCall && $this->isObjectType(
+        switch (true) {
+            case $methodCall instanceof MethodCall && $this->isObjectType(
                 $methodCall->var,
                 new ObjectType('Illuminate\Contracts\Foundation\Application')
-            ) => true,
-            $methodCall instanceof StaticCall && $this->isObjectType(
+            ):
+                return true;
+            case $methodCall instanceof StaticCall && $this->isObjectType(
                 $methodCall->class,
                 new ObjectType('Illuminate\Support\Facades\App')
-            ) => true,
-            $methodCall instanceof StaticCall && $this->isObjectType(
+            ):
+                return true;
+            case $methodCall instanceof StaticCall && $this->isObjectType(
                 $methodCall->class,
                 new ObjectType('App')
-            ) => true,
-            default => false,
-        };
+            ):
+                return true;
+            default:
+                return false;
+        }
     }
 }

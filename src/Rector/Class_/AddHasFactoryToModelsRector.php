@@ -25,16 +25,24 @@ use Webmozart\Assert\Assert;
  */
 final class AddHasFactoryToModelsRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    private const string TRAIT_NAME = 'Illuminate\Database\Eloquent\Factories\HasFactory';
+    /**
+     * @readonly
+     */
+    private ReflectionResolver $reflectionResolver;
+    /**
+     * @var string
+     */
+    private const TRAIT_NAME = 'Illuminate\Database\Eloquent\Factories\HasFactory';
 
     /**
      * @var string[]
      */
     private array $allowList = [];
 
-    public function __construct(
-        private readonly ReflectionResolver $reflectionResolver,
-    ) {}
+    public function __construct(ReflectionResolver $reflectionResolver)
+    {
+        $this->reflectionResolver = $reflectionResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

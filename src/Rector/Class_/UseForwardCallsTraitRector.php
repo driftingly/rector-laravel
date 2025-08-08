@@ -24,9 +24,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class UseForwardCallsTraitRector extends AbstractRector
 {
-    private const string FORWARD_CALLS_TRAIT = 'Illuminate\Support\Traits\ForwardCalls';
+    /**
+     * @readonly
+     */
+    private CallUserFuncAnalyzer $callUserFuncAnalyzer;
+    /**
+     * @var string
+     */
+    private const FORWARD_CALLS_TRAIT = 'Illuminate\Support\Traits\ForwardCalls';
 
-    public function __construct(private readonly CallUserFuncAnalyzer $callUserFuncAnalyzer) {}
+    public function __construct(CallUserFuncAnalyzer $callUserFuncAnalyzer)
+    {
+        $this->callUserFuncAnalyzer = $callUserFuncAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -126,10 +136,7 @@ CODE_SAMPLE
             return;
         }
 
-        $class->stmts = [
-            new TraitUse([new FullyQualified(self::FORWARD_CALLS_TRAIT)]),
-            ...$class->stmts,
-        ];
+        $class->stmts = array_merge([new TraitUse([new FullyQualified(self::FORWARD_CALLS_TRAIT)])], $class->stmts);
     }
 
     private function refactorFunctionCalls(Class_ $class): void
