@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\PropertyFetch;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Scalar\InterpolatedString;
+use PhpParser\NodeVisitor;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Reflection\ReflectionResolver;
@@ -66,13 +70,14 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [PropertyFetch::class, MethodCall::class];
+        return [PropertyFetch::class, MethodCall::class, InterpolatedString::class];
     }
 
     /**
-     * @param  PropertyFetch|MethodCall  $node
+     * @param  PropertyFetch|MethodCall|InterpolatedString  $node
+     * @return Node|null|1
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|int|null
     {
         $classReflection = $this->reflectionResolver->resolveClassReflection($node);
 
@@ -84,30 +89,66 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($node instanceof MethodCall) {
-            if (! $node->var instanceof PropertyFetch) {
-                return null;
-            }
-
-            // The randomEnum() method is a special case where the faker instance is used
-            // see https://github.com/spatie/laravel-enum#faker-provider
-            if ($this->isName($node->name, 'randomEnum')) {
-                return null;
-            }
-
-            return $this->refactorPropertyFetch($node);
+        if ($node instanceof InterpolatedString) {
+            return $this->refactorInterpolatedString($node);
         }
 
-        if ($node->var instanceof PropertyFetch) {
-            return $this->refactorPropertyFetch($node);
+        // The randomEnum() method is a special case where the faker instance is used
+        // see https://github.com/spatie/laravel-enum#faker-provider
+        if ($node instanceof MethodCall && $this->isName($node->name, 'randomEnum')) {
+            return NodeVisitor::DONT_TRAVERSE_CHILDREN;
         }
 
-        return null;
+        return $this->refactorFakerReference($node);
     }
 
-    private function refactorPropertyFetch(MethodCall|PropertyFetch $node): MethodCall|PropertyFetch|null
+    private function refactorInterpolatedString(InterpolatedString $interpolatedString): ?Node
     {
+        $hasChanged = false;
+        $parts = [];
+        $nonFakerParts = [];
+
+        foreach ($interpolatedString->parts as $part) {
+            $faker = $this->refactorFakerReference($part);
+
+            if (! $faker instanceof Node) {
+                $nonFakerParts[] = $part;
+
+                continue;
+            }
+
+            if ($nonFakerParts !== []) {
+                $parts[] = new InterpolatedString($nonFakerParts);
+                $nonFakerParts = [];
+            }
+
+            $parts[] = $faker;
+            $hasChanged = true;
+        }
+
+        if (! $hasChanged) {
+            return null;
+        }
+
+        if ($nonFakerParts !== []) {
+            $parts[] = new InterpolatedString($nonFakerParts);
+        }
+
+        return array_reduce(
+            $parts,
+            fn (?Expr $carry, Expr $part) => $carry === null ? $part : new Concat($carry, $part),
+            null,
+        );
+    }
+
+    private function refactorFakerReference(Node $node): ?Expr
+    {
+        if (! $node instanceof PropertyFetch && ! $node instanceof MethodCall) {
+            return null;
+        }
+
         if (! $node->var instanceof PropertyFetch) {
+
             return null;
         }
 
