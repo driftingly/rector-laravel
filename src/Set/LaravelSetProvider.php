@@ -6,6 +6,7 @@ use Rector\Set\Contract\SetInterface;
 use Rector\Set\Contract\SetProviderInterface;
 use Rector\Set\ValueObject\ComposerTriggeredSet;
 use Rector\Set\ValueObject\Set;
+use RectorLaravel\Set\Packages\Faker\FakerSetList;
 use RectorLaravel\Set\Packages\Livewire\LivewireSetList;
 
 final class LaravelSetProvider implements SetProviderInterface
@@ -101,6 +102,12 @@ final class LaravelSetProvider implements SetProviderInterface
                 'livewire/livewire',
                 '3.0',
                 LivewireSetList::LIVEWIRE_30,
+            ),
+            new ComposerTriggeredSet(
+                self::GROUP_NAME,
+                'fakerphp/faker',
+                '1.0',
+                FakerSetList::FAKER_10,
             ),
             ...$this->getLaravelVersions(),
         ];
