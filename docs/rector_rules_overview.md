@@ -1,4 +1,4 @@
-# 80 Rules Overview
+# 82 Rules Overview
 
 ## AbortIfRector
 
@@ -54,28 +54,6 @@ Adds the `@extends` annotation to Factories.
  class UserFactory extends Factory
  {
      protected $model = \App\Models\User::class;
- }
-```
-
-<br>
-
-## AddHasFactoryToModelsRector
-
-Adds the `HasFactory` trait to Models.
-
-:wrench: **configure it!**
-
-- class: [`RectorLaravel\Rector\Class_\AddHasFactoryToModelsRector`](../src/Rector/Class_/AddHasFactoryToModelsRector.php)
-
-```diff
- namespace App\Models;
-
- use Illuminate\Database\Eloquent\Factories\Factory;
- use Illuminate\Database\Eloquent\Model;
-
- class User extends Model
- {
-+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
  }
 ```
 
@@ -498,6 +476,21 @@ Refactor `whereDate()` queries to include both date and time comparisons with Ca
 +        $query->whereTime('created_at', '<=', $dateTime);
      }
  }
+```
+
+<br>
+
+## ConvertEnumerableToArrayToAllRector
+
+Convert `toArray()` to `all()` when the collection does not contain any Arrayable objects.
+
+- class: [`RectorLaravel\Rector\MethodCall\ConvertEnumerableToArrayToAllRector`](../src/Rector/MethodCall/ConvertEnumerableToArrayToAllRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+-new Collection([0, 1, -1])->toArray();
++new Collection([0, 1, -1])->all();
 ```
 
 <br>
@@ -1222,6 +1215,19 @@ Replace `$this->faker` with the `fake()` helper function in Factories
          ];
      }
  }
+```
+
+<br>
+
+## ReplaceFakerPropertyFetchWithMethodCallRector
+
+Replace deprecated faker property fetch with method call
+
+- class: [`RectorLaravel\Rector\PropertyFetch\ReplaceFakerPropertyFetchWithMethodCallRector`](../src/Rector/PropertyFetch/ReplaceFakerPropertyFetchWithMethodCallRector.php)
+
+```diff
+-$faker->name,
++$faker->name(),
 ```
 
 <br>
