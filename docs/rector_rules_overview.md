@@ -1,4 +1,4 @@
-# 83 Rules Overview
+# 84 Rules Overview
 
 ## AbortIfRector
 
@@ -593,6 +593,7 @@ Use the event or dispatch helpers instead of the static dispatch method.
 -ExampleJob::dispatch($email);
 +dispatch(new ExampleJob($email));
 ```
+
 <br>
 
 ```diff
@@ -1255,6 +1256,19 @@ Replace `$this->faker` with the `fake()` helper function in Factories
          ];
      }
  }
+```
+
+<br>
+
+## ReplaceFakerPropertyFetchWithMethodCallRector
+
+Replace deprecated faker property fetch with method call
+
+- class: [`RectorLaravel\Rector\PropertyFetch\ReplaceFakerPropertyFetchWithMethodCallRector`](../src/Rector/PropertyFetch/ReplaceFakerPropertyFetchWithMethodCallRector.php)
+
+```diff
+-$faker->name,
++$faker->name(),
 ```
 
 <br>
