@@ -101,4 +101,18 @@ interface Enumerable
      * @return $this|TUnlessNotEmptyReturnType
      */
     public function unlessNotEmpty();
+
+    /**
+     * Get the collection of items as a plain array.
+     *
+     * @return array<TKey, mixed>
+     */
+    public function toArray();
+
+    /**
+     * Get all items in the enumerable.
+     *
+     * @return array<TKey, TValue>
+     */
+    public function all();
 }
