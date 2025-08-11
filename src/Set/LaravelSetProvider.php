@@ -4,6 +4,7 @@ namespace RectorLaravel\Set;
 
 use Rector\Set\Contract\SetInterface;
 use Rector\Set\Contract\SetProviderInterface;
+use Rector\Set\ValueObject\ComposerTriggeredSet;
 use Rector\Set\ValueObject\Set;
 use RectorLaravel\Set\Packages\Livewire\LivewireSetList;
 
@@ -95,9 +96,10 @@ final class LaravelSetProvider implements SetProviderInterface
                 'Upgrade Legacy Factories to Modern Factories',
                 LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES,
             ),
-            new Set(
+            new ComposerTriggeredSet(
                 self::GROUP_NAME,
-                'Livewire 3.0',
+                'livewire/livewire',
+                '3.0',
                 LivewireSetList::LIVEWIRE_30,
             ),
             ...$this->getLaravelVersions(),
@@ -105,7 +107,7 @@ final class LaravelSetProvider implements SetProviderInterface
     }
 
     /**
-     * @return Set[]
+     * @return ComposerTriggeredSet[]
      */
     private function getLaravelVersions(): array
     {
@@ -113,18 +115,20 @@ final class LaravelSetProvider implements SetProviderInterface
 
         $totalPostFive = count(self::LARAVEL_POST_FIVE);
         foreach (self::LARAVEL_POST_FIVE as $index => $version) {
-            $versions[] = new Set(
+            $versions[] = new ComposerTriggeredSet(
                 self::GROUP_NAME,
-                'Laravel Framework ' . ($totalPostFive - $index + 5) . '.0',
+                'laravel/framework',
+                ($totalPostFive - $index + 5) . '.0',
                 $version,
             );
         }
 
         $totalFive = count(self::LARAVEL_FIVE);
         foreach (self::LARAVEL_FIVE as $index => $version) {
-            $versions[] = new Set(
+            $versions[] = new ComposerTriggeredSet(
                 self::GROUP_NAME,
-                'Laravel Framework 5.' . ($totalFive - $index - 1),
+                'laravel/framework',
+                '5.' . ($totalFive - $index - 1),
                 $version,
             );
         }
