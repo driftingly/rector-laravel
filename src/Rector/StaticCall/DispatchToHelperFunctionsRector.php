@@ -80,7 +80,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
         }
 
         if ($this->usesBusDispatchable($classReflection)) {
-            if($this->isName($node->name, 'dispatchSync')){
+            if ($this->isName($node->name, 'dispatchSync')) {
                 return $this->createDispatchableCall($node, 'dispatch_sync');
             }
 
