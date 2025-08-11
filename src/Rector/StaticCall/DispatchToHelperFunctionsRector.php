@@ -42,6 +42,10 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
                     'ExampleJob::dispatch($email);',
                     'dispatch(new ExampleJob($email));'
                 ),
+                new CodeSample(
+                    'ExampleJob::dispatchSync($email);',
+                    'dispatch_sync(new ExampleJob($email));'
+                ),
             ],
         );
     }
@@ -60,7 +64,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
             return null;
         }
 
-        if (! $this->isName($node->name, 'dispatch')) {
+        if (! $this->isName($node->name, 'dispatch') && ! $this->isName($node->name, 'dispatchSync')) {
             return null;
         }
 
@@ -76,6 +80,10 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
         }
 
         if ($this->usesBusDispatchable($classReflection)) {
+            if ($this->isName($node->name, 'dispatchSync')) {
+                return $this->createDispatchableCall($node, 'dispatch_sync');
+            }
+
             return $this->createDispatchableCall($node, 'dispatch');
         }
 

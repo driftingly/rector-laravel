@@ -566,6 +566,12 @@ Use the event or dispatch helpers instead of the static dispatch method.
 -ExampleJob::dispatch($email);
 +dispatch(new ExampleJob($email));
 ```
+<br>
+
+```diff
+-ExampleJob::dispatchSync($email);
++dispatch_sync(new ExampleJob($email));
+```
 
 <br>
 
