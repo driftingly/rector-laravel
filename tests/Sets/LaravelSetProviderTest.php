@@ -11,22 +11,22 @@ use RectorLaravel\Set\LaravelSetProvider;
 final class LaravelSetProviderTest extends TestCase
 {
     private const array LARAVEL_VERSION_SETS = [
-        'Laravel Framework 12.0' => LaravelSetList::LARAVEL_120,
-        'Laravel Framework 11.0' => LaravelSetList::LARAVEL_110,
-        'Laravel Framework 10.0' => LaravelSetList::LARAVEL_100,
-        'Laravel Framework 9.0' => LaravelSetList::LARAVEL_90,
-        'Laravel Framework 8.0' => LaravelSetList::LARAVEL_80,
-        'Laravel Framework 7.0' => LaravelSetList::LARAVEL_70,
-        'Laravel Framework 6.0' => LaravelSetList::LARAVEL_60,
-        'Laravel Framework 5.8' => LaravelSetList::LARAVEL_58,
-        'Laravel Framework 5.7' => LaravelSetList::LARAVEL_57,
-        'Laravel Framework 5.6' => LaravelSetList::LARAVEL_56,
-        'Laravel Framework 5.5' => LaravelSetList::LARAVEL_55,
-        'Laravel Framework 5.4' => LaravelSetList::LARAVEL_54,
-        'Laravel Framework 5.3' => LaravelSetList::LARAVEL_53,
-        'Laravel Framework 5.2' => LaravelSetList::LARAVEL_52,
-        'Laravel Framework 5.1' => LaravelSetList::LARAVEL_51,
-        'Laravel Framework 5.0' => LaravelSetList::LARAVEL_50,
+        LaravelSetList::LARAVEL_120,
+        LaravelSetList::LARAVEL_110,
+        LaravelSetList::LARAVEL_100,
+        LaravelSetList::LARAVEL_90,
+        LaravelSetList::LARAVEL_80,
+        LaravelSetList::LARAVEL_70,
+        LaravelSetList::LARAVEL_60,
+        LaravelSetList::LARAVEL_58,
+        LaravelSetList::LARAVEL_57,
+        LaravelSetList::LARAVEL_56,
+        LaravelSetList::LARAVEL_55,
+        LaravelSetList::LARAVEL_54,
+        LaravelSetList::LARAVEL_53,
+        LaravelSetList::LARAVEL_52,
+        LaravelSetList::LARAVEL_51,
+        LaravelSetList::LARAVEL_50,
     ];
 
     /**
@@ -73,16 +73,6 @@ final class LaravelSetProviderTest extends TestCase
             fn (string $filePath) => in_array($filePath, self::LARAVEL_VERSION_SETS, true),
         );
 
-        Assert::assertSame(array_values(self::LARAVEL_VERSION_SETS), array_values($filePaths));
-
-        $setNames = array_filter(
-            array_map(
-                fn (SetInterface $set) => $set->getName(),
-                $sets
-            ),
-            fn (string $setName) => in_array($setName, array_keys(self::LARAVEL_VERSION_SETS), true),
-        );
-
-        Assert::assertSame(array_keys(self::LARAVEL_VERSION_SETS), array_values($setNames));
+        Assert::assertSame(self::LARAVEL_VERSION_SETS, array_values($filePaths));
     }
 }

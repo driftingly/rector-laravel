@@ -19,7 +19,8 @@
         "phpunit/phpunit": "^10.5",
         "symplify/rule-doc-generator": "^12.2",
         "tightenco/duster": "^3.1",
-        "nette/utils": "^4.0"
+        "nette/utils": "^4.0",
+        "tracy/tracy": "^2.10"
     },
     "autoload": {
         "psr-4": {
@@ -31,7 +32,8 @@
             "RectorLaravel\\Tests\\": "tests",
             "RectorLaravel\\Commands\\": "commands"
         },
-        "classmap": ["stubs"]
+        "classmap": ["stubs"],
+        "files": ["tests/debug_functions.php"]
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --ansi",
