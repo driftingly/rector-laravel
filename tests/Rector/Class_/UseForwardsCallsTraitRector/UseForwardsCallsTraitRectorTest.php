@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\Class_\UseForwardCallsTraitRector;
+namespace RectorLaravel\Tests\Rector\Class_\UseForwardsCallsTraitRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class UseForwardCallsTraitRectorTest extends AbstractRectorTestCase
+final class UseForwardsCallsTraitRectorTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {

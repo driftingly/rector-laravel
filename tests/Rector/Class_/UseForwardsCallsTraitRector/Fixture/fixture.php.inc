@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\UseForwardCallsTraitRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\UseForwardsCallsTraitRector\Fixture;
 
 class Fixture
 {
@@ -26,11 +26,11 @@ class Fixture
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\UseForwardCallsTraitRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\UseForwardsCallsTraitRector\Fixture;
 
 class Fixture
 {
-    use \Illuminate\Support\Traits\ForwardCalls;
+    use \Illuminate\Support\Traits\ForwardsCalls;
     private SomeCall $foo;
 
     public function __call($method, $args)

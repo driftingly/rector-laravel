@@ -1592,16 +1592,16 @@ Use `$this->components` property within commands
 
 <br>
 
-## UseForwardCallsTraitRector
+## UseForwardsCallsTraitRector
 
 Replaces the use of `call_user_func` and `call_user_func_array` method with the CallForwarding trait
 
-- class: [`RectorLaravel\Rector\Class_\UseForwardCallsTraitRector`](../src/Rector/Class_/UseForwardCallsTraitRector.php)
+- class: [`RectorLaravel\Rector\Class_\UseForwardsCallsTraitRector`](../src/Rector/Class_/UseForwardsCallsTraitRector.php)
 
 ```diff
  class SomeClass
  {
-+    use ForwardCalls;
++    use ForwardsCalls;
 +
      public function __call($method, $parameters)
      {
