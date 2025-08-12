@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\UseForwardCallsTraitRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\UseForwardsCallsTraitRector\Fixture;
 
 class SkipFirstClassCallableUse
 {

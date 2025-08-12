@@ -20,11 +20,11 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Class_\UseForwardCallsTraitRector\UseForwardCallsTraitRectorTest
+ * @see \RectorLaravel\Tests\Rector\Class_\UseForwardsCallsTraitRector\UseForwardsCallsTraitRectorTest
  */
-final class UseForwardCallsTraitRector extends AbstractRector
+final class UseForwardsCallsTraitRector extends AbstractRector
 {
-    private const string FORWARD_CALLS_TRAIT = 'Illuminate\Support\Traits\ForwardCalls';
+    private const string FORWARD_CALLS_TRAIT = 'Illuminate\Support\Traits\ForwardsCalls';
 
     public function __construct(private readonly CallUserFuncAnalyzer $callUserFuncAnalyzer) {}
 
@@ -45,7 +45,7 @@ CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
 class SomeClass
 {
-    use ForwardCalls;
+    use ForwardsCalls;
 
     public function __call($method, $parameters)
     {

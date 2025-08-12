@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\UseForwardCallsTraitRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\UseForwardsCallsTraitRector\Fixture;
 
 class WorksWithFirstClassCallableCallable
 {
@@ -18,11 +18,11 @@ class WorksWithFirstClassCallableCallable
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\Class_\UseForwardCallsTraitRector\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\UseForwardsCallsTraitRector\Fixture;
 
 class WorksWithFirstClassCallableCallable
 {
-    use \Illuminate\Support\Traits\ForwardCalls;
+    use \Illuminate\Support\Traits\ForwardsCalls;
     public function __call($method, $args)
     {
         return $this->forwardCallTo($this, 'foo', $args);
