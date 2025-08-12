@@ -114,6 +114,31 @@ return RectorConfig::configure()
 | [RouteActionCallableRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/StaticCall/RouteActionCallableRector.php) | Converts route action strings like `'UserController@index'` to callable arrays `[UserController::class, 'index']`. Configure with `NAMESPACE` for controller namespace and `ROUTES` for file-specific namespaces. |
 | [WhereToWhereLikeRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/WhereToWhereLikeRector.php) | Converts `where('column', 'like', 'value')` to `whereLike('column', 'value')` calls. Configure with `USING_POSTGRES_DRIVER` boolean to handle PostgreSQL vs MySQL differences. |
 
+## Opinionated Rules
+
+These rules are more opinionated and are not included in any sets by default.
+
+```php
+<?php declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\MethodCall\ResponseHelperCallToJsonResponseRector;
+
+return RectorConfig::configure()
+    ->withRules([
+        ResponseHelperCallToJsonResponseRector::class,
+    ]);
+```
+
+| Rule | Description |
+|------|-------------|
+| [RemoveModelPropertyFromFactoriesRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Class_/RemoveModelPropertyFromFactoriesRector.php) | Removes the `$model` property from Factories. |
+| [ResponseHelperCallToJsonResponseRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/ResponseHelperCallToJsonResponseRector.php) | Converts `response()->json()` to `new JsonResponse()`. |
+| [MinutesToSecondsInCacheRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/StaticCall/MinutesToSecondsInCacheRector.php) | Change minutes argument to seconds in cache methods. |
+| [UseComponentPropertyWithinCommandsRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/UseComponentPropertyWithinCommandsRector.php) | Use `$this->components` property within commands. |
+| [UseForwardsCallsTraitRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Class_/UseForwardsCallsTraitRector.php) | Replaces the use of `call_user_func` and `call_user_func_array` method with the CallForwarding trait. |
+| [EmptyToBlankAndFilledFuncRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Empty_/EmptyToBlankAndFilledFuncRector.php) | Converts `empty()` to `blank()` and `filled()` |
+
 ## Creating New Rules
 
 You can create a new rule using the composer script:
