@@ -6,6 +6,7 @@ use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
 use RectorLaravel\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector;
 use RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector;
+use RectorLaravel\Rector\Expr\AppEnvironmentComparisonToParameterRector;
 use RectorLaravel\Rector\MethodCall\ReverseConditionableMethodCallRector;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -14,4 +15,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ReverseConditionableMethodCallRector::class);
     $rectorConfig->rule(ApplyDefaultInsteadOfNullCoalesceRector::class);
     $rectorConfig->rule(MakeModelAttributesAndScopesProtectedRector::class);
+    $rectorConfig->rule(AppEnvironmentComparisonToParameterRector::class);
 };
