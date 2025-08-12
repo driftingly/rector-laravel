@@ -92,6 +92,28 @@ return RectorConfig::configure()
 | [LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-legacy-factories-to-classes.php)                           | Migrates Eloquent legacy model factories (with closures) into class based factories.<br/>https://laravel.com/docs/8.x/releases#model-factory-classes                                                                                             |
 | [LaravelSetList::LARAVEL_STATIC_TO_INJECTION](https://github.com/driftingly/rector-laravel/blob/main/config/sets/laravel-static-to-injection.php)                                           | Replaces Laravel's Facades with Dependency Injection.<br/>https://tomasvotruba.com/blog/2019/03/04/how-to-turn-laravel-from-static-to-dependency-injection-in-one-day/<br/>https://laravel.com/docs/12.x/facades#facades-vs-dependency-injection |
 
+## Configurable Rules
+
+These rules require configuration and must be added manually to your `rector.php` file.
+
+```php
+<?php declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector;
+
+return RectorConfig::configure()
+    ->withConfiguredRule(RemoveDumpDataDeadCodeRector::class, [
+        'dd', 'dump', 'var_dump'
+    ]);
+```
+
+| Rule | Description |
+|------|-------------|
+| [RemoveDumpDataDeadCodeRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/FuncCall/RemoveDumpDataDeadCodeRector.php) | Removes debug function calls like `dd()`, `dump()`, etc. from code. Configure with an array of function names to remove (default: `['dd', 'dump']`). |
+| [RouteActionCallableRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/StaticCall/RouteActionCallableRector.php) | Converts route action strings like `'UserController@index'` to callable arrays `[UserController::class, 'index']`. Configure with `NAMESPACE` for controller namespace and `ROUTES` for file-specific namespaces. |
+| [WhereToWhereLikeRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/WhereToWhereLikeRector.php) | Converts `where('column', 'like', 'value')` to `whereLike('column', 'value')` calls. Configure with `USING_POSTGRES_DRIVER` boolean to handle PostgreSQL vs MySQL differences. |
+
 ## Creating New Rules
 
 You can create a new rule using the composer script:
