@@ -46,6 +46,8 @@ final class LaravelSetList
 
     final public const string LARAVEL_CODE_QUALITY = __DIR__ . '/../../config/sets/laravel-code-quality.php';
 
+    final public const string LARAVEL_CODE_STYLE = __DIR__ . '/../../config/sets/laravel-code-style.php';
+
     final public const string LARAVEL_COLLECTION = __DIR__ . '/../../config/sets/laravel-collection.php';
 
     final public const string LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME = __DIR__ . '/../../config/sets/laravel-container-string-to-fully-qualified-name.php';
