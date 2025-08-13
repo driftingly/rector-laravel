@@ -14,28 +14,24 @@ return static function (RectorConfig $rectorConfig): void {
             ArrayDimFetchToMethodCallRector::class,
             [
                 new ArrayDimFetchToMethodCall(
-                    new ObjectType('Illuminate\Foundation\Application'),
-                    'make',
-                ),
-                new ArrayDimFetchToMethodCall(
-                    new ObjectType('Illuminate\Contracts\Foundation\Application'),
-                    'make',
-                ),
-                new ArrayDimFetchToMethodCall(
-                    new ObjectType('Illuminate\Config\Repository'),
-                    'get',
-                ),
-                new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Contracts\Config\Repository'),
-                    'make',
+                    'get',
+                    'set',
+                    'has',
+                    'set', // intentional
                 ),
                 new ArrayDimFetchToMethodCall(
-                    new ObjectType('Illuminate\Contracts\Container\Container\Application'),
-                    'make',
+                    new ObjectType('Illuminate\Contracts\Cache\Repository'),
+                    'get',
+                    'set',
+                    'has',
+                    'forget',
                 ),
                 new ArrayDimFetchToMethodCall(
                     new ObjectType('Illuminate\Contracts\Container\Container'),
                     'make',
+                    'bind',
+                    'bound',
                 ),
             ],
         );
