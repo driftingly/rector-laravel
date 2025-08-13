@@ -12,8 +12,8 @@ use Rector\NodeTypeResolver\NodeTypeResolver;
 final readonly class QueryBuilderAnalyzer
 {
     public function __construct(
-        private readonly NodeTypeResolver $nodeTypeResolver,
-        private readonly NodeNameResolver $nodeNameResolver,
+        private NodeTypeResolver $nodeTypeResolver,
+        private NodeNameResolver $nodeNameResolver,
     ) {}
 
     protected static function modelType(): ObjectType
