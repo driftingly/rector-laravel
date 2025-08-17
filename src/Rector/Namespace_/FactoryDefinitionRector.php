@@ -21,7 +21,7 @@ use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\PhpParser\Node\CustomNode\FileWithoutNamespace;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\ModelFactoryNodeFactory;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -45,7 +45,7 @@ final class FactoryDefinitionRector extends AbstractRector implements Configurab
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Upgrade legacy factories to support classes.', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 <<<'CODE_SAMPLE'
 use Faker\Generator as Faker;
 
@@ -73,7 +73,8 @@ class UserFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     }
 }
 CODE_SAMPLE
-            ),
+                ,
+                ['App\User']),
         ]);
     }
 

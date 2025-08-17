@@ -1,4 +1,4 @@
-# 80 Rules Overview
+# 83 Rules Overview
 
 ## AbortIfRector
 
@@ -54,28 +54,6 @@ Adds the `@extends` annotation to Factories.
  class UserFactory extends Factory
  {
      protected $model = \App\Models\User::class;
- }
-```
-
-<br>
-
-## AddHasFactoryToModelsRector
-
-Adds the `HasFactory` trait to Models.
-
-:wrench: **configure it!**
-
-- class: [`RectorLaravel\Rector\Class_\AddHasFactoryToModelsRector`](../src/Rector/Class_/AddHasFactoryToModelsRector.php)
-
-```diff
- namespace App\Models;
-
- use Illuminate\Database\Eloquent\Factories\Factory;
- use Illuminate\Database\Eloquent\Model;
-
- class User extends Model
- {
-+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
  }
 ```
 
@@ -138,6 +116,25 @@ Add new `$guard` argument to Illuminate\Auth\Events\Login
 +        $guard = config('auth.defaults.guard');
 +        $loginEvent = new Login($guard, 'user', false);
      }
+ }
+```
+
+<br>
+
+## AddHasFactoryToModelsRector
+
+Adds the HasFactory trait to Models.
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\Class_\AddHasFactoryToModelsRector`](../src/Rector/Class_/AddHasFactoryToModelsRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+
+ class User extends Model
+ {
++    use \Illuminate\Database\Eloquent\Factories\HasFactory;
  }
 ```
 
@@ -498,6 +495,36 @@ Refactor `whereDate()` queries to include both date and time comparisons with Ca
 +        $query->whereTime('created_at', '<=', $dateTime);
      }
  }
+```
+
+<br>
+
+## ContainerBindConcreteWithClosureOnlyRector
+
+Drop the specified abstract class from the bind method and replace it with a closure that returns the abstract class.
+
+- class: [`RectorLaravel\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector`](../src/Rector/MethodCall/ContainerBindConcreteWithClosureOnlyRector.php)
+
+```diff
+-$this->app->bind(SomeClass::class, function (): SomeClass {
++$this->app->bind(function (): SomeClass {
+     return new SomeClass();
+ });
+```
+
+<br>
+
+## ConvertEnumerableToArrayToAllRector
+
+Convert `toArray()` to `all()` when the collection does not contain any Arrayable objects.
+
+- class: [`RectorLaravel\Rector\MethodCall\ConvertEnumerableToArrayToAllRector`](../src/Rector/MethodCall/ConvertEnumerableToArrayToAllRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+-new Collection([0, 1, -1])->toArray();
++new Collection([0, 1, -1])->all();
 ```
 
 <br>
