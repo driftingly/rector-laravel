@@ -53,7 +53,6 @@ final class LaravelServiceAnalyzer
         if (! $reflectionMethod->isStatic() || $reflectionMethod->getNumberOfParameters() > 0) {
             return null;
         }
-        $reflectionMethod->setAccessible(true);
         $origin = $reflectionMethod->invoke(null);
         if (! is_string($origin)) {
             return null;

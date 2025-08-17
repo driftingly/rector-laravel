@@ -11,7 +11,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -33,7 +33,7 @@ final class FactoryFuncCallToStaticCallRector extends AbstractRector implements 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Use the static factory method instead of global factory function.', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 <<<'CODE_SAMPLE'
 factory(User::class);
 CODE_SAMPLE
@@ -42,7 +42,8 @@ CODE_SAMPLE
                 <<<'CODE_SAMPLE'
 User::factory();
 CODE_SAMPLE
-            ),
+                ,
+                ['App\User']),
         ]);
     }
 
