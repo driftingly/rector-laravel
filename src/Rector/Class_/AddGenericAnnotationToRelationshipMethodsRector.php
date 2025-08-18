@@ -66,7 +66,7 @@ final class AddGenericAnnotationToRelationshipMethodsRector extends AbstractRect
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class User extends Model
+class Comment extends Model
 {
     public function owner(): BelongsTo
     {
@@ -78,7 +78,7 @@ CODE_SAMPLE,
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class User extends Model
+class Comment extends Model
 {
     /**
      * @return BelongsTo<User, $this>
