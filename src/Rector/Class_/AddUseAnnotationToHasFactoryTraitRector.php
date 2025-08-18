@@ -9,6 +9,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
@@ -28,6 +29,7 @@ final class AddUseAnnotationToHasFactoryTraitRector extends AbstractRector
     public function __construct(
         private readonly DocBlockUpdater $docBlockUpdater,
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
+        private readonly ReflectionProvider $reflectionProvider,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -144,20 +146,53 @@ CODE_SAMPLE
             return null;
         }
 
-        $classBaseName = $this->nodeNameResolver->getShortName($className);
+        $modelName = $this->nodeNameResolver->getShortName($className);
 
-        $factoryName = $classBaseName . 'Factory';
+        $factoryName = $modelName . 'Factory';
 
         $currentNamespace = $class->namespacedName?->toString() ?? $className;
 
-        if (str_contains($currentNamespace, '\\Models\\')) {
-            return '\\Database\\Factories\\' . $factoryName;
+        $factoryClassNames = $this->getPotentialFactoryClassNames($currentNamespace, $factoryName);
+
+        foreach ($factoryClassNames as $factoryClassName) {
+            if ($this->reflectionProvider->hasClass($factoryClassName)) {
+                return $factoryClassName;
+            }
         }
 
-        if (str_contains($currentNamespace, 'App\\')) {
-            return '\\Database\\Factories\\' . $factoryName;
-        }
+        return null;
+    }
 
-        return '\\Database\\Factories\\' . $factoryName;
+    /**
+     * @return string[]
+     */
+    private function getPotentialFactoryClassNames(string $modelNamespace, string $factoryName): array
+    {
+        $factoryClassNames = [];
+
+        if (str_contains($modelNamespace, '\\Models\\')) {
+            $afterModels = substr($modelNamespace, strpos($modelNamespace, '\\Models\\') + 8);
+
+            if (str_contains($afterModels, '\\')) {
+                $namespaceParts = explode('\\', $afterModels);
+                array_pop($namespaceParts);
+                $deepNamespace = implode('\\', $namespaceParts);
+
+                $factoryClassNames[] = '\\Database\\Factories\\' . $deepNamespace . '\\' . $factoryName;
+            }
+        } elseif (str_contains($modelNamespace, 'App\\')) {
+            $afterApp = substr($modelNamespace, strpos($modelNamespace, 'App\\') + 4);
+
+            if (str_contains($afterApp, '\\')) {
+                $namespaceParts = explode('\\', $afterApp);
+                array_pop($namespaceParts);
+                $deepNamespace = implode('\\', $namespaceParts);
+
+                $factoryClassNames[] = '\\Database\\Factories\\' . $deepNamespace . '\\' . $factoryName;
+            }
+        }
+        $factoryClassNames[] = '\\Database\\Factories\\' . $factoryName;
+
+        return array_unique($factoryClassNames);
     }
 }
