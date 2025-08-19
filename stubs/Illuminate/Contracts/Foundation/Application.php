@@ -6,7 +6,7 @@ namespace Illuminate\Contracts\Foundation;
 
 use Illuminate\Contracts\Container\Container;
 
-if (class_exists('Illuminate\Contracts\Foundation\Application')) {
+if (interface_exists('Illuminate\Contracts\Foundation\Application')) {
     return;
 }
 
