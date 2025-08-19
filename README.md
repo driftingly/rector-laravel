@@ -23,7 +23,22 @@ composer require --dev driftingly/rector-laravel
 
 ## Automate Laravel Upgrades
 
-To add a set to your config, use `RectorLaravel\Set\LaravelLevelSetList` and pick the constant that matches your target version.
+To automatically apply the correct rules depending on the version of Laravel (or other packages) you are currently on (as detected in the `composer.json`), use the following:
+
+```php
+<?php declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+use RectorLaravel\Set\LaravelSetProvider;
+
+return RectorConfig::configure()
+    ->withSetProviders(LaravelSetProvider::class)
+    ->withComposerBased(laravel: true, /** other options */);
+```
+
+### Manual Configuration
+
+To manually add a version set to your config, use `RectorLaravel\Set\LaravelLevelSetList` and pick the constant that matches your target version.
 Sets for higher versions include sets for lower versions.
 
 ```php
