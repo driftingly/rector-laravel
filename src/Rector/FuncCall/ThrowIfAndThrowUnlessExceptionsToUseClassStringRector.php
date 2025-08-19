@@ -61,10 +61,7 @@ CODE_SAMPLE,
 
         // convert the class to a class string
         $node->args[1] = new Arg(new ClassConstFetch($class, 'class'));
-        $node->args = [
-            ...$node->args,
-            ...$exception->getArgs(),
-        ];
+        $node->args = array_merge($node->args, $exception->getArgs());
 
         return $node;
     }

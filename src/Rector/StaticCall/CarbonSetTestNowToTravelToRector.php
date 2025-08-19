@@ -20,7 +20,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CarbonSetTestNowToTravelToRector extends AbstractRector
 {
-    public function __construct(private readonly ReflectionProvider $reflectionProvider) {}
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * @throws PoorDocumentationException

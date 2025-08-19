@@ -14,22 +14,36 @@ use ReflectionMethod;
 final class LaravelServiceAnalyzer
 {
     /**
+     * @readonly
+     */
+    private NodeTypeResolver $nodeTypeResolver;
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    /**
      * @var array<string, class-string>
      */
     public array $services = [
         'db' => 'Illuminate\Database\DatabaseManager',
     ];
 
-    public function __construct(
-        private readonly NodeTypeResolver $nodeTypeResolver,
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
+    public function __construct(NodeTypeResolver $nodeTypeResolver, NodeNameResolver $nodeNameResolver, ReflectionProvider $reflectionProvider)
+    {
+        $this->nodeTypeResolver = $nodeTypeResolver;
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * @param  array<string, class-string>  $services
+     * @return static
      */
-    public function defineServices(array $services, bool $merge = false): static
+    public function defineServices(array $services, bool $merge = false)
     {
         $this->services = $merge ? array_merge($this->services, $services) : $services;
 
@@ -49,6 +63,7 @@ final class LaravelServiceAnalyzer
         }
 
         $reflectionMethod = new ReflectionMethod($className, 'getFacadeAccessor');
+        $reflectionMethod->setAccessible(true);
 
         if (! $reflectionMethod->isStatic() || $reflectionMethod->getNumberOfParameters() > 0) {
             return null;
@@ -71,7 +86,10 @@ final class LaravelServiceAnalyzer
         return new ObjectType($service);
     }
 
-    public function isMatchingCall(MethodCall|StaticCall $node, ObjectType $objectType, string $method): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    public function isMatchingCall($node, ObjectType $objectType, string $method): bool
     {
         if (! $this->nodeNameResolver->isName($node->name, $method)) {
             return false;
