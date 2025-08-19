@@ -54,6 +54,8 @@ final class LaravelSetList
 
     final public const string LARAVEL_FACADE_ALIASES_TO_FULL_NAMES = __DIR__ . '/../../config/sets/laravel-facade-aliases-to-full-names.php';
 
+    final public const string LARAVEL_FACTORIES = __DIR__ . '/../../config/sets/laravel-factories.php';
+
     final public const string LARAVEL_IF_HELPERS = __DIR__ . '/../../config/sets/laravel-if-helpers.php';
 
     final public const string LARAVEL_LEGACY_FACTORIES_TO_CLASSES = __DIR__ . '/../../config/sets/laravel-legacy-factories-to-classes.php';

@@ -69,6 +69,11 @@ final class LaravelSetProvider implements SetProviderInterface
             ),
             new Set(
                 self::GROUP_NAME,
+                'Factory improvements',
+                LaravelSetList::LARAVEL_FACTORIES,
+            ),
+            new Set(
+                self::GROUP_NAME,
                 'Rename Aliases to FQN Classes',
                 LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES,
             ),
