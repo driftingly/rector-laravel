@@ -136,7 +136,7 @@ CODE_SAMPLE
     {
         $name = $this->getName($classMethod);
 
-        if (str_starts_with((string) $name, 'scope')) {
+        if ((bool) preg_match('/^scope.+$/', $name)) {
             return true;
         }
 
