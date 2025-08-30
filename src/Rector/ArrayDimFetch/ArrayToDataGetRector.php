@@ -64,12 +64,12 @@ CODE_SAMPLE
             return null;
         }
 
-        $rootVar = $this->getRootVariable($node);
+        $expr = $this->getRootVariable($node);
 
         return new FuncCall(
             new Name('data_get'),
             [
-                new Arg($rootVar),
+                new Arg($expr),
                 new Arg($keyPath),
             ]
         );
