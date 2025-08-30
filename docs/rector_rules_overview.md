@@ -1,4 +1,4 @@
-# 85 Rules Overview
+# 86 Rules Overview
 
 ## AbortIfRector
 
@@ -290,6 +290,21 @@ Move help facade-like function calls to constructor injection
 +        $viewFactory = $this->viewFactory;
      }
  }
+```
+
+<br>
+
+## ArrayToDataGetRector
+
+Convert array access to data_get() helper function
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\ArrayToDataGetRector`](../src/Rector/ArrayDimFetch/ArrayToDataGetRector.php)
+
+```diff
+-$array['key'];
+-$array['nested']['key'];
++data_get($array, 'key');
++data_get($array, 'nested.key');
 ```
 
 <br>
