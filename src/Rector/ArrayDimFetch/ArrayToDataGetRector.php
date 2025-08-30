@@ -60,7 +60,7 @@ CODE_SAMPLE
         }
 
         $keyPath = $this->buildKeyPath($node);
-        if (!$keyPath instanceof Expr) {
+        if (! $keyPath instanceof Expr) {
             return null;
         }
 
@@ -81,7 +81,7 @@ CODE_SAMPLE
         $current = $arrayDimFetch;
 
         while ($current instanceof ArrayDimFetch) {
-            if (!$current->dim instanceof Expr || ! $current->dim instanceof Scalar) {
+            if (! $current->dim instanceof Expr || ! $current->dim instanceof Scalar) {
                 return null;
             }
 
@@ -101,7 +101,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param array<array-key, Scalar> $keys
+     * @param  array<array-key, scalar>  $keys
      */
     private function createDotNotationString(array $keys): ?String_
     {
@@ -114,7 +114,7 @@ CODE_SAMPLE
                 return null;
             }
 
-            if (!is_string($value) && !is_int($value)) {
+            if (! is_string($value) && ! is_int($value)) {
                 return null;
             }
 
