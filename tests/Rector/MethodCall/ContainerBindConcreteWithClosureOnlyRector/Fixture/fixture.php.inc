@@ -19,6 +19,12 @@ $app->singleton(SomeInterface::class, function () {
     return new SomeClass();
 });
 
+foreach ([SomeClass::class] as $item) {
+    $app->singleton($item, function () use ($item) {
+        return new $item();
+    });
+}
+
 ?>
 -----
 <?php
@@ -41,5 +47,11 @@ $app->bind(function (): \RectorLaravel\Tests\Rector\MethodCall\ContainerBindConc
 $app->singleton(function (): \RectorLaravel\Tests\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector\Source\SomeInterface {
     return new SomeClass();
 });
+
+foreach ([SomeClass::class] as $item) {
+    $app->singleton($item, function () use ($item) {
+        return new $item();
+    });
+}
 
 ?>
