@@ -3,6 +3,7 @@
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Const_;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
@@ -73,6 +74,10 @@ CODE_SAMPLE
         $type = $this->getType($node->getArgs()[0]->value);
         $classString = $node->getArgs()[0]->value;
         $concreteNode = $node->getArgs()[1]->value;
+
+        if ($classString instanceof Node\Expr\Variable) {
+            return null;
+        }
 
         if (! $concreteNode instanceof Closure) {
             return null;
