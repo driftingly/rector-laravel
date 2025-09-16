@@ -113,6 +113,14 @@ CODE_SAMPLE
             return true;
         }
 
+        if (
+            $classReflection->getParentClass() instanceof ClassReflection &&
+            $classReflection->getParentClass()->hasMethod($this->getName($classMethod)) &&
+            $classReflection->getParentClass()->getMethod($this->getName($classMethod), $scope)->isPublic()
+        ) {
+            return true;
+        }
+
         return ! $classReflection->isTrait()
             && ! $classReflection->is('Illuminate\Database\Eloquent\Model');
     }
