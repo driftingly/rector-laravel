@@ -29,7 +29,7 @@ class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements Co
     /**
      * @var string[]
      */
-    private array $allowedPatterns = [];
+    private array $allowedPatterns = ['*_at', '*_date', '*_on'];
 
     public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
 
