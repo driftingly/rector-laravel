@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypeCombinator;
+use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -62,7 +63,12 @@ CODE_SAMPLE
             return null;
         }
 
-        $type = TypeCombinator::removeNull($this->getType($node->var));
+        $scope = ScopeFetcher::fetch($node);
+        $type = TypeCombinator::removeNull(
+            // This HAS to use the $scope->getType() as opposed to $this->getType()
+            // because it's not getting the proper type from the Larastan extensions
+            $scope->getType($node->var)
+        );
         $valueType = $type->getTemplateType('Illuminate\Support\Enumerable', 'TValue');
 
         if (! (new ObjectType('Illuminate\Contracts\Support\Arrayable'))->isSuperTypeOf($valueType)->no()) {
