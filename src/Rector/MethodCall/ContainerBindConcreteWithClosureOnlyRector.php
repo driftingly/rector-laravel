@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Const_;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
@@ -73,6 +74,10 @@ CODE_SAMPLE
         $type = $this->getType($node->getArgs()[0]->value);
         $classString = $node->getArgs()[0]->value;
         $concreteNode = $node->getArgs()[1]->value;
+
+        if ($classString instanceof Variable) {
+            return null;
+        }
 
         if (! $concreteNode instanceof Closure) {
             return null;
