@@ -36,17 +36,17 @@ class SomeClass
         $array = ['key' => 'value', 'nested' => ['inner' => 'data']];
 
         // Simple array access
-        $value = data_get($array, 'key');
+        $value = \Illuminate\Support\Arr::get($array, 'key');
 
         // Nested array access
-        $nested = data_get($array, 'nested.inner');
+        $nested = \Illuminate\Support\Arr::get($array, 'nested.inner');
 
         // Multiple levels
-        $data = data_get($array, 'level1.level2.level3');
+        $data = \Illuminate\Support\Arr::get($array, 'level1.level2.level3');
 
         // Integer keys
-        $indexed = data_get($array, 0);
-        $multiIndexed = data_get($array, '0.1');
+        $indexed = \Illuminate\Support\Arr::get($array, 0);
+        $multiIndexed = \Illuminate\Support\Arr::get($array, '0.1');
     }
 }
 

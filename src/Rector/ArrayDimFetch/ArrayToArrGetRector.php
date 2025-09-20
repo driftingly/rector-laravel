@@ -8,7 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
@@ -17,22 +17,22 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayToDataGetRector\ArrayToDataGetRectorTest
+ * @see \RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayToArrGetRector\ArrayToArrGetRectorTest
  */
-final class ArrayToDataGetRector extends AbstractRector
+final class ArrayToArrGetRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Convert array access to data_get() helper function',
+            'Convert array access to Arr::get() method call',
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 $array['key'];
 $array['nested']['key'];
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
-data_get($array, 'key');
-data_get($array, 'nested.key');
+\Illuminate\Support\Arr::get($array, 'key');
+\Illuminate\Support\Arr::get($array, 'nested.key');
 CODE_SAMPLE
             )]
         );
@@ -49,7 +49,7 @@ CODE_SAMPLE
     /**
      * @param  ArrayDimFetch  $node
      */
-    public function refactor(Node $node): ?FuncCall
+    public function refactor(Node $node): ?StaticCall
     {
         if ($node->dim === null) {
             return null;
@@ -66,8 +66,9 @@ CODE_SAMPLE
 
         $expr = $this->getRootVariable($node);
 
-        return new FuncCall(
-            new Name('data_get'),
+        return new StaticCall(
+            new Name\FullyQualified('Illuminate\Support\Arr'),
+            'get',
             [
                 new Arg($expr),
                 new Arg($keyPath),
@@ -101,7 +102,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  array<array-key, scalar>  $keys
+     * @param  array<Scalar>  $keys
      */
     private function createDotNotationString(array $keys): ?String_
     {

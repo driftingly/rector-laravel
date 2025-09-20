@@ -294,17 +294,17 @@ Move help facade-like function calls to constructor injection
 
 <br>
 
-## ArrayToDataGetRector
+## ArrayToArrGetRector
 
-Convert array access to data_get() helper function
+Convert array access to Arr::get() method call
 
-- class: [`RectorLaravel\Rector\ArrayDimFetch\ArrayToDataGetRector`](../src/Rector/ArrayDimFetch/ArrayToDataGetRector.php)
+- class: [`RectorLaravel\Rector\ArrayDimFetch\ArrayToArrGetRector`](../src/Rector/ArrayDimFetch/ArrayToArrGetRector.php)
 
 ```diff
 -$array['key'];
 -$array['nested']['key'];
-+data_get($array, 'key');
-+data_get($array, 'nested.key');
++\Illuminate\Support\Arr::get($array, 'key');
++\Illuminate\Support\Arr::get($array, 'nested.key');
 ```
 
 <br>
