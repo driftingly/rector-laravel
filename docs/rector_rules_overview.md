@@ -296,15 +296,20 @@ Move help facade-like function calls to constructor injection
 
 ## ArrayToArrGetRector
 
-Convert array access to Arr::get() method call
+Convert array access to `Arr::get()` method call, skips null coalesce with throw expressions
 
 - class: [`RectorLaravel\Rector\ArrayDimFetch\ArrayToArrGetRector`](../src/Rector/ArrayDimFetch/ArrayToArrGetRector.php)
 
 ```diff
 -$array['key'];
 -$array['nested']['key'];
+-$array['key'] ?? 'default';
+-$array['nested']['key'] ?? 'default';
 +\Illuminate\Support\Arr::get($array, 'key');
 +\Illuminate\Support\Arr::get($array, 'nested.key');
++\Illuminate\Support\Arr::get($array, 'key', 'default');
++\Illuminate\Support\Arr::get($array, 'nested.key', 'default');
+ $array['key'] ?? throw new Exception('Required');
 ```
 
 <br>
