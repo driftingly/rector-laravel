@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\ArrayDimFetch;
 
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -67,7 +68,7 @@ CODE_SAMPLE
         $expr = $this->getRootVariable($node);
 
         return new StaticCall(
-            new Name\FullyQualified('Illuminate\Support\Arr'),
+            new FullyQualified('Illuminate\Support\Arr'),
             'get',
             [
                 new Arg($expr),
