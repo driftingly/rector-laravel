@@ -61,4 +61,10 @@ final class LaravelSetList
     final public const string LARAVEL_LEGACY_FACTORIES_TO_CLASSES = __DIR__ . '/../../config/sets/laravel-legacy-factories-to-classes.php';
 
     final public const string LARAVEL_STATIC_TO_INJECTION = __DIR__ . '/../../config/sets/laravel-static-to-injection.php';
+
+    final public const string LARAVEL_TESTING = __DIR__ . '/../../config/sets/laravel-testing.php';
+
+    final public const string LARAVEL_TYPE_DECLARATIONS = __DIR__ . '/../../config/sets/laravel-type-declarations.php';
+
+    final public const string LUMEN = __DIR__ . '/../../config/sets/lumen.php';
 }
