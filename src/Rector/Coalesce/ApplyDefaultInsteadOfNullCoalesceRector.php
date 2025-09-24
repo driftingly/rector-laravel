@@ -41,7 +41,6 @@ final class ApplyDefaultInsteadOfNullCoalesceRector extends AbstractRector imple
             new ApplyDefaultInsteadOfNullCoalesce('config'),
             new ApplyDefaultInsteadOfNullCoalesce('env'),
             new ApplyDefaultInsteadOfNullCoalesce('data_get', argumentPosition: 2),
-            new ApplyDefaultInsteadOfNullCoalesce('input', new ObjectType('Illuminate\Http\Request')),
             new ApplyDefaultInsteadOfNullCoalesce('get', new ObjectType('Illuminate\Support\Env')),
         ];
     }
