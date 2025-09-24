@@ -58,9 +58,10 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
         return [StaticCall::class];
     }
 
+    /** @param StaticCall $node */
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof StaticCall) {
+        if ($node->isFirstClassCallable()) {
             return null;
         }
 
