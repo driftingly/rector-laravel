@@ -10,9 +10,8 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\VariadicPlaceholder;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -31,7 +30,10 @@ class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements Co
      */
     private array $allowedPatterns = ['*_at', '*_date', '*_on'];
 
-    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
+    public function __construct(
+        private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer,
+        private readonly ValueResolver $valueResolver,
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -77,17 +79,31 @@ CODE_SAMPLE
         return [MethodCall::class];
     }
 
+    /** @param  MethodCall  $node */
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof MethodCall) {
+        if (! $this->isOrderByMethodCall($node)) {
             return null;
         }
 
-        if ($this->isOrderByMethodCall($node) && $this->isAllowedPattern($node)) {
-            return $this->convertOrderByToLatest($node);
+        $columnArg = $node->getArg('column', 0);
+        $directionArg = $node->getArg('direction', 1);
+
+        if ($columnArg === null) {
+            return null;
         }
 
-        return null;
+        if (! $this->isAllowedPattern($columnArg->value)) {
+            return null;
+        }
+
+        $direction = $directionArg === null ? 'asc' : $this->valueResolver->getValue($directionArg);
+
+        if (! is_string($direction)) {
+            return null;
+        }
+
+        return $this->convertOrderByToLatest($node, $columnArg, $direction);
     }
 
     /**
@@ -104,38 +120,30 @@ CODE_SAMPLE
 
     private function isOrderByMethodCall(MethodCall $methodCall): bool
     {
-        // Check if it's a method call to `orderBy`
-
         return $this->queryBuilderAnalyzer->isMatchingCall($methodCall, 'orderBy')
             || $this->queryBuilderAnalyzer->isMatchingCall($methodCall, 'orderByDesc');
     }
 
-    private function isAllowedPattern(MethodCall $methodCall): bool
+    private function isAllowedPattern(Expr $expr): bool
     {
-        $columnArg = $methodCall->args !== [] && $methodCall->args[0] instanceof Arg
-            ? $methodCall->args[0]->value
-            : null;
-
         // If no patterns are specified, consider all column names as matching
         if ($this->allowedPatterns === []) {
             return true;
         }
 
-        if ($columnArg instanceof String_) {
-            $columnName = $columnArg->value;
+        $value = $this->valueResolver->getValue($expr);
 
-            // If specified, only allow certain patterns
+        if (is_string($value)) {
             foreach ($this->allowedPatterns as $allowedPattern) {
-                if (fnmatch($allowedPattern, $columnName)) {
+                if (fnmatch($allowedPattern, $value)) {
                     return true;
                 }
             }
         }
 
-        if ($columnArg instanceof Variable && is_string($columnArg->name)) {
-            // Check against allowed patterns
+        if ($expr instanceof Variable && is_string($expr->name)) {
             foreach ($this->allowedPatterns as $allowedPattern) {
-                if (fnmatch(ltrim($allowedPattern, '$'), $columnArg->name)) {
+                if (fnmatch(ltrim($allowedPattern, '$'), $expr->name)) {
                     return true;
                 }
             }
@@ -144,48 +152,18 @@ CODE_SAMPLE
         return false;
     }
 
-    private function convertOrderByToLatest(MethodCall $methodCall): ?MethodCall
+    private function convertOrderByToLatest(MethodCall $methodCall, Arg $columnArg, string $direction): MethodCall
     {
-        if (! isset($methodCall->args[0]) && ! $methodCall->args[0] instanceof VariadicPlaceholder) {
-            return null;
-        }
-
-        $columnVar = $methodCall->args[0] instanceof Arg ? $methodCall->args[0]->value : null;
-        if (! $columnVar instanceof Expr) {
-            return null;
-        }
-
-        if (isset($methodCall->args[1]) && (! $methodCall->args[1] instanceof Arg || ! $methodCall->args[1]->value instanceof String_)) {
-            return null;
-        }
-
-        if (isset($methodCall->args[1]) && $methodCall->args[1] instanceof Arg && $methodCall->args[1]->value instanceof String_) {
-            $direction = $methodCall->args[1]->value->value;
-        } else {
-            $direction = 'asc';
-        }
-
         if ($this->isName($methodCall->name, 'orderByDesc')) {
-            $newMethod = 'latest';
+            $method = 'latest';
         } else {
-            $newMethod = $direction === 'asc' ? 'oldest' : 'latest';
+            $method = strtolower($direction) === 'asc' ? 'oldest' : 'latest';
         }
 
-        return $this->createMethodCall($methodCall, $newMethod, $columnVar);
-    }
-
-    private function createMethodCall(MethodCall $methodCall, string $newMethod, Expr $expr): MethodCall
-    {
-        if ($expr instanceof String_ && $expr->value === 'created_at') {
-            $args = [];
-        } elseif ($expr instanceof String_) {
-            $args = [new Arg(new String_($expr->value))];
-        } else {
-            $args = [new Arg($expr)];
-        }
-
-        $methodCall->name = new Identifier($newMethod);
-        $methodCall->args = $args;
+        $methodCall->name = new Identifier($method);
+        $methodCall->args = $this->valueResolver->isValue($columnArg->value, 'created_at')
+            ? []
+            : [$columnArg];
 
         return $methodCall;
     }
