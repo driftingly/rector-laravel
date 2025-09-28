@@ -8,7 +8,6 @@ use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\InterpolatedStringPart;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PhpParser\Node\Scalar\String_;
@@ -99,50 +98,34 @@ CODE_SAMPLE
 
     private function processInterpolatedStringRule(InterpolatedString $interpolatedString): Array_
     {
-        $intermediateRules = [];
+        // Build rule parts by splitting on pipes while preserving variables
+        $allRuleParts = [];
+        $currentParts = [];
 
         foreach ($interpolatedString->parts as $part) {
             if ($part instanceof InterpolatedStringPart) {
-                $newParts = explode('|', $part->value);
-                $intermediateRules[] = new InterpolatedString(array_map(static fn ($part) => new InterpolatedStringPart($part), $newParts));
-            } elseif ($part instanceof Variable) {
-                $intermediateRules[] = $part;
-            }
-        }
-
-        $finalRules = [];
-        foreach ($intermediateRules as $key => $rulePart) {
-            $nextRule = $intermediateRules[$key + 1] ?? null;
-            $prevRule = $intermediateRules[$key - 1] ?? null;
-
-            if ($rulePart instanceof Variable) {
-                $finalRule = new InterpolatedString([$rulePart]);
-
-                if ($prevRule instanceof InterpolatedString) {
-                    $lastPart = array_pop($prevRule->parts);
-                    if ($lastPart instanceof InterpolatedStringPart) {
-                        array_unshift($finalRule->parts, $lastPart);
+                $segments = explode('|', $part->value);
+                foreach ($segments as $index => $segment) {
+                    // Complete current rule and start new one
+                    if ($index !== 0 && $currentParts !== []) {
+                        $allRuleParts[] = $currentParts;
+                        $currentParts = [];
                     }
-                    $intermediateRules[$key - 1] = $prevRule;
-                }
 
-                if ($nextRule instanceof InterpolatedString) {
-                    $firstPart = array_shift($nextRule->parts);
-                    if ($firstPart instanceof InterpolatedStringPart) {
-                        $finalRule->parts[] = $firstPart;
+                    if ($segment !== '') {
+                        $currentParts[] = new InterpolatedStringPart($segment);
                     }
-                    $intermediateRules[$key + 1] = $nextRule;
                 }
-
-                $finalRules[] = $finalRule;
             } else {
-                $finalRules[] = $rulePart;
+                $currentParts[] = $part; // Variables and other parts
             }
         }
 
-        $finalRules = array_filter($finalRules, fn (InterpolatedString $interpolatedString) => count($interpolatedString->parts) > 0);
+        if ($currentParts !== []) {
+            $allRuleParts[] = $currentParts;
+        }
 
-        return new Array_(array_map(static fn (InterpolatedString $interpolatedString) => new ArrayItem($interpolatedString), $finalRules));
+        return new Array_(array_map(fn ($parts) => new ArrayItem(new InterpolatedString($parts)), $allRuleParts));
     }
 
     private function refactorCall(StaticCall|MethodCall $node): StaticCall|MethodCall|null

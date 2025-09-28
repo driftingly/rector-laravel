@@ -4,10 +4,13 @@ namespace RectorLaravel\Tests\Rector\MethodCall\ValidationRuleArrayStringValueTo
 
 class AppliesToHttpRequests
 {
+    private int $size = 500;
+
     public function store(\Illuminate\Http\Request $request)
     {
         $request->validate([
             'name' => 'required|string',
+            'layout' => "required|mimes:png|dimensions:width={$this->size},height={$this->size}",
         ]);
     }
 }
@@ -20,10 +23,13 @@ namespace RectorLaravel\Tests\Rector\MethodCall\ValidationRuleArrayStringValueTo
 
 class AppliesToHttpRequests
 {
+    private int $size = 500;
+
     public function store(\Illuminate\Http\Request $request)
     {
         $request->validate([
             'name' => ['required', 'string'],
+            'layout' => ["required", "mimes:png", "dimensions:width={$this->size},height={$this->size}"],
         ]);
     }
 }
