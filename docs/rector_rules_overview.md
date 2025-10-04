@@ -208,6 +208,27 @@ Add `parent::register();` call to `register()` class method in child of `Illumin
 
 <br>
 
+## AddUseAnnotationToHasFactoryTraitRector
+
+Adds `@use` annotation to HasFactory trait usage to provide better IDE support.
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\Class_\AddUseAnnotationToHasFactoryTraitRector`](../src/Rector/Class_/AddUseAnnotationToHasFactoryTraitRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+ class User extends Model
+ {
++    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\UserFactory> */
+     use HasFactory;
+ }
+```
+
+<br>
+
 ## AnonymousMigrationsRector
 
 Convert migrations to anonymous classes.
