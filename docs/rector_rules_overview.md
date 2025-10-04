@@ -1,4 +1,4 @@
-# 86 Rules Overview
+# 87 Rules Overview
 
 ## AbortIfRector
 
@@ -671,6 +671,30 @@ Changes `orderBy()` to `latest()` or `oldest()`
 +$builder->oldest($allowed_variable_name);
  $builder->orderBy($unallowed_variable_name);
  $builder->orderBy('unallowed_column_name');
+```
+
+<br>
+
+## EloquentWhereIdToWhereKeyRector
+
+Refactor model calls to the primary key using the `whereKey` and `whereKeyNot` methods
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereIdToWhereKeyRector`](../src/Rector/MethodCall/EloquentWhereIdToWhereKeyRector.php)
+
+```diff
+-User::where('id', '=', $user->id)->get();
+-User::where('id', $user->id)->get();
++User::whereKey($user)->get();
++User::whereKey($user)->get();
+```
+
+<br>
+
+```diff
+-User::where('id', '!=', $user->id)->get();
+-User::whereNot('id', $user->id)->get();
++User::whereKeyNot($user)->get();
++User::whereKeyNot($user)->get();
 ```
 
 <br>

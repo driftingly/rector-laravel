@@ -48,4 +48,14 @@ abstract class Model
     {
         return $this->primaryKey;
     }
+
+    /**
+     * Begin querying the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function query()
+    {
+        return new Builder();
+    }
 }
