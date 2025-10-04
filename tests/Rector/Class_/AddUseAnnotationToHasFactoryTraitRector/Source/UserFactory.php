@@ -1,10 +1,10 @@
 <?php
 
-namespace Database\Factories;
+namespace RectorLaravel\Tests\Rector\Class_\AddUseAnnotationToHasFactoryTraitRector\Source;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProductFactory extends Factory
+class UserFactory extends Factory
 {
     public function definition()
     {
