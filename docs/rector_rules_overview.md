@@ -1,4 +1,4 @@
-# 86 Rules Overview
+# 87 Rules Overview
 
 ## AbortIfRector
 
@@ -475,6 +475,36 @@ Use the `$this->travelTo()` method in Laravel's `TestCase` class instead of the 
 +        $this->travelTo('2024-08-11');
      }
  }
+```
+
+<br>
+
+## CarbonToDateFacadeRector
+
+Refactor Carbon static method calls to use the Date facade instead.
+
+- class: [`RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector`](../src/Rector/StaticCall/CarbonToDateFacadeRector.php)
+
+```diff
+-use Carbon\Carbon;
++use Illuminate\Support\Facades\Date;
+
+-Carbon::now();
+-Carbon::parse('2024-01-01');
++Date::now();
++Date::parse('2024-01-01');
+```
+
+<br>
+
+```diff
+-use Illuminate\Support\Carbon;
++use Illuminate\Support\Facades\Date;
+
+-Carbon::now();
+-Carbon::today();
++Date::now();
++Date::today();
 ```
 
 <br>
