@@ -1,4 +1,4 @@
-# 84 Rules Overview
+# 86 Rules Overview
 
 ## AbortIfRector
 
@@ -208,6 +208,27 @@ Add `parent::register();` call to `register()` class method in child of `Illumin
 
 <br>
 
+## AddUseAnnotationToHasFactoryTraitRector
+
+Adds `@use` annotation to HasFactory trait usage to provide better IDE support.
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\Class_\AddUseAnnotationToHasFactoryTraitRector`](../src/Rector/Class_/AddUseAnnotationToHasFactoryTraitRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+ class User extends Model
+ {
++    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\UserFactory> */
+     use HasFactory;
+ }
+```
+
+<br>
+
 ## AnonymousMigrationsRector
 
 Convert migrations to anonymous classes.
@@ -229,13 +250,19 @@ Convert migrations to anonymous classes.
 
 ## AppEnvironmentComparisonToParameterRector
 
-Replace `$app->environment() === 'local'` with `$app->environment('local')`
+Replace app environment comparison with parameter or method call
 
 - class: [`RectorLaravel\Rector\Expr\AppEnvironmentComparisonToParameterRector`](../src/Rector/Expr/AppEnvironmentComparisonToParameterRector.php)
 
 ```diff
--$app->environment() === 'production';
-+$app->environment('production');
+-$app->environment() === 'local';
+-$app->environment() !== 'production';
+-$app->environment() === 'testing';
+-in_array($app->environment(), ['local', 'testing']);
++$app->isLocal();
++! $app->isProduction();
++$app->environment('testing');
++$app->environment(['local', 'testing']);
 ```
 
 <br>
@@ -888,6 +915,32 @@ Changes middlewares from rule definitions from string to array notation.
 -$router->post('/user', ['middleware => 'test|authentication']);
 +$router->get('/user', ['middleware => ['test']]);
 +$router->post('/user', ['middleware => ['test', 'authentication']]);
+```
+
+<br>
+
+## MakeModelAttributesAndScopesProtectedRector
+
+Makes Model attributes and scopes protected
+
+- class: [`RectorLaravel\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector`](../src/Rector/ClassMethod/MakeModelAttributesAndScopesProtectedRector.php)
+
+```diff
+ class User extends Model
+ {
+-    public function foo(): Attribute
++    protected function foo(): Attribute
+     {
+         return Attribute::get(fn () => $this->bar);
+     }
+
+     #[Scope]
+-    public function active(Builder $query): Builder
++    protected function active(Builder $query): Builder
+     {
+         return $query->where('active', true);
+     }
+ }
 ```
 
 <br>
