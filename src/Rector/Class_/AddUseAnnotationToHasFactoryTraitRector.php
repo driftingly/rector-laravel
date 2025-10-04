@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
+use PHPStan\Type\ObjectType;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
-use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
-use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\Type\ObjectType;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
-use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use RectorLaravel\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use PHPStan\Reflection\ReflectionProvider;
+use Rector\Comments\NodeDocBlock\DocBlockUpdater;
+use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
+use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\UsesTagValueNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 
 /**
  * @see \RectorLaravel\Tests\Rector\Class_\AddUseAnnotationToHasFactoryTraitRector\AddUseAnnotationToHasFactoryTraitRectorTest
@@ -52,7 +55,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Model
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 }
 CODE_SAMPLE
@@ -125,11 +128,15 @@ CODE_SAMPLE
             return false;
         }
 
-        $useAnnotationValue = 'HasFactory<' . $factoryClassName . '>';
-
         $phpDocTagNode = new PhpDocTagNode(
             self::USE_TAG_NAME,
-            new GenericTagValueNode($useAnnotationValue)
+            new UsesTagValueNode(
+                new GenericTypeNode(
+                    new FullyQualifiedIdentifierTypeNode(self::HAS_FACTORY_TRAIT),
+                    [new FullyQualifiedIdentifierTypeNode($factoryClassName)]
+                ),
+                ''
+            )
         );
 
         $phpDocInfo->addPhpDocTagNode($phpDocTagNode);
