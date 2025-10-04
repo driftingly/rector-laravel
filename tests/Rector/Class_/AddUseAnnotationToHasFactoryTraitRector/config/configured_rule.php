@@ -6,5 +6,9 @@ use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\Class_\AddUseAnnotationToHasFactoryTraitRector;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->rule(AddUseAnnotationToHasFactoryTraitRector::class);
+    $rectorConfig->ruleWithConfiguration(AddUseAnnotationToHasFactoryTraitRector::class, [
+        AddUseAnnotationToHasFactoryTraitRector::FACTORY_NAMESPACES => [
+            'RectorLaravel\\Tests\\Rector\\Class_\\AddUseAnnotationToHasFactoryTraitRector\\Source',
+        ],
+    ]);
 };
