@@ -107,7 +107,7 @@ CODE_SAMPLE
     {
         foreach ($traitUse->traits as $trait) {
             $traitName = $this->getName($trait);
-            if ($traitName === self::HAS_FACTORY_TRAIT || $traitName === 'HasFactory') {
+            if ($traitName === self::HAS_FACTORY_TRAIT) {
                 return true;
             }
         }
