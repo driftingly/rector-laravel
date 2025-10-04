@@ -172,6 +172,11 @@ CODE_SAMPLE,
 
     private function resolveFactoryClassName(Class_ $class): ?string
     {
+        $factoryFromProperty = $this->getFactoryFromProperty($class);
+        if ($factoryFromProperty !== null) {
+            return $factoryFromProperty;
+        }
+
         $className = $this->getName($class);
         if ($className === null) {
             return null;
@@ -188,6 +193,41 @@ CODE_SAMPLE,
         foreach ($factoryClassNames as $factoryClassName) {
             if ($this->reflectionProvider->hasClass($factoryClassName)) {
                 return $factoryClassName;
+            }
+        }
+
+        return null;
+    }
+
+    private function getFactoryFromProperty(Class_ $class): ?string
+    {
+        foreach ($class->stmts as $stmt) {
+            if (! $stmt instanceof \PhpParser\Node\Stmt\Property) {
+                continue;
+            }
+
+            if (! $this->isName($stmt, 'factory')) {
+                continue;
+            }
+
+            if ($stmt->props[0]->default === null) {
+                continue;
+            }
+
+            $defaultValue = $stmt->props[0]->default;
+
+            if ($defaultValue instanceof \PhpParser\Node\Expr\ClassConstFetch) {
+                $factoryClassName = $this->getName($defaultValue->class);
+                if ($factoryClassName !== null && $this->reflectionProvider->hasClass($factoryClassName)) {
+                    return $factoryClassName;
+                }
+            }
+
+            if ($defaultValue instanceof \PhpParser\Node\Scalar\String_) {
+                $factoryClassName = $defaultValue->value;
+                if ($this->reflectionProvider->hasClass($factoryClassName)) {
+                    return $factoryClassName;
+                }
             }
         }
 
