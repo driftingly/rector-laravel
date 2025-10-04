@@ -1,4 +1,4 @@
-# 137 Rules Overview
+# 138 Rules Overview
 
 ## AbortIfRector
 
@@ -2154,6 +2154,25 @@ Change array access on a config or cache repository to the matching method call,
 +$config->set('app.name', 'Foo');
 +$config->has('app.name');
 +$config->set('app.name');
+```
+
+<br>
+
+## RequestInputToTypedMethodRector
+
+Refactor Request input/get/data methods and array access to type-specific methods when the type is known
+
+- class: [`RectorLaravel\Rector\MethodCall\RequestInputToTypedMethodRector`](../src/Rector/MethodCall/RequestInputToTypedMethodRector.php)
+
+```diff
+-$name = $request->input('name');
+-$age = (int) $request->get('age');
+-$price = (float) $request->data('price');
+-$isActive = (bool) $request['is_active'];
++$name = $request->string('name');
++$age = $request->integer('age');
++$price = $request->float('price');
++$isActive = $request->boolean('is_active');
 ```
 
 <br>
