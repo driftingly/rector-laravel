@@ -25,6 +25,7 @@ use RectorLaravel\Rector\MethodCall\RedirectRouteToToRouteHelperRector;
 use RectorLaravel\Rector\MethodCall\ReverseConditionableMethodCallRector;
 use RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector;
 use RectorLaravel\Rector\PropertyFetch\OptionalToNullsafeOperatorRector;
+use RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector;
 use RectorLaravel\Rector\StaticCall\DispatchToHelperFunctionsRector;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -49,6 +50,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RedirectRouteToToRouteHelperRector::class);
     $rectorConfig->rule(AnonymousMigrationsRector::class);
     $rectorConfig->rule(SleepFuncToSleepStaticCallRector::class);
+    $rectorConfig->rule(CarbonToDateFacadeRector::class);
     $rectorConfig->rule(DispatchToHelperFunctionsRector::class);
     $rectorConfig->rule(NotFilledBlankFuncCallToBlankFilledFuncCallRector::class);
     $rectorConfig->rule(EloquentOrderByToLatestOrOldestRector::class);
