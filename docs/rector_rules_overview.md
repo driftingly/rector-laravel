@@ -1,4 +1,4 @@
-# 86 Rules Overview
+# 87 Rules Overview
 
 ## AbortIfRector
 
@@ -15,6 +15,21 @@ Change if abort to abort_if
 -}
 +abort_if($condition, 404);
 +abort_unless($condition, 404);
+```
+
+<br>
+
+## AbortIfToGateDenyIfRector
+
+Change `abort_if()` to `Gate::denyIf()` when condition is user-related
+
+- class: [`RectorLaravel\Rector\FuncCall\AbortIfToGateDenyIfRector`](../src/Rector/FuncCall/AbortIfToGateDenyIfRector.php)
+
+```diff
+-abort_if($user->id === $post->user_id);
+-abort_if($post->user()->is($user));
++\Illuminate\Support\Facades\Gate::denyIf($user->id === $post->user_id);
++\Illuminate\Support\Facades\Gate::denyIf($post->user()->is($user));
 ```
 
 <br>
