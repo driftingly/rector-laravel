@@ -14,7 +14,7 @@ class SkipAlreadyTyped
         $price = $request->float('price');
         $isActive = $request->boolean('is_active');
         $date = $request->date('date');
-        
+
         // Should not change if no cast
         $data = $request->input('data');
         $value = $request->get('value');
