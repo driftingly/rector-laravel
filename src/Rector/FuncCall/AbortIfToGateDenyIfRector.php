@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
@@ -58,7 +58,12 @@ CODE_SAMPLE
             return null;
         }
 
-        $condition = $node->args[0]->value;
+        $firstArg = $node->args[0];
+        if (! $firstArg instanceof Arg) {
+            return null;
+        }
+
+        $condition = $firstArg->value;
 
         if (! $this->containsUserRelatedCheck($condition)) {
             return null;
@@ -79,28 +84,30 @@ CODE_SAMPLE
         $hasUserReference = false;
 
         $this->traverseNodesWithCallable($node, function (Node $subNode) use (&$hasUserReference): ?int {
-            if ($subNode instanceof Variable && is_string($subNode->name)) {
-                if (str_contains(strtolower($subNode->name), 'user')) {
-                    $hasUserReference = true;
-                    return null;
-                }
+            if ($subNode instanceof Variable && is_string($subNode->name) && str_contains(strtolower($subNode->name), 'user')) {
+                $hasUserReference = true;
+
+                return null;
             }
 
             if ($subNode instanceof PropertyFetch) {
                 $propertyName = $this->getName($subNode->name);
-                if ($propertyName && str_contains(strtolower($propertyName), 'user')) {
+                if ($propertyName !== null && str_contains(strtolower($propertyName), 'user')) {
                     $hasUserReference = true;
+
                     return null;
                 }
             }
 
             if ($subNode instanceof FuncCall && $this->isName($subNode->name, 'auth')) {
                 $hasUserReference = true;
+
                 return null;
             }
 
             if ($subNode instanceof StaticCall && $this->isName($subNode->class, 'Auth')) {
                 $hasUserReference = true;
+
                 return null;
             }
 
