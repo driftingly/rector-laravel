@@ -127,17 +127,10 @@ CODE_SAMPLE
     {
         $objectType = new ObjectType('Illuminate\Database\Eloquent\Model');
 
-        // For property fetch expressions like $user->team_id, check the variable part ($user)
         if ($expr instanceof PropertyFetch && $this->isObjectType($expr->var, $objectType)) {
             return true;
         }
 
-        // For variable expressions like $user, check the variable directly
-        if ($expr instanceof Variable && $this->isObjectType($expr, $objectType)) {
-            return true;
-        }
-
-        // Allow by default for backwards compatibility - be permissive unless obviously not a model
-        return true;
+        return $expr instanceof Variable && $this->isObjectType($expr, $objectType);
     }
 }
