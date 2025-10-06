@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\MethodCall;
 
-use PhpParser\Node\Expr;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Cast;
