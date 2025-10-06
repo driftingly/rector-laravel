@@ -555,6 +555,27 @@ Refactor `whereDate()` queries to include both date and time comparisons with Ca
 
 <br>
 
+## ConfigToTypedConfigMethodCallRector
+
+Refactor `config()` calls to use type-specific methods when the expected type is known
+
+- class: [`RectorLaravel\Rector\FuncCall\ConfigToTypedConfigMethodCallRector`](../src/Rector/FuncCall/ConfigToTypedConfigMethodCallRector.php)
+
+```diff
+-$name = (string) config('app.name');
+-$lifetime = (int) config('session.lifetime');
+-$debug = (bool) config('app.debug');
+-$version = (float) config('app.version');
+-$connections = (array) config('database.connections');
++$name = config()->string('app.name');
++$lifetime = config()->integer('session.lifetime');
++$debug = config()->boolean('app.debug');
++$version = config()->float('app.version');
++$connections = config()->array('database.connections');
+```
+
+<br>
+
 ## ContainerBindConcreteWithClosureOnlyRector
 
 Drop the specified abstract class from the bind method and replace it with a closure that returns the abstract class.
