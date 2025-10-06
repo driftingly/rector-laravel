@@ -49,11 +49,11 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Equal|Identical $node
+     * @param  Equal|Identical  $node
      */
     public function refactor(Node $node): ?Node
     {
-        if (!$node instanceof Equal && !$node instanceof Identical) {
+        if (! $node instanceof Equal && ! $node instanceof Identical) {
             return null;
         }
 
@@ -65,14 +65,13 @@ CODE_SAMPLE
         [$leftVar, $relationshipName, $rightVar] = $result;
 
         // Enhanced safety check: verify both variables could be models
-        if (!$this->couldBeModel($leftVar) || !$this->couldBeModel($rightVar)) {
+        if (! $this->couldBeModel($leftVar) || ! $this->couldBeModel($rightVar)) {
             return null;
         }
 
-        $relationshipCall = new MethodCall($leftVar, new Identifier($relationshipName));
-        $isCall = new MethodCall($relationshipCall, new Identifier('is'), [new Arg($rightVar)]);
+        $methodCall = new MethodCall($leftVar, new Identifier($relationshipName));
 
-        return $isCall;
+        return new MethodCall($methodCall, new Identifier('is'), [new Arg($rightVar)]);
     }
 
     /**
@@ -83,14 +82,14 @@ CODE_SAMPLE
         $left = $node->left;
         $right = $node->right;
 
-        if (!$left instanceof PropertyFetch || !$right instanceof PropertyFetch) {
+        if (! $left instanceof PropertyFetch || ! $right instanceof PropertyFetch) {
             return null;
         }
 
         $leftProperty = $left->name;
         $rightProperty = $right->name;
 
-        if (!$leftProperty instanceof Identifier || !$rightProperty instanceof Identifier) {
+        if (! $leftProperty instanceof Identifier || ! $rightProperty instanceof Identifier) {
             return null;
         }
 
@@ -100,12 +99,14 @@ CODE_SAMPLE
         if ($this->isForeignKeyToIdPattern($leftPropertyName, $rightPropertyName)) {
             // $model->foreign_key_id == $otherModel->id
             $relationshipName = $this->extractRelationshipName($leftPropertyName);
+
             return [$left->var, $relationshipName, $right->var];
         }
 
         if ($this->isForeignKeyToIdPattern($rightPropertyName, $leftPropertyName)) {
             // $otherModel->id == $model->foreign_key_id
             $relationshipName = $this->extractRelationshipName($rightPropertyName);
+
             return [$right->var, $relationshipName, $left->var];
         }
 
@@ -124,30 +125,16 @@ CODE_SAMPLE
 
     private function couldBeModel(Expr $expr): bool
     {
-        $modelType = new ObjectType('Illuminate\Database\Eloquent\Model');
-        
+        $objectType = new ObjectType('Illuminate\Database\Eloquent\Model');
+
         // For property fetch expressions like $user->team_id, check the variable part ($user)
-        if ($expr instanceof PropertyFetch) {
-            if ($this->isObjectType($expr->var, $modelType)) {
-                return true;
-            }
-        }
-        
-        // For variable expressions like $user, check the variable directly
-        if ($expr instanceof Variable) {
-            if ($this->isObjectType($expr, $modelType)) {
-                return true;
-            }
+        if ($expr instanceof PropertyFetch && $this->isObjectType($expr->var, $objectType)) {
+            return true;
         }
 
-        // Fallback: check for obvious non-model patterns
-        if ($expr instanceof Variable && is_string($expr->name)) {
-            $varName = $expr->name;
-            // Skip variables that are obviously not models
-            $nonModelNames = ['i', 'j', 'k', 'x', 'y', 'z', 'count', 'index', 'key', 'value', 'data', 'result', 'item', 'element'];
-            if (in_array($varName, $nonModelNames, true)) {
-                return false;
-            }
+        // For variable expressions like $user, check the variable directly
+        if ($expr instanceof Variable && $this->isObjectType($expr, $objectType)) {
+            return true;
         }
 
         // Allow by default for backwards compatibility - be permissive unless obviously not a model
