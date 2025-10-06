@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\MethodCall;
 
+use PhpParser\Node\Expr;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
@@ -219,7 +220,7 @@ CODE_SAMPLE
         }
 
         $args = [];
-        if ($arrayDimFetch->dim !== null) {
+        if ($arrayDimFetch->dim instanceof Expr) {
             $args[] = new Arg($arrayDimFetch->dim);
         }
 
