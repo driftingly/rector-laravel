@@ -5,21 +5,23 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
-use PHPStan\Type\ObjectType;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\TraitUse;
-use RectorLaravel\AbstractRector;
+use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\UsesTagValueNode;
+use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\ObjectType;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
-use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\UsesTagValueNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
-use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**
@@ -202,7 +204,7 @@ CODE_SAMPLE,
     private function getFactoryFromProperty(Class_ $class): ?string
     {
         foreach ($class->stmts as $stmt) {
-            if (! $stmt instanceof \PhpParser\Node\Stmt\Property) {
+            if (! $stmt instanceof Property) {
                 continue;
             }
 
@@ -216,14 +218,14 @@ CODE_SAMPLE,
 
             $defaultValue = $stmt->props[0]->default;
 
-            if ($defaultValue instanceof \PhpParser\Node\Expr\ClassConstFetch) {
+            if ($defaultValue instanceof ClassConstFetch) {
                 $factoryClassName = $this->getName($defaultValue->class);
                 if ($factoryClassName !== null && $this->reflectionProvider->hasClass($factoryClassName)) {
                     return $factoryClassName;
                 }
             }
 
-            if ($defaultValue instanceof \PhpParser\Node\Scalar\String_) {
+            if ($defaultValue instanceof String_) {
                 $factoryClassName = $defaultValue->value;
                 if ($this->reflectionProvider->hasClass($factoryClassName)) {
                     return $factoryClassName;
@@ -246,7 +248,11 @@ CODE_SAMPLE,
             $factoryNamespace = ltrim($factoryNamespace, '\\');
 
             if (str_contains($modelNamespace, '\\Models\\')) {
-                $afterModels = substr($modelNamespace, strpos($modelNamespace, '\\Models\\') + 8);
+                $modelsPosition = strpos($modelNamespace, '\\Models\\');
+                if ($modelsPosition === false) {
+                    continue;
+                }
+                $afterModels = substr($modelNamespace, $modelsPosition + 8);
 
                 if (str_contains($afterModels, '\\')) {
                     $namespaceParts = explode('\\', $afterModels);
@@ -256,7 +262,11 @@ CODE_SAMPLE,
                     $factoryClassNames[] = '\\' . $factoryNamespace . '\\' . $deepNamespace . '\\' . $factoryName;
                 }
             } elseif (str_contains($modelNamespace, 'App\\')) {
-                $afterApp = substr($modelNamespace, strpos($modelNamespace, 'App\\') + 4);
+                $appPosition = strpos($modelNamespace, 'App\\');
+                if ($appPosition === false) {
+                    continue;
+                }
+                $afterApp = substr($modelNamespace, $appPosition + 4);
 
                 if (str_contains($afterApp, '\\')) {
                     $namespaceParts = explode('\\', $afterApp);
