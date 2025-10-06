@@ -20,6 +20,7 @@ use RectorLaravel\Rector\FuncCall\RemoveRedundantWithCallsRector;
 use RectorLaravel\Rector\FuncCall\SleepFuncToSleepStaticCallRector;
 use RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector;
 use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
+use RectorLaravel\Rector\MethodCall\EloquentWhereIdToWhereKeyRector;
 use RectorLaravel\Rector\MethodCall\RedirectBackToBackHelperRector;
 use RectorLaravel\Rector\MethodCall\RedirectRouteToToRouteHelperRector;
 use RectorLaravel\Rector\MethodCall\ReverseConditionableMethodCallRector;
@@ -54,4 +55,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(DispatchToHelperFunctionsRector::class);
     $rectorConfig->rule(NotFilledBlankFuncCallToBlankFilledFuncCallRector::class);
     $rectorConfig->rule(EloquentOrderByToLatestOrOldestRector::class);
+    $rectorConfig->rule(EloquentWhereIdToWhereKeyRector::class);
 };

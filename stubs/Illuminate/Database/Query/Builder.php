@@ -22,6 +22,22 @@ class Builder implements \Illuminate\Contracts\Database\Query\Builder
      */
     public function orderByDesc($column): static {}
 
+    /**
+     * @return $this
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and'): static
+    {
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function whereNot($column, $operator = null, $value = null, $boolean = 'and'): static
+    {
+        return $this;
+    }
+
     protected function protectedMethodBelongsToQueryBuilder(): void {}
 
     private function privateMethodBelongsToQueryBuilder(): void {}

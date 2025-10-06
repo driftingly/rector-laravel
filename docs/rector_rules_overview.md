@@ -726,6 +726,30 @@ Changes `orderBy()` to `latest()` or `oldest()`
 
 <br>
 
+## EloquentWhereIdToWhereKeyRector
+
+Refactor model calls to the primary key using the `whereKey` and `whereKeyNot` methods
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentWhereIdToWhereKeyRector`](../src/Rector/MethodCall/EloquentWhereIdToWhereKeyRector.php)
+
+```diff
+-User::where('id', '=', $user->id)->get();
+-User::where('id', $user->id)->get();
++User::whereKey($user)->get();
++User::whereKey($user)->get();
+```
+
+<br>
+
+```diff
+-User::where('id', '!=', $user->id)->get();
+-User::whereNot('id', $user->id)->get();
++User::whereKeyNot($user)->get();
++User::whereKeyNot($user)->get();
+```
+
+<br>
+
 ## EloquentWhereRelationTypeHintingParameterRector
 
 Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `whereDoesntHave`, `orWhereDoesntHave`, `whereHasMorph`, `orWhereHasMorph`, `whereDoesntHaveMorph`, `orWhereDoesntHaveMorph`
