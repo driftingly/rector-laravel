@@ -82,6 +82,7 @@ CODE_SAMPLE
         }
 
         $configCall = new FuncCall(new Name('config'));
+
         return new MethodCall($configCall, new Identifier($methodName), $funcCall->args);
     }
 
