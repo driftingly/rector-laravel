@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Cast;
@@ -61,7 +62,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Cast|Assign $node
+     * @param  Cast|Assign  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -112,6 +113,7 @@ CODE_SAMPLE
             $typedMethod = $this->inferTypeFromContext($assign);
             if ($typedMethod !== null) {
                 $assign->expr = $this->replaceWithTypedMethod($expr, $typedMethod);
+
                 return $assign;
             }
         }
@@ -120,6 +122,7 @@ CODE_SAMPLE
             $typedMethod = $this->inferTypeFromContext($assign);
             if ($typedMethod !== null) {
                 $assign->expr = $this->convertArrayAccessToTypedMethod($expr, $typedMethod);
+
                 return $assign;
             }
         }
@@ -128,6 +131,7 @@ CODE_SAMPLE
             $typedMethod = $this->inferTypeFromContext($assign);
             if ($typedMethod !== null) {
                 $assign->expr = $this->convertPropertyFetchToTypedMethod($expr, $typedMethod);
+
                 return $assign;
             }
         }
@@ -142,6 +146,7 @@ CODE_SAMPLE
         }
 
         $methodName = $this->getName($methodCall->name);
+
         return $methodName !== null && in_array($methodName, self::GENERIC_METHODS, true);
     }
 
@@ -203,6 +208,7 @@ CODE_SAMPLE
     private function replaceWithTypedMethod(MethodCall $methodCall, string $typedMethod): MethodCall
     {
         $methodCall->name = new Identifier($typedMethod);
+
         return $methodCall;
     }
 
@@ -214,7 +220,7 @@ CODE_SAMPLE
 
         $args = [];
         if ($arrayDimFetch->dim !== null) {
-            $args[] = new Node\Arg($arrayDimFetch->dim);
+            $args[] = new Arg($arrayDimFetch->dim);
         }
 
         return new MethodCall($arrayDimFetch->var, $typedMethod, $args);
@@ -230,7 +236,7 @@ CODE_SAMPLE
         return new MethodCall(
             $propertyFetch->var,
             $typedMethod,
-            [new Node\Arg(new ScalarString($propertyName))]
+            [new Arg(new ScalarString($propertyName))]
         );
     }
 }
