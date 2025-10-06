@@ -4,6 +4,4 @@ namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereIdToWhereKeyRector\
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
-{
-}
+class User extends Model {}
