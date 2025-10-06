@@ -13,6 +13,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -64,7 +65,6 @@ CODE_SAMPLE
 
         [$leftVar, $relationshipName, $rightVar] = $result;
 
-        // Enhanced safety check: verify both variables could be models
         if (! $this->couldBeModel($leftVar) || ! $this->couldBeModel($rightVar)) {
             return null;
         }
@@ -127,10 +127,24 @@ CODE_SAMPLE
     {
         $objectType = new ObjectType('Illuminate\Database\Eloquent\Model');
 
-        if ($expr instanceof PropertyFetch && $this->isObjectType($expr->var, $objectType)) {
-            return true;
+        if ($expr instanceof PropertyFetch) {
+            $varType = $this->getType($expr->var);
+            if ($this->isObjectType($expr->var, $objectType)) {
+                return true;
+            }
+
+            return $varType instanceof MixedType;
         }
 
-        return $expr instanceof Variable && $this->isObjectType($expr, $objectType);
+        if ($expr instanceof Variable) {
+            $varType = $this->getType($expr);
+            if ($this->isObjectType($expr, $objectType)) {
+                return true;
+            }
+
+            return $varType instanceof MixedType;
+        }
+
+        return false;
     }
 }
