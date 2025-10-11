@@ -6,10 +6,19 @@ use RectorLaravel\Tests\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRecto
 
 class SomeController
 {
+    public function __construct(
+        protected readonly User $userBaseModel,
+    ) {
+    }
+
     public function getUser()
     {
+        $userModel = new User;
+
         # eligible
         $user = User::publicMethodBelongsToQueryBuilder();
+        $user = $this->userBaseModel::publicMethodBelongsToQueryBuilder();
+        $user = $userModel::publicMethodBelongsToQueryBuilder();
 
         # not eligible
         $user = User::excludablePublicMethodBelongsToEloquentQueryBuilder();
@@ -24,10 +33,19 @@ use RectorLaravel\Tests\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRecto
 
 class SomeController
 {
+    public function __construct(
+        protected readonly User $userBaseModel,
+    ) {
+    }
+
     public function getUser()
     {
+        $userModel = new User;
+
         # eligible
         $user = User::query()->publicMethodBelongsToQueryBuilder();
+        $user = $this->userBaseModel::query()->publicMethodBelongsToQueryBuilder();
+        $user = $userModel::query()->publicMethodBelongsToQueryBuilder();
 
         # not eligible
         $user = User::excludablePublicMethodBelongsToEloquentQueryBuilder();
