@@ -45,7 +45,7 @@ CODE_SAMPLE
      * @param  ArrayDimFetch|Assign|Isset_|Unset_|InterpolatedString  $node
      * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CHILDREN|null
      */
-    public function refactor(Node $node): StaticCall|int|null
+    public function refactor(Node $node)
     {
         if (! $node instanceof ArrayDimFetch) {
             if (! $node instanceof Assign) {

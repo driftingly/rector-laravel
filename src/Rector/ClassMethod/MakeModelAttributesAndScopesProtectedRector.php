@@ -22,11 +22,24 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class MakeModelAttributesAndScopesProtectedRector extends AbstractRector
 {
-    public function __construct(
-        private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-        private readonly AttributeGroupNewLiner $attributeGroupNewLiner,
-    ) {}
+    /**
+     * @readonly
+     */
+    private VisibilityManipulator $visibilityManipulator;
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    /**
+     * @readonly
+     */
+    private AttributeGroupNewLiner $attributeGroupNewLiner;
+    public function __construct(VisibilityManipulator $visibilityManipulator, PhpAttributeAnalyzer $phpAttributeAnalyzer, AttributeGroupNewLiner $attributeGroupNewLiner)
+    {
+        $this->visibilityManipulator = $visibilityManipulator;
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+        $this->attributeGroupNewLiner = $attributeGroupNewLiner;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
