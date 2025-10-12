@@ -3,7 +3,6 @@
 namespace RectorLaravel\Rector\StaticCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
@@ -137,11 +136,13 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
             return null;
         }
 
-        return new FuncCall(
-            new Name($method),
-            [
-                new Arg(new New_(new FullyQualified($class), $staticCall->args)),
-            ],
+        $className = $class->isSpecialClassName()
+            ? $class
+            : new FullyQualified($class);
+
+        return $this->nodeFactory->createFuncCall(
+            $method,
+            [new New_($className, $staticCall->args)],
         );
     }
 }
