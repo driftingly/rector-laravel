@@ -23,6 +23,26 @@ class User extends Model
         return $query;
     }
 
+    public function scopeInactive(Builder $query): void
+    {
+        $query->where('active', false);
+    }
+
+    public function scopeParam($query): void
+    {
+        $query->where('active', false);
+    }
+
+    public function scopeNone($query)
+    {
+        $query->where('active', false);
+    }
+
+    public function scopeReturn(Builder $query)
+    {
+        $query->where('active', false);
+    }
+
     #[Scope]
     public function verified(Builder $query): Builder
     {
@@ -62,6 +82,26 @@ class User extends Model
     protected function scopeActive(Builder $query): Builder
     {
         return $query;
+    }
+
+    protected function scopeInactive(Builder $query): void
+    {
+        $query->where('active', false);
+    }
+
+    protected function scopeParam($query): void
+    {
+        $query->where('active', false);
+    }
+
+    protected function scopeNone($query)
+    {
+        $query->where('active', false);
+    }
+
+    protected function scopeReturn(Builder $query)
+    {
+        $query->where('active', false);
     }
 
     #[Scope]
