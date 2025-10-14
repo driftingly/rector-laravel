@@ -23,6 +23,11 @@ final class User extends Model
         return $query;
     }
 
+    private function scopeInactive(Builder $query): void
+    {
+        $query->where('active', false);
+    }
+
     #[Scope]
     private function verified(Builder $query): Builder
     {
@@ -55,6 +60,11 @@ final class User extends Model
     protected function scopeActive(Builder $query): Builder
     {
         return $query;
+    }
+
+    protected function scopeInactive(Builder $query): void
+    {
+        $query->where('active', false);
     }
 
     #[Scope]
