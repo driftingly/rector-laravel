@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
@@ -142,12 +143,28 @@ CODE_SAMPLE
 
     private function isScopeMethod(ClassMethod $classMethod): bool
     {
-        $name = $this->getName($classMethod);
-
-        if ((bool) preg_match('/^scope.+$/', $name)) {
+        if ($this->phpAttributeAnalyzer->hasPhpAttribute($classMethod, 'Illuminate\Database\Eloquent\Attributes\Scope')) {
             return true;
         }
 
-        return $this->phpAttributeAnalyzer->hasPhpAttribute($classMethod, 'Illuminate\Database\Eloquent\Attributes\Scope');
+        $name = $this->getName($classMethod);
+
+        if (! (bool) preg_match('/^scope.+$/', $name)) {
+            return false;
+        }
+
+        if (! isset($classMethod->params[0]) || ! $classMethod->params[0] instanceof Node) {
+            return false;
+        }
+
+        if (! $this->isObjectType($classMethod->params[0], new ObjectType('Illuminate\Database\Eloquent\Builder'))) {
+            return false;
+        }
+
+        if ($classMethod->returnType instanceof Identifier && $classMethod->returnType->toString() === 'void') {
+            return true;
+        }
+
+        return $classMethod->returnType instanceof Node && $this->isObjectType($classMethod->returnType, new ObjectType('Illuminate\Database\Eloquent\Builder'));
     }
 }
