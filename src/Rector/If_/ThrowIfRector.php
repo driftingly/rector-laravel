@@ -46,25 +46,26 @@ CODE_SAMPLE
         ]);
     }
 
+    /**
+     * @return array<class-string<Node>>
+     */
     public function getNodeTypes(): array
     {
         return [If_::class];
     }
 
+    /**
+     * @param If_ $node
+     */
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof If_) {
-            return null;
-        }
-
         if ($node->else instanceof Else_ || $node->elseifs !== []) {
             return null;
         }
 
         $ifStmts = $node->stmts;
-
-        // Check if there's a single throw statement inside the if
-        if (count($ifStmts) !== 1 || ! $ifStmts[0] instanceof Expression || ! $ifStmts[0]->expr instanceof Throw_) {
+        // Check if there's a single throw expression inside the if-statement
+        if (!(count($ifStmts) === 1 && $ifStmts[0] instanceof Expression && $ifStmts[0]->expr instanceof Throw_)) {
             return null;
         }
 
@@ -75,22 +76,11 @@ CODE_SAMPLE
             return null;
         }
 
-        // Check if the condition is a negation
-        if ($condition instanceof BooleanNot) {
-            // Create a new throw_unless function call
-            $funcCall = new FuncCall(new Name('throw_unless'), [
-                new Arg($condition->expr),
-                new Arg($throwExpr->expr),
-            ]);
-        } else {
-            // Create a new throw_if function call
-            $funcCall = new FuncCall(new Name('throw_if'), [
-                new Arg($condition),
-                new Arg($throwExpr->expr),
-            ]);
-        }
-
-        $expression = new Expression($funcCall);
+        $expression = new Expression(
+            $condition instanceof BooleanNot
+                ? new FuncCall(new Name('throw_unless'), [new Arg($condition->expr), new Arg($throwExpr->expr)])
+                : new FuncCall(new Name('throw_if'), [new Arg($condition), new Arg($throwExpr->expr)])
+        );
 
         $comments = array_merge($node->getComments(), $ifStmts[0]->getComments());
         if ($comments !== []) {
