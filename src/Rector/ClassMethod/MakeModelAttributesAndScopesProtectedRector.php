@@ -10,7 +10,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
-use Rector\Php81\NodeManipulator\AttributeGroupNewLiner;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use RectorLaravel\AbstractRector;
@@ -24,8 +23,7 @@ class MakeModelAttributesAndScopesProtectedRector extends AbstractRector
 {
     public function __construct(
         private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-        private readonly AttributeGroupNewLiner $attributeGroupNewLiner,
+        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -89,10 +87,6 @@ CODE_SAMPLE
         }
 
         $this->visibilityManipulator->makeProtected($node);
-
-        if ($node->attrGroups !== []) {
-            $this->attributeGroupNewLiner->newLine($this->file, $node);
-        }
 
         return $node;
     }
