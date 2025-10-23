@@ -10,6 +10,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
 use ReflectionException;
@@ -107,7 +108,13 @@ CODE_SAMPLE
             return null;
         }
 
-        $staticCall = $this->nodeFactory->createStaticCall($originalClassName, 'query');
+        if ($node->class instanceof Name) {
+            $staticCall = $this->nodeFactory->createStaticCall($originalClassName, 'query');
+        }
+
+        if (! $node->class instanceof Name) {
+            $staticCall = new StaticCall($node->class, 'query');
+        }
 
         $methodCall = $this->nodeFactory->createMethodCall($staticCall, $methodName);
         foreach ($node->args as $arg) {
