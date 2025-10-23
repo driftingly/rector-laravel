@@ -9,9 +9,14 @@ use PHPStan\Reflection\ReflectionProvider;
 
 class ModelAnalyzer
 {
-    public function __construct(
-        private readonly ReflectionProvider $reflectionProvider
-    ) {}
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * Returns the table name of a model
