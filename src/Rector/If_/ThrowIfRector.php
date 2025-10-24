@@ -5,9 +5,14 @@ namespace RectorLaravel\Rector\If_;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
@@ -46,25 +51,26 @@ CODE_SAMPLE
         ]);
     }
 
+    /**
+     * @return array<class-string<Node>>
+     */
     public function getNodeTypes(): array
     {
         return [If_::class];
     }
 
+    /**
+     * @param If_ $node
+     */
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof If_) {
-            return null;
-        }
-
         if ($node->else instanceof Else_ || $node->elseifs !== []) {
             return null;
         }
 
         $ifStmts = $node->stmts;
-
-        // Check if there's a single throw statement inside the if
-        if (count($ifStmts) !== 1 || ! $ifStmts[0] instanceof Expression || ! $ifStmts[0]->expr instanceof Throw_) {
+        // Check if there's a single throw expression inside the if-statement
+        if (!(count($ifStmts) === 1 && $ifStmts[0] instanceof Expression && $ifStmts[0]->expr instanceof Throw_)) {
             return null;
         }
 
@@ -75,22 +81,15 @@ CODE_SAMPLE
             return null;
         }
 
-        // Check if the condition is a negation
-        if ($condition instanceof BooleanNot) {
-            // Create a new throw_unless function call
-            $funcCall = new FuncCall(new Name('throw_unless'), [
-                new Arg($condition->expr),
-                new Arg($throwExpr->expr),
-            ]);
-        } else {
-            // Create a new throw_if function call
-            $funcCall = new FuncCall(new Name('throw_if'), [
-                new Arg($condition),
-                new Arg($throwExpr->expr),
-            ]);
+        if (!$this->shouldTransform($throwExpr)) {
+            return null;
         }
 
-        $expression = new Expression($funcCall);
+        $expression = new Expression(
+            $condition instanceof BooleanNot
+                ? new FuncCall(new Name('throw_unless'), [new Arg($condition->expr), new Arg($throwExpr->expr)])
+                : new FuncCall(new Name('throw_if'), [new Arg($condition), new Arg($throwExpr->expr)])
+        );
 
         $comments = array_merge($node->getComments(), $ifStmts[0]->getComments());
         if ($comments !== []) {
@@ -98,6 +97,22 @@ CODE_SAMPLE
         }
 
         return $expression;
+    }
+
+    private function shouldTransform(Throw_ $throw): bool {
+        $shouldTransform = true;
+        $bannedNodeTypes = [MethodCall::class, StaticCall::class, FuncCall::class, ArrayDimFetch::class, PropertyFetch::class, StaticPropertyFetch::class];
+        $this->traverseNodesWithCallable($throw->expr , function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
+            if (in_array($node::class, $bannedNodeTypes, true)) {
+                $shouldTransform = false;
+                return NodeVisitor::STOP_TRAVERSAL;
+            }
+
+            return null;
+        });
+
+
+        return $shouldTransform;
     }
 
     /**
