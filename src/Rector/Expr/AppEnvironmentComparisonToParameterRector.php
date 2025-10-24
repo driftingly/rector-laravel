@@ -113,7 +113,7 @@ CODE_SAMPLE
         $methodCall = array_values(
             array_filter(
                 [$binaryOp->left, $binaryOp->right],
-                fn ($node) => $this->validMethodCall($node),
+                $this->validMethodCall(...),
             )
         )[0] ?? null;
 
