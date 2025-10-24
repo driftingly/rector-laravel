@@ -5,9 +5,14 @@ namespace RectorLaravel\Rector\If_;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
@@ -76,6 +81,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if (!$this->shouldTransform($condition, $throwExpr)) {
+            return null;
+        }
+
         $expression = new Expression(
             $condition instanceof BooleanNot
                 ? new FuncCall(new Name('throw_unless'), [new Arg($condition->expr), new Arg($throwExpr->expr)])
@@ -88,6 +97,22 @@ CODE_SAMPLE
         }
 
         return $expression;
+    }
+
+    private function shouldTransform(Expr $condition, Throw_ $expr): bool {
+        $shouldTransform = true;
+        $bannedNodeTypes = [MethodCall::class, StaticCall::class, FuncCall::class, ArrayDimFetch::class, PropertyFetch::class, StaticPropertyFetch::class];
+        $this->traverseNodesWithCallable($expr->expr , function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
+            if (in_array($node::class, $bannedNodeTypes, true)) {
+                $shouldTransform = false;
+                return NodeVisitor::STOP_TRAVERSAL;
+            }
+
+            return null;
+        });
+
+
+        return $shouldTransform;
     }
 
     /**
