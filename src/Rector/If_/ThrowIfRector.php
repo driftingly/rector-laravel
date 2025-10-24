@@ -81,7 +81,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (!$this->shouldTransform($condition, $throwExpr)) {
+        if (!$this->shouldTransform($throwExpr)) {
             return null;
         }
 
@@ -99,10 +99,10 @@ CODE_SAMPLE
         return $expression;
     }
 
-    private function shouldTransform(Expr $condition, Throw_ $expr): bool {
+    private function shouldTransform(Throw_ $throw): bool {
         $shouldTransform = true;
         $bannedNodeTypes = [MethodCall::class, StaticCall::class, FuncCall::class, ArrayDimFetch::class, PropertyFetch::class, StaticPropertyFetch::class];
-        $this->traverseNodesWithCallable($expr->expr , function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
+        $this->traverseNodesWithCallable($throw->expr , function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
             if (in_array($node::class, $bannedNodeTypes, true)) {
                 $shouldTransform = false;
                 return NodeVisitor::STOP_TRAVERSAL;
