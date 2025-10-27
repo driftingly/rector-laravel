@@ -2,7 +2,7 @@
 
 namespace RectorLaravel\Tests\Rector\If_\ThrowIfRector\Fixture;
 
-class SkipIfArrayAccess
+class SomeClass
 {
     public function handle($condition)
     {
