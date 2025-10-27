@@ -33,8 +33,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ThrowIfRector extends AbstractRector
 {
-    public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {
-    }
+    public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -105,7 +104,6 @@ CODE_SAMPLE
         return $expression;
     }
 
-
     private function isSafeToTransform(Throw_ $throw, Expr $expr): bool
     {
         $shouldTransform = true;
@@ -113,7 +111,7 @@ CODE_SAMPLE
         $this->traverseNodesWithCallable($throw->expr, function (Node $node) use (&$shouldTransform, $bannedNodeTypes, $expr): ?int {
             if (
                 in_array($node::class, $bannedNodeTypes, true)
-                || $node instanceof Variable && !$this->isSafeToTransformWithVariableAccess($node, $expr)
+                || $node instanceof Variable && ! $this->isSafeToTransformWithVariableAccess($node, $expr)
             ) {
                 $shouldTransform = false;
 
@@ -131,12 +129,13 @@ CODE_SAMPLE
      * This method checks if the variable was assigned on the right side of a short-circuit logical operator (conjunction and disjunction).
      * Note: The check is a little too strict, because such a variable may be initialized before the if-statement, and in such case it doesn't matter if it was assigned somewhere in the condition.
      */
-    private function isSafeToTransformWithVariableAccess(Variable $variable, Expr $expr): bool {
+    private function isSafeToTransformWithVariableAccess(Variable $variable, Expr $expr): bool
+    {
         $firstShortCircuitOperator = $this->betterNodeFinder->findFirst(
             $expr,
-            fn(Node $node): bool => $node instanceof BooleanAnd || $node instanceof BooleanOr
+            fn (Node $node): bool => $node instanceof BooleanAnd || $node instanceof BooleanOr
         );
-        if (!$firstShortCircuitOperator instanceof Node) {
+        if (! $firstShortCircuitOperator instanceof Node) {
             return true;
         }
         assert($firstShortCircuitOperator instanceof BooleanAnd || $firstShortCircuitOperator instanceof BooleanOr);
@@ -144,11 +143,11 @@ CODE_SAMPLE
         $varName = $this->getName($variable);
         $hasUnsafeAssignment = $this->betterNodeFinder->findFirst(
             $firstShortCircuitOperator->right, // only here short-circuit problem can happen
-            fn(Node $node): bool => $node instanceof Assign
+            fn (Node $node): bool => $node instanceof Assign
                 && $node->var instanceof Variable
                 && $this->getName($node->var) === $varName
         );
 
-        return !$hasUnsafeAssignment instanceof Node;
+        return ! $hasUnsafeAssignment instanceof Node;
     }
 }
