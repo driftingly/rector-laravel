@@ -77,11 +77,7 @@ CODE_SAMPLE
         $ifCondition = $node->cond;
         $throwExpr = $ifStmts[0]->expr;
 
-        if ($this->exceptionUsesVariablesAssignedByCondition($throwExpr, $ifCondition)) {
-            return null;
-        }
-
-        if (! $this->shouldTransform($throwExpr)) {
+        if (! $this->shouldTransform($throwExpr, $ifCondition)) {
             return null;
         }
 
@@ -99,8 +95,12 @@ CODE_SAMPLE
         return $expression;
     }
 
-    private function shouldTransform(Throw_ $throwExpr): bool
+    private function shouldTransform(Throw_ $throwExpr, Expr $ifCondition): bool
     {
+        if ($this->exceptionUsesVariablesAssignedByCondition($throwExpr, $ifCondition)) {
+            return false;
+        }
+
         $shouldTransform = true;
         $bannedNodeTypes = [MethodCall::class, StaticCall::class, FuncCall::class, ArrayDimFetch::class, PropertyFetch::class, StaticPropertyFetch::class];
         $this->traverseNodesWithCallable($throwExpr->expr, function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
