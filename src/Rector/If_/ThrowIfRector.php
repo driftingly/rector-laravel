@@ -60,7 +60,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param If_ $node
+     * @param  If_  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -70,7 +70,7 @@ CODE_SAMPLE
 
         $ifStmts = $node->stmts;
         // Check if there's a single throw expression inside the if-statement
-        if (!(count($ifStmts) === 1 && $ifStmts[0] instanceof Expression && $ifStmts[0]->expr instanceof Throw_)) {
+        if (! (count($ifStmts) === 1 && $ifStmts[0] instanceof Expression && $ifStmts[0]->expr instanceof Throw_)) {
             return null;
         }
 
@@ -81,7 +81,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (!$this->shouldTransform($throwExpr)) {
+        if (! $this->shouldTransform($throwExpr)) {
             return null;
         }
 
@@ -99,18 +99,19 @@ CODE_SAMPLE
         return $expression;
     }
 
-    private function shouldTransform(Throw_ $throw): bool {
+    private function shouldTransform(Throw_ $throw): bool
+    {
         $shouldTransform = true;
         $bannedNodeTypes = [MethodCall::class, StaticCall::class, FuncCall::class, ArrayDimFetch::class, PropertyFetch::class, StaticPropertyFetch::class];
-        $this->traverseNodesWithCallable($throw->expr , function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
+        $this->traverseNodesWithCallable($throw->expr, function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
             if (in_array($node::class, $bannedNodeTypes, true)) {
                 $shouldTransform = false;
+
                 return NodeVisitor::STOP_TRAVERSAL;
             }
 
             return null;
         });
-
 
         return $shouldTransform;
     }
