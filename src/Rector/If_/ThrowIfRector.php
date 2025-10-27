@@ -7,6 +7,8 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
+use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
@@ -21,6 +23,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\NodeVisitor;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PhpParser\Node\BetterNodeFinder;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -30,6 +33,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ThrowIfRector extends AbstractRector
 {
+    public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Change if throw to throw_if', [
@@ -64,6 +70,10 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
+        /**
+         * This is too conservative, can work with cases with elseif and else execution branches.
+         * Skip for now for simplicity.
+         */
         if ($node->else instanceof Else_ || $node->elseifs !== []) {
             return null;
         }
@@ -77,7 +87,7 @@ CODE_SAMPLE
         $ifCondition = $node->cond;
         $throwExpr = $ifStmts[0]->expr;
 
-        if (! $this->shouldTransform($throwExpr, $ifCondition)) {
+        if (! $this->isSafeToTransform($throwExpr, $ifCondition)) {
             return null;
         }
 
@@ -95,16 +105,15 @@ CODE_SAMPLE
         return $expression;
     }
 
-    private function shouldTransform(Throw_ $throwExpr, Expr $ifCondition): bool
+    private function isSafeToTransform(Throw_ $throwExpr, Expr $ifCondition): bool
     {
-        if ($this->exceptionUsesVariablesAssignedByCondition($throwExpr, $ifCondition)) {
-            return false;
-        }
-
         $shouldTransform = true;
         $bannedNodeTypes = [MethodCall::class, StaticCall::class, FuncCall::class, ArrayDimFetch::class, PropertyFetch::class, StaticPropertyFetch::class];
-        $this->traverseNodesWithCallable($throwExpr->expr, function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
-            if (in_array($node::class, $bannedNodeTypes, true)) {
+        $this->traverseNodesWithCallable($throwExpr->expr, function (Node $node) use (&$shouldTransform, $bannedNodeTypes, $ifCondition): ?int {
+            if (
+                in_array($node::class, $bannedNodeTypes, true)
+                || $node instanceof Variable && !$this->isSafeToTransformWithVariableAccess($node, $ifCondition)
+            ) {
                 $shouldTransform = false;
 
                 return NodeVisitor::STOP_TRAVERSAL;
@@ -117,32 +126,28 @@ CODE_SAMPLE
     }
 
     /**
-     * Make sure the exception doesn't use variables assigned by the condition or this
-     * will cause broken code to be generated
+     * Not safe to transform when throw expression contains variables that are assigned in the if-condition because of the short-circuit logical operators issue.
+     * This method checks if the variable was assigned on the right side of a short-circuit logical operator (conjunction and disjunction).
+     * Note: The check is a little too strict, because such a variable may be initialized before the if-statement, and in such case it doesn't matter if it was assigned somewhere in the condition.
      */
-    private function exceptionUsesVariablesAssignedByCondition(Expr $throwExpr, Expr $condition): bool
-    {
-        $conditionVariables = [];
-        $returnValue = false;
+    private function isSafeToTransformWithVariableAccess(Node $node, Expr $ifCondition): bool {
+        $firstShortCircuitOperator = $this->betterNodeFinder->findFirst(
+            $ifCondition,
+            fn(Node $node): bool => $node instanceof BooleanAnd || $node instanceof BooleanOr
+        );
+        if ($firstShortCircuitOperator === null) {
+            return true;
+        }
+        assert($firstShortCircuitOperator instanceof BooleanAnd or $firstShortCircuitOperator instanceof BooleanOr);
 
-        $this->traverseNodesWithCallable($condition, function (Node $node) use (&$conditionVariables): null {
-            if ($node instanceof Assign) {
-                $conditionVariables[] = $this->getName($node->var);
-            }
+        $varName = $this->getName($node);
+        $hasUnsafeAssignment = $this->betterNodeFinder->findFirst(
+            $firstShortCircuitOperator->right, // only here short-circuit problem can happen
+            fn(Node $n): bool => $n instanceof Assign
+                && $n->var instanceof Variable
+                && $this->getName($n->var) === $varName
+        );
 
-            return null;
-        });
-
-        $this->traverseNodesWithCallable($throwExpr, function (Node $node) use ($conditionVariables, &$returnValue): ?int {
-            if ($node instanceof Variable && in_array($this->getName($node), $conditionVariables, true)) {
-                $returnValue = true;
-
-                return NodeVisitor::STOP_TRAVERSAL;
-            }
-
-            return null;
-        });
-
-        return $returnValue;
+        return $hasUnsafeAssignment === null;
     }
 }
