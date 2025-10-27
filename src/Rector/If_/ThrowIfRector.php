@@ -74,10 +74,10 @@ CODE_SAMPLE
             return null;
         }
 
-        $condition = $node->cond;
+        $ifCondition = $node->cond;
         $throwExpr = $ifStmts[0]->expr;
 
-        if ($this->exceptionUsesVariablesAssignedByCondition($throwExpr, $condition)) {
+        if ($this->exceptionUsesVariablesAssignedByCondition($throwExpr, $ifCondition)) {
             return null;
         }
 
@@ -86,9 +86,9 @@ CODE_SAMPLE
         }
 
         $expression = new Expression(
-            $condition instanceof BooleanNot
-                ? new FuncCall(new Name('throw_unless'), [new Arg($condition->expr), new Arg($throwExpr->expr)])
-                : new FuncCall(new Name('throw_if'), [new Arg($condition), new Arg($throwExpr->expr)])
+            $ifCondition instanceof BooleanNot
+                ? new FuncCall(new Name('throw_unless'), [new Arg($ifCondition->expr), new Arg($throwExpr->expr)])
+                : new FuncCall(new Name('throw_if'), [new Arg($ifCondition), new Arg($throwExpr->expr)])
         );
 
         $comments = array_merge($node->getComments(), $ifStmts[0]->getComments());
@@ -99,11 +99,11 @@ CODE_SAMPLE
         return $expression;
     }
 
-    private function shouldTransform(Throw_ $throw): bool
+    private function shouldTransform(Throw_ $throwExpr): bool
     {
         $shouldTransform = true;
         $bannedNodeTypes = [MethodCall::class, StaticCall::class, FuncCall::class, ArrayDimFetch::class, PropertyFetch::class, StaticPropertyFetch::class];
-        $this->traverseNodesWithCallable($throw->expr, function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
+        $this->traverseNodesWithCallable($throwExpr->expr, function (Node $node) use (&$shouldTransform, $bannedNodeTypes): ?int {
             if (in_array($node::class, $bannedNodeTypes, true)) {
                 $shouldTransform = false;
 
