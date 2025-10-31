@@ -25,13 +25,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector
 {
-    private const string URL_ATTRIBUTE = 'Livewire\Attributes\Url';
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    /**
+     * @var string
+     */
+    private const URL_ATTRIBUTE = 'Livewire\Attributes\Url';
 
-    private const string COMPONENT_CLASS = 'Livewire\Component';
+    /**
+     * @var string
+     */
+    private const COMPONENT_CLASS = 'Livewire\Component';
 
-    private const string QUERY_STRING_PROPERTY_NAME = 'queryString';
+    /**
+     * @var string
+     */
+    private const QUERY_STRING_PROPERTY_NAME = 'queryString';
 
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+    public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer)
+    {
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -188,7 +204,7 @@ CODE_SAMPLE
 
         $property->attrGroups[] = new AttributeGroup([
             new Attribute(
-                new FullyQualified(self::URL_ATTRIBUTE), args: $args
+                new FullyQualified(self::URL_ATTRIBUTE), $args
             ),
         ]);
     }
@@ -205,7 +221,7 @@ CODE_SAMPLE
                 continue;
             }
             if ($item->key instanceof String_ && $item->value instanceof Scalar && in_array($item->key->value, ['except', 'as'], true)) {
-                $args[] = new Arg($item->value, name: new Identifier($item->key->value));
+                $args[] = new Arg($item->value, false, false, [], new Identifier($item->key->value));
             }
         }
 

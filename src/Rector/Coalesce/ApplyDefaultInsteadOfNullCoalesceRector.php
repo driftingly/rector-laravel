@@ -40,7 +40,7 @@ final class ApplyDefaultInsteadOfNullCoalesceRector extends AbstractRector imple
         return [
             new ApplyDefaultInsteadOfNullCoalesce('config'),
             new ApplyDefaultInsteadOfNullCoalesce('env'),
-            new ApplyDefaultInsteadOfNullCoalesce('data_get', argumentPosition: 2),
+            new ApplyDefaultInsteadOfNullCoalesce('data_get', null, 2),
             new ApplyDefaultInsteadOfNullCoalesce('get', new ObjectType('Illuminate\Support\Env')),
         ];
     }
@@ -58,10 +58,7 @@ CODE_SAMPLE,
 custom_helper('app.name', 'Laravel');
 CODE_SAMPLE
                     ,
-                    [
-                        ...self::defaultLaravelMethods(),
-                        new ApplyDefaultInsteadOfNullCoalesce('custom_helper'),
-                    ],
+                    array_merge(self::defaultLaravelMethods(), [new ApplyDefaultInsteadOfNullCoalesce('custom_helper')]),
                 ),
             ]
         );
@@ -74,8 +71,9 @@ CODE_SAMPLE
 
     /**
      * @param  Coalesce  $node
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\FuncCall|null
      */
-    public function refactor(Node $node): MethodCall|StaticCall|FuncCall|null
+    public function refactor(Node $node)
     {
         if (! $node->left instanceof FuncCall &&
             ! $node->left instanceof MethodCall &&
