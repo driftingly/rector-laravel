@@ -51,8 +51,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Illuminate\Contracts\Routing\UrlRoutable',
             'resolveRouteBinding',
             1,
-            'field',
-            null
+            'field'
         ),
         ]);
 

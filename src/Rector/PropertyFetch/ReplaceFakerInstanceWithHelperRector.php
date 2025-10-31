@@ -137,7 +137,6 @@ CODE_SAMPLE
         return array_reduce(
             $parts,
             fn (?Expr $carry, Expr $part) => $carry === null ? $part : new Concat($carry, $part),
-            null,
         );
     }
 
