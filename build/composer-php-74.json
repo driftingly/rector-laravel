@@ -5,7 +5,8 @@
     "description": "Rector upgrades rules for Laravel Framework",
     "require": {
         "php": "^7.4 || ^8.0",
-        "rector/rector": "^2.2.7"
+        "rector/rector": "^2.2.7",
+        "webmozart/assert": "^1.11"
     },
     "autoload": {
         "psr-4": {
