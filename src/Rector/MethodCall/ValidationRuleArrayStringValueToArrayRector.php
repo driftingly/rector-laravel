@@ -55,8 +55,9 @@ CODE_SAMPLE
 
     /**
      * @param  MethodCall|StaticCall|ClassLike  $node
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Stmt\ClassLike|null
      */
-    public function refactor(Node $node): MethodCall|StaticCall|ClassLike|null
+    public function refactor(Node $node)
     {
         if ($node instanceof ClassLike) {
             return $this->refactorClassMethod($node);
@@ -128,7 +129,11 @@ CODE_SAMPLE
         return new Array_(array_map(fn ($parts) => new ArrayItem(new InterpolatedString($parts)), $allRuleParts));
     }
 
-    private function refactorCall(StaticCall|MethodCall $node): StaticCall|MethodCall|null
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall $node
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|null
+     */
+    private function refactorCall($node)
     {
         if (
             ! $this->isName($node->name, 'make')
@@ -208,7 +213,7 @@ CODE_SAMPLE
             }
 
             $changed = false;
-            $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$changed, &$hasChanged): Return_|int|null {
+            $this->traverseNodesWithCallable($classMethod, function (Node $node) use (&$changed, &$hasChanged) {
                 if ($changed) {
                     $hasChanged = true;
 

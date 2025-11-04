@@ -17,9 +17,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceFakerPropertyFetchWithMethodCallRector extends AbstractRector
 {
-    public function __construct(
-        private readonly BuilderFactory $builderFactory,
-    ) {}
+    /**
+     * @readonly
+     */
+    private BuilderFactory $builderFactory;
+    public function __construct(BuilderFactory $builderFactory)
+    {
+        $this->builderFactory = $builderFactory;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
