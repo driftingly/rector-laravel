@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\StaticCall;
 
-use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Name;
+use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
-use ReflectionException;
-use ReflectionMethod;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -31,6 +32,10 @@ final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector imple
      */
     private array $excludeMethods = [];
 
+    public function __construct(
+        private readonly ReflectionProvider $reflectionProvider
+    ) {}
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -40,13 +45,15 @@ final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector imple
                     <<<'CODE_SAMPLE'
 use App\Models\User;
 
+$user = User::first();
 $user = User::find(1);
 CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
 use App\Models\User;
 
-$user = User::query()->find(1);
+$user = User::query()->first();
+$user = User::find(1);
 CODE_SAMPLE
                     , [
                         self::EXCLUDE_METHODS => ['find'],
@@ -68,60 +75,50 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        $resolvedType = $this->nodeTypeResolver->getType($node->class);
-
-        $classNames = $resolvedType->getObjectClassNames();
-
-        if ($classNames === []) {
-            return null;
-        }
-
-        $className = $classNames[0];
-
-        $originalClassName = $this->getName($node->class); // like "self" or "App\Models\User"
-
-        if ($originalClassName === null) {
-            return null;
-        }
-
-        // does not extend Eloquent Model
-        if (! is_subclass_of($className, Model::class)) {
-            return null;
-        }
-
         if (! $node->name instanceof Identifier) {
             return null;
         }
 
         $methodName = $node->name->toString();
 
-        // if not a magic method
-        if (! $this->isMagicMethod($className, $methodName)) {
+        if (
+            $methodName === 'query' // short circuit
+            || in_array($methodName, $this->excludeMethods, true)
+        ) {
             return null;
         }
 
-        // if method belongs to Eloquent Query Builder or Query Builder
-        if (! $this->isPublicMethod(EloquentQueryBuilder::class, $methodName) && ! $this->isPublicMethod(
-            QueryBuilder::class,
-            $methodName
-        )) {
+        $resolvedType = $this->nodeTypeResolver->getType($node->class);
+
+        $classNames = $resolvedType->isClassString()->yes()
+            ? $resolvedType->getClassStringObjectType()->getObjectClassNames()
+            : $resolvedType->getObjectClassNames();
+
+        $classReflection = null;
+
+        foreach ($classNames as $className) {
+            if (! $this->reflectionProvider->hasClass($className)) {
+                continue;
+            }
+
+            $classReflection = $this->reflectionProvider->getClass($className);
+
+            if (! $classReflection->is(Model::class)) {
+                continue;
+            }
+
+            break;
+        }
+
+        if (! $classReflection instanceof ClassReflection) {
             return null;
         }
 
-        if ($node->class instanceof Name) {
-            $staticCall = $this->nodeFactory->createStaticCall($originalClassName, 'query');
+        if (! $this->isMagicMethod($classReflection, $methodName)) {
+            return null;
         }
 
-        if (! $node->class instanceof Name) {
-            $staticCall = new StaticCall($node->class, 'query');
-        }
-
-        $methodCall = $this->nodeFactory->createMethodCall($staticCall, $methodName);
-        foreach ($node->args as $arg) {
-            $methodCall->args[] = $arg;
-        }
-
-        return $methodCall;
+        return new MethodCall(new StaticCall($node->class, 'query'), $node->name, $node->args);
     }
 
     /**
@@ -136,39 +133,45 @@ CODE_SAMPLE
         $this->excludeMethods = $excludeMethods;
     }
 
-    public function isMagicMethod(string $className, string $methodName): bool
+    private function isMagicMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (in_array($methodName, $this->excludeMethods, true)) {
+        if (! $classReflection->hasMethod($methodName)) {
+            // if the class doesn't have the method then check if the method is a scope
+            if ($classReflection->hasMethod('scope' . ucfirst($methodName))) {
+                return true;
+            }
+
+            // otherwise, need to check if the method is directly on the EloquentBuilder or QueryBuilder
+            return $this->isPublicMethod(EloquentBuilder::class, $methodName)
+                || $this->isPublicMethod(QueryBuilder::class, $methodName);
+        }
+
+        $extendedMethodReflection = $classReflection->getMethod($methodName, new OutOfClassScope);
+
+        if (! $extendedMethodReflection->isPublic() || $extendedMethodReflection->isStatic()) {
             return false;
         }
 
-        try {
-            $reflectionMethod = new ReflectionMethod($className, $methodName);
-        } catch (ReflectionException) {
-            return true; // method does not exist => is magic method
-        }
+        $declaringClass = $extendedMethodReflection->getDeclaringClass();
 
-        return false; // not a magic method
+        // finally, make sure the method is on the builders or a subclass
+        return $declaringClass->is(EloquentBuilder::class) || $declaringClass->is(QueryBuilder::class);
     }
 
-    public function isPublicMethod(string $className, string $methodName): bool
+    private function isPublicMethod(string $className, string $methodName): bool
     {
-        try {
-            $reflectionMethod = new ReflectionMethod($className, $methodName);
-
-            // if not public
-            if (! $reflectionMethod->isPublic()) {
-                return false;
-            }
-
-            // if static
-            if ($reflectionMethod->isStatic()) {
-                return false;
-            }
-        } catch (ReflectionException) {
-            return false; // method does not exist => is magic method
+        if (! $this->reflectionProvider->hasClass($className)) {
+            return false;
         }
 
-        return true; // method exist
+        $classReflection = $this->reflectionProvider->getClass($className);
+
+        if (! $classReflection->hasMethod($methodName)) {
+            return false;
+        }
+
+        $extendedMethodReflection = $classReflection->getMethod($methodName, new OutOfClassScope);
+
+        return $extendedMethodReflection->isPublic() && ! $extendedMethodReflection->isStatic();
     }
 }
