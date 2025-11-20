@@ -79,6 +79,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
 
         if ($hasChanged) {
             $node->stmts = array_values($node->stmts);
+
             return $node;
         }
 

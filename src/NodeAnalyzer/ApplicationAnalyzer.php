@@ -10,7 +10,7 @@ class ApplicationAnalyzer
     private ?string $version = null;
 
     /**
-     * @param class-string $applicationClass
+     * @param  class-string  $applicationClass
      */
     public function __construct(
         private string $applicationClass = 'Illuminate\Foundation\Application',
@@ -24,7 +24,7 @@ class ApplicationAnalyzer
     }
 
     /**
-     * @param class-string $applicationClass
+     * @param  class-string  $applicationClass
      */
     public function setApplicationClass(string $applicationClass): static
     {
