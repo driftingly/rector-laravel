@@ -76,7 +76,7 @@ CODE_SAMPLE
     /**
      * @param  Class_  $node
      */
-    public function refactor(Node $node)
+    public function refactor(Node $node): ?Node
     {
         if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
             return null;
