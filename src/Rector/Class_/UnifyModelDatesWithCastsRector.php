@@ -128,8 +128,9 @@ CODE_SAMPLE
         }
 
         unset($node->stmts[array_search($datesProperty, $node->stmts, true)]);
+        $node->stmts = array_values($node->stmts);
 
-        return null;
+        return $node;
     }
 
     private function createCastsProperty(): Property

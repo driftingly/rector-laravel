@@ -100,6 +100,7 @@ CODE_SAMPLE,
                 $method->addStmt(new Return_($stmt->props[0]->default));
                 $methodNode = $method->getNode();
                 $node->stmts[] = $methodNode;
+                $node->stmts = array_values($node->stmts);
 
                 $this->restorePhpDoc($methodNode);
 

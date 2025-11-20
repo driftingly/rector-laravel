@@ -77,10 +77,12 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
             }
         }
 
-        return $hasChanged
-            ? $node
-            : null;
+        if ($hasChanged) {
+            $node->stmts = array_values($node->stmts);
+            return $node;
+        }
 
+        return null;
     }
 
     public function getRuleDefinition(): RuleDefinition

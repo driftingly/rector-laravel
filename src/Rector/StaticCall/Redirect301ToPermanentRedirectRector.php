@@ -96,6 +96,7 @@ CODE_SAMPLE
         }
 
         unset($node->args[2]);
+        $node->args = array_values($node->args);
 
         $node->name = new Identifier('permanentRedirect');
 
