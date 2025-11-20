@@ -141,6 +141,7 @@ CODE_SAMPLE
         }
 
         $node->stmts = array_merge($node->stmts, $factories);
+        $node->stmts = array_values($node->stmts);
 
         return $node;
     }
