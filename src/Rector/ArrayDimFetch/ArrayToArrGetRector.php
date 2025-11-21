@@ -76,6 +76,7 @@ CODE_SAMPLE
     {
         if ($node instanceof Isset_) {
             $this->markIssetArrayDimFetchesAsProcessed($node);
+
             return null;
         }
 
@@ -83,6 +84,7 @@ CODE_SAMPLE
             if ($node->expr instanceof ArrayDimFetch) {
                 $this->markArrayDimFetchAsProcessed($node->expr);
             }
+
             return null;
         }
 
@@ -90,6 +92,7 @@ CODE_SAMPLE
             if ($node->var instanceof ArrayDimFetch) {
                 $this->markArrayDimFetchAsProcessed($node->var);
             }
+
             return null;
         }
 
@@ -203,6 +206,10 @@ CODE_SAMPLE
         $stringParts = [];
 
         foreach ($keys as $key) {
+            if (! $key instanceof Scalar) {
+                return null;
+            }
+
             $constantValues = $this->getType($key)->getConstantScalarValues();
 
             if ($constantValues === []) {
