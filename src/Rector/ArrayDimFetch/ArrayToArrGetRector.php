@@ -8,7 +8,11 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\Empty_;
+use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Name\FullyQualified;
@@ -31,7 +35,7 @@ final class ArrayToArrGetRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Convert array access to Arr::get() method call, skips null coalesce with throw expressions',
+            'Convert array access to Arr::get() method call, skips isset/empty checks, assignments, and null coalesce with throw expressions',
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 $array['key'];
@@ -39,6 +43,9 @@ $array['nested']['key'];
 $array['key'] ?? 'default';
 $array['nested']['key'] ?? 'default';
 $array['key'] ?? throw new Exception('Required');
+isset($array['key']);
+empty($array['key']);
+$array['key'] = 'value';
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
 \Illuminate\Support\Arr::get($array, 'key');
@@ -46,6 +53,9 @@ CODE_SAMPLE,
 \Illuminate\Support\Arr::get($array, 'key', 'default');
 \Illuminate\Support\Arr::get($array, 'nested.key', 'default');
 $array['key'] ?? throw new Exception('Required');
+isset($array['key']);
+empty($array['key']);
+$array['key'] = 'value';
 CODE_SAMPLE
             )]
         );
@@ -56,14 +66,33 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [ArrayDimFetch::class, Coalesce::class];
+        return [ArrayDimFetch::class, Coalesce::class, Isset_::class, Empty_::class, Assign::class, AssignOp::class];
     }
 
     /**
-     * @param  ArrayDimFetch|Coalesce  $node
+     * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|Assign|AssignOp  $node
      */
     public function refactor(Node $node): ?StaticCall
     {
+        if ($node instanceof Isset_) {
+            $this->markIssetArrayDimFetchesAsProcessed($node);
+            return null;
+        }
+
+        if ($node instanceof Empty_) {
+            if ($node->expr instanceof ArrayDimFetch) {
+                $this->markArrayDimFetchAsProcessed($node->expr);
+            }
+            return null;
+        }
+
+        if ($node instanceof Assign || $node instanceof AssignOp) {
+            if ($node->var instanceof ArrayDimFetch) {
+                $this->markArrayDimFetchAsProcessed($node->var);
+            }
+            return null;
+        }
+
         if ($node instanceof Coalesce) {
             $result = $this->refactorCoalesce($node);
             if ($result instanceof StaticCall && $node->left instanceof ArrayDimFetch) {
@@ -211,6 +240,15 @@ CODE_SAMPLE
         while ($current instanceof ArrayDimFetch) {
             $this->processedArrayDimFetches[] = $current;
             $current = $current->var;
+        }
+    }
+
+    private function markIssetArrayDimFetchesAsProcessed(Isset_ $isset): void
+    {
+        foreach ($isset->vars as $var) {
+            if ($var instanceof ArrayDimFetch) {
+                $this->markArrayDimFetchAsProcessed($var);
+            }
         }
     }
 }
