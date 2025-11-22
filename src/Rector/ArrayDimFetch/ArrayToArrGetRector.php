@@ -8,12 +8,17 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\Empty_;
+use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Unset_;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -31,7 +36,7 @@ final class ArrayToArrGetRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Convert array access to Arr::get() method call, skips null coalesce with throw expressions',
+            'Convert array access to Arr::get() method call, skips isset/empty checks, assignments, unset, and null coalesce with throw expressions',
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 $array['key'];
@@ -39,6 +44,10 @@ $array['nested']['key'];
 $array['key'] ?? 'default';
 $array['nested']['key'] ?? 'default';
 $array['key'] ?? throw new Exception('Required');
+isset($array['key']);
+empty($array['key']);
+$array['key'] = 'value';
+unset($array['key']);
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
 \Illuminate\Support\Arr::get($array, 'key');
@@ -46,6 +55,10 @@ CODE_SAMPLE,
 \Illuminate\Support\Arr::get($array, 'key', 'default');
 \Illuminate\Support\Arr::get($array, 'nested.key', 'default');
 $array['key'] ?? throw new Exception('Required');
+isset($array['key']);
+empty($array['key']);
+$array['key'] = 'value';
+unset($array['key']);
 CODE_SAMPLE
             )]
         );
@@ -56,14 +69,36 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [ArrayDimFetch::class, Coalesce::class];
+        return [ArrayDimFetch::class, Coalesce::class, Isset_::class, Empty_::class, Assign::class, AssignOp::class, Unset_::class];
     }
 
     /**
-     * @param  ArrayDimFetch|Coalesce  $node
+     * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|Assign|AssignOp|Unset_  $node
      */
     public function refactor(Node $node): ?StaticCall
     {
+        if ($node instanceof Isset_ || $node instanceof Unset_) {
+            $this->markVarsArrayDimFetchesAsProcessed($node->vars);
+
+            return null;
+        }
+
+        if ($node instanceof Empty_) {
+            if ($node->expr instanceof ArrayDimFetch) {
+                $this->markArrayDimFetchAsProcessed($node->expr);
+            }
+
+            return null;
+        }
+
+        if ($node instanceof Assign || $node instanceof AssignOp) {
+            if ($node->var instanceof ArrayDimFetch) {
+                $this->markArrayDimFetchAsProcessed($node->var);
+            }
+
+            return null;
+        }
+
         if ($node instanceof Coalesce) {
             $result = $this->refactorCoalesce($node);
             if ($result instanceof StaticCall && $node->left instanceof ArrayDimFetch) {
@@ -78,7 +113,7 @@ CODE_SAMPLE
                 return null;
             }
 
-            return $this->refactorArrayDimFetch($node);
+            return $this->createArrGetCall($node);
         }
 
         return null;
@@ -104,11 +139,6 @@ CODE_SAMPLE
         $staticCall->args[] = new Arg($coalesce->right);
 
         return $staticCall;
-    }
-
-    private function refactorArrayDimFetch(ArrayDimFetch $arrayDimFetch): ?StaticCall
-    {
-        return $this->createArrGetCall($arrayDimFetch);
     }
 
     private function createArrGetCall(ArrayDimFetch $arrayDimFetch): ?StaticCall
@@ -174,6 +204,10 @@ CODE_SAMPLE
         $stringParts = [];
 
         foreach ($keys as $key) {
+            if (! $key instanceof Scalar) {
+                return null;
+            }
+
             $constantValues = $this->getType($key)->getConstantScalarValues();
 
             if ($constantValues === []) {
@@ -211,6 +245,18 @@ CODE_SAMPLE
         while ($current instanceof ArrayDimFetch) {
             $this->processedArrayDimFetches[] = $current;
             $current = $current->var;
+        }
+    }
+
+    /**
+     * @param Expr[] $vars
+     */
+    private function markVarsArrayDimFetchesAsProcessed(array $vars): void
+    {
+        foreach ($vars as $var) {
+            if ($var instanceof ArrayDimFetch) {
+                $this->markArrayDimFetchAsProcessed($var);
+            }
         }
     }
 }
