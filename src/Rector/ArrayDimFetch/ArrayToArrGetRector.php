@@ -19,6 +19,8 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Unset_;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -28,11 +30,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ArrayToArrGetRector extends AbstractRector
 {
-    /**
-     * @var ArrayDimFetch[]
-     */
-    private array $processedArrayDimFetches = [];
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -69,71 +66,59 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [ArrayDimFetch::class, Coalesce::class, Isset_::class, Empty_::class, Assign::class, AssignOp::class, Unset_::class];
+        return [
+            ArrayDimFetch::class,
+            Coalesce::class,
+            Isset_::class,
+            Empty_::class,
+            Assign::class,
+            AssignOp::class,
+            Unset_::class
+        ];
     }
 
     /**
-     * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|Assign|AssignOp|Unset_  $node
+     * @param ArrayDimFetch|Coalesce|Isset_|Empty_|Assign|AssignOp|Unset_ $node
+     * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN|null
      */
-    public function refactor(Node $node): ?StaticCall
+    public function refactor(Node $node): StaticCall|int|null
     {
-        if ($node instanceof Isset_ || $node instanceof Unset_) {
-            $this->markVarsArrayDimFetchesAsProcessed($node->vars);
-
-            return null;
-        }
-
-        if ($node instanceof Empty_) {
-            if ($node->expr instanceof ArrayDimFetch) {
-                $this->markArrayDimFetchAsProcessed($node->expr);
-            }
-
-            return null;
-        }
-
-        if ($node instanceof Assign || $node instanceof AssignOp) {
-            if ($node->var instanceof ArrayDimFetch) {
-                $this->markArrayDimFetchAsProcessed($node->var);
-            }
-
-            return null;
-        }
-
         if ($node instanceof Coalesce) {
-            $result = $this->refactorCoalesce($node);
-            if ($result instanceof StaticCall && $node->left instanceof ArrayDimFetch) {
-                $this->processedArrayDimFetches[] = $node->left;
-            }
-
-            return $result;
+            return $this->refactorCoalesce($node);
         }
 
-        if ($node instanceof ArrayDimFetch) {
-            if (in_array($node, $this->processedArrayDimFetches, true)) {
-                return null;
+        if ($node instanceof AssignOp || $node instanceof Assign) {
+            if ($this->containsArrayDimFetch($node->var)) {
+                return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
             }
 
-            return $this->createArrGetCall($node);
+            return null;
         }
 
-        return null;
+        if (! $node instanceof ArrayDimFetch) {
+            if ($this->containsArrayDimFetch($node)) {
+                return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            }
+
+            return null;
+        }
+
+        return $this->createArrGetCall($node);
     }
 
-    private function refactorCoalesce(Coalesce $coalesce): ?StaticCall
+    private function refactorCoalesce(Coalesce $coalesce): StaticCall|int
     {
         if (! $coalesce->left instanceof ArrayDimFetch) {
-            return null;
+            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
         }
 
         if ($coalesce->right instanceof Throw_) {
-            $this->markArrayDimFetchAsProcessed($coalesce->left);
-
-            return null;
+            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
         }
 
         $staticCall = $this->createArrGetCall($coalesce->left);
         if (! $staticCall instanceof StaticCall) {
-            return null;
+            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
         }
 
         $staticCall->args[] = new Arg($coalesce->right);
@@ -237,26 +222,19 @@ CODE_SAMPLE
         return $current;
     }
 
-    private function markArrayDimFetchAsProcessed(ArrayDimFetch $arrayDimFetch): void
+    private function containsArrayDimFetch(Assign|Unset_|Node|Coalesce|ArrayDimFetch|Isset_|Empty_|AssignOp $node): bool
     {
-        $this->processedArrayDimFetches[] = $arrayDimFetch;
+        $found = false;
 
-        $current = $arrayDimFetch;
-        while ($current instanceof ArrayDimFetch) {
-            $this->processedArrayDimFetches[] = $current;
-            $current = $current->var;
-        }
-    }
-
-    /**
-     * @param Expr[] $vars
-     */
-    private function markVarsArrayDimFetchesAsProcessed(array $vars): void
-    {
-        foreach ($vars as $var) {
-            if ($var instanceof ArrayDimFetch) {
-                $this->markArrayDimFetchAsProcessed($var);
+        $this->traverseNodesWithCallable($node, function (Node $node) use (&$found): ?int {
+            if ($node instanceof ArrayDimFetch) {
+                $found = true;
+                return NodeVisitor::STOP_TRAVERSAL;
             }
-        }
+
+            return null;
+        });
+
+        return $found;
     }
 }
