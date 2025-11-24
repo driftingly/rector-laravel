@@ -12,11 +12,11 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use PHPStan\Type\Type;
 
 /**
  * @see \RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector\EloquentWhereTypeHintClosureParameterRectorTest
@@ -72,8 +72,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param StaticCall|MethodCall $node
-     * @return Node|null
+     * @param  StaticCall|MethodCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -83,6 +82,7 @@ CODE_SAMPLE
             $type = $this->getType($node->var);
         }
 
+        /** @phpstan-ignore argument.type */
         if ($this->isWhereMethodWithClosureOrArrowFunction($node) && $this->changeClosureParamType($node, $type)) {
             return $node;
         }
@@ -101,7 +101,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param ObjectType $type
+     * @param  ObjectType  $type
      */
     private function changeClosureParamType(MethodCall|StaticCall $node, Type $type): bool
     {
