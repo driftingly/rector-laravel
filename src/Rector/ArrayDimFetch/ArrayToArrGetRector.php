@@ -225,7 +225,7 @@ CODE_SAMPLE
         return $current;
     }
 
-    private function containsArrayDimFetch(Assign|Unset_|Node|Coalesce|ArrayDimFetch|Isset_|Empty_|AssignOp $node): bool
+    private function containsArrayDimFetch(Node $node): bool
     {
         $found = false;
 
