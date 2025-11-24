@@ -19,7 +19,6 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Unset_;
-use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -73,12 +72,12 @@ CODE_SAMPLE
             Empty_::class,
             Assign::class,
             AssignOp::class,
-            Unset_::class
+            Unset_::class,
         ];
     }
 
     /**
-     * @param ArrayDimFetch|Coalesce|Isset_|Empty_|Assign|AssignOp|Unset_ $node
+     * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|Assign|AssignOp|Unset_  $node
      * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN|null
      */
     public function refactor(Node $node): StaticCall|int|null
@@ -229,6 +228,7 @@ CODE_SAMPLE
         $this->traverseNodesWithCallable($node, function (Node $node) use (&$found): ?int {
             if ($node instanceof ArrayDimFetch) {
                 $found = true;
+
                 return NodeVisitor::STOP_TRAVERSAL;
             }
 
