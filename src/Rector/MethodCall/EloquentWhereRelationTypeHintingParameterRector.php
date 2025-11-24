@@ -79,7 +79,7 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): MethodCall|StaticCall|null
     {
-        $type = new ObjectType('Illuminate\Database\Eloquent\Builder');
+        $type = new ObjectType('Illuminate\Contracts\Database\Eloquent\Builder');
 
         if ($node instanceof MethodCall) {
             $type = $this->getType($node->var);

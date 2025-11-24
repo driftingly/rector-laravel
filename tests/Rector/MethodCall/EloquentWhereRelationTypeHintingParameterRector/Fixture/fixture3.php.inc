@@ -16,7 +16,7 @@ namespace RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHinting
 
 use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\Source\FooModel;
 
-FooModel::whereHas('posts', function (\Illuminate\Database\Eloquent\Builder $query) {
+FooModel::whereHas('posts', function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
     $query->where('is_published', true);
 });
 
