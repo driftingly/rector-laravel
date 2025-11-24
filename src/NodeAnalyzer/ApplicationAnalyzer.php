@@ -9,6 +9,9 @@ class ApplicationAnalyzer
 {
     private ?string $version = null;
 
+    /**
+     * @param  class-string  $applicationClass
+     */
     public function __construct(
         private string $applicationClass = 'Illuminate\Foundation\Application',
     ) {}
@@ -20,6 +23,10 @@ class ApplicationAnalyzer
         return $this;
     }
 
+    /**
+     * @param  class-string  $applicationClass
+     * @return $this
+     */
     public function setApplicationClass(string $applicationClass): static
     {
         $this->applicationClass = $applicationClass;
@@ -27,6 +34,9 @@ class ApplicationAnalyzer
         return $this;
     }
 
+    /**
+     * @return class-string
+     */
     public function getApplicationClass(): string
     {
         return $this->applicationClass;
