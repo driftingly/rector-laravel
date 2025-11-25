@@ -125,6 +125,7 @@ CODE_SAMPLE
 
         // Remove the second argument (the 'like' operator)
         unset($node->args[1]);
+        $node->args = array_values($node->args);
 
         return $node;
     }
