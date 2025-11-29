@@ -80,6 +80,7 @@ CODE_SAMPLE
         }
 
         unset($node->stmts[array_search($deferProperty, $node->stmts, true)]);
+        $node->stmts = array_values($node->stmts);
 
         $node->implements[] = new FullyQualified('Illuminate\Contracts\Support\DeferrableProvider');
 
