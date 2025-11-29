@@ -13,7 +13,7 @@ if (class_exists('Illuminate\Database\Eloquent\Builder')) {
  *
  * @mixin \Illuminate\Database\Query\Builder
  */
-class Builder extends QueryBuilder
+class Builder extends QueryBuilder implements \Illuminate\Contracts\Database\Eloquent\Builder
 {
     /**
      * The model being queried.

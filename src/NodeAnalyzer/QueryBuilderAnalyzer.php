@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\NodeAnalyzer;
 
+use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -94,19 +95,19 @@ final readonly class QueryBuilderAnalyzer
     /**
      * Resolve the Model being used by an instance of an Eloquent Query Builder
      *
-     * @param  ObjectType $objectType
+     * @param  Type $objectType
      * @param  Scope $scope
      * @return ObjectType|null
      * @throws \PHPStan\ShouldNotHappenException
      */
-    public function resolveQueryBuilderModel(ObjectType $objectType, Scope $scope): ?Type
+    public function resolveQueryBuilderModel(Type $objectType, Scope $scope): ?Type
     {
-        if ($objectType->isSuperTypeOf(self::eloquentQueryBuilderType())->no()) {
-            throw new \InvalidArgumentException('object must be super of Eloquent Builder');
+        if ($objectType->isSuperTypeOf(self::queryBuilderType())->no()) {
+            throw new InvalidArgumentException('Object type must be an Eloquent query builder.');
         }
 
-        $modelProperty = $objectType->getInstanceProperty('model', $scope);
-        $modelType = $modelProperty->getNativeType();
+        $modelProperty = $objectType->getProperty('model', $scope);
+        $modelType = $modelProperty->getReadableType();
 
         if ($modelType->isObject()->no()) {
             return null;
@@ -131,21 +132,20 @@ final readonly class QueryBuilderAnalyzer
     public function isQueryUsingModel(Node $node, ObjectType $model): bool
     {
         $classType = $this->nodeTypeResolver->getType($node);
-        $scope = ScopeFetcher::fetch($node);
-
-        /** @var $classType ObjectType */
-        if ($classType->isObject()->no()) {
-            return false;
-        }
 
         if ($classType->isSuperTypeOf(self::eloquentQueryBuilderType())->no()) {
             return false;
         }
 
-        if ($this->resolveQueryBuilderModel($classType, $scope)->isSuperTypeOf($model)->yes()) {
-            return true;
+        $scope = ScopeFetcher::fetch($node);
+
+        $property = $classType->getProperty('model', $scope);
+        $propertyType = $property->getReadableType();
+
+        if ($propertyType->isSuperTypeOf(self::modelType())->no()) {
+            return false;
         }
 
-        return false;
+        return $propertyType->getClassName() === $model->getClassName();
     }
 }
