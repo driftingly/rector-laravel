@@ -103,11 +103,11 @@ CODE_SAMPLE
 
             $classReflection = $this->reflectionProvider->getClass($className);
 
-            if (! $classReflection->is(Model::class)) {
-                continue;
+            if ($classReflection->is(Model::class)) {
+                break;
             }
 
-            break;
+            $classReflection = null;
         }
 
         if (! $classReflection instanceof ClassReflection) {
@@ -135,15 +135,19 @@ CODE_SAMPLE
 
     private function isMagicMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (! $classReflection->hasMethod($methodName)) {
+        if (! $classReflection->hasNativeMethod($methodName)) {
             // if the class doesn't have the method then check if the method is a scope
-            if ($classReflection->hasMethod('scope' . ucfirst($methodName))) {
+            if ($classReflection->hasNativeMethod('scope' . ucfirst($methodName))) {
                 return true;
             }
 
             // otherwise, need to check if the method is directly on the EloquentBuilder or QueryBuilder
             return $this->isPublicMethod(EloquentBuilder::class, $methodName)
                 || $this->isPublicMethod(QueryBuilder::class, $methodName);
+        }
+
+        if (! $classReflection->hasMethod($methodName)) {
+            return false; // no mixin
         }
 
         $extendedMethodReflection = $classReflection->getMethod($methodName, new OutOfClassScope);
@@ -166,11 +170,11 @@ CODE_SAMPLE
 
         $classReflection = $this->reflectionProvider->getClass($className);
 
-        if (! $classReflection->hasMethod($methodName)) {
+        if (! $classReflection->hasNativeMethod($methodName)) {
             return false;
         }
 
-        $extendedMethodReflection = $classReflection->getMethod($methodName, new OutOfClassScope);
+        $extendedMethodReflection = $classReflection->getNativeMethod($methodName);
 
         return $extendedMethodReflection->isPublic() && ! $extendedMethodReflection->isStatic();
     }
