@@ -151,6 +151,6 @@ CODE_SAMPLE,
             return false;
         }
 
-        return $this->isName($node->name, 'app');
+        return $this->isNames($node->name, ['app', 'resolve']);
     }
 }
