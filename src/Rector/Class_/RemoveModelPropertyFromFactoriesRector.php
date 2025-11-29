@@ -71,6 +71,7 @@ CODE_SAMPLE
             }
 
             unset($node->stmts[$index]);
+            $node->stmts = array_values($node->stmts);
 
             break;
         }

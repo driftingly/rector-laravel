@@ -111,6 +111,7 @@ CODE_SAMPLE
         $parentStaticCallExpression = new Expression($staticCall);
 
         $node->stmts = array_merge([$parentStaticCallExpression], (array) $node->stmts);
+        $node->stmts = array_values($node->stmts);
 
         return $node;
     }
