@@ -8,8 +8,20 @@ if (class_exists('Illuminate\Database\Eloquent\Builder')) {
     return;
 }
 
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @mixin \Illuminate\Database\Query\Builder
+ */
 class Builder extends QueryBuilder
 {
+    /**
+     * The model being queried.
+     *
+     * @var TModel
+     */
+    protected $model;
+
     public function publicMethodBelongsToEloquentQueryBuilder(): void {}
 
     public function excludablePublicMethodBelongsToEloquentQueryBuilder(): void {}
