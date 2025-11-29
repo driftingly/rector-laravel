@@ -22,6 +22,12 @@ class Builder implements \Illuminate\Contracts\Database\Query\Builder
      */
     public function orderByDesc($column): static {}
 
+    /**
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
+     * @return mixed
+     */
+    public function max($column) {}
+
     protected function protectedMethodBelongsToQueryBuilder(): void {}
 
     private function privateMethodBelongsToQueryBuilder(): void {}
