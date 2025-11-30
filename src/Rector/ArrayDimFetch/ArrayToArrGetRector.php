@@ -106,7 +106,6 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Coalesce $coalesce
      * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN
      */
     private function refactorCoalesce(Coalesce $coalesce): StaticCall|int
