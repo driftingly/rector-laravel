@@ -7,21 +7,33 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 
-final readonly class FacadeAssertionAnalyzer
+final class FacadeAssertionAnalyzer
 {
-    public function __construct(
-        private NodeTypeResolver $nodeTypeResolver,
-        private NodeNameResolver $nodeNameResolver,
-    ) {}
+    /**
+     * @readonly
+     */
+    private NodeTypeResolver $nodeTypeResolver;
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    public function __construct(NodeTypeResolver $nodeTypeResolver, NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeTypeResolver = $nodeTypeResolver;
+        $this->nodeNameResolver = $nodeNameResolver;
+    }
 
     public function isFacadeAssertion(StaticCall $staticCall): bool
     {
-        return match (true) {
-            $this->nodeTypeResolver->isObjectType($staticCall->class, new ObjectType('Illuminate\Support\Facades\Bus'))
-            && $this->nodeNameResolver->isName($staticCall->name, 'assertDispatched') => true,
-            $this->nodeTypeResolver->isObjectType($staticCall->class, new ObjectType('Illuminate\Support\Facades\Event'))
-            && $this->nodeNameResolver->isName($staticCall->name, 'assertDispatched') => true,
-            default => false,
-        };
+        switch (true) {
+            case $this->nodeTypeResolver->isObjectType($staticCall->class, new ObjectType('Illuminate\Support\Facades\Bus'))
+            && $this->nodeNameResolver->isName($staticCall->name, 'assertDispatched'):
+                return true;
+            case $this->nodeTypeResolver->isObjectType($staticCall->class, new ObjectType('Illuminate\Support\Facades\Event'))
+            && $this->nodeNameResolver->isName($staticCall->name, 'assertDispatched'):
+                return true;
+            default:
+                return false;
+        }
     }
 }

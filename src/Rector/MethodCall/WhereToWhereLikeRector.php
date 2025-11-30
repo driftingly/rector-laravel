@@ -26,9 +26,15 @@ use Webmozart\Assert\Assert;
  */
 final class WhereToWhereLikeRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    public const string USING_POSTGRES_DRIVER = 'usingPostgresDriver';
+    /**
+     * @var string
+     */
+    public const USING_POSTGRES_DRIVER = 'usingPostgresDriver';
 
-    private const array WHERE_LIKE_METHODS = [
+    /**
+     * @var mixed[]
+     */
+    private const WHERE_LIKE_METHODS = [
         'where' => 'whereLike',
         'orwhere' => 'orWhereLike',
     ];
@@ -143,7 +149,10 @@ CODE_SAMPLE
         $this->usingPostgresDriver = $configuration[self::USING_POSTGRES_DRIVER];
     }
 
-    private function getLikeParameterUsedInQuery(MethodCall|StaticCall $call): ?string
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $call
+     */
+    private function getLikeParameterUsedInQuery($call): ?string
     {
         if (! $call->args[1] instanceof Arg) {
             return null;
@@ -156,18 +165,24 @@ CODE_SAMPLE
         return strtolower($call->args[1]->value->value);
     }
 
-    private function setNewNodeName(MethodCall|StaticCall $call, string $likeParameter): void
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $call
+     */
+    private function setNewNodeName($call, string $likeParameter): void
     {
         $newNodeName = self::WHERE_LIKE_METHODS[$this->getLowercaseCallName($call)];
 
-        if (str_contains($likeParameter, 'not')) {
+        if (strpos($likeParameter, 'not') !== false) {
             $newNodeName = str_replace('Like', 'NotLike', $newNodeName);
         }
 
         $call->name = new Identifier($newNodeName);
     }
 
-    private function setCaseSensitivity(MethodCall|StaticCall $call, string $likeParameter): void
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $call
+     */
+    private function setCaseSensitivity($call, string $likeParameter): void
     {
         // Case sensitive query in MySQL
         if (in_array($likeParameter, ['like binary', 'not like binary'], true)) {
@@ -180,19 +195,22 @@ CODE_SAMPLE
         }
     }
 
-    private function getCaseSensitivityArgument(MethodCall|StaticCall $call): Arg
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $call
+     */
+    private function getCaseSensitivityArgument($call): Arg
     {
         if ($call->args[2] instanceof Arg && $call->args[2]->name instanceof Identifier) {
-            return new Arg(
-                new ConstFetch(new Name('true')),
-                name: new Identifier('caseSensitive')
-            );
+            return new Arg(new ConstFetch(new Name('true')), false, false, [], new Identifier('caseSensitive'));
         }
 
         return new Arg(new ConstFetch(new Name('true')));
     }
 
-    private function getLowercaseCallName(MethodCall|StaticCall $call): string
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $call
+     */
+    private function getLowercaseCallName($call): string
     {
         return strtolower((string) $this->getName($call->name));
     }
