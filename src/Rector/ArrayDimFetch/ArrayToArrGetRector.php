@@ -80,7 +80,7 @@ CODE_SAMPLE
      * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|Assign|AssignOp|Unset_  $node
      * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN|null
      */
-    public function refactor(Node $node): StaticCall|int|null
+    public function refactor(Node $node)
     {
         if ($node instanceof Coalesce) {
             return $this->refactorCoalesce($node);
@@ -108,7 +108,7 @@ CODE_SAMPLE
     /**
      * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN
      */
-    private function refactorCoalesce(Coalesce $coalesce): StaticCall|int
+    private function refactorCoalesce(Coalesce $coalesce)
     {
         if (! $coalesce->left instanceof ArrayDimFetch) {
             return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;

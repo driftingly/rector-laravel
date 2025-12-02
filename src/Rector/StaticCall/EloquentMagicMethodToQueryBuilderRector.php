@@ -25,16 +25,24 @@ use Webmozart\Assert\Assert;
  */
 final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    final public const string EXCLUDE_METHODS = 'exclude_methods';
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    /**
+     * @var string
+     */
+    public const EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var string[]
      */
     private array $excludeMethods = [];
 
-    public function __construct(
-        private readonly ReflectionProvider $reflectionProvider
-    ) {}
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
