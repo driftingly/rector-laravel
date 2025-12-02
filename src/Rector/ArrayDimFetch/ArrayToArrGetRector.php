@@ -94,7 +94,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($node->getAttribute(AttributeKey::IS_BEING_ASSIGNED)) {
+        if ($node->getAttribute(AttributeKey::IS_BEING_ASSIGNED) === true) {
             return null;
         }
 
