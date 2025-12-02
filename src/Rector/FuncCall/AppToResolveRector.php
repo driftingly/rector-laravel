@@ -42,7 +42,10 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?FuncCall
     {
-        if (! $this->isName($node->name, 'app')) {
+        if (
+            ! $node->name instanceof Name
+            || ! $this->isName($node->name, 'app')
+        ) {
             return null;
         }
 
