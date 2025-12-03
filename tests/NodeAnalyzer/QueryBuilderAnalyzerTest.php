@@ -85,7 +85,7 @@ class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
     /**
      * @test
      */
-    public function if_resolves_the_model_on_eloquent_queries(): void
+    public function it_resolves_the_model_on_eloquent_queries(): void
     {
         $rectorParser = $this->make(RectorParser::class);
         $queryBuilderAnalyzer = $this->make(QueryBuilderAnalyzer::class);
