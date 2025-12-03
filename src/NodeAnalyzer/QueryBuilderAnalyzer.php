@@ -14,7 +14,6 @@ use PHPStan\Type\Type;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
-use Rector\PHPStan\ScopeFetcher;
 
 final readonly class QueryBuilderAnalyzer
 {
@@ -98,11 +97,11 @@ final readonly class QueryBuilderAnalyzer
      */
     public function resolveQueryBuilderModel(Type $objectType, Scope $scope): ?Type
     {
-        if ($objectType->isSuperTypeOf(self::queryBuilderType())->no()) {
+        if ($objectType->isObject()->no() || $objectType->isSuperTypeOf(self::queryBuilderType())->no()) {
             throw new InvalidArgumentException('Object type must be an Eloquent query builder.');
         }
 
-        $extendedPropertyReflection = $objectType->getProperty('model', $scope);
+        $extendedPropertyReflection = $objectType->getInstanceProperty('model', $scope);
         $modelType = $extendedPropertyReflection->getReadableType();
 
         if ($modelType->isObject()->no()) {
@@ -113,6 +112,7 @@ final readonly class QueryBuilderAnalyzer
             return null;
         }
 
+        /** @phpstan-ignore return.type */
         return $modelType;
     }
 
@@ -129,10 +129,12 @@ final readonly class QueryBuilderAnalyzer
         if (self::eloquentQueryBuilderType()->isSuperTypeOf($classType)->no()) {
             return false;
         }
-        $template = $classType->getTemplateType(Builder::class, 'TModel');
-        if (self::modelType()->isSuperTypeOf($template)->no()) {
+        $type = $classType->getTemplateType(Builder::class, 'TModel');
+        if ($type->isObject()->no() || self::modelType()->isSuperTypeOf($type)->no()) {
             return false;
         }
-        return $template->getClassName() === $objectType->getClassName();
+
+        /** @phpstan-ignore method.notFound */
+        return $type->getClassName() === $objectType->getClassName();
     }
 }

@@ -22,6 +22,14 @@ class Builder extends QueryBuilder implements \Illuminate\Contracts\Database\Elo
      */
     protected $model;
 
+    /**
+     * @return $this
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and')
+    {
+        return $this;
+    }
+
     public function publicMethodBelongsToEloquentQueryBuilder(): void {}
 
     public function excludablePublicMethodBelongsToEloquentQueryBuilder(): void {}

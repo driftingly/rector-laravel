@@ -72,7 +72,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
             $mutatingScope,
         );
 
-        $this->assertTrue($result);
+        Assert::assertTrue($result);
 
         $result = $modelAnalyzer->isQueryScopeOnModel(
             'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
@@ -80,7 +80,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
             $mutatingScope,
         );
 
-        $this->assertTrue($result);
+        Assert::assertTrue($result);
 
         $result = $modelAnalyzer->isQueryScopeOnModel(
             'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
@@ -88,7 +88,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
             $mutatingScope,
         );
 
-        $this->assertFalse($result);
+        Assert::assertFalse($result);
 
         $result = $modelAnalyzer->isQueryScopeOnModel(
             'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
@@ -96,6 +96,6 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
             $mutatingScope,
         );
 
-        $this->assertFalse($result);
+        Assert::assertFalse($result);
     }
 }

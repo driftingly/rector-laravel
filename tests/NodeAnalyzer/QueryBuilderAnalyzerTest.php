@@ -2,12 +2,16 @@
 
 namespace RectorLaravel\Tests\NodeAnalyzer;
 
+use Exception;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Namespace_;
 use PHPStan\Type\ObjectType;
 use PHPUnit\Framework\Assert;
 use Rector\NodeTypeResolver\NodeScopeAndMetadataDecorator;
@@ -88,11 +92,21 @@ class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
         $nodeTypeResolver = $this->make(NodeTypeResolver::class);
         $nodeScopeAndMetadataDecorator = $this->make(NodeScopeAndMetadataDecorator::class);
 
+        /** @var Namespace_[] $statements */
         $statements = $rectorParser->parseFile(__DIR__ . '/fixtures/query-resolved.php');
+        /** @var Namespace_[] $statements */
         $statements = $nodeScopeAndMetadataDecorator->decorateNodesFromFile(
             __DIR__ . '/fixtures/query-resolved.php',
             $statements
         );
+
+        if (
+            ! $statements[0]->stmts[2] instanceof Expression ||
+            ! $statements[0]->stmts[2]->expr instanceof MethodCall ||
+            ! $statements[0]->stmts[2]->expr->var instanceof Variable
+        ) {
+            throw new Exception('Fixture nodes are incorrect');
+        }
 
         $variable = $statements[0]->stmts[2]->expr->var;
 
@@ -100,14 +114,14 @@ class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
         $initialType = $nodeTypeResolver->getType($variable);
         $foundType = $queryBuilderAnalyzer->resolveQueryBuilderModel($initialType, $scope);
 
-        $this->assertNotNull($foundType);
+        Assert::assertNotNull($foundType);
 
-        $this->assertTrue(
+        Assert::assertTrue(
             $foundType->isSuperTypeOf(
                 new ObjectType('RectorLaravel\Tests\NodeAnalyzer\Source\Foo')
             )->yes()
         );
-        $this->assertFalse(
+        Assert::assertFalse(
             $foundType->isSuperTypeOf(
                 new ObjectType('RectorLaravel\Tests\NodeAnalyzer\Source\Bar')
             )->yes()
@@ -123,24 +137,34 @@ class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
         $queryBuilderAnalyzer = $this->make(QueryBuilderAnalyzer::class);
         $nodeScopeAndMetadataDecorator = $this->make(NodeScopeAndMetadataDecorator::class);
 
+        /** @var Namespace_[] $statements */
         $statements = $rectorParser->parseFile(__DIR__ . '/fixtures/query-resolved.php');
+        /** @var Namespace_[] $statements */
         $statements = $nodeScopeAndMetadataDecorator->decorateNodesFromFile(
             __DIR__ . '/fixtures/query-resolved.php',
             $statements
         );
+
+        if (
+            ! $statements[0]->stmts[2] instanceof Expression ||
+            ! $statements[0]->stmts[2]->expr instanceof MethodCall ||
+            ! $statements[0]->stmts[2]->expr->var instanceof Variable
+        ) {
+            throw new Exception('Fixture nodes are incorrect');
+        }
 
         $result = $queryBuilderAnalyzer->isQueryUsingModel(
             $statements[0]->stmts[2]->expr->var,
             new ObjectType('RectorLaravel\Tests\NodeAnalyzer\Source\Foo')
         );
 
-        $this->assertTrue($result);
+        Assert::assertTrue($result);
 
         $result = $queryBuilderAnalyzer->isQueryUsingModel(
             $statements[0]->stmts[2]->expr->var,
             new ObjectType('RectorLaravel\Tests\NodeAnalyzer\Source\Bar')
         );
 
-        $this->assertFalse($result);
+        Assert::assertFalse($result);
     }
 }

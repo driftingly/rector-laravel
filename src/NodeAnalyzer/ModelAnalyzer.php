@@ -28,7 +28,13 @@ class ModelAnalyzer
      */
     public function getTable(string|ObjectType $model): ?string
     {
-        $table = $this->resolveModelClassToInstance($model)->getTable();
+        $model = $this->resolveModelClassToInstance($model);
+
+        if (! $model instanceof Model) {
+            return null;
+        }
+
+        $table = $model->getTable();
 
         if (! is_string($table)) {
             return null;
@@ -46,7 +52,13 @@ class ModelAnalyzer
      */
     public function getPrimaryKey(string|ObjectType $model): ?string
     {
-        $keyName = $this->resolveModelClassToInstance($model)->getKeyName();
+        $model = $this->resolveModelClassToInstance($model);
+
+        if (! $model instanceof Model) {
+            return null;
+        }
+
+        $keyName = $model->getKeyName();
 
         if (! is_string($keyName)) {
             return null;
@@ -56,11 +68,12 @@ class ModelAnalyzer
     }
 
     /**
-     * @param  string  $methodName
+     * @param  class-string<Model>|ObjectType  $model
      */
     public function isQueryScopeOnModel(string|ObjectType $model, string $scopeName, Scope $scope): bool
     {
         if (! is_string($model)) {
+            /** @var class-string<Model> $model */
             $model = $model->getClassName();
         }
 
