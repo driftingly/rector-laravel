@@ -8,7 +8,6 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\Empty_;
@@ -20,6 +19,8 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Unset_;
 use PhpParser\NodeVisitor;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -70,14 +71,13 @@ CODE_SAMPLE
             Coalesce::class,
             Isset_::class,
             Empty_::class,
-            Assign::class,
             AssignOp::class,
             Unset_::class,
         ];
     }
 
     /**
-     * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|Assign|AssignOp|Unset_  $node
+     * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|AssignOp|Unset_  $node
      * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN|null
      */
     public function refactor(Node $node): StaticCall|int|null
@@ -86,19 +86,20 @@ CODE_SAMPLE
             return $this->refactorCoalesce($node);
         }
 
-        if ($node instanceof AssignOp || $node instanceof Assign) {
-            if ($this->containsArrayDimFetch($node->var)) {
+        if (! $node instanceof ArrayDimFetch) {
+            if ($this->containsArrayDimFetch($node)) {
                 return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
             }
 
             return null;
         }
 
-        if (! $node instanceof ArrayDimFetch) {
-            if ($this->containsArrayDimFetch($node)) {
-                return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
-            }
+        if ($node->getAttribute(AttributeKey::IS_BEING_ASSIGNED) === true) {
+            return null;
+        }
 
+        $scope = ScopeFetcher::fetch($node->var);
+        if ($scope->isInExpressionAssign($node)) {
             return null;
         }
 
