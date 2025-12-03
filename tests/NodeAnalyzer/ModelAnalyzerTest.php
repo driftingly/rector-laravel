@@ -60,7 +60,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
     /**
      * @test
      */
-    public function it_can_determine_if_the_model_uses_the_scope(): void
+    public function it_can_determine_if_the_model_has_query_scope(): void
     {
         $modelAnalyzer = $this->make(ModelAnalyzer::class);
         $scopeFactory = $this->make(ScopeFactory::class);
@@ -93,6 +93,32 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
         $result = $modelAnalyzer->isQueryScopeOnModel(
             'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
             'nonExistingMethod',
+            $mutatingScope,
+        );
+
+        Assert::assertFalse($result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_determine_if_the_model_has_relationship_method(): void
+    {
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
+        $scopeFactory = $this->make(ScopeFactory::class);
+        $mutatingScope = $scopeFactory->createFromFile(__DIR__ . '/Source/SomeModel.php');
+
+        $result = $modelAnalyzer->isRelationshipOnModel(
+            'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
+            'relationship',
+            $mutatingScope,
+        );
+
+        Assert::assertTrue($result);
+
+        $result = $modelAnalyzer->isRelationshipOnModel(
+            'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
+            'notRelationship',
             $mutatingScope,
         );
 

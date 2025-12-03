@@ -13,4 +13,9 @@ class SomeModel extends Model
     public function scopeFilterSomething($query) {}
 
     public function someGenericFunction($query) {}
+
+    public function relationship()
+    {
+        return $this->hasMany(Foo::class);
+    }
 }

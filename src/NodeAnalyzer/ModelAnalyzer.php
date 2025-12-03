@@ -19,6 +19,11 @@ class ModelAnalyzer
         private readonly ReflectionProvider $reflectionProvider,
     ) {}
 
+    protected static function relationType(): ObjectType
+    {
+        return new ObjectType('Illuminate\Database\Eloquent\Relations\Relation');
+    }
+
     /**
      * Returns the table name of a model
      *
@@ -90,6 +95,33 @@ class ModelAnalyzer
                 return true;
             }
         } catch (MissingMethodFromReflectionException) {
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  class-string<Model>|ObjectType  $model
+     */
+    public function isRelationshipOnModel(string|ObjectType $model, string $relationName, Scope $scope): bool
+    {
+        if (! is_string($model)) {
+            /** @var class-string<Model> $model */
+            $model = $model->getClassName();
+        }
+
+        $classReflection = $this->getClass($model);
+
+        if (! $classReflection->hasMethod($relationName)) {
+            return false;
+        }
+
+        $method = $classReflection->getMethod($relationName, $scope);
+
+        foreach ($method->getVariants() as $methodVariant) {
+            if ($methodVariant->getReturnType()->isSuperTypeOf(self::relationType())) {
+                return true;
+            }
         }
 
         return false;
