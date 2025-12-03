@@ -85,7 +85,7 @@ CODE_SAMPLE
 
             // The randomEnum() method is a special case where the faker instance is used
             // see https://github.com/spatie/laravel-enum#faker-provider
-            if ($node instanceof MethodCall && $this->isName($node->name, 'randomEnum')) {
+            if ($this->isName($node->name, 'randomEnum')) {
                 $node->setAttribute(self::IS_IN_RANDOM_ENUM, true);
                 $this->traverseNodesWithCallable($node, function (Node $subNode) {
                     if (! $subNode instanceof PropertyFetch && ! $subNode instanceof InterpolatedString) {
