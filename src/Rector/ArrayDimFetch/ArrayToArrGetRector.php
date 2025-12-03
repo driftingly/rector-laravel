@@ -8,12 +8,19 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\Empty_;
+use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Unset_;
+use PhpParser\NodeVisitor;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -23,15 +30,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ArrayToArrGetRector extends AbstractRector
 {
-    /**
-     * @var ArrayDimFetch[]
-     */
-    private array $processedArrayDimFetches = [];
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Convert array access to Arr::get() method call, skips null coalesce with throw expressions',
+            'Convert array access to Arr::get() method call, skips isset/empty checks, assignments, unset, and null coalesce with throw expressions',
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 $array['key'];
@@ -39,6 +41,10 @@ $array['nested']['key'];
 $array['key'] ?? 'default';
 $array['nested']['key'] ?? 'default';
 $array['key'] ?? throw new Exception('Required');
+isset($array['key']);
+empty($array['key']);
+$array['key'] = 'value';
+unset($array['key']);
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
 \Illuminate\Support\Arr::get($array, 'key');
@@ -46,6 +52,10 @@ CODE_SAMPLE,
 \Illuminate\Support\Arr::get($array, 'key', 'default');
 \Illuminate\Support\Arr::get($array, 'nested.key', 'default');
 $array['key'] ?? throw new Exception('Required');
+isset($array['key']);
+empty($array['key']);
+$array['key'] = 'value';
+unset($array['key']);
 CODE_SAMPLE
             )]
         );
@@ -56,59 +66,67 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [ArrayDimFetch::class, Coalesce::class];
+        return [
+            ArrayDimFetch::class,
+            Coalesce::class,
+            Isset_::class,
+            Empty_::class,
+            AssignOp::class,
+            Unset_::class,
+        ];
     }
 
     /**
-     * @param  ArrayDimFetch|Coalesce  $node
+     * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|AssignOp|Unset_  $node
+     * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN|null
      */
-    public function refactor(Node $node): ?StaticCall
+    public function refactor(Node $node): StaticCall|int|null
     {
         if ($node instanceof Coalesce) {
-            $result = $this->refactorCoalesce($node);
-            if ($result instanceof StaticCall && $node->left instanceof ArrayDimFetch) {
-                $this->processedArrayDimFetches[] = $node->left;
-            }
-
-            return $result;
+            return $this->refactorCoalesce($node);
         }
 
-        if ($node instanceof ArrayDimFetch) {
-            if (in_array($node, $this->processedArrayDimFetches, true)) {
-                return null;
+        if (! $node instanceof ArrayDimFetch) {
+            if ($this->containsArrayDimFetch($node)) {
+                return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
             }
 
-            return $this->refactorArrayDimFetch($node);
+            return null;
         }
 
-        return null;
+        if ($node->getAttribute(AttributeKey::IS_BEING_ASSIGNED) === true) {
+            return null;
+        }
+
+        $scope = ScopeFetcher::fetch($node->var);
+        if ($scope->isInExpressionAssign($node)) {
+            return null;
+        }
+
+        return $this->createArrGetCall($node);
     }
 
-    private function refactorCoalesce(Coalesce $coalesce): ?StaticCall
+    /**
+     * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN
+     */
+    private function refactorCoalesce(Coalesce $coalesce): StaticCall|int
     {
         if (! $coalesce->left instanceof ArrayDimFetch) {
-            return null;
+            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
         }
 
         if ($coalesce->right instanceof Throw_) {
-            $this->markArrayDimFetchAsProcessed($coalesce->left);
-
-            return null;
+            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
         }
 
         $staticCall = $this->createArrGetCall($coalesce->left);
         if (! $staticCall instanceof StaticCall) {
-            return null;
+            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
         }
 
         $staticCall->args[] = new Arg($coalesce->right);
 
         return $staticCall;
-    }
-
-    private function refactorArrayDimFetch(ArrayDimFetch $arrayDimFetch): ?StaticCall
-    {
-        return $this->createArrGetCall($arrayDimFetch);
     }
 
     private function createArrGetCall(ArrayDimFetch $arrayDimFetch): ?StaticCall
@@ -174,6 +192,10 @@ CODE_SAMPLE
         $stringParts = [];
 
         foreach ($keys as $key) {
+            if (! $key instanceof Scalar) {
+                return null;
+            }
+
             $constantValues = $this->getType($key)->getConstantScalarValues();
 
             if ($constantValues === []) {
@@ -203,14 +225,20 @@ CODE_SAMPLE
         return $current;
     }
 
-    private function markArrayDimFetchAsProcessed(ArrayDimFetch $arrayDimFetch): void
+    private function containsArrayDimFetch(Node $node): bool
     {
-        $this->processedArrayDimFetches[] = $arrayDimFetch;
+        $found = false;
 
-        $current = $arrayDimFetch;
-        while ($current instanceof ArrayDimFetch) {
-            $this->processedArrayDimFetches[] = $current;
-            $current = $current->var;
-        }
+        $this->traverseNodesWithCallable($node, function (Node $node) use (&$found): ?int {
+            if ($node instanceof ArrayDimFetch) {
+                $found = true;
+
+                return NodeVisitor::STOP_TRAVERSAL;
+            }
+
+            return null;
+        });
+
+        return $found;
     }
 }

@@ -13,6 +13,7 @@ use RectorLaravel\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector
 use RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector;
 use RectorLaravel\Rector\Expr\AppEnvironmentComparisonToParameterRector;
 use RectorLaravel\Rector\Expr\SubStrToStartsWithOrEndsWithStaticMethodCallRector\SubStrToStartsWithOrEndsWithStaticMethodCallRector;
+use RectorLaravel\Rector\FuncCall\AppToResolveRector;
 use RectorLaravel\Rector\FuncCall\NotFilledBlankFuncCallToBlankFilledFuncCallRector;
 use RectorLaravel\Rector\FuncCall\NowFuncWithStartOfDayMethodCallToTodayFuncRector;
 use RectorLaravel\Rector\FuncCall\RemoveRedundantValueCallsRector;
@@ -54,4 +55,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(DispatchToHelperFunctionsRector::class);
     $rectorConfig->rule(NotFilledBlankFuncCallToBlankFilledFuncCallRector::class);
     $rectorConfig->rule(EloquentOrderByToLatestOrOldestRector::class);
+    $rectorConfig->rule(AppToResolveRector::class);
 };
