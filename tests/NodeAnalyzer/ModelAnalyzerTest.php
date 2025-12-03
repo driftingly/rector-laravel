@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Analyzer;
+namespace RectorLaravel\Tests\NodeAnalyzer;
 
 use PHPUnit\Framework\Assert;
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
@@ -15,7 +15,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
     {
         $modelAnalyzer = $this->make(ModelAnalyzer::class);
 
-        $result = $modelAnalyzer->getTable('RectorLaravel\Tests\Analyzer\Source\SomeModel');
+        $result = $modelAnalyzer->getTable('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel');
 
         Assert::assertSame('<default_table_mechanism>', $result);
     }
@@ -27,7 +27,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
     {
         $modelAnalyzer = $this->make(ModelAnalyzer::class);
 
-        $result = $modelAnalyzer->getTable('RectorLaravel\Tests\Analyzer\Source\SomeModelWithCustomTableAndPrimaryKey');
+        $result = $modelAnalyzer->getTable('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModelWithCustomTableAndPrimaryKey');
 
         Assert::assertSame('custom_table', $result);
     }
@@ -39,7 +39,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
     {
         $modelAnalyzer = $this->make(ModelAnalyzer::class);
 
-        $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\Analyzer\Source\SomeModel');
+        $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel');
 
         Assert::assertSame('id', $result);
     }
@@ -51,7 +51,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
     {
         $modelAnalyzer = $this->make(ModelAnalyzer::class);
 
-        $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\Analyzer\Source\SomeModelWithCustomTableAndPrimaryKey');
+        $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModelWithCustomTableAndPrimaryKey');
 
         Assert::assertSame('uuid', $result);
     }

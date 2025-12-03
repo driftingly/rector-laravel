@@ -81,7 +81,7 @@ class ModelAnalyzer
     private function usesScopeAttribute(ExtendedMethodReflection $methodReflection): bool
     {
         foreach ($methodReflection->getAttributes() as $attribute) {
-            if ($attribute->getName() === 'Scope') {
+            if ($attribute->getName() === 'Illuminate\Database\Eloquent\Attributes\Scope') {
                 return true;
             }
         }
