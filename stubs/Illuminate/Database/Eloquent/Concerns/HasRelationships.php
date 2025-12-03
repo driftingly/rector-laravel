@@ -18,7 +18,5 @@ trait HasRelationships
      * @param  string|null  $localKey
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<TRelatedModel, $this>
      */
-    public function hasMany($related, $foreignKey = null, $localKey = null)
-    {
-    }
+    public function hasMany($related, $foreignKey = null, $localKey = null) {}
 }

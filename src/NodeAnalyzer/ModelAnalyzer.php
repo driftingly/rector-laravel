@@ -116,10 +116,10 @@ class ModelAnalyzer
             return false;
         }
 
-        $method = $classReflection->getMethod($relationName, $scope);
+        $extendedMethodReflection = $classReflection->getMethod($relationName, $scope);
 
-        foreach ($method->getVariants() as $methodVariant) {
-            if ($methodVariant->getReturnType()->isSuperTypeOf(self::relationType())) {
+        foreach ($extendedMethodReflection->getVariants() as $extendedParametersAcceptor) {
+            if ($extendedParametersAcceptor->getReturnType()->isSuperTypeOf(self::relationType())->yes()) {
                 return true;
             }
         }
