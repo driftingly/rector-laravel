@@ -51,7 +51,6 @@ CODE_SAMPLE
         $this->traverseNodesWithCallable($nodes, function (Node $node) {
             if (in_array($node::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
                     && (! $node instanceof Assign || $node->var instanceof ArrayDimFetch && $this->isName($node->var->var, '_SERVER'))) {
-                $node->setAttribute(self::IS_IN_SERVER_VARIABLE, true);
                 $this->traverseNodesWithCallable($node, function (Node $subNode) {
                     if (! $subNode instanceof ArrayDimFetch) {
                         return null;
