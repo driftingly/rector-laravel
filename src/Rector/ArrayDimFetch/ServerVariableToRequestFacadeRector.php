@@ -40,7 +40,7 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class, ArrayDimFetch::class];
+        return [ArrayDimFetch::class];
     }
 
     #[Override]
@@ -71,14 +71,10 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  ArrayDimFetch|Assign|Isset_|Unset_|InterpolatedString  $node
+     * @param  ArrayDimFetch  $node
      */
     public function refactor(Node $node): ?StaticCall
     {
-        if (! $node instanceof ArrayDimFetch) {
-            return null;
-        }
-
         if (! $this->isName($node->var, '_SERVER')) {
             return null;
         }
