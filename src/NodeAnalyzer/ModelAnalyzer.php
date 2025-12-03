@@ -39,7 +39,8 @@ class ModelAnalyzer
     /**
      * Returns the primary key for a model
      *
-     * @param class-string<Model>|ObjectType $model
+     * @param  class-string<Model>|ObjectType  $model
+     *
      * @throws ReflectionException
      */
     public function getPrimaryKey(string|ObjectType $model): ?string
@@ -54,9 +55,7 @@ class ModelAnalyzer
     }
 
     /**
-     * @param string|ObjectType $model
-     * @param string $methodName
-     * @return bool
+     * @param  string  $methodName
      */
     public function isQueryScopeOnModel(string|ObjectType $model, string $scopeName, Scope $scope): bool
     {
@@ -73,7 +72,7 @@ class ModelAnalyzer
         try {
             $method = $classReflection->getMethod($scopeName, $scope);
 
-            if ($this->usesScopeAttribute($method))  {
+            if ($this->usesScopeAttribute($method)) {
                 return true;
             }
         } catch (MissingMethodFromReflectionException) {
@@ -82,10 +81,10 @@ class ModelAnalyzer
         return false;
     }
 
-    private function usesScopeAttribute(ExtendedMethodReflection $methodReflection): bool
+    private function usesScopeAttribute(ExtendedMethodReflection $extendedMethodReflection): bool
     {
-        foreach ($methodReflection->getAttributes() as $attribute) {
-            if ($attribute->getName() === 'Illuminate\Database\Eloquent\Attributes\Scope') {
+        foreach ($extendedMethodReflection->getAttributes() as $attributeReflection) {
+            if ($attributeReflection->getName() === 'Illuminate\Database\Eloquent\Attributes\Scope') {
                 return true;
             }
         }
@@ -122,8 +121,8 @@ class ModelAnalyzer
     /**
      * Create an instance of the Model to interact with
      *
-     * @param class-string<Model>|ObjectType $model
-     * @return Model
+     * @param  class-string<Model>|ObjectType  $model
+     *
      * @throws ReflectionException
      */
     private function resolveModelClassToInstance(string|ObjectType $model): Model

@@ -26,6 +26,14 @@ abstract class Model
     protected $primaryKey = 'id';
 
     /**
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public static function query(): Builder
+    {
+        return new Builder;
+    }
+
+    /**
      * Exists in the Illuminate/Database/Eloquent/Concerns/HasTimestamps trait
      * Put here for simplicity
      */
@@ -47,13 +55,5 @@ abstract class Model
     public function getKeyName()
     {
         return $this->primaryKey;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder<static>
-     */
-    public static function query(): Builder
-    {
-        return new Builder();
     }
 }

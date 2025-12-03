@@ -14,7 +14,5 @@ class Scope
     /**
      * Create a new attribute instance.
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }

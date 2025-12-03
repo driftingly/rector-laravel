@@ -2,8 +2,6 @@
 
 namespace RectorLaravel\Tests\NodeAnalyzer;
 
-use PHPStan\Analyser\LazyInternalScopeFactory;
-use PHPStan\Analyser\MutatingScope;
 use PHPUnit\Framework\Assert;
 use Rector\NodeTypeResolver\PHPStan\Scope\ScopeFactory;
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
@@ -66,12 +64,12 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
     {
         $modelAnalyzer = $this->make(ModelAnalyzer::class);
         $scopeFactory = $this->make(ScopeFactory::class);
-        $scope = $scopeFactory->createFromFile(__DIR__ . '/Source/SomeModel.php');
+        $mutatingScope = $scopeFactory->createFromFile(__DIR__ . '/Source/SomeModel.php');
 
         $result = $modelAnalyzer->isQueryScopeOnModel(
             'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
             'someScope',
-            $scope,
+            $mutatingScope,
         );
 
         $this->assertTrue($result);
@@ -79,7 +77,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
         $result = $modelAnalyzer->isQueryScopeOnModel(
             'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
             'filterSomething',
-            $scope,
+            $mutatingScope,
         );
 
         $this->assertTrue($result);
@@ -87,7 +85,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
         $result = $modelAnalyzer->isQueryScopeOnModel(
             'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
             'someGenericFunction',
-            $scope,
+            $mutatingScope,
         );
 
         $this->assertFalse($result);
@@ -95,7 +93,7 @@ class ModelAnalyzerTest extends AbstractLazyTestCase
         $result = $modelAnalyzer->isQueryScopeOnModel(
             'RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel',
             'nonExistingMethod',
-            $scope,
+            $mutatingScope,
         );
 
         $this->assertFalse($result);

@@ -2,5 +2,8 @@
 
 namespace RectorLaravel\Tests\NodeAnalyzer\Fixtures;
 
-/** @var \Illuminate\Database\Eloquent\Builder<\RectorLaravel\Tests\NodeAnalyzer\Source\Foo> $query */
+use Illuminate\Database\Eloquent\Builder;
+use RectorLaravel\Tests\NodeAnalyzer\Source\Foo;
+
+/** @var Builder<Foo> $query */
 $query->where('a', 'b');

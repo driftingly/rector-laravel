@@ -8,18 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class SomeModel extends Model
 {
     #[Scope]
-    public function someScope($query)
-    {
+    public function someScope($query) {}
 
-    }
+    public function scopeFilterSomething($query) {}
 
-    public function scopeFilterSomething($query)
-    {
-
-    }
-
-    public function someGenericFunction($query)
-    {
-
-    }
+    public function someGenericFunction($query) {}
 }

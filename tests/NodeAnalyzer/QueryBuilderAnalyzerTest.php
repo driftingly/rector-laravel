@@ -78,14 +78,17 @@ class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
         ), 'where'));
     }
 
-    public function test_if_resolves_the_model_on_eloquent_queries(): void
+    /**
+     * @test
+     */
+    public function if_resolves_the_model_on_eloquent_queries(): void
     {
-        $parser = $this->make(RectorParser::class);
+        $rectorParser = $this->make(RectorParser::class);
         $queryBuilderAnalyzer = $this->make(QueryBuilderAnalyzer::class);
         $nodeTypeResolver = $this->make(NodeTypeResolver::class);
         $nodeScopeAndMetadataDecorator = $this->make(NodeScopeAndMetadataDecorator::class);
 
-        $statements = $parser->parseFile(__DIR__ . '/fixtures/query-resolved.php');
+        $statements = $rectorParser->parseFile(__DIR__ . '/fixtures/query-resolved.php');
         $statements = $nodeScopeAndMetadataDecorator->decorateNodesFromFile(
             __DIR__ . '/fixtures/query-resolved.php',
             $statements
@@ -111,13 +114,16 @@ class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
         );
     }
 
-    public function test_it_analyses_if_call_node_is_using_a_query_builder_with_specific_model(): void
+    /**
+     * @test
+     */
+    public function it_analyses_if_call_node_is_using_a_query_builder_with_specific_model(): void
     {
-        $parser = $this->make(RectorParser::class);
+        $rectorParser = $this->make(RectorParser::class);
         $queryBuilderAnalyzer = $this->make(QueryBuilderAnalyzer::class);
         $nodeScopeAndMetadataDecorator = $this->make(NodeScopeAndMetadataDecorator::class);
 
-        $statements = $parser->parseFile(__DIR__ . '/fixtures/query-resolved.php');
+        $statements = $rectorParser->parseFile(__DIR__ . '/fixtures/query-resolved.php');
         $statements = $nodeScopeAndMetadataDecorator->decorateNodesFromFile(
             __DIR__ . '/fixtures/query-resolved.php',
             $statements

@@ -10,6 +10,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PHPStan\ScopeFetcher;
@@ -39,10 +40,7 @@ final readonly class QueryBuilderAnalyzer
     /**
      * Determine if a Method or Static call is on a Query Builder instance.
      *
-     * @param  MethodCall|StaticCall $node
-     * @param  string $method
-     * @return bool
-     * @throws \Rector\Exception\ShouldNotHappenException
+     * @throws ShouldNotHappenException
      */
     public function isMatchingCall(MethodCall|StaticCall $node, string $method): bool
     {
@@ -60,9 +58,7 @@ final readonly class QueryBuilderAnalyzer
     /**
      * Determine if a Static call is being forwarded to a Query Builder object from a Model
      *
-     * @param  StaticCall $staticCall
-     * @return bool
-     * @throws \Rector\Exception\ShouldNotHappenException
+     * @throws ShouldNotHappenException
      */
     public function isProxyCall(StaticCall $staticCall): bool
     {
@@ -95,9 +91,8 @@ final readonly class QueryBuilderAnalyzer
     /**
      * Resolve the Model being used by an instance of an Eloquent Query Builder
      *
-     * @param  Type $objectType
-     * @param  Scope $scope
      * @return ObjectType|null
+     *
      * @throws \PHPStan\ShouldNotHappenException
      */
     public function resolveQueryBuilderModel(Type $objectType, Scope $scope): ?Type
@@ -106,8 +101,8 @@ final readonly class QueryBuilderAnalyzer
             throw new InvalidArgumentException('Object type must be an Eloquent query builder.');
         }
 
-        $modelProperty = $objectType->getProperty('model', $scope);
-        $modelType = $modelProperty->getReadableType();
+        $extendedPropertyReflection = $objectType->getProperty('model', $scope);
+        $modelType = $extendedPropertyReflection->getReadableType();
 
         if ($modelType->isObject()->no()) {
             return null;
@@ -123,13 +118,10 @@ final readonly class QueryBuilderAnalyzer
     /**
      * Determine if a node is an Eloquent Query Builder for a particular Eloquent Model
      *
-     * @param  Node $node
-     * @param  ObjectType $model
-     * @return bool
      * @throws \PHPStan\ShouldNotHappenException
-     * @throws \Rector\Exception\ShouldNotHappenException
+     * @throws ShouldNotHappenException
      */
-    public function isQueryUsingModel(Node $node, ObjectType $model): bool
+    public function isQueryUsingModel(Node $node, ObjectType $objectType): bool
     {
         $classType = $this->nodeTypeResolver->getType($node);
 
@@ -139,13 +131,13 @@ final readonly class QueryBuilderAnalyzer
 
         $scope = ScopeFetcher::fetch($node);
 
-        $property = $classType->getProperty('model', $scope);
-        $propertyType = $property->getReadableType();
+        $extendedPropertyReflection = $classType->getProperty('model', $scope);
+        $propertyType = $extendedPropertyReflection->getReadableType();
 
         if ($propertyType->isSuperTypeOf(self::modelType())->no()) {
             return false;
         }
 
-        return $propertyType->getClassName() === $model->getClassName();
+        return $propertyType->getClassName() === $objectType->getClassName();
     }
 }
