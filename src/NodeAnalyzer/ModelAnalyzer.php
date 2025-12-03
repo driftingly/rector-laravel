@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ExtendedMethodReflection;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use ReflectionException;
@@ -69,10 +70,13 @@ class ModelAnalyzer
             return true;
         }
 
-        $method = $classReflection->getMethod($scopeName, $scope);
+        try {
+            $method = $classReflection->getMethod($scopeName, $scope);
 
-        if ($this->usesScopeAttribute($method))  {
-            return true;
+            if ($this->usesScopeAttribute($method))  {
+                return true;
+            }
+        } catch (MissingMethodFromReflectionException) {
         }
 
         return false;
