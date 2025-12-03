@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\NodeAnalyzer;
 
+use Illuminate\Database\Eloquent\Builder;
 use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -34,7 +35,7 @@ final readonly class QueryBuilderAnalyzer
 
     protected static function eloquentQueryBuilderType(): ObjectType
     {
-        return new ObjectType('Illuminate\Contracts\Database\Eloquent\Builder');
+        return new ObjectType('Illuminate\Database\Eloquent\Builder');
     }
 
     /**
@@ -125,19 +126,13 @@ final readonly class QueryBuilderAnalyzer
     {
         $classType = $this->nodeTypeResolver->getType($node);
 
-        if ($classType->isSuperTypeOf(self::eloquentQueryBuilderType())->no()) {
+        if (self::eloquentQueryBuilderType()->isSuperTypeOf($classType)->no()) {
             return false;
         }
-
-        $scope = ScopeFetcher::fetch($node);
-
-        $extendedPropertyReflection = $classType->getProperty('model', $scope);
-        $propertyType = $extendedPropertyReflection->getReadableType();
-
-        if ($propertyType->isSuperTypeOf(self::modelType())->no()) {
+        $template = $classType->getTemplateType(Builder::class, 'TModel');
+        if (self::modelType()->isSuperTypeOf($template)->no()) {
             return false;
         }
-
-        return $propertyType->getClassName() === $objectType->getClassName();
+        return $template->getClassName() === $objectType->getClassName();
     }
 }

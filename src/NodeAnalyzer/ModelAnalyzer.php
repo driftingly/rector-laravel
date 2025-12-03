@@ -11,6 +11,7 @@ use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use ReflectionException;
+use Throwable;
 
 class ModelAnalyzer
 {
@@ -125,16 +126,23 @@ class ModelAnalyzer
      *
      * @throws ReflectionException
      */
-    private function resolveModelClassToInstance(string|ObjectType $model): Model
+    private function resolveModelClassToInstance(string|ObjectType $model): ?Model
     {
-        if (! is_string($model)) {
-            $model = $model->getClassName();
+        $classReflection = is_string($model)
+            ? $this->getClass($model)
+            : $model->getObjectClassReflections()[0];
+
+        if ($classReflection->isAbstract()) {
+            return null;
         }
 
-        $classReflection = $this->getClass($model);
-
-        /** @var Model $instance */
-        $instance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        try {
+            /** @var Model $instance */
+            $instance = $classReflection->getNativeReflection()->newInstance();
+        } catch (Throwable) {
+            /** @var Model $instance */
+            $instance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        }
 
         return $instance;
     }

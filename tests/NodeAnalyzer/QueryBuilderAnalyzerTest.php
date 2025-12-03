@@ -94,7 +94,7 @@ class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
             $statements
         );
 
-        $variable = $statements[0]->stmts[0]->expr->var;
+        $variable = $statements[0]->stmts[2]->expr->var;
 
         $scope = ScopeFetcher::fetch($variable);
         $initialType = $nodeTypeResolver->getType($variable);
@@ -130,14 +130,14 @@ class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
         );
 
         $result = $queryBuilderAnalyzer->isQueryUsingModel(
-            $statements[0]->stmts[0]->expr->var,
+            $statements[0]->stmts[2]->expr->var,
             new ObjectType('RectorLaravel\Tests\NodeAnalyzer\Source\Foo')
         );
 
         $this->assertTrue($result);
 
         $result = $queryBuilderAnalyzer->isQueryUsingModel(
-            $statements[0]->stmts[0]->expr->var,
+            $statements[0]->stmts[2]->expr->var,
             new ObjectType('RectorLaravel\Tests\NodeAnalyzer\Source\Bar')
         );
 
