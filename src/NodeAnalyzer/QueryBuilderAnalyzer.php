@@ -104,10 +104,6 @@ final readonly class QueryBuilderAnalyzer
         $extendedPropertyReflection = $objectType->getInstanceProperty('model', $scope);
         $modelType = $extendedPropertyReflection->getReadableType();
 
-        if ($modelType->isObject()->no()) {
-            return null;
-        }
-
         if ($modelType->isSuperTypeOf(self::modelType())->no()) {
             return null;
         }
@@ -130,7 +126,7 @@ final readonly class QueryBuilderAnalyzer
             return false;
         }
         $type = $classType->getTemplateType(Builder::class, 'TModel');
-        if ($type->isObject()->no() || self::modelType()->isSuperTypeOf($type)->no()) {
+        if (self::modelType()->isSuperTypeOf($type)->no()) {
             return false;
         }
 
