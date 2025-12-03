@@ -108,9 +108,8 @@ CODE_SAMPLE
 
     /**
      * @param  PropertyFetch|MethodCall|InterpolatedString  $node
-     * @return Node|null
      */
-    public function refactor(Node $node): Node|null
+    public function refactor(Node $node): ?Node
     {
         $classReflection = $this->reflectionResolver->resolveClassReflection($node);
 
