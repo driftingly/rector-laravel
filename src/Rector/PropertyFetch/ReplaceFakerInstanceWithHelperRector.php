@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\PropertyFetch;
 
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Concat;
@@ -23,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceFakerInstanceWithHelperRector extends AbstractRector
 {
-    private const IS_IN_RANDOM_ENUM = 'is_in_random_enum';
+    private const string IS_IN_RANDOM_ENUM = 'is_in_random_enum';
 
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver,
@@ -74,6 +75,7 @@ CODE_SAMPLE
         return [PropertyFetch::class, MethodCall::class, InterpolatedString::class];
     }
 
+    #[Override]
     public function beforeTraverse(array $nodes): array
     {
         parent::beforeTraverse($nodes);
