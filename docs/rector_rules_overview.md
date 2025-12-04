@@ -1,4 +1,4 @@
-# 88 Rules Overview
+# Rules Overview
 
 ## AbortIfRector
 
@@ -16,6 +16,8 @@ Change if abort to abort_if
 +abort_if($condition, 404);
 +abort_unless($condition, 404);
 ```
+
+**Sets:** `LARAVEL_IF_HELPERS`
 
 <br>
 
@@ -37,6 +39,8 @@ Adds default value for arguments in defined methods.
  }
 ```
 
+**Sets:** *No set*
+
 <br>
 
 ## AddExtendsAnnotationToModelFactoriesRector
@@ -56,6 +60,8 @@ Adds the `@extends` annotation to Factories.
      protected $model = \App\Models\User::class;
  }
 ```
+
+**Sets:** `LARAVEL_90`, `LARAVEL_FACTORIES`
 
 <br>
 
@@ -97,6 +103,8 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
  }
 ```
 
+**Sets:** `LARAVEL_TYPE_DECLARATIONS`
+
 <br>
 
 ## AddGuardToLoginEventRector
@@ -119,6 +127,8 @@ Add new `$guard` argument to Illuminate\Auth\Events\Login
  }
 ```
 
+**Sets:** `LARAVEL_57`
+
 <br>
 
 ## AddHasFactoryToModelsRector
@@ -137,6 +147,8 @@ Adds the HasFactory trait to Models.
 +    use \Illuminate\Database\Eloquent\Factories\HasFactory;
  }
 ```
+
+**Sets:** `LARAVEL_FACTORIES`
 
 <br>
 
@@ -166,6 +178,8 @@ Add "$this->mockConsoleOutput = false"; to console tests that work with output c
  }
 ```
 
+**Sets:** `LARAVEL_57`
+
 <br>
 
 ## AddParentBootToModelClassMethodRector
@@ -185,6 +199,8 @@ Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Data
      }
  }
 ```
+
+**Sets:** `LARAVEL_57`
 
 <br>
 
@@ -206,6 +222,8 @@ Add `parent::register();` call to `register()` class method in child of `Illumin
  }
 ```
 
+**Sets:** `LARAVEL_80`
+
 <br>
 
 ## AnonymousMigrationsRector
@@ -224,6 +242,8 @@ Convert migrations to anonymous classes.
 -}
 +};
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -244,6 +264,8 @@ Replace app environment comparison with parameter or method call
 +$app->environment(['local', 'testing']);
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## ApplyDefaultInsteadOfNullCoalesceRector
@@ -258,6 +280,23 @@ Apply default instead of null coalesce
 -custom_helper('app.name') ?? 'Laravel';
 +custom_helper('app.name', 'Laravel');
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
+
+<br>
+
+## AppToResolveRector
+
+Convert app() to resolve() where applicable.
+
+- class: [`RectorLaravel\Rector\FuncCall\AppToResolveRector`](../src/Rector/FuncCall/AppToResolveRector.php)
+
+```diff
+-app('foo');
++resolve('foo');
+```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -292,6 +331,8 @@ Move help facade-like function calls to constructor injection
  }
 ```
 
+**Sets:** `LARAVEL_STATIC_TO_INJECTION`
+
 <br>
 
 ## ArrayToArrGetRector
@@ -311,6 +352,8 @@ Convert array access to `Arr::get()` method call, skips null coalesce with throw
 +\Illuminate\Support\Arr::get($array, 'nested.key', 'default');
  $array['key'] ?? throw new Exception('Required');
 ```
+
+**Sets:** `LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL`
 
 <br>
 
@@ -338,6 +381,8 @@ Replace assertSee with assertSeeHtml when testing HTML with escape set to false
 -$response->assertSeeInOrder(["<li>foo</li>", "<li>bar</li>"], false);
 +$response->assertSeeHtmlInOrder(["<li>foo</li>", "<li>bar</li>"]);
 ```
+
+**Sets:** `LARAVEL_110`
 
 <br>
 
@@ -376,6 +421,8 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
  }
 ```
 
+**Sets:** `LARAVEL_TESTING`
+
 <br>
 
 ## AssertWithClassStringToTypeHintedClosureRector
@@ -390,6 +437,8 @@ Changes assert calls to use a type hinted closure.
      return true;
  });
 ```
+
+**Sets:** `LARAVEL_TESTING`
 
 <br>
 
@@ -408,6 +457,8 @@ Convert negated calls to `contains` to `doesntContain`, or vice versa.
 +$collection->doesntContain(fn (?int $number): bool => is_null($number));
 +$collection->contains(fn (?int $number) => $number > 0);
 ```
+
+**Sets:** `LARAVEL_COLLECTION`
 
 <br>
 
@@ -428,6 +479,8 @@ Avoid negated conditionals in `filter()` by using `reject()`, or vice versa.
 +$collection->reject(fn (?int $number): bool => (bool) $number); // Explicitly cast
 +$collection->filter(fn (?int $number): bool => $number > 0); // Adds return type
 ```
+
+**Sets:** `LARAVEL_COLLECTION`
 
 <br>
 
@@ -455,6 +508,8 @@ Replace magical call on `$this->app["something"]` to standalone type assign vari
  }
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## CarbonSetTestNowToTravelToRector
@@ -476,6 +531,8 @@ Use the `$this->travelTo()` method in Laravel's `TestCase` class instead of the 
      }
  }
 ```
+
+**Sets:** `LARAVEL_TESTING`
 
 <br>
 
@@ -507,6 +564,8 @@ Refactor Carbon static method calls to use the Date facade instead.
 +Date::today();
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## CashierStripeOptionsToStripeRector
@@ -529,6 +588,8 @@ Renames the Billable `stripeOptions()` to `stripe().`
      }
  }
 ```
+
+**Sets:** `LARAVEL_CASHIER_130`
 
 <br>
 
@@ -553,6 +614,8 @@ Refactor `whereDate()` queries to include both date and time comparisons with Ca
  }
 ```
 
+**Sets:** `LARAVEL_57`
+
 <br>
 
 ## ConfigToTypedConfigMethodCallRector
@@ -574,6 +637,8 @@ Refactor `config()` calls to use type-specific methods when the expected type is
 +$connections = config()->array('database.connections');
 ```
 
+**Sets:** *No set*
+
 <br>
 
 ## ContainerBindConcreteWithClosureOnlyRector
@@ -588,6 +653,8 @@ Drop the specified abstract class from the bind method and replace it with a clo
      return new SomeClass();
  });
 ```
+
+**Sets:** `LARAVEL_120`
 
 <br>
 
@@ -604,6 +671,8 @@ Convert `toArray()` to `all()` when the collection does not contain any Arrayabl
 +new Collection([0, 1, -1])->all();
 ```
 
+**Sets:** `LARAVEL_COLLECTION`
+
 <br>
 
 ## DatabaseExpressionCastsToMethodCallRector
@@ -619,6 +688,8 @@ Convert DB Expression string casts to `getValue()` method calls.
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
 ```
 
+**Sets:** `LARAVEL_100`
+
 <br>
 
 ## DatabaseExpressionToStringToMethodCallRector
@@ -633,6 +704,8 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
 ```
+
+**Sets:** `LARAVEL_100`
 
 <br>
 
@@ -650,6 +723,8 @@ Dispatch non ShouldQueue jobs to dispatchSync
 +Bus::dispatchSync(new SomeJob());
 +$this->dispatchSync(new SomeJob());
 ```
+
+**Sets:** `LARAVEL_100`
 
 <br>
 
@@ -678,6 +753,8 @@ Use the event or dispatch helpers instead of the static dispatch method.
 +dispatch_sync(new ExampleJob($email));
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## EloquentMagicMethodToQueryBuilderRector
@@ -694,6 +771,8 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 -$user = User::find(1);
 +$user = User::query()->find(1);
 ```
+
+**Sets:** `LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER`
 
 <br>
 
@@ -724,6 +803,8 @@ Changes `orderBy()` to `latest()` or `oldest()`
  $builder->orderBy('unallowed_column_name');
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## EloquentWhereRelationTypeHintingParameterRector
@@ -743,6 +824,8 @@ Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `w
      $query->where('is_published', true);
  });
 ```
+
+**Sets:** `LARAVEL_TYPE_DECLARATIONS`
 
 <br>
 
@@ -770,6 +853,8 @@ Change typehint of closure parameter in where method of Eloquent or Query Builde
  });
 ```
 
+**Sets:** `LARAVEL_TYPE_DECLARATIONS`
+
 <br>
 
 ## EmptyToBlankAndFilledFuncRector
@@ -785,6 +870,8 @@ Replace use of the unsafe `empty()` function with Laravel's safer `blank()` & `f
 +filled([]);
 ```
 
+**Sets:** *No set*
+
 <br>
 
 ## EnvVariableToEnvHelperRector
@@ -797,6 +884,8 @@ Change env variable to env static call
 -$_ENV['APP_NAME'];
 +\Illuminate\Support\Env::get('APP_NAME');
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -812,6 +901,8 @@ Call the state methods directly instead of specify the name of state.
 +$factory->delinquent();
 +$factory->premium()->delinquent();
 ```
+
+**Sets:** `LARAVEL_LEGACY_FACTORIES_TO_CLASSES`
 
 <br>
 
@@ -845,6 +936,8 @@ Upgrade legacy factories to support classes.
 +}
 ```
 
+**Sets:** `LARAVEL_LEGACY_FACTORIES_TO_CLASSES`
+
 <br>
 
 ## FactoryFuncCallToStaticCallRector
@@ -859,6 +952,8 @@ Use the static factory method instead of global factory function.
 -factory(User::class);
 +User::factory();
 ```
+
+**Sets:** `LARAVEL_LEGACY_FACTORIES_TO_CLASSES`
 
 <br>
 
@@ -879,6 +974,8 @@ Change `app()` func calls to facade calls
  }
 ```
 
+**Sets:** `LARAVEL_STATIC_TO_INJECTION`
+
 <br>
 
 ## JsonCallToExplicitJsonCallRector
@@ -891,6 +988,8 @@ Change method calls from `$this->json` to `$this->postJson,` `$this->putJson,` e
 -$this->json("POST", "/api/v1/users", $data);
 +$this->postJson("/api/v1/users", $data);
 ```
+
+**Sets:** `LARAVEL_TESTING`
 
 <br>
 
@@ -912,6 +1011,8 @@ Converts the computed methods of a Livewire component to use the Computed Attrib
      }
  }
 ```
+
+**Sets:** `LIVEWIRE_30`
 
 <br>
 
@@ -939,6 +1040,8 @@ Converts the `$queryString` property of a Livewire component to use the Url Attr
  }
 ```
 
+**Sets:** `LIVEWIRE_30`
+
 <br>
 
 ## LumenRoutesStringActionToUsesArrayRector
@@ -951,6 +1054,8 @@ Changes action in rule definitions from string to array notation.
 -$router->get('/user', 'UserController@get');
 +$router->get('/user', ['uses => 'UserController@get']);
 ```
+
+**Sets:** `LUMEN`
 
 <br>
 
@@ -966,6 +1071,8 @@ Changes middlewares from rule definitions from string to array notation.
 +$router->get('/user', ['middleware => ['test']]);
 +$router->post('/user', ['middleware => ['test', 'authentication']]);
 ```
+
+**Sets:** `LUMEN`
 
 <br>
 
@@ -992,6 +1099,8 @@ Makes Model attributes and scopes protected
      }
  }
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -1025,11 +1134,13 @@ Migrate to the new Model attributes syntax
  }
 ```
 
+**Sets:** `LARAVEL_90`
+
 <br>
 
 ## MinutesToSecondsInCacheRector
 
-Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Illuminate\Support\Facades\Cache
+Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and `Illuminate\Support\Facades\Cache` methods
 
 - class: [`RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector`](../src/Rector/StaticCall/MinutesToSecondsInCacheRector.php)
 
@@ -1043,6 +1154,8 @@ Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Ill
      }
  }
 ```
+
+**Sets:** *No set*
 
 <br>
 
@@ -1069,6 +1182,8 @@ Refactor Model `$casts` property with `casts()` method
  }
 ```
 
+**Sets:** `LARAVEL_110`
+
 <br>
 
 ## NotFilledBlankFuncCallToBlankFilledFuncCallRector
@@ -1084,6 +1199,8 @@ Swap the use of NotBooleans used with `filled()` and `blank()` to the correct he
 +filled([]);
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## NowFuncWithStartOfDayMethodCallToTodayFuncRector
@@ -1096,6 +1213,8 @@ Use `today()` instead of `now()->startOfDay()`
 -$now = now()->startOfDay();
 +$now = today();
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -1115,6 +1234,8 @@ Convert simple calls to optional helper to use the nullsafe operator
  // macro methods
  optional($user)->present()->getKey();
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -1138,6 +1259,8 @@ Change deprecated `$defer` = true; to `Illuminate\Contracts\Support\DeferrablePr
  }
 ```
 
+**Sets:** `LARAVEL_58`
+
 <br>
 
 ## Redirect301ToPermanentRedirectRector
@@ -1156,6 +1279,8 @@ Change "redirect" call with 301 to "permanentRedirect"
      }
  }
 ```
+
+**Sets:** `LARAVEL_57`
 
 <br>
 
@@ -1184,6 +1309,8 @@ Replace `redirect()->back()` and `Redirect::back()` with `back()`
  }
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## RedirectRouteToToRouteHelperRector
@@ -1211,6 +1338,8 @@ Replace `redirect()->route("home")` and `Redirect::route("home")` with `to_route
  }
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## RefactorBlueprintGeometryColumnsRector
@@ -1223,6 +1352,8 @@ refactors calls with the pre Laravel 11 methods for blueprint geometry columns
 -$blueprint->point('coordinates')->spatialIndex();
 +$blueprint->geometry('coordinates', 'point')->spatialIndex();
 ```
+
+**Sets:** `LARAVEL_110`
 
 <br>
 
@@ -1251,6 +1382,8 @@ It will removes the dump data just like dd or dump functions from the code.`
  }
 ```
 
+**Sets:** *No set*
+
 <br>
 
 ## RemoveModelPropertyFromFactoriesRector
@@ -1270,6 +1403,10 @@ Removes the `$model` property from Factories.
 
 <br>
 
+**Sets:** *No set*
+
+<br>
+
 ## RemoveRedundantValueCallsRector
 
 Removes redundant value helper calls
@@ -1280,6 +1417,8 @@ Removes redundant value helper calls
 -value(new Object())->something();
 +(new Object())->something();
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -1294,6 +1433,8 @@ Removes redundant with helper calls
 +(new Object())->something();
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## ReplaceAssertTimesSendWithAssertSentTimesRector
@@ -1306,6 +1447,8 @@ Replace assertTimesSent with assertSentTimes
 -Notification::assertTimesSent(1, SomeNotification::class);
 +Notification::assertSentTimes(SomeNotification::class, 1);
 ```
+
+**Sets:** `LARAVEL_100`
 
 <br>
 
@@ -1338,6 +1481,8 @@ Replace expectJobs and expectEvents methods in tests
  }
 ```
 
+**Sets:** `LARAVEL_100`
+
 <br>
 
 ## ReplaceFakerInstanceWithHelperRector
@@ -1361,6 +1506,8 @@ Replace `$this->faker` with the `fake()` helper function in Factories
  }
 ```
 
+**Sets:** `LARAVEL_90`
+
 <br>
 
 ## ReplaceFakerPropertyFetchWithMethodCallRector
@@ -1373,6 +1520,8 @@ Replace deprecated faker property fetch with method call
 -$faker->name,
 +$faker->name(),
 ```
+
+**Sets:** `FAKER_10`
 
 <br>
 
@@ -1391,6 +1540,8 @@ Changes the string or class const used for a service container make call
 +\Illuminate\Support\Facades\Application::make(Illuminate\Contracts\Encryption\Encrypter::class)->encrypt('...');
 ```
 
+**Sets:** `LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME`
+
 <br>
 
 ## ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector
@@ -1407,6 +1558,8 @@ Replace `withoutJobs`, `withoutEvents` and `withoutNotifications` with Facade `f
 +\Illuminate\Support\Facades\Event::fake();
 +\Illuminate\Support\Facades\Notification::fake();
 ```
+
+**Sets:** `LARAVEL_100`
 
 <br>
 
@@ -1426,6 +1579,8 @@ Change if report to report_if
 +report_if($condition, new Exception());
 +report_unless($condition, new Exception());
 ```
+
+**Sets:** `LARAVEL_IF_HELPERS`
 
 <br>
 
@@ -1448,6 +1603,8 @@ Change static `validate()` method to `$request->validate()`
      }
  }
 ```
+
+**Sets:** `LARAVEL_STATIC_TO_INJECTION`
 
 <br>
 
@@ -1478,6 +1635,8 @@ Change request variable definition in Facade
 +\Illuminate\Support\Facades\Request::exists('value');
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## ResponseHelperCallToJsonResponseRector
@@ -1490,6 +1649,8 @@ Use new JsonResponse instead of `response()->json()`
 -response()->json(['key' => 'value']);
 +return new JsonResponse(['key' => 'value']);
 ```
+
+**Sets:** *No set*
 
 <br>
 
@@ -1511,6 +1672,8 @@ Reverse conditionable method calls
 +$conditionable->when($condition, function () {});
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## RouteActionCallableRector
@@ -1530,6 +1693,8 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 +    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index']);
  })
 ```
+
+**Sets:** *No set*
 
 <br>
 
@@ -1551,6 +1716,8 @@ Changes model scope methods to use the scope attribute
  }
 ```
 
+**Sets:** `LARAVEL_120`
+
 <br>
 
 ## ServerVariableToRequestFacadeRector
@@ -1563,6 +1730,8 @@ Change server variable to Request facade's server method
 -$_SERVER['VARIABLE'];
 +\Illuminate\Support\Facade\Request::server('VARIABLE');
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -1593,6 +1762,8 @@ Change PHP session usage to Session Facade methods
 +\Illuminate\Support\Facades\Session::has('key');
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## SleepFuncToSleepStaticCallRector
@@ -1605,6 +1776,8 @@ Use `Sleep::sleep()` and `Sleep::usleep()` instead of the `sleep()` and `usleep(
 -sleep(5);
 +\Illuminate\Support\Sleep::sleep(5);
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -1621,6 +1794,8 @@ Use `Str::startsWith()` or `Str::endsWith()` instead of `substr()` === `$str`
  }
 ```
 
+**Sets:** `LARAVEL_CODE_QUALITY`
+
 <br>
 
 ## ThrowIfAndThrowUnlessExceptionsToUseClassStringRector
@@ -1633,6 +1808,8 @@ changes use of a new throw instance to class string
 -throw_if($condition, new MyException('custom message'));
 +throw_if($condition, MyException::class, 'custom message');
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -1652,6 +1829,8 @@ Change if throw to throw_if
 +throw_if($condition, new Exception());
 +throw_unless($condition, new Exception());
 ```
+
+**Sets:** `LARAVEL_IF_HELPERS`
 
 <br>
 
@@ -1673,6 +1852,8 @@ Automatically type hints your tappable closures
 +(new Collection)->tap(function (Collection $collection) {}
 ```
 
+**Sets:** `LARAVEL_TYPE_DECLARATIONS`
+
 <br>
 
 ## UnaliasCollectionMethodsRector
@@ -1690,6 +1871,8 @@ Use the base collection methods instead of their aliases.
 +$collection->avg();
 +$collection->contains(fn (?int $number): bool => is_null($number));
 ```
+
+**Sets:** `LARAVEL_COLLECTION`
 
 <br>
 
@@ -1712,6 +1895,8 @@ Unify Model `$dates` property with `$casts`
 -    protected $dates = ['birthday'];
  }
 ```
+
+**Sets:** `LARAVEL_100`
 
 <br>
 
@@ -1740,6 +1925,8 @@ Use `$this->components` property within commands
  }
 ```
 
+**Sets:** *No set*
+
 <br>
 
 ## UseForwardsCallsTraitRector
@@ -1761,6 +1948,8 @@ Replaces the use of `call_user_func` and `call_user_func_array` method with the 
  }
 ```
 
+**Sets:** *No set*
+
 <br>
 
 ## ValidationRuleArrayStringValueToArrayRector
@@ -1775,6 +1964,8 @@ Convert string validation rules into arrays for Laravel's Validator.
 +    'field' => ['required', 'nullable', 'string', 'max:255'],
  ]);
 ```
+
+**Sets:** `LARAVEL_CODE_QUALITY`
 
 <br>
 
@@ -1807,5 +1998,7 @@ Can be configured for the Postgres driver with `[WhereToWhereLikeRector::USING_P
 +$query->orWhereLike('name', 'Rector');
 +$query->whereLike('name', 'Rector', true);
 ```
+
+**Sets:** *No set*
 
 <br>

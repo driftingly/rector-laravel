@@ -9,7 +9,7 @@
 
 ## Available Rules
 
-See all available Laravel rules [here](/docs/rector_rules_overview.md). This list includes even the rules that are not yet released, but are available under the `dev-main` branch.
+See all 89 available Laravel Rector rules and which rules belong to which sets [here](/docs/rector_rules_overview.md). This list includes even the rules that are not yet released, but are available under the `main` branch.
 
 You can also find the released rules on the Rector [Find Rule](https://getrector.com/find-rule?activeRectorSetGroup=laravel) page.
 
@@ -17,7 +17,7 @@ You can also find the released rules on the Rector [Find Rule](https://getrector
 
 This package is a [Rector](https://github.com/rectorphp/rector) extension developed by the Laravel community.
 
-Rules for additional first party packages are included as well e.g. Cashier and Livewire.
+Rules for additional first party packages are included as well e.g. Livewire, Cashier, Faker and Lumen.
 
 Install as a dev dependency:
 
@@ -27,7 +27,7 @@ composer require --dev driftingly/rector-laravel
 
 ## Automate Laravel Upgrades
 
-To automatically apply the correct rules depending on the version of Laravel (or other packages) you are currently on (as detected in the `composer.json`), use the following:
+To automatically apply the correct rules depending on the version of Laravel (and other packages like Livewire, Cashier and Faker) you are currently on (as detected in the `composer.json`), use the following:
 
 ```php
 <?php declare(strict_types=1);
@@ -40,10 +40,27 @@ return RectorConfig::configure()
     ->withComposerBased(laravel: true, /** other options */);
 ```
 
+For example if you have `"laravel/framework": "^11.0"` installed this will apply the `LaravelLevelSetList::UP_TO_LARAVEL_110` set which includes all rules up to and including Laravel 11.
+
 ### Manual Configuration
 
-To manually add a version set to your config, use `RectorLaravel\Set\LaravelLevelSetList` and pick the constant that matches your target version.
-Sets for higher versions include sets for lower versions.
+To manually add a version set to your config, use `RectorLaravel\Set\LaravelSetList` or `RectorLaravel\Set\LaravelLevelSetList` and pick the constant that matches your target version.
+
+The sets in `RectorLaravel\Set\LaravelSetList` only contain changes related to a specific version upgrade. For example, the rules in `LaravelSetList::LARAVEL_110` apply when upgrading from Laravel 10 to Laravel 11.
+
+```php
+<?php declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+use RectorLaravel\Set\LaravelSetList;
+
+return RectorConfig::configure()
+    ->withSets([
+        LaravelSetList::LARAVEL_110,
+    ]);
+```
+
+If you want to apply all the rules up to and including a specific version, you can use the `LaravelLevelSetList` instead.
 
 ```php
 <?php declare(strict_types=1);
@@ -57,12 +74,9 @@ return RectorConfig::configure()
     ]);
 ```
 
-The sets in `RectorLaravel\Set\LaravelSetList` only contain changes related to a specific version upgrade.
-For example, the rules in `LaravelSetList::LARAVEL_110` apply when upgrading from Laravel 10 to Laravel 11.
+## Predefined Sets
 
-## Additional Sets
-
-To improve different aspects of your code, use the sets in `RectorLaravel\Set\LaravelSetList`.
+To improve different aspects of your code without having to specify each rule individually, use the sets in `RectorLaravel\Set\LaravelSetList`.
 
 ```php
 <?php declare(strict_types=1);
@@ -77,6 +91,10 @@ return RectorConfig::configure()
         ...
     ]);
 ```
+
+Almost all rules included in these sets can be manually specified one by one if you do not want to apply the full set. Also some rules included in sets are configurable if specified manually.
+
+`LARAVEL_ARRAYACCESS_TO_METHOD_CALL` and `LARAVEL_FACADE_ALIASES_TO_FULL_NAMES` do not have any separate rules that can be manually specified manually and `LARAVEL_STATIC_TO_INJECTION` only partially has rules that can be manually specified.
 
 | Set                                                                                                                                                                                         | Purpose                                                                                                                                                                                                                                          |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -112,6 +130,7 @@ return RectorConfig::configure()
 
 | Rule | Description |
 |------|-------------|
+| [AddArgumentDefaultValueRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/ClassMethod/AddArgumentDefaultValueRector.php) | Adds default value for arguments in defined methods. Configure with an array of argument names and default values. |
 | [RemoveDumpDataDeadCodeRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/FuncCall/RemoveDumpDataDeadCodeRector.php) | Removes debug function calls like `dd()`, `dump()`, etc. from code. Configure with an array of function names to remove (default: `['dd', 'dump']`). |
 | [RouteActionCallableRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/StaticCall/RouteActionCallableRector.php) | Converts route action strings like `'UserController@index'` to callable arrays `[UserController::class, 'index']`. Configure with `NAMESPACE` for controller namespace and `ROUTES` for file-specific namespaces. |
 | [WhereToWhereLikeRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/WhereToWhereLikeRector.php) | Converts `where('column', 'like', 'value')` to `whereLike('column', 'value')` calls. Configure with `USING_POSTGRES_DRIVER` boolean to handle PostgreSQL vs MySQL differences. |
@@ -134,12 +153,13 @@ return RectorConfig::configure()
 
 | Rule | Description |
 |------|-------------|
+| [ConfigToTypedConfigMethodCallRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/FuncCall/ConfigToTypedConfigMethodCallRector.php) | Refactor `config()` calls to use type-specific methods when the expected type is known. |
+| [EmptyToBlankAndFilledFuncRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Empty_/EmptyToBlankAndFilledFuncRector.php) | Replace use of the unsafe `empty()` function with Laravel's safer `blank()` & `filled()` functions. |
+| [MinutesToSecondsInCacheRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/StaticCall/MinutesToSecondsInCacheRector.php) | Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and `Illuminate\Support\Facades\Cache` methods. |
 | [RemoveModelPropertyFromFactoriesRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Class_/RemoveModelPropertyFromFactoriesRector.php) | Removes the `$model` property from Factories. |
 | [ResponseHelperCallToJsonResponseRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/ResponseHelperCallToJsonResponseRector.php) | Converts `response()->json()` to `new JsonResponse()`. |
-| [MinutesToSecondsInCacheRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/StaticCall/MinutesToSecondsInCacheRector.php) | Change minutes argument to seconds in cache methods. |
 | [UseComponentPropertyWithinCommandsRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/UseComponentPropertyWithinCommandsRector.php) | Use `$this->components` property within commands. |
 | [UseForwardsCallsTraitRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Class_/UseForwardsCallsTraitRector.php) | Replaces the use of `call_user_func` and `call_user_func_array` method with the CallForwarding trait. |
-| [EmptyToBlankAndFilledFuncRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Empty_/EmptyToBlankAndFilledFuncRector.php) | Converts `empty()` to `blank()` and `filled()` |
 
 ## Creating New Rules
 
