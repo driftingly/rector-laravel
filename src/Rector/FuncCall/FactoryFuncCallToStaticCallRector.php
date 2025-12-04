@@ -23,7 +23,10 @@ use Webmozart\Assert\Assert;
  */
 final class FactoryFuncCallToStaticCallRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    private const string FACTORY = 'factory';
+    /**
+     * @var string
+     */
+    private const FACTORY = 'factory';
 
     /**
      * @var string[]
