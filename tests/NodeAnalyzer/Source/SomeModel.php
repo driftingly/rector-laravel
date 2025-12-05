@@ -4,6 +4,7 @@ namespace RectorLaravel\Tests\NodeAnalyzer\Source;
 
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SomeModel extends Model
 {
@@ -14,7 +15,7 @@ class SomeModel extends Model
 
     public function someGenericFunction($query) {}
 
-    public function relationship()
+    public function relationship(): HasMany
     {
         return $this->hasMany(Foo::class);
     }

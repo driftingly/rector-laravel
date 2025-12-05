@@ -2,6 +2,8 @@
 
 namespace Illuminate\Database\Eloquent\Concerns;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 if (trait_exists('Illuminate\Database\Eloquent\Concerns\HasRelationships')) {
     return null;
 }
@@ -16,7 +18,7 @@ trait HasRelationships
      * @param  class-string<TRelatedModel>  $related
      * @param  string|null  $foreignKey
      * @param  string|null  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<TRelatedModel, $this>
+     * @return HasMany<TRelatedModel, $this>
      */
     public function hasMany($related, $foreignKey = null, $localKey = null) {}
 }
