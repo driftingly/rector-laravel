@@ -30,6 +30,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ArrayToArrGetRector extends AbstractRector
 {
+    private const string HAS_ARRAY_DIM_FETCH = 'has_array_dim_fetch';
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -78,17 +80,20 @@ CODE_SAMPLE
 
     /**
      * @param  ArrayDimFetch|Coalesce|Isset_|Empty_|AssignOp|Unset_  $node
-     * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN|null
      */
-    public function refactor(Node $node): StaticCall|int|null
+    public function refactor(Node $node): ?StaticCall
     {
+        if ($node->getAttribute(self::HAS_ARRAY_DIM_FETCH) === true) {
+            return null;
+        }
+
         if ($node instanceof Coalesce) {
             return $this->refactorCoalesce($node);
         }
 
         if (! $node instanceof ArrayDimFetch) {
             if ($this->containsArrayDimFetch($node)) {
-                return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+                $this->markArrayDimFetchNodes($node);
             }
 
             return null;
@@ -106,22 +111,25 @@ CODE_SAMPLE
         return $this->createArrGetCall($node);
     }
 
-    /**
-     * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN
-     */
-    private function refactorCoalesce(Coalesce $coalesce): StaticCall|int
+    private function refactorCoalesce(Coalesce $coalesce): ?StaticCall
     {
         if (! $coalesce->left instanceof ArrayDimFetch) {
-            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            $this->markArrayDimFetchNodes($coalesce);
+
+            return null;
         }
 
         if ($coalesce->right instanceof Throw_) {
-            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            $this->markArrayDimFetchNodes($coalesce);
+
+            return null;
         }
 
         $staticCall = $this->createArrGetCall($coalesce->left);
         if (! $staticCall instanceof StaticCall) {
-            return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            $this->markArrayDimFetchNodes($coalesce);
+
+            return null;
         }
 
         $staticCall->args[] = new Arg($coalesce->right);
@@ -225,12 +233,34 @@ CODE_SAMPLE
         return $current;
     }
 
+    private function markArrayDimFetchNodes(Node $node): void
+    {
+        $this->traverseNodesWithCallable($node, function (Node $subNode) use ($node): ?int {
+            // first visit is current node itself
+            if ($node === $subNode) {
+                return null;
+            }
+
+            if ($subNode instanceof ArrayDimFetch) {
+                $subNode->setAttribute(self::HAS_ARRAY_DIM_FETCH, true);
+            }
+
+            return null;
+        });
+    }
+
     private function containsArrayDimFetch(Node $node): bool
     {
         $found = false;
 
-        $this->traverseNodesWithCallable($node, function (Node $node) use (&$found): ?int {
-            if ($node instanceof ArrayDimFetch) {
+        $originalNode = $node;
+        $this->traverseNodesWithCallable($node, function (Node $subNode) use (&$found, $originalNode): ?int {
+            // first visit is current node itself
+            if ($originalNode === $subNode) {
+                return null;
+            }
+
+            if ($subNode instanceof ArrayDimFetch) {
                 $found = true;
 
                 return NodeVisitor::STOP_TRAVERSAL;
