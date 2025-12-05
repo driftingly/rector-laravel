@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\Rector\ArrayDimFetch;
 
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -11,7 +12,6 @@ use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PhpParser\Node\Stmt\Unset_;
-use PhpParser\NodeVisitor;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -21,6 +21,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ServerVariableToRequestFacadeRector extends AbstractRector
 {
+    private const string IS_IN_SERVER_VARIABLE = 'is_in_server_variable';
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -38,32 +40,50 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class, ArrayDimFetch::class];
+        return [ArrayDimFetch::class];
+    }
+
+    #[Override]
+    public function beforeTraverse(array $nodes): array
+    {
+        parent::beforeTraverse($nodes);
+
+        $this->traverseNodesWithCallable($nodes, function (Node $node) {
+            if (in_array($node::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
+                    && (! $node instanceof Assign || $node->var instanceof ArrayDimFetch && $this->isName($node->var->var, '_SERVER'))) {
+                $this->traverseNodesWithCallable($node, function (Node $subNode) {
+                    if (! $subNode instanceof ArrayDimFetch) {
+                        return null;
+                    }
+
+                    $subNode->setAttribute(self::IS_IN_SERVER_VARIABLE, true);
+
+                    return $subNode;
+                });
+
+                return $node;
+            }
+
+            return null;
+        });
+
+        return $nodes;
     }
 
     /**
-     * @param  ArrayDimFetch|Assign|Isset_|Unset_|InterpolatedString  $node
-     * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CHILDREN|null
+     * @param  ArrayDimFetch  $node
      */
-    public function refactor(Node $node): StaticCall|int|null
+    public function refactor(Node $node): ?StaticCall
     {
-        if (! $node instanceof ArrayDimFetch) {
-            if (! $node instanceof Assign) {
-                return NodeVisitor::DONT_TRAVERSE_CHILDREN;
-            }
-
-            if (! $node->var instanceof ArrayDimFetch || ! $this->isName($node->var->var, '_SERVER')) {
-                return null;
-            }
-
-            return NodeVisitor::DONT_TRAVERSE_CHILDREN;
-        }
-
         if (! $this->isName($node->var, '_SERVER')) {
             return null;
         }
 
         if (! $node->dim instanceof Expr) {
+            return null;
+        }
+
+        if ($node->getAttribute(self::IS_IN_SERVER_VARIABLE) === true) {
             return null;
         }
 
