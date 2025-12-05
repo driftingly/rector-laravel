@@ -46,9 +46,9 @@ class RelationshipAnalyzerTest extends AbstractLazyTestCase
 
         $variable = $statements[0]->stmts[3]->expr->var;
 
-        $scope = ScopeFetcher::fetch($variable);
+        ScopeFetcher::fetch($variable);
         $initialType = $nodeTypeResolver->getType($variable);
-        $foundType = $relationshipAnalyzer->resolveRelatedForRelation($initialType, $scope);
+        $foundType = $relationshipAnalyzer->resolveRelatedForRelation($initialType);
 
         Assert::assertNotNull($foundType);
 
@@ -92,9 +92,9 @@ class RelationshipAnalyzerTest extends AbstractLazyTestCase
 
         $variable = $statements[0]->stmts[3]->expr->var;
 
-        $scope = ScopeFetcher::fetch($variable);
+        ScopeFetcher::fetch($variable);
         $initialType = $nodeTypeResolver->getType($variable);
-        $foundType = $relationshipAnalyzer->resolveParentForRelation($initialType, $scope);
+        $foundType = $relationshipAnalyzer->resolveParentForRelation($initialType);
 
         Assert::assertNotNull($foundType);
 

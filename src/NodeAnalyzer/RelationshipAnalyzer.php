@@ -2,8 +2,7 @@
 
 namespace RectorLaravel\NodeAnalyzer;
 
-use InvalidArgumentException;
-use PHPStan\Analyser\Scope;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -24,16 +23,10 @@ class RelationshipAnalyzer
      *
      * @return ObjectType|null
      */
-    public function resolveRelatedForRelation(Type $objectType, Scope $scope): ?Type
+    public function resolveRelatedForRelation(Type $objectType): ?Type
     {
-        if ($objectType->isObject()->no() || $objectType->isSuperTypeOf(self::relationType())->no()) {
-            throw new InvalidArgumentException('Object type must be an Eloquent relation.');
-        }
-
-        $extendedPropertyReflection = $objectType->getInstanceProperty('related', $scope);
-        $modelType = $extendedPropertyReflection->getReadableType();
-
-        if ($modelType->isSuperTypeOf(self::modelType())->no()) {
+        $modelType = $objectType->getTemplateType(Relation::class, 'TRelatedModel');
+        if (self::modelType()->isSuperTypeOf($modelType)->no()) {
             return null;
         }
 
@@ -46,16 +39,11 @@ class RelationshipAnalyzer
      *
      * @return ObjectType|null
      */
-    public function resolveParentForRelation(Type $objectType, Scope $scope): ?Type
+    public function resolveParentForRelation(Type $objectType): ?Type
     {
-        if ($objectType->isObject()->no() || $objectType->isSuperTypeOf(self::relationType())->no()) {
-            throw new InvalidArgumentException('Object type must be an Eloquent relation.');
-        }
+        $modelType = $objectType->getTemplateType(Relation::class, 'TDeclaringModel');
 
-        $extendedPropertyReflection = $objectType->getInstanceProperty('parent', $scope);
-        $modelType = $extendedPropertyReflection->getReadableType();
-
-        if ($modelType->isSuperTypeOf(self::modelType())->no()) {
+        if (self::modelType()->isSuperTypeOf($modelType)->no()) {
             return null;
         }
 
