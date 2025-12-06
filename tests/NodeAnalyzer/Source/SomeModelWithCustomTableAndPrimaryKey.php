@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Analyzer\Source;
+namespace RectorLaravel\Tests\NodeAnalyzer\Source;
 
 use Illuminate\Database\Eloquent\Model;
 
