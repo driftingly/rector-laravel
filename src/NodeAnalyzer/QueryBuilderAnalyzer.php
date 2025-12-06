@@ -97,7 +97,7 @@ final readonly class QueryBuilderAnalyzer
      */
     public function resolveQueryBuilderModel(Type $objectType, Scope $scope): ?Type
     {
-        if ($objectType->isObject()->no() || $objectType->isSuperTypeOf(self::queryBuilderType())->no()) {
+        if (self::queryBuilderType()->isSuperTypeOf($objectType)->no()) {
             throw new InvalidArgumentException('Object type must be an Eloquent query builder.');
         }
 
