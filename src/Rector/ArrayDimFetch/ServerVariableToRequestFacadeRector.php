@@ -2,7 +2,6 @@
 
 namespace RectorLaravel\Rector\ArrayDimFetch;
 
-use Override;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -40,41 +39,34 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [ArrayDimFetch::class];
+        return [Node::class, ArrayDimFetch::class];
     }
 
-    #[Override]
-    public function beforeTraverse(array $nodes): array
-    {
-        parent::beforeTraverse($nodes);
-
-        $this->traverseNodesWithCallable($nodes, function (Node $node) {
-            if (in_array($node::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
-                    && (! $node instanceof Assign || $node->var instanceof ArrayDimFetch && $this->isName($node->var->var, '_SERVER'))) {
-                $this->traverseNodesWithCallable($node, function (Node $subNode) {
-                    if (! $subNode instanceof ArrayDimFetch) {
-                        return null;
-                    }
-
-                    $subNode->setAttribute(self::IS_IN_SERVER_VARIABLE, true);
-
-                    return $subNode;
-                });
-
-                return $node;
-            }
-
-            return null;
-        });
-
-        return $nodes;
-    }
-
-    /**
-     * @param  ArrayDimFetch  $node
-     */
     public function refactor(Node $node): ?StaticCall
     {
+        if (! $node instanceof ArrayDimFetch) {
+            $this->traverseNodesWithCallable($node, function (Node $subNode) {
+                if (in_array($subNode::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
+                        && (! $subNode instanceof Assign || $subNode->var instanceof ArrayDimFetch && $this->isName($subNode->var->var, '_SERVER'))) {
+                    $this->traverseNodesWithCallable($subNode, function (Node $subSubNode) {
+                        if (! $subSubNode instanceof ArrayDimFetch) {
+                            return null;
+                        }
+
+                        $subSubNode->setAttribute(self::IS_IN_SERVER_VARIABLE, true);
+
+                        return $subSubNode;
+                    });
+
+                    return $subNode;
+                }
+
+                return null;
+            });
+
+            return null;
+        }
+
         if (! $this->isName($node->var, '_SERVER')) {
             return null;
         }
