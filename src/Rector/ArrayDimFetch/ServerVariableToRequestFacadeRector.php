@@ -11,6 +11,8 @@ use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PhpParser\Node\Stmt\Unset_;
+use PHPStan\Analyser\Scope;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -45,24 +47,27 @@ CODE_SAMPLE
     public function refactor(Node $node): ?StaticCall
     {
         if (! $node instanceof ArrayDimFetch) {
-            $this->traverseNodesWithCallable($node, function (Node $subNode) {
-                if (in_array($subNode::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
-                        && (! $subNode instanceof Assign || $subNode->var instanceof ArrayDimFetch && $this->isName($subNode->var->var, '_SERVER'))) {
-                    $this->traverseNodesWithCallable($subNode, function (Node $subSubNode) {
-                        if (! $subSubNode instanceof ArrayDimFetch) {
-                            return null;
-                        }
+            $scope = $node->getAttribute(AttributeKey::SCOPE);
+            if ($scope instanceof Scope && $scope->isInFirstLevelStatement()) {
+                $this->traverseNodesWithCallable($node, function (Node $subNode) {
+                    if (in_array($subNode::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
+                            && (! $subNode instanceof Assign || $subNode->var instanceof ArrayDimFetch && $this->isName($subNode->var->var, '_SERVER'))) {
+                        $this->traverseNodesWithCallable($subNode, function (Node $subSubNode) {
+                            if (! $subSubNode instanceof ArrayDimFetch) {
+                                return null;
+                            }
 
-                        $subSubNode->setAttribute(self::IS_IN_SERVER_VARIABLE, true);
+                            $subSubNode->setAttribute(self::IS_IN_SERVER_VARIABLE, true);
 
-                        return $subSubNode;
-                    });
+                            return $subSubNode;
+                        });
 
-                    return $subNode;
-                }
+                        return $subNode;
+                    }
 
-                return null;
-            });
+                    return null;
+                });
+            }
 
             return null;
         }

@@ -34,7 +34,6 @@ final readonly class ModelFactoryNodeFactory
         private NodeNameResolver $nodeNameResolver,
         private NodeFactory $nodeFactory,
         private ValueResolver $valueResolver,
-        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser
     ) {}
 
     public function createEmptyFactory(string $name, Expr $expr): Class_
@@ -116,7 +115,7 @@ final readonly class ModelFactoryNodeFactory
 
     public function appendConfigure(ClassMethod $classMethod, string $name, Closure|ArrowFunction $callable): void
     {
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable(
+        SimpleCallableNodeTraverser::traverseNodesWithCallable(
             (array) $classMethod->stmts,
             function (Node $node) use ($callable, $name): ?Return_ {
                 if (! $node instanceof Return_) {
@@ -145,7 +144,7 @@ final readonly class ModelFactoryNodeFactory
      */
     private function fakerVariableToPropertyFetch(array $stmts, Param $param): void
     {
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($stmts, function (Node $node) use (
+        SimpleCallableNodeTraverser::traverseNodesWithCallable($stmts, function (Node $node) use (
             $param
         ): ?PropertyFetch {
             if (! $node instanceof Variable) {

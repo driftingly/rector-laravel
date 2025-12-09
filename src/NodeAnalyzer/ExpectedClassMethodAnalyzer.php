@@ -18,7 +18,6 @@ use RectorLaravel\ValueObject\ExpectedClassMethodMethodCalls;
 final readonly class ExpectedClassMethodAnalyzer
 {
     public function __construct(
-        private SimpleCallableNodeTraverser $simpleCallableNodeTraverser,
         private NodeNameResolver $nodeNameResolver,
         private NodeTypeResolver $nodeTypeResolver,
     ) {}
@@ -31,7 +30,7 @@ final readonly class ExpectedClassMethodAnalyzer
         $notExpectedMethodCalls = [];
         $reasonsToNotContinue = false;
 
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod, function (Node $node) use (
+        SimpleCallableNodeTraverser::traverseNodesWithCallable($classMethod, function (Node $node) use (
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
             &$reasonsToNotContinue,
@@ -87,7 +86,7 @@ final readonly class ExpectedClassMethodAnalyzer
         $notExpectedMethodCalls = [];
         $reasonsToNotContinue = false;
 
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod, function (Node $node) use (
+        SimpleCallableNodeTraverser::traverseNodesWithCallable($classMethod, function (Node $node) use (
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
             &$reasonsToNotContinue,
