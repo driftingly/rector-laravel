@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\PropertyFetch;
 
-use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Concat;
@@ -12,8 +11,10 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Scalar\InterpolatedString;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -72,47 +73,44 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [PropertyFetch::class, MethodCall::class, InterpolatedString::class];
+        return [Node::class, PropertyFetch::class, MethodCall::class, InterpolatedString::class];
     }
 
-    #[Override]
-    public function beforeTraverse(array $nodes): array
+    public function refactor(Node $node): ?Node
     {
-        parent::beforeTraverse($nodes);
+        if (! $node instanceof PropertyFetch && ! $node instanceof MethodCall && ! $node instanceof InterpolatedString) {
+            $scope = $node->getAttribute(AttributeKey::SCOPE);
+            if ($scope instanceof Scope && $scope->isInFirstLevelStatement()) {
 
-        $this->traverseNodesWithCallable($nodes, function (Node $node) {
-            if (! $node instanceof MethodCall) {
-                return null;
-            }
-
-            // The randomEnum() method is a special case where the faker instance is used
-            // see https://github.com/spatie/laravel-enum#faker-provider
-            if ($this->isName($node->name, 'randomEnum')) {
-                $node->setAttribute(self::IS_IN_RANDOM_ENUM, true);
                 $this->traverseNodesWithCallable($node, function (Node $subNode) {
-                    if (! $subNode instanceof PropertyFetch && ! $subNode instanceof InterpolatedString) {
+                    if (! $subNode instanceof MethodCall) {
                         return null;
                     }
 
-                    $subNode->setAttribute(self::IS_IN_RANDOM_ENUM, true);
+                    // The randomEnum() method is a special case where the faker instance is used
+                    // see https://github.com/spatie/laravel-enum#faker-provider
+                    if ($this->isName($subNode->name, 'randomEnum')) {
+                        $subNode->setAttribute(self::IS_IN_RANDOM_ENUM, true);
+                        $this->traverseNodesWithCallable($subNode, function (Node $subSubNode) {
+                            if (! $subSubNode instanceof PropertyFetch && ! $subSubNode instanceof InterpolatedString) {
+                                return null;
+                            }
 
-                    return $subNode;
+                            $subSubNode->setAttribute(self::IS_IN_RANDOM_ENUM, true);
+
+                            return $subSubNode;
+                        });
+
+                        return $subNode;
+                    }
+
+                    return null;
                 });
-
-                return $node;
             }
 
             return null;
-        });
+        }
 
-        return $nodes;
-    }
-
-    /**
-     * @param  PropertyFetch|MethodCall|InterpolatedString  $node
-     */
-    public function refactor(Node $node): ?Node
-    {
         $classReflection = $this->reflectionResolver->resolveClassReflection($node);
 
         if (! $classReflection instanceof ClassReflection) {

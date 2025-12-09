@@ -2,7 +2,6 @@
 
 namespace RectorLaravel\Rector\ArrayDimFetch;
 
-use Override;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -14,6 +13,8 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Unset_;
+use PHPStan\Analyser\Scope;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -56,40 +57,10 @@ CODE_SAMPLE
         );
     }
 
-    #[Override]
-    public function beforeTraverse(array $nodes): array
-    {
-        parent::beforeTraverse($nodes);
-
-        $this->traverseNodesWithCallable($nodes, function (Node $node) {
-            if (! $node instanceof ArrayDimFetch) {
-                return null;
-            }
-
-            if (! $node->dim instanceof Expr) {
-                $node->setAttribute(self::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR, true);
-                $this->traverseNodesWithCallable($node, function (Node $subNode) {
-                    if (! $subNode instanceof Variable) {
-                        return null;
-                    }
-
-                    $subNode->setAttribute(self::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR, true);
-
-                    return $subNode;
-                });
-
-                return $node;
-            }
-
-            return null;
-        });
-
-        return $nodes;
-    }
-
     public function getNodeTypes(): array
     {
         return [
+            Node::class,
             Isset_::class,
             Unset_::class,
             ArrayDimFetch::class,
@@ -104,6 +75,36 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): StaticCall|Expression|null
     {
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if ($scope instanceof Scope && $scope->isInFirstLevelStatement()) {
+            $this->traverseNodesWithCallable($node, function (Node $subNode) {
+                if (! $subNode instanceof ArrayDimFetch) {
+                    return null;
+                }
+
+                if (! $subNode->dim instanceof Expr) {
+                    $subNode->setAttribute(self::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR, true);
+                    $this->traverseNodesWithCallable($subNode, function (Node $subSubNode) {
+                        if (! $subSubNode instanceof Variable) {
+                            return null;
+                        }
+
+                        $subSubNode->setAttribute(self::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR, true);
+
+                        return $subSubNode;
+                    });
+
+                    return $subNode;
+                }
+
+                return null;
+            });
+        }
+
+        if (! $node instanceof Isset_ && ! $node instanceof Unset_ && ! $node instanceof ArrayDimFetch && ! $node instanceof Assign && ! $node instanceof FuncCall && ! $node instanceof Variable) {
+            return null;
+        }
+
         if ($node instanceof ArrayDimFetch) {
             return $this->processDimFetch($node);
         }
