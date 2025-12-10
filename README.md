@@ -105,6 +105,10 @@ use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector;
 
 return RectorConfig::configure()
+    // include default config
+    ->withSets([
+        __DIR__ . '/vendor/driftingly/rector-laravel/config/config.php'
+    ])
     ->withConfiguredRule(RemoveDumpDataDeadCodeRector::class, [
         'dd', 'dump', 'var_dump'
     ]);
@@ -127,6 +131,10 @@ use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\MethodCall\ResponseHelperCallToJsonResponseRector;
 
 return RectorConfig::configure()
+    // include default config
+    ->withSets([
+        __DIR__ . '/vendor/driftingly/rector-laravel/config/config.php'
+    ])
     ->withRules([
         ResponseHelperCallToJsonResponseRector::class,
     ]);
