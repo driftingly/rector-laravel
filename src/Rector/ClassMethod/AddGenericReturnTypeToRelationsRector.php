@@ -36,8 +36,39 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
+    /**
+     * @readonly
+     */
+    private TypeComparator $typeComparator;
+    /**
+     * @readonly
+     */
+    private DocBlockUpdater $docBlockUpdater;
+    /**
+     * @readonly
+     */
+    private PhpDocInfoFactory $phpDocInfoFactory;
+    /**
+     * @readonly
+     */
+    private BetterNodeFinder $betterNodeFinder;
+    /**
+     * @readonly
+     */
+    private StaticTypeMapper $staticTypeMapper;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    /**
+     * @readonly
+     */
+    private ApplicationAnalyzer $applicationAnalyzer;
     // Relation methods which are supported by this Rector.
-    private const array RELATION_METHODS = [
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_METHODS = [
         'hasOne', 'hasOneThrough', 'morphOne',
         'belongsTo', 'morphTo',
         'hasMany', 'hasManyThrough', 'morphMany',
@@ -45,23 +76,30 @@ class AddGenericReturnTypeToRelationsRector extends AbstractRector
     ];
 
     // Relation methods which need the class as TChildModel.
-    private const array RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
 
     // Relation methods which need the class as TIntermediateModel.
-    private const array RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
 
     private bool $shouldUseNewGenerics = false;
     private bool $shouldUsePivotGeneric = false;
 
-    public function __construct(
-        private readonly TypeComparator $typeComparator,
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
-        private readonly BetterNodeFinder $betterNodeFinder,
-        private readonly StaticTypeMapper $staticTypeMapper,
-        private readonly ReflectionProvider $reflectionProvider,
-        private readonly ApplicationAnalyzer $applicationAnalyzer,
-    ) {}
+    public function __construct(TypeComparator $typeComparator, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder, StaticTypeMapper $staticTypeMapper, ReflectionProvider $reflectionProvider, ApplicationAnalyzer $applicationAnalyzer)
+    {
+        $this->typeComparator = $typeComparator;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->staticTypeMapper = $staticTypeMapper;
+        $this->reflectionProvider = $reflectionProvider;
+        $this->applicationAnalyzer = $applicationAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -308,7 +346,7 @@ CODE_SAMPLE
 
         $classReflection = $scope->getClassReflection();
 
-        return $classReflection?->getName();
+        return ($nullsafeVariable1 = $classReflection) ? $nullsafeVariable1->getName() : null;
     }
 
     /**

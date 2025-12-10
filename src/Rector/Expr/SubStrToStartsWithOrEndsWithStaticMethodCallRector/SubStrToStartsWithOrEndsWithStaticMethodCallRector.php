@@ -20,9 +20,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

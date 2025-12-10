@@ -22,7 +22,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ServerVariableToRequestFacadeRector extends AbstractRector
 {
-    private const string IS_IN_SERVER_VARIABLE = 'is_in_server_variable';
+    /**
+     * @var string
+     */
+    private const IS_IN_SERVER_VARIABLE = 'is_in_server_variable';
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -50,7 +53,7 @@ CODE_SAMPLE
             $scope = $node->getAttribute(AttributeKey::SCOPE);
             if ($scope instanceof Scope && $scope->isInFirstLevelStatement()) {
                 $this->traverseNodesWithCallable($node, function (Node $subNode) {
-                    if (in_array($subNode::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
+                    if (in_array(get_class($subNode), [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
                             && (! $subNode instanceof Assign || $subNode->var instanceof ArrayDimFetch && $this->isName($subNode->var->var, '_SERVER'))) {
                         $this->traverseNodesWithCallable($subNode, function (Node $subSubNode) {
                             if (! $subSubNode instanceof ArrayDimFetch) {

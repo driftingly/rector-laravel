@@ -30,13 +30,18 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class RequestStaticValidateToInjectRector extends AbstractRector
 {
     /**
+     * @readonly
+     */
+    private ReflectionResolver $reflectionResolver;
+    /**
      * @var ObjectType[]
      */
     private array $requestObjectTypes = [];
 
     public function __construct(
-        private readonly ReflectionResolver $reflectionResolver
+        ReflectionResolver $reflectionResolver
     ) {
+        $this->reflectionResolver = $reflectionResolver;
         $this->requestObjectTypes = [new ObjectType('Illuminate\Http\Request'), new ObjectType('Request')];
     }
 
@@ -118,7 +123,10 @@ CODE_SAMPLE
         return null;
     }
 
-    private function shouldSkip(ClassMethod $classMethod, StaticCall|FuncCall $node, Scope $scope): bool
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\FuncCall $node
+     */
+    private function shouldSkip(ClassMethod $classMethod, $node, Scope $scope): bool
     {
         $classReflection = $scope->getClassReflection();
 
@@ -134,7 +142,7 @@ CODE_SAMPLE
             $classMethod,
             $scope
         );
-        $classMethodNamespaceName = $classMethodReflection?->getPrototype()?->getDeclaringClass()?->getName();
+        $classMethodNamespaceName = ($nullsafeVariable1 = ($nullsafeVariable2 = ($nullsafeVariable3 = $classMethodReflection) ? $nullsafeVariable3->getPrototype() : null) ? $nullsafeVariable2->getDeclaringClass() : null) ? $nullsafeVariable1->getName() : null;
         if ($classMethodNamespaceName !== $classReflection->getName()) {
             return true;
         }
