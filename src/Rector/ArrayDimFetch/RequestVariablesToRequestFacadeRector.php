@@ -62,7 +62,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param ArrayDimFetch|Variable|Isset_ $node
+     * @param  ArrayDimFetch|Variable|Isset_  $node
      */
     public function refactor(Node $node): StaticCall|NotIdentical|null
     {
