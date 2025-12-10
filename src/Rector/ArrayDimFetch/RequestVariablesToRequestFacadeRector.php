@@ -61,6 +61,9 @@ CODE_SAMPLE
         return [ArrayDimFetch::class, Variable::class, Isset_::class];
     }
 
+    /**
+     * @param ArrayDimFetch|Variable|Isset_ $node
+     */
     public function refactor(Node $node): StaticCall|NotIdentical|null
     {
         if ($node instanceof Variable) {
