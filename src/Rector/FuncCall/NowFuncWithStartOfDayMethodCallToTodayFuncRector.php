@@ -45,6 +45,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if (! $node->var instanceof FuncCall) {
+            return null;
+        }
+
         if (! $this->isName($node->var, 'now')) {
             return null;
         }
