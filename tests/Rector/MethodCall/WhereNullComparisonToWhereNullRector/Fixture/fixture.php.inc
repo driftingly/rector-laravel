@@ -8,7 +8,9 @@ class Fixture
 {
     public function test(Builder $query)
     {
-        $query->where('foo', null)
+        $query
+            ->where('foobar')
+            ->where('foo', null)
             ->where('bar', '=', null);
     }
 }
@@ -24,7 +26,7 @@ class Fixture
 {
     public function test(Builder $query)
     {
-        $query->whereNull('foo')->whereNull('bar');
+        $query->whereNull('foobar')->whereNull('foo')->whereNull('bar');
     }
 }
 ?>

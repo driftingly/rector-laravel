@@ -53,6 +53,14 @@ CODE_SAMPLE
         $args = $node->args;
         $type = null;
 
+        if (count($args) === 1) {
+            return $this->nodeFactory->createMethodCall(
+                $node->var,
+                'whereNull',
+                [$args[0]]
+            );
+        }
+
         if (count($args) === 2 && $args[1] instanceof Arg) {
             $type = $this->getType($args[1]->value);
         }
