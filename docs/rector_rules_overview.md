@@ -1806,9 +1806,11 @@ Convert to where comparison to whereNull method call
 -$query->where('foo', null);
 -$query->where('foo', '=', null);
 -$query->where('foo');
+-$query->where('foo', '!=', null);
 +$query->whereNull('foo');
 +$query->whereNull('foo');
 +$query->whereNull('foo');
++$query->whereNotNull('foo');
 ```
 
 <br>

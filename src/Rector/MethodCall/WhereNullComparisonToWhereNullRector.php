@@ -20,11 +20,13 @@ class WhereNullComparisonToWhereNullRector extends AbstractRector
 $query->where('foo', null);
 $query->where('foo', '=', null);
 $query->where('foo');
+$query->where('foo', '!=', null);
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
 $query->whereNull('foo');
 $query->whereNull('foo');
 $query->whereNull('foo');
+$query->whereNotNull('foo');
 CODE_SAMPLE
             ),
         ]);
@@ -40,6 +42,8 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?MethodCall
     {
+        $replacementMethod = 'whereNull';
+
         if ($node->isFirstClassCallable()) {
             return null;
         }
@@ -67,7 +71,14 @@ CODE_SAMPLE
             $type = $this->getType($args[1]->value);
         }
 
-        if (count($args) === 3 && $args[2] instanceof Arg) {
+        if (count($args) === 3 && $args[2] instanceof Arg && $args[1] instanceof Arg) {
+            $comparisonType = $this->getType($args[1]->value);
+
+            /** @phpstan-ignore method.notFound */
+            if ($comparisonType->isString()->yes() && $comparisonType->getValue() === '!=') {
+                $replacementMethod = 'whereNotNull';
+            }
+
             $type = $this->getType($args[2]->value);
         }
 
@@ -81,7 +92,7 @@ CODE_SAMPLE
 
         return $this->nodeFactory->createMethodCall(
             $node->var,
-            'whereNull',
+            $replacementMethod,
             [$args[0]]
         );
     }

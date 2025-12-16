@@ -11,7 +11,8 @@ class Fixture
         $query
             ->where('foobar')
             ->where('foo', null)
-            ->where('bar', '=', null);
+            ->where('bar', '=', null)
+            ->where('barfoo', '!=', null);
     }
 }
 ?>
@@ -26,7 +27,7 @@ class Fixture
 {
     public function test(Builder $query)
     {
-        $query->whereNull('foobar')->whereNull('foo')->whereNull('bar');
+        $query->whereNull('foobar')->whereNull('foo')->whereNull('bar')->whereNotNull('barfoo');
     }
 }
 ?>
