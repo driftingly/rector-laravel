@@ -1805,6 +1805,8 @@ Convert to where comparison to whereNull method call
 ```diff
 -$query->where('foo', null);
 -$query->where('foo', '=', null);
+-$query->where('foo');
++$query->whereNull('foo');
 +$query->whereNull('foo');
 +$query->whereNull('foo');
 ```

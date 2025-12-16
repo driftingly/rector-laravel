@@ -19,8 +19,10 @@ class WhereNullComparisonToWhereNullRector extends AbstractRector
             new CodeSample(<<<'CODE_SAMPLE'
 $query->where('foo', null);
 $query->where('foo', '=', null);
+$query->where('foo');
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
+$query->whereNull('foo');
 $query->whereNull('foo');
 $query->whereNull('foo');
 CODE_SAMPLE
