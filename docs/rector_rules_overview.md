@@ -1,4 +1,4 @@
-# 88 Rules Overview
+# 90 Rules Overview
 
 ## AbortIfRector
 
@@ -246,6 +246,19 @@ Replace app environment comparison with parameter or method call
 
 <br>
 
+## AppToResolveRector
+
+Convert `app()` to `resolve()` where applicable.
+
+- class: [`RectorLaravel\Rector\FuncCall\AppToResolveRector`](../src/Rector/FuncCall/AppToResolveRector.php)
+
+```diff
+-app('foo');
++resolve('foo');
+```
+
+<br>
+
 ## ApplyDefaultInsteadOfNullCoalesceRector
 
 Apply default instead of null coalesce
@@ -296,7 +309,7 @@ Move help facade-like function calls to constructor injection
 
 ## ArrayToArrGetRector
 
-Convert array access to `Arr::get()` method call, skips null coalesce with throw expressions
+Convert array access to `Arr::get()` method call, skips isset/empty checks, assignments, unset, and null coalesce with throw expressions
 
 - class: [`RectorLaravel\Rector\ArrayDimFetch\ArrayToArrGetRector`](../src/Rector/ArrayDimFetch/ArrayToArrGetRector.php)
 
@@ -310,6 +323,10 @@ Convert array access to `Arr::get()` method call, skips null coalesce with throw
 +\Illuminate\Support\Arr::get($array, 'key', 'default');
 +\Illuminate\Support\Arr::get($array, 'nested.key', 'default');
  $array['key'] ?? throw new Exception('Required');
+ isset($array['key']);
+ empty($array['key']);
+ $array['key'] = 'value';
+ unset($array['key']);
 ```
 
 <br>
@@ -691,8 +708,9 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 ```diff
  use App\Models\User;
 
--$user = User::find(1);
-+$user = User::query()->find(1);
+-$user = User::first();
++$user = User::query()->first();
+ $user = User::find(1);
 ```
 
 <br>
@@ -1774,6 +1792,21 @@ Convert string validation rules into arrays for Laravel's Validator.
 -    'field' => 'required|nullable|string|max:255',
 +    'field' => ['required', 'nullable', 'string', 'max:255'],
  ]);
+```
+
+<br>
+
+## WhereNullComparisonToWhereNullRector
+
+Convert to where comparison to whereNull method call
+
+- class: [`RectorLaravel\Rector\MethodCall\WhereNullComparisonToWhereNullRector`](../src/Rector/MethodCall/WhereNullComparisonToWhereNullRector.php)
+
+```diff
+-$query->where('foo', null);
+-$query->where('foo', '=', null);
++$query->whereNull('foo');
++$query->whereNull('foo');
 ```
 
 <br>
