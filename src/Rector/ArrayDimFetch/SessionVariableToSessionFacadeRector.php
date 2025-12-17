@@ -24,7 +24,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class SessionVariableToSessionFacadeRector extends AbstractRector
 {
-    private const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR = 'is_inside_array_dim_fetch_with_dim_not_expr';
+    /**
+     * @var string
+     */
+    private const IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR = 'is_inside_array_dim_fetch_with_dim_not_expr';
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -72,8 +75,9 @@ CODE_SAMPLE
 
     /**
      * @param  ArrayDimFetch|Assign|FuncCall|Isset_|Unset_|Variable  $node
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Stmt\Expression|null
      */
-    public function refactor(Node $node): StaticCall|Expression|null
+    public function refactor(Node $node)
     {
         $scope = $node->getAttribute(AttributeKey::SCOPE);
         if ($scope instanceof Scope && $scope->isInFirstLevelStatement()) {
@@ -178,13 +182,23 @@ CODE_SAMPLE
         }
 
         $method = $this->getName($funcCall);
-        $replacementMethod = match ($method) {
-            'session_regenerate_id' => 'regenerate',
-            'session_unset' => 'flush',
-            'session_destroy' => 'destroy',
-            'session_start' => 'start',
-            default => null,
-        };
+        switch ($method) {
+            case 'session_regenerate_id':
+                $replacementMethod = 'regenerate';
+                break;
+            case 'session_unset':
+                $replacementMethod = 'flush';
+                break;
+            case 'session_destroy':
+                $replacementMethod = 'destroy';
+                break;
+            case 'session_start':
+                $replacementMethod = 'start';
+                break;
+            default:
+                $replacementMethod = null;
+                break;
+        }
 
         if ($replacementMethod === null) {
             return null;

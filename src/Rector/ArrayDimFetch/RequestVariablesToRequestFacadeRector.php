@@ -24,7 +24,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class RequestVariablesToRequestFacadeRector extends AbstractRector
 {
-    private const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR = 'is_inside_array_dim_fetch_with_dim_not_scalar';
+    /**
+     * @var string
+     */
+    private const IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR = 'is_inside_array_dim_fetch_with_dim_not_scalar';
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -64,7 +67,10 @@ CODE_SAMPLE
         return [Node::class, ArrayDimFetch::class, Variable::class, Isset_::class];
     }
 
-    public function refactor(Node $node): StaticCall|NotIdentical|null
+    /**
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\BinaryOp\NotIdentical|null
+     */
+    public function refactor(Node $node)
     {
         if (! $node instanceof ArrayDimFetch && ! $node instanceof Variable && ! $node instanceof Isset_) {
             $scope = $node->getAttribute(AttributeKey::SCOPE);
@@ -144,12 +150,20 @@ CODE_SAMPLE
                 return null;
             }
 
-            $method = match ($arrayDimFetch->var->name) {
-                '_GET' => 'query',
-                '_POST' => 'post',
-                '_REQUEST' => 'input',
-                default => null,
-            };
+            switch ($arrayDimFetch->var->name) {
+                case '_GET':
+                    $method = 'query';
+                    break;
+                case '_POST':
+                    $method = 'post';
+                    break;
+                case '_REQUEST':
+                    $method = 'input';
+                    break;
+                default:
+                    $method = null;
+                    break;
+            }
             if ($method === null) {
                 return null;
             }
@@ -162,15 +176,22 @@ CODE_SAMPLE
 
     private function getGetterMethodName(Variable $variable): ?string
     {
-        return match ($variable->name) {
-            '_GET' => 'query',
-            '_POST' => 'post',
-            '_REQUEST' => 'input',
-            default => null,
-        };
+        switch ($variable->name) {
+            case '_GET':
+                return 'query';
+            case '_POST':
+                return 'post';
+            case '_REQUEST':
+                return 'input';
+            default:
+                return null;
+        }
     }
 
-    private function processIsset(Isset_ $isset): StaticCall|NotIdentical|null
+    /**
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\BinaryOp\NotIdentical|null
+     */
+    private function processIsset(Isset_ $isset)
     {
         if (count($isset->vars) < 1) {
             return null;
@@ -222,12 +243,20 @@ CODE_SAMPLE
 
     private function processVariable(Variable $variable): ?StaticCall
     {
-        $method = match ($variable->name) {
-            '_GET' => 'query',
-            '_POST' => 'post',
-            '_REQUEST' => 'all',
-            default => null,
-        };
+        switch ($variable->name) {
+            case '_GET':
+                $method = 'query';
+                break;
+            case '_POST':
+                $method = 'post';
+                break;
+            case '_REQUEST':
+                $method = 'all';
+                break;
+            default:
+                $method = null;
+                break;
+        }
         if ($method === null) {
             return null;
         }

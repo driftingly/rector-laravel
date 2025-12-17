@@ -20,9 +20,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AssertWithClassStringToTypeHintedClosureRector extends AbstractRector
 {
-    public function __construct(
-        private readonly FacadeAssertionAnalyzer $facadeAssertionAnalyzer
-    ) {}
+    /**
+     * @readonly
+     */
+    private FacadeAssertionAnalyzer $facadeAssertionAnalyzer;
+    public function __construct(FacadeAssertionAnalyzer $facadeAssertionAnalyzer)
+    {
+        $this->facadeAssertionAnalyzer = $facadeAssertionAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -88,14 +93,19 @@ CODE_SAMPLE
 
         $type = $this->getType($node->args[0]->value);
 
-        $classString = match (true) {
-            /** @phpstan-ignore method.notFound */
-            $type->isClassString()->yes() => $type->getClassStringObjectType()->getClassName(),
-            $type->isString()->yes()
+        switch (true) {
+            case $type->isClassString()->yes():
+                $classString = $type->getClassStringObjectType()->getClassName();
+                break;
+            case $type->isString()->yes()
                 /** @phpstan-ignore method.notFound */
-                && $type->getClassStringObjectType()->isObject()->yes() => $type->getClassStringObjectType()->getClassName(),
-            default => null,
-        };
+                && $type->getClassStringObjectType()->isObject()->yes():
+                $classString = $type->getClassStringObjectType()->getClassName();
+                break;
+            default:
+                $classString = null;
+                break;
+        }
 
         if (! is_string($classString)) {
             return null;
@@ -104,7 +114,10 @@ CODE_SAMPLE
         return $this->refactorClosure($node, $functionLike, $classString);
     }
 
-    public function refactorClosure(StaticCall $staticCall, Closure|ArrowFunction $closure, string $class): StaticCall
+    /**
+     * @param \PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $closure
+     */
+    public function refactorClosure(StaticCall $staticCall, $closure, string $class): StaticCall
     {
         $closure->params[0]->type = new FullyQualified($class);
 

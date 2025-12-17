@@ -7,16 +7,24 @@ use RuntimeException;
 
 class ApplicationAnalyzer
 {
+    /**
+     * @var class-string
+     */
+    private string $applicationClass = 'Illuminate\Foundation\Application';
     private ?string $version = null;
 
     /**
      * @param  class-string  $applicationClass
      */
-    public function __construct(
-        private string $applicationClass = 'Illuminate\Foundation\Application',
-    ) {}
+    public function __construct(string $applicationClass = 'Illuminate\Foundation\Application')
+    {
+        $this->applicationClass = $applicationClass;
+    }
 
-    public function setVersion(?string $version): static
+    /**
+     * @return static
+     */
+    public function setVersion(?string $version)
     {
         $this->version = $version;
 
@@ -27,7 +35,7 @@ class ApplicationAnalyzer
      * @param  class-string  $applicationClass
      * @return $this
      */
-    public function setApplicationClass(string $applicationClass): static
+    public function setApplicationClass(string $applicationClass)
     {
         $this->applicationClass = $applicationClass;
 
