@@ -28,6 +28,16 @@ class Builder implements \Illuminate\Contracts\Database\Query\Builder
      */
     public function max($column) {}
 
+    /**
+     * Add a "where null" clause to the query.
+     *
+     * @param  string|array|\Illuminate\Contracts\Database\Query\Expression  $columns
+     * @param  string  $boolean
+     * @param  bool  $not
+     * @return $this
+     */
+    public function whereNull($columns, $boolean = 'and', $not = false) {}
+
     protected function protectedMethodBelongsToQueryBuilder(): void {}
 
     private function privateMethodBelongsToQueryBuilder(): void {}

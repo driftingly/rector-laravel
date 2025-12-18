@@ -12,7 +12,8 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
-use PhpParser\NodeVisitor;
+use PHPStan\Analyser\Scope;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\ValueObject\ReplaceRequestKeyAndMethodValue;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -23,6 +24,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class RequestVariablesToRequestFacadeRector extends AbstractRector
 {
+    private const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR = 'is_inside_array_dim_fetch_with_dim_not_scalar';
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -58,16 +61,42 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [ArrayDimFetch::class, Variable::class, Isset_::class];
+        return [Node::class, ArrayDimFetch::class, Variable::class, Isset_::class];
     }
 
-    /**
-     * @param  ArrayDimFetch|Variable  $node
-     * @return StaticCall|NotIdentical|1|null
-     */
-    public function refactor(Node $node): StaticCall|NotIdentical|int|null
+    public function refactor(Node $node): StaticCall|NotIdentical|null
     {
+        if (! $node instanceof ArrayDimFetch && ! $node instanceof Variable && ! $node instanceof Isset_) {
+            $scope = $node->getAttribute(AttributeKey::SCOPE);
+            if ($scope instanceof Scope && $scope->isInFirstLevelStatement()) {
+                $this->traverseNodesWithCallable($node, function (Node $subNode) {
+                    if ($subNode instanceof ArrayDimFetch) {
+
+                        if ($subNode->dim instanceof Scalar) {
+                            return null;
+                        }
+
+                        $this->traverseNodesWithCallable($subNode, function (Node $subSubNode) {
+                            if ($subSubNode instanceof Variable) {
+                                $subSubNode->setAttribute(self::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR, true);
+
+                                return $subSubNode;
+                            }
+
+                            return null;
+                        });
+                    }
+                });
+            }
+
+            return null;
+        }
+
         if ($node instanceof Variable) {
+            if ($node->getAttribute(self::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR) === true) {
+                return null;
+            }
+
             return $this->processVariable($node);
         }
 
@@ -88,13 +117,10 @@ CODE_SAMPLE
         return $replaceValue;
     }
 
-    /**
-     * @return ReplaceRequestKeyAndMethodValue|1|null
-     */
-    public function findAllKeys(ArrayDimFetch $arrayDimFetch): ReplaceRequestKeyAndMethodValue|int|null
+    public function findAllKeys(ArrayDimFetch $arrayDimFetch): ?ReplaceRequestKeyAndMethodValue
     {
         if (! $arrayDimFetch->dim instanceof Scalar) {
-            return NodeVisitor::DONT_TRAVERSE_CHILDREN;
+            return null;
         }
 
         $value = $this->getType($arrayDimFetch->dim)->getConstantScalarValues()[0] ?? null;
@@ -144,10 +170,7 @@ CODE_SAMPLE
         };
     }
 
-    /**
-     * @return StaticCall|NotIdentical|1|null
-     */
-    private function processIsset(Isset_ $isset): StaticCall|NotIdentical|int|null
+    private function processIsset(Isset_ $isset): StaticCall|NotIdentical|null
     {
         if (count($isset->vars) < 1) {
             return null;
@@ -169,7 +192,7 @@ CODE_SAMPLE
         }
 
         if (! $var->dim instanceof Expr) {
-            return NodeVisitor::DONT_TRAVERSE_CHILDREN;
+            return null;
         }
 
         $replaceValue = $this->findAllKeys($var);

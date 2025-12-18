@@ -11,7 +11,8 @@ use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PhpParser\Node\Stmt\Unset_;
-use PhpParser\NodeVisitor;
+use PHPStan\Analyser\Scope;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -21,6 +22,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ServerVariableToRequestFacadeRector extends AbstractRector
 {
+    private const string IS_IN_SERVER_VARIABLE = 'is_in_server_variable';
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -38,25 +41,35 @@ CODE_SAMPLE
 
     public function getNodeTypes(): array
     {
-        return [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class, ArrayDimFetch::class];
+        return [Node::class, ArrayDimFetch::class];
     }
 
-    /**
-     * @param  ArrayDimFetch|Assign|Isset_|Unset_|InterpolatedString  $node
-     * @return StaticCall|NodeVisitor::DONT_TRAVERSE_CHILDREN|null
-     */
-    public function refactor(Node $node): StaticCall|int|null
+    public function refactor(Node $node): ?StaticCall
     {
         if (! $node instanceof ArrayDimFetch) {
-            if (! $node instanceof Assign) {
-                return NodeVisitor::DONT_TRAVERSE_CHILDREN;
+            $scope = $node->getAttribute(AttributeKey::SCOPE);
+            if ($scope instanceof Scope && $scope->isInFirstLevelStatement()) {
+                $this->traverseNodesWithCallable($node, function (Node $subNode) {
+                    if (in_array($subNode::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
+                            && (! $subNode instanceof Assign || $subNode->var instanceof ArrayDimFetch && $this->isName($subNode->var->var, '_SERVER'))) {
+                        $this->traverseNodesWithCallable($subNode, function (Node $subSubNode) {
+                            if (! $subSubNode instanceof ArrayDimFetch) {
+                                return null;
+                            }
+
+                            $subSubNode->setAttribute(self::IS_IN_SERVER_VARIABLE, true);
+
+                            return $subSubNode;
+                        });
+
+                        return $subNode;
+                    }
+
+                    return null;
+                });
             }
 
-            if (! $node->var instanceof ArrayDimFetch || ! $this->isName($node->var->var, '_SERVER')) {
-                return null;
-            }
-
-            return NodeVisitor::DONT_TRAVERSE_CHILDREN;
+            return null;
         }
 
         if (! $this->isName($node->var, '_SERVER')) {
@@ -64,6 +77,10 @@ CODE_SAMPLE
         }
 
         if (! $node->dim instanceof Expr) {
+            return null;
+        }
+
+        if ($node->getAttribute(self::IS_IN_SERVER_VARIABLE) === true) {
             return null;
         }
 

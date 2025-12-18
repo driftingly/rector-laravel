@@ -2,6 +2,8 @@
 
 namespace Illuminate\Database\Eloquent;
 
+use Illuminate\Database\Eloquent\Concerns\HasRelationships;
+
 if (class_exists('Illuminate\Database\Eloquent\Model')) {
     return;
 }
@@ -11,6 +13,8 @@ if (class_exists('Illuminate\Database\Eloquent\Model')) {
  */
 abstract class Model
 {
+    use HasRelationships;
+
     /**
      * The table associated with the model.
      *
@@ -24,6 +28,14 @@ abstract class Model
      * @var string
      */
     protected $primaryKey = 'id';
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public static function query(): Builder
+    {
+        return new Builder;
+    }
 
     /**
      * Exists in the Illuminate/Database/Eloquent/Concerns/HasTimestamps trait

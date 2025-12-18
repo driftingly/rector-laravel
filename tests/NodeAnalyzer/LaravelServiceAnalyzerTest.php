@@ -1,6 +1,6 @@
 <?php
 
-namespace NodeAnalyzer;
+namespace RectorLaravel\Tests\NodeAnalyzer;
 
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
