@@ -5,7 +5,7 @@
     "description": "Rector upgrades rules for Laravel Framework",
     "require": {
         "php": ">=8.3",
-        "rector/rector": "^2.2.13",
+        "rector/rector": "^2.3.0",
         "webmozart/assert": "^1.11",
         "symplify/rule-doc-generator-contracts": "^11.2"
     },
