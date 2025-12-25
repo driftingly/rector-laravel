@@ -15,12 +15,21 @@ use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 use RectorLaravel\ValueObject\ExpectedClassMethodMethodCalls;
 
-final readonly class ExpectedClassMethodAnalyzer
+final class ExpectedClassMethodAnalyzer
 {
-    public function __construct(
-        private NodeNameResolver $nodeNameResolver,
-        private NodeTypeResolver $nodeTypeResolver,
-    ) {}
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @readonly
+     */
+    private NodeTypeResolver $nodeTypeResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodeTypeResolver = $nodeTypeResolver;
+    }
 
     public function findExpectedJobCallsWithClassMethod(ClassMethod $classMethod): ?ExpectedClassMethodMethodCalls
     {
@@ -33,8 +42,8 @@ final readonly class ExpectedClassMethodAnalyzer
         SimpleCallableNodeTraverser::traverseNodesWithCallable($classMethod, function (Node $node) use (
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
-            &$reasonsToNotContinue,
-        ): array|int|Node|null {
+            &$reasonsToNotContinue
+        ) {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -89,8 +98,8 @@ final readonly class ExpectedClassMethodAnalyzer
         SimpleCallableNodeTraverser::traverseNodesWithCallable($classMethod, function (Node $node) use (
             &$expectedMethodCalls,
             &$notExpectedMethodCalls,
-            &$reasonsToNotContinue,
-        ): array|int|Node|null {
+            &$reasonsToNotContinue
+        ) {
             if (! $node instanceof MethodCall) {
                 return null;
             }

@@ -113,7 +113,7 @@ CODE_SAMPLE
         $methodCall = array_values(
             array_filter(
                 [$binaryOp->left, $binaryOp->right],
-                $this->validMethodCall(...),
+                \Closure::fromCallable([$this, 'validMethodCall']),
             )
         )[0] ?? null;
 
@@ -140,24 +140,31 @@ CODE_SAMPLE
             return false;
         }
 
-        return match (true) {
-            $node instanceof MethodCall && $this->isObjectType(
+        switch (true) {
+            case $node instanceof MethodCall && $this->isObjectType(
                 $node->var,
                 new ObjectType('Illuminate\Contracts\Foundation\Application')
-            ) => true,
-            $node instanceof StaticCall && $this->isObjectType(
+            ):
+                return true;
+            case $node instanceof StaticCall && $this->isObjectType(
                 $node->class,
                 new ObjectType('Illuminate\Support\Facades\App')
-            ) => true,
-            $node instanceof StaticCall && $this->isObjectType(
+            ):
+                return true;
+            case $node instanceof StaticCall && $this->isObjectType(
                 $node->class,
                 new ObjectType('App')
-            ) => true,
-            default => false,
-        };
+            ):
+                return true;
+            default:
+                return false;
+        }
     }
 
-    private function getMethodName(MethodCall|StaticCall $methodCall, string $environment): ?string
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $methodCall
+     */
+    private function getMethodName($methodCall, string $environment): ?string
     {
         if (
             $methodCall instanceof MethodCall
@@ -166,10 +173,13 @@ CODE_SAMPLE
             return null;
         }
 
-        return match ($environment) {
-            'local' => 'isLocal',
-            'production' => 'isProduction',
-            default => null,
-        };
+        switch ($environment) {
+            case 'local':
+                return 'isLocal';
+            case 'production':
+                return 'isProduction';
+            default:
+                return null;
+        }
     }
 }

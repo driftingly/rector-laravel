@@ -20,9 +20,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LumenRoutesStringActionToUsesArrayRector extends AbstractRector
 {
-    public function __construct(
-        private readonly LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer
-    ) {}
+    /**
+     * @readonly
+     */
+    private LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer;
+    public function __construct(LumenRouteRegisteringMethodAnalyzer $lumenRouteRegisteringMethodAnalyzer)
+    {
+        $this->lumenRouteRegisteringMethodAnalyzer = $lumenRouteRegisteringMethodAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -30,7 +30,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ArrayToArrGetRector extends AbstractRector
 {
-    private const string HAS_ARRAY_DIM_FETCH = 'has_array_dim_fetch';
+    /**
+     * @var string
+     */
+    private const HAS_ARRAY_DIM_FETCH = 'has_array_dim_fetch';
 
     public function getRuleDefinition(): RuleDefinition
     {
