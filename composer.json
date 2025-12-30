@@ -6,7 +6,7 @@
     "require": {
         "php": ">=8.3",
         "rector/rector": "^2.3.0",
-        "webmozart/assert": "^1.11",
+        "webmozart/assert": "^1.11 || ^2.0",
         "symplify/rule-doc-generator-contracts": "^11.2"
     },
     "require-dev": {
