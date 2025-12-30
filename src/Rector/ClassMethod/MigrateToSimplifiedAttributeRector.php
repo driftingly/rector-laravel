@@ -58,7 +58,7 @@ final class MigrateToSimplifiedAttributeRector extends AbstractRector
         $hasChanged = false;
 
         foreach ($node->stmts as $key => $stmt) {
-            if (! $stmt instanceof ClassMethod) {
+            if (! $stmt instanceof ClassMethod || $stmt->isAbstract()) {
                 continue;
             }
 
