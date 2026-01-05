@@ -1,4 +1,4 @@
-# 90 Rules Overview
+# 91 Rules Overview
 
 ## AbortIfRector
 
@@ -202,6 +202,25 @@ Add `parent::register();` call to `register()` class method in child of `Illumin
      public function register()
      {
 +        parent::register();
+     }
+ }
+```
+
+<br>
+
+## AddReturnTypeToModelRelationshipMethodRector
+
+Add return type to relationship methods in Models
+
+- class: [`RectorLaravel\Rector\Class_\AddReturnTypeToModelRelationshipMethodRector`](../src/Rector/Class_/AddReturnTypeToModelRelationshipMethodRector.php)
+
+```diff
+ class User extends Model
+ {
+-    public function posts()
++    public function posts(): HasMany
+     {
+         return $this->hasMany(Post::class);
      }
  }
 ```

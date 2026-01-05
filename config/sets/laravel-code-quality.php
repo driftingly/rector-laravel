@@ -8,6 +8,7 @@ use RectorLaravel\Rector\ArrayDimFetch\RequestVariablesToRequestFacadeRector;
 use RectorLaravel\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector;
 use RectorLaravel\Rector\ArrayDimFetch\SessionVariableToSessionFacadeRector;
 use RectorLaravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
+use RectorLaravel\Rector\Class_\AddReturnTypeToModelRelationshipMethodRector;
 use RectorLaravel\Rector\Class_\AnonymousMigrationsRector;
 use RectorLaravel\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector;
 use RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector;
@@ -56,4 +57,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NotFilledBlankFuncCallToBlankFilledFuncCallRector::class);
     $rectorConfig->rule(EloquentOrderByToLatestOrOldestRector::class);
     $rectorConfig->rule(AppToResolveRector::class);
+    $rectorConfig->rule(AddReturnTypeToModelRelationshipMethodRector::class);
 };

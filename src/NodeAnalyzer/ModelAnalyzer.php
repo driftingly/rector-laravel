@@ -4,11 +4,21 @@ namespace RectorLaravel\NodeAnalyzer;
 
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
+use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\FunctionLike;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeVisitor;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ExtendedMethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
+use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 use ReflectionException;
 use Throwable;
 
@@ -16,6 +26,7 @@ class ModelAnalyzer
 {
     public function __construct(
         private readonly ReflectionProvider $reflectionProvider,
+        private readonly NodeNameResolver $nodeNameResolver,
     ) {}
 
     protected static function relationType(): ObjectType
@@ -127,6 +138,42 @@ class ModelAnalyzer
         }
 
         return false;
+    }
+
+    /**
+     * Returns if the class method returns the result of a Laravel Model relationship
+     */
+    public function classMethodReturnsRelationship(ClassMethod $classMethod): ?string
+    {
+        SimpleCallableNodeTraverser::traverse($classMethod->stmts, function (Node $node) use (&$found): ?int {
+            // make sure we don't traverse into closures and such which might have a return statement
+            if ($node instanceof FunctionLike) {
+                return NodeVisitor::DONT_TRAVERSE_CHILDREN;
+            }
+
+            if ($node instanceof Return_ && $node->expr instanceof MethodCall) {
+
+                $methodCall = $node->expr;
+
+                if ($methodCall->var instanceof Variable && $this->nodeNameResolver->isName($methodCall->var, 'this')) {
+
+                    $foundRelationship = match ($this->nodeNameResolver->getName($methodCall->name)) {
+                        'hasOne', 'hasOneThrough', 'hasMany', 'hasManyThrough', 'belongsToMany', 'morphOne', 'morphMany', 'morphToMany', 'morphedByMany' => $methodCall->name,
+                        default => null,
+                    };
+
+                    if ($foundRelationship instanceof Identifier) {
+                        $found = $foundRelationship->name;
+                    }
+
+                    return NodeVisitor::STOP_TRAVERSAL;
+                }
+            }
+
+            return null;
+        });
+
+        return $found;
     }
 
     private function usesScopeAttribute(ExtendedMethodReflection $extendedMethodReflection): bool
