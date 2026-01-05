@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\Class_\AddReturnTypeToModelRelationshipMethodRector;
 use RectorLaravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector;
 use RectorLaravel\Rector\FuncCall\TypeHintTappableCallRector;
 use RectorLaravel\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector;
@@ -14,4 +15,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AddGenericReturnTypeToRelationsRector::class);
     $rectorConfig->rule(EloquentWhereRelationTypeHintingParameterRector::class);
     $rectorConfig->rule(EloquentWhereTypeHintClosureParameterRector::class);
+    $rectorConfig->rule(AddReturnTypeToModelRelationshipMethodRector::class);
 };
