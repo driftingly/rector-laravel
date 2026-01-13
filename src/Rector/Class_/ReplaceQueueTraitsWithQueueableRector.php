@@ -111,9 +111,7 @@ CODE_SAMPLE
                 continue;
             }
 
-            $foundTraits = $this->findQueueTraits($traitUses);
-
-            if (count($foundTraits) === 4) {
+            if (count($this->findQueueTraits($traitUses)) === 4) {
                 return $stmt;
             }
         }
@@ -144,23 +142,13 @@ CODE_SAMPLE
 
     private function replaceTraitsInClass(Class_ $class): void
     {
-        $traitUses = $class->getTraitUses();
         $replacedFirst = false;
 
-        foreach ($traitUses as $traitUse) {
+        foreach ($class->getTraitUses() as $traitUse) {
             $newTraits = [];
 
             foreach ($traitUse->traits as $trait) {
-                $isQueueTrait = false;
-
-                foreach (self::TRAITS_TO_REPLACE as $traitToReplace) {
-                    if ($this->isName($trait, $traitToReplace)) {
-                        $isQueueTrait = true;
-                        break;
-                    }
-                }
-
-                if ($isQueueTrait) {
+                if ($this->isQueueTrait($trait)) {
                     if (! $replacedFirst) {
                         $newTraits[] = new Name('Queueable');
                         $replacedFirst = true;
@@ -179,6 +167,17 @@ CODE_SAMPLE
         }
     }
 
+    private function isQueueTrait(Name $trait): bool
+    {
+        foreach (self::TRAITS_TO_REPLACE as $traitToReplace) {
+            if ($this->isName($trait, $traitToReplace)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param  Namespace_|FileNode  $node
      */
@@ -188,20 +187,14 @@ CODE_SAMPLE
         $useStmtsToRemove = [];
 
         foreach ($node->stmts as $key => $stmt) {
-            if (! $stmt instanceof Use_) {
-                continue;
-            }
-
-            if ($stmt->type !== Use_::TYPE_NORMAL) {
+            if (! $stmt instanceof Use_ || $stmt->type !== Use_::TYPE_NORMAL) {
                 continue;
             }
 
             $newUses = [];
 
             foreach ($stmt->uses as $use) {
-                $useName = $use->name->toString();
-
-                if (in_array($useName, self::TRAITS_TO_REPLACE, true)) {
+                if (in_array($use->name->toString(), self::TRAITS_TO_REPLACE, true)) {
                     if (! $addedNewImport) {
                         $newUses[] = new UseUse(new Name(self::QUEUEABLE_TRAIT));
                         $addedNewImport = true;
@@ -236,14 +229,14 @@ CODE_SAMPLE
     {
         $newUse = new Use_([new UseUse(new Name(self::QUEUEABLE_TRAIT))]);
 
-        $insertIndex = 0;
         foreach ($node->stmts as $key => $stmt) {
             if ($stmt instanceof Use_) {
-                $insertIndex = $key;
-                break;
+                array_splice($node->stmts, $key, 0, [$newUse]);
+
+                return;
             }
         }
 
-        array_splice($node->stmts, $insertIndex, 0, [$newUse]);
+        array_unshift($node->stmts, $newUse);
     }
 }
