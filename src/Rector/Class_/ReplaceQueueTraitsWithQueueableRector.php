@@ -6,9 +6,10 @@ namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Name;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
+use Rector\PostRector\Collector\UseNodesToAddCollector;
+use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -18,6 +19,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
 {
+    public function __construct(
+        private readonly UseNodesToAddCollector $useNodesToAddCollector,
+    ) {}
+
     private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
 
     private const string INTERACTS_WITH_QUEUE_TRAIT = 'Illuminate\Queue\InteractsWithQueue';
@@ -140,7 +145,8 @@ CODE_SAMPLE
 
                 if ($isQueueTrait) {
                     if (! $replacedFirst) {
-                        $newTraits[] = new FullyQualified(self::QUEUEABLE_TRAIT);
+                        $this->useNodesToAddCollector->addUseImport(new FullyQualifiedObjectType(self::QUEUEABLE_TRAIT));
+                        $newTraits[] = new Name('Queueable');
                         $replacedFirst = true;
                     }
                 } else {
