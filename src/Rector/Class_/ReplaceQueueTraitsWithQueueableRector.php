@@ -7,9 +7,11 @@ namespace RectorLaravel\Rector\Class_;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\TraitUse;
-use Rector\PostRector\Collector\UseNodesToAddCollector;
-use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\Stmt\UseUse;
+use Rector\PhpParser\Node\FileNode;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -19,10 +21,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
 {
-    public function __construct(
-        private readonly UseNodesToAddCollector $useNodesToAddCollector,
-    ) {}
-
     private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
 
     private const string INTERACTS_WITH_QUEUE_TRAIT = 'Illuminate\Queue\InteractsWithQueue';
@@ -73,47 +71,69 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [Class_::class];
+        return [Namespace_::class, FileNode::class];
     }
 
     /**
-     * @param  Class_  $node
+     * @param  Namespace_|FileNode  $node
      */
     public function refactor(Node $node): ?Node
     {
-        $traitUses = $node->getTraitUses();
-
-        if ($traitUses === []) {
+        if ($node instanceof FileNode && $node->isNamespaced()) {
             return null;
         }
 
-        $foundTraits = $this->findQueueTraits($traitUses);
+        $class = $this->findClassWithAllQueueTraits($node);
 
-        if (count($foundTraits) !== 4) {
+        if (! $class instanceof Class_) {
             return null;
         }
 
-        $this->replaceTraitsWithQueueable($node, $traitUses, $foundTraits);
+        $this->replaceTraitsInClass($class);
+        $this->replaceUseStatements($node);
 
         return $node;
     }
 
     /**
+     * @param  Namespace_|FileNode  $node
+     */
+    private function findClassWithAllQueueTraits(Node $node): ?Class_
+    {
+        foreach ($node->stmts as $stmt) {
+            if (! $stmt instanceof Class_) {
+                continue;
+            }
+
+            $traitUses = $stmt->getTraitUses();
+
+            if ($traitUses === []) {
+                continue;
+            }
+
+            $foundTraits = $this->findQueueTraits($traitUses);
+
+            if (count($foundTraits) === 4) {
+                return $stmt;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param  TraitUse[]  $traitUses
-     * @return array<string, array{traitUse: TraitUse, traitIndex: int}>
+     * @return array<string, true>
      */
     private function findQueueTraits(array $traitUses): array
     {
         $foundTraits = [];
 
         foreach ($traitUses as $traitUse) {
-            foreach ($traitUse->traits as $traitIndex => $trait) {
+            foreach ($traitUse->traits as $trait) {
                 foreach (self::TRAITS_TO_REPLACE as $traitToReplace) {
                     if ($this->isName($trait, $traitToReplace)) {
-                        $foundTraits[$traitToReplace] = [
-                            'traitUse' => $traitUse,
-                            'traitIndex' => $traitIndex,
-                        ];
+                        $foundTraits[$traitToReplace] = true;
                     }
                 }
             }
@@ -122,18 +142,15 @@ CODE_SAMPLE
         return $foundTraits;
     }
 
-    /**
-     * @param  TraitUse[]  $traitUses
-     * @param  array<string, array{traitUse: TraitUse, traitIndex: int}>  $foundTraits
-     */
-    private function replaceTraitsWithQueueable(Class_ $class, array $traitUses, array $foundTraits): void
+    private function replaceTraitsInClass(Class_ $class): void
     {
+        $traitUses = $class->getTraitUses();
         $replacedFirst = false;
 
-        foreach ($traitUses as $traitUseIndex => $traitUse) {
+        foreach ($traitUses as $traitUse) {
             $newTraits = [];
 
-            foreach ($traitUse->traits as $traitIndex => $trait) {
+            foreach ($traitUse->traits as $trait) {
                 $isQueueTrait = false;
 
                 foreach (self::TRAITS_TO_REPLACE as $traitToReplace) {
@@ -145,7 +162,6 @@ CODE_SAMPLE
 
                 if ($isQueueTrait) {
                     if (! $replacedFirst) {
-                        $this->useNodesToAddCollector->addUseImport(new FullyQualifiedObjectType(self::QUEUEABLE_TRAIT));
                         $newTraits[] = new Name('Queueable');
                         $replacedFirst = true;
                     }
@@ -158,21 +174,76 @@ CODE_SAMPLE
                 unset($class->stmts[array_search($traitUse, $class->stmts, true)]);
                 $class->stmts = array_values($class->stmts);
             } else {
-                $traitUse->traits = $this->sortTraits($newTraits);
+                $traitUse->traits = $newTraits;
             }
         }
     }
 
     /**
-     * @param  Name[]  $traits
-     * @return Name[]
+     * @param  Namespace_|FileNode  $node
      */
-    private function sortTraits(array $traits): array
+    private function replaceUseStatements(Node $node): void
     {
-        usort($traits, function (Name $a, Name $b): int {
-            return strcmp($a->toString(), $b->toString());
-        });
+        $addedNewImport = false;
+        $useStmtsToRemove = [];
 
-        return $traits;
+        foreach ($node->stmts as $key => $stmt) {
+            if (! $stmt instanceof Use_) {
+                continue;
+            }
+
+            if ($stmt->type !== Use_::TYPE_NORMAL) {
+                continue;
+            }
+
+            $newUses = [];
+
+            foreach ($stmt->uses as $use) {
+                $useName = $use->name->toString();
+
+                if (in_array($useName, self::TRAITS_TO_REPLACE, true)) {
+                    if (! $addedNewImport) {
+                        $newUses[] = new UseUse(new Name(self::QUEUEABLE_TRAIT));
+                        $addedNewImport = true;
+                    }
+                } else {
+                    $newUses[] = $use;
+                }
+            }
+
+            if ($newUses === []) {
+                $useStmtsToRemove[] = $key;
+            } else {
+                $stmt->uses = $newUses;
+            }
+        }
+
+        foreach (array_reverse($useStmtsToRemove) as $key) {
+            unset($node->stmts[$key]);
+        }
+
+        $node->stmts = array_values($node->stmts);
+
+        if (! $addedNewImport) {
+            $this->addNewImportAtTop($node);
+        }
+    }
+
+    /**
+     * @param  Namespace_|FileNode  $node
+     */
+    private function addNewImportAtTop(Node $node): void
+    {
+        $newUse = new Use_([new UseUse(new Name(self::QUEUEABLE_TRAIT))]);
+
+        $insertIndex = 0;
+        foreach ($node->stmts as $key => $stmt) {
+            if ($stmt instanceof Use_) {
+                $insertIndex = $key;
+                break;
+            }
+        }
+
+        array_splice($node->stmts, $insertIndex, 0, [$newUse]);
     }
 }
