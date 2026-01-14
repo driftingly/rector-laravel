@@ -167,10 +167,10 @@ CODE_SAMPLE
         }
     }
 
-    private function isQueueTrait(Name $trait): bool
+    private function isQueueTrait(Name $name): bool
     {
         foreach (self::TRAITS_TO_REPLACE as $traitToReplace) {
-            if ($this->isName($trait, $traitToReplace)) {
+            if ($this->isName($name, $traitToReplace)) {
                 return true;
             }
         }
