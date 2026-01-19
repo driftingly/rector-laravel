@@ -114,6 +114,12 @@ final class LaravelSetProvider implements SetProviderInterface
                 '1.0',
                 FakerSetList::FAKER_10,
             ),
+            new ComposerTriggeredSet(
+                self::GROUP_NAME,
+                'livewire/livewire',
+                '4.0',
+                LivewireSetList::LIVEWIRE_40,
+            ),
             ...$this->getLaravelVersions(),
         ];
     }
