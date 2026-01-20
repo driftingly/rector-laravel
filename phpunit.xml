@@ -9,8 +9,21 @@
     displayDetailsOnTestsThatTriggerWarnings="true"
 >
     <testsuites>
-        <testsuite name="main">
-            <directory>tests</directory>
+        <testsuite name="commands">
+            <directory>tests/Commands</directory>
+        </testsuite>
+        <testsuite name="sets">
+            <directory>tests/Sets</directory>
+        </testsuite>
+        <testsuite name="rector">
+            <directory>tests/Rector</directory>
+        </testsuite>
+        <!--
+            This on the last as tests extends AbstractLazyTestCase
+            that clear configuration
+        -->
+        <testsuite name="node-analizer">
+            <directory>tests/NodeAnalyzer</directory>
         </testsuite>
     </testsuites>
 </phpunit>
