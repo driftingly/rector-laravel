@@ -60,5 +60,10 @@
             "phpstan/extension-installer": true,
             "cweagans/composer-patches": false
         }
+    },
+    "extra": {
+        "rector": {
+            "includes": ["config/config.php"]
+        }
     }
 }
