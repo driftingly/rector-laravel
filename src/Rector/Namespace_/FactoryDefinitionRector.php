@@ -18,7 +18,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\PhpParser\Node\CustomNode\FileWithoutNamespace;
+use Rector\PhpParser\Node\FileNode;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\ModelFactoryNodeFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -89,14 +89,19 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [Namespace_::class, FileWithoutNamespace::class];
+        return [Namespace_::class, FileNode::class];
     }
 
     /**
-     * @param  Namespace_|FileWithoutNamespace  $node
+     * @param  Namespace_|FileNode  $node
      */
     public function refactor(Node $node): ?Node
     {
+        if ($node instanceof FileNode && $node->isNamespaced()) {
+            // handled in Namespace_ node
+            return null;
+        }
+
         $factories = [];
         foreach ($node->stmts as $key => $stmt) {
             if (! $stmt instanceof Expression) {
