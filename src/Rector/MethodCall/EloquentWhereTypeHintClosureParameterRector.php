@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -70,15 +71,19 @@ CODE_SAMPLE
         return [MethodCall::class, StaticCall::class];
     }
 
+    /**
+     * @param  StaticCall|MethodCall  $node
+     */
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
-            return null;
+        $type = new ObjectType('Illuminate\Contracts\Database\Eloquent\Builder');
+
+        if ($node instanceof MethodCall) {
+            $type = $this->getType($node->var);
         }
 
-        if ($this->isWhereMethodWithClosureOrArrowFunction($node)) {
-            $this->changeClosureParamType($node);
-
+        /** @phpstan-ignore argument.type */
+        if ($this->isWhereMethodWithClosureOrArrowFunction($node) && $this->changeClosureParamType($node, $type)) {
             return $node;
         }
 
@@ -95,31 +100,32 @@ CODE_SAMPLE
         ! ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): void
+    /**
+     * @param  ObjectType  $type
+     */
+    private function changeClosureParamType(MethodCall|StaticCall $node, Type $type): bool
     {
         /** @var ArrowFunction|Closure $closure */
         $closure = $node->getArgs()[0]
             ->value;
 
         if (! isset($closure->getParams()[0])) {
-            return;
+            return false;
         }
 
         $param = $closure->getParams()[0];
 
         if ($param->type instanceof Name) {
-            return;
+            return false;
         }
 
-        $classOrVar = $node instanceof MethodCall
-            ? $node->var
-            : $node->class;
+        if ($type->isObject()->no()) {
+            return false;
+        }
 
-        $type = $this->isObjectType($classOrVar, new ObjectType('Illuminate\Database\Eloquent\Model'))
-            ? 'Illuminate\Contracts\Database\Eloquent\Builder'
-            : 'Illuminate\Contracts\Database\Query\Builder';
+        $param->type = new FullyQualified($type->getClassName());
 
-        $param->type = new FullyQualified($type);
+        return true;
     }
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
