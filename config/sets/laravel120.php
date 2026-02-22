@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\ClassMethod\ScopeNamedClassMethodToScopeAttributedClassMethodRector;
 use RectorLaravel\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector;
+use RectorLaravel\Rector\MethodCall\RequestGetToRequestInputRector;
 
 // see https://laravel.com/docs/12.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
@@ -14,4 +15,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ContainerBindConcreteWithClosureOnlyRector::class);
     // https://github.com/laravel/framework/pull/54450
     $rectorConfig->rule(ScopeNamedClassMethodToScopeAttributedClassMethodRector::class);
+    $rectorConfig->rule(RequestGetToRequestInputRector::class);
 };
