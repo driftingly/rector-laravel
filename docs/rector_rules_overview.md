@@ -1,4 +1,4 @@
-# 90 Rules Overview
+# 91 Rules Overview
 
 ## AbortIfRector
 
@@ -1443,6 +1443,29 @@ Change if report to report_if
 -}
 +report_if($condition, new Exception());
 +report_unless($condition, new Exception());
+```
+
+<br>
+
+## RequestGetToRequestInputRector
+
+Replace `Illuminate\Http\Request::get()` calls with `Illuminate\Http\Request::input()`
+
+- class: [`RectorLaravel\Rector\MethodCall\RequestGetToRequestInputRector`](../src/Rector/MethodCall/RequestGetToRequestInputRector.php)
+
+```diff
+ use Illuminate\Http\Request;
+
+ class SomeController
+ {
+     public function index(Request $request)
+     {
+-        $name = $request->get('name');
+-        $name = $request->get('name', 'default');
++        $name = $request->input('name');
++        $name = $request->input('name', 'default');
+     }
+ }
 ```
 
 <br>
