@@ -13,3 +13,19 @@ class StorePostRequest extends FormRequest
     }
 }
 ?>
+-----
+<?php
+
+namespace RectorLaravel\Tests\Rector\MethodCall\RequestGetToRequestInputRector\Fixture;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StorePostRequest extends FormRequest
+{
+    public function handle()
+    {
+        $name = $this->input('name');
+        $name = $this->input('name', 'default');
+    }
+}
+?>

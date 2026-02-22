@@ -8,4 +8,4 @@ if (class_exists('Illuminate\Foundation\Http\FormRequest')) {
     return;
 }
 
-class FormRequest {}
+class FormRequest extends \Illuminate\Http\Request {}
