@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
+use Rector\Renaming\ValueObject\MethodCallRename;
 use RectorLaravel\Rector\ClassMethod\ScopeNamedClassMethodToScopeAttributedClassMethodRector;
 use RectorLaravel\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector;
 use RectorLaravel\Rector\MethodCall\RequestGetToRequestInputRector;
@@ -15,5 +17,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ContainerBindConcreteWithClosureOnlyRector::class);
     // https://github.com/laravel/framework/pull/54450
     $rectorConfig->rule(ScopeNamedClassMethodToScopeAttributedClassMethodRector::class);
-    $rectorConfig->rule(RequestGetToRequestInputRector::class);
+
+    $rectorConfig->configure()
+        ->withConfiguredRule(RenameMethodRector::class, [
+            new MethodCallRename('Illuminate\Http\Request', 'get', 'input'),
+            new MethodCallRename('Illuminate\Support\Facades\Request', 'get', 'input'),
+        ]);
 };
