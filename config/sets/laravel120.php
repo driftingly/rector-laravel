@@ -7,7 +7,6 @@ use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use RectorLaravel\Rector\ClassMethod\ScopeNamedClassMethodToScopeAttributedClassMethodRector;
 use RectorLaravel\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector;
-use RectorLaravel\Rector\MethodCall\RequestGetToRequestInputRector;
 
 // see https://laravel.com/docs/12.x/upgrade
 return static function (RectorConfig $rectorConfig): void {
