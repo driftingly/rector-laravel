@@ -1456,14 +1456,18 @@ Replace `Illuminate\Http\Request::get()` calls with `Illuminate\Http\Request::in
 ```diff
  use Illuminate\Http\Request;
 
+ use Illuminate\Support\Facades\Request;
+
  class SomeController
  {
      public function index(Request $request)
      {
 -        $name = $request->get('name');
 -        $name = $request->get('name', 'default');
+-        Request::get('name');
 +        $name = $request->input('name');
 +        $name = $request->input('name', 'default');
++        Request::input('name');
      }
  }
 ```

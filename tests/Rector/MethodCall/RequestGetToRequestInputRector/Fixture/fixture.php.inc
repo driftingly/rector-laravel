@@ -3,6 +3,7 @@
 namespace RectorLaravel\Tests\Rector\MethodCall\RequestGetToRequestInputRector\Fixture;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as RequestFacade;
 
 class SomeController
 {
@@ -10,6 +11,7 @@ class SomeController
     {
         $name = $request->get('name');
         $name = $request->get('name', 'default');
+        $name = RequestFacade::get('name');
     }
 }
 ?>
@@ -19,6 +21,7 @@ class SomeController
 namespace RectorLaravel\Tests\Rector\MethodCall\RequestGetToRequestInputRector\Fixture;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as RequestFacade;
 
 class SomeController
 {
@@ -26,6 +29,7 @@ class SomeController
     {
         $name = $request->input('name');
         $name = $request->input('name', 'default');
+        $name = RequestFacade::input('name');
     }
 }
 ?>
