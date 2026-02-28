@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Illuminate\Foundation\Http;
 
+use Illuminate\Http\Request;
+
 if (class_exists('Illuminate\Foundation\Http\FormRequest')) {
     return;
 }
 
-class FormRequest {}
+class FormRequest extends Request {}
