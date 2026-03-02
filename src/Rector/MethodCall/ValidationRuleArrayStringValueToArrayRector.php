@@ -5,9 +5,7 @@ namespace RectorLaravel\Rector\MethodCall;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
-use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\InterpolatedStringPart;
@@ -76,7 +74,7 @@ CODE_SAMPLE
         $changed = false;
 
         foreach ($array->items as $item) {
-            if ($item instanceof ArrayItem) {
+            if ($item instanceof ArrayItem && $item->key !== null) {
                 if ($item->value instanceof String_) {
                     $item->value = $this->processStringRule($item->value);
                     $changed = true;
@@ -215,12 +213,6 @@ CODE_SAMPLE
                     $hasChanged = true;
 
                     return NodeVisitor::STOP_TRAVERSAL;
-                }
-
-                // Skip closures and arrow functions to avoid processing their
-                // return statements (e.g. inside Rule::forEach callbacks).
-                if ($node instanceof Closure || $node instanceof ArrowFunction) {
-                    return NodeVisitor::DONT_TRAVERSE_CHILDREN;
                 }
 
                 if (! $node instanceof Return_) {
