@@ -22,6 +22,10 @@ class User extends Model
     protected $keyType = 'string';
 
     protected $incrementing = false;
+
+    protected $appends = [
+        'full_name',
+    ];
 }
 
 ?>
@@ -32,6 +36,9 @@ namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 
+#[\Illuminate\Database\Eloquent\Attributes\Appends([
+    'full_name',
+])]
 #[\Illuminate\Database\Eloquent\Attributes\Fillable([
     'name',
     'email',
