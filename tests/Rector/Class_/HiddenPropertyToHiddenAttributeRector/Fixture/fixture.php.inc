@@ -1,16 +1,11 @@
 <?php
 
-namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\HiddenPropertyToHiddenAttributeRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    protected $fillable = [
-        'name',
-        'email',
-    ];
-
     protected $hidden = [
         'password',
     ];
@@ -20,14 +15,10 @@ class User extends Model
 -----
 <?php
 
-namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\HiddenPropertyToHiddenAttributeRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 
-#[\Illuminate\Database\Eloquent\Attributes\Fillable([
-    'name',
-    'email',
-])]
 #[\Illuminate\Database\Eloquent\Attributes\Hidden([
     'password',
 ])]
