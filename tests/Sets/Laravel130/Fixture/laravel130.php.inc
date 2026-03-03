@@ -26,6 +26,10 @@ class User extends Model
     protected $appends = [
         'full_name',
     ];
+
+    protected $guarded = [
+        'is_admin',
+    ];
 }
 
 ?>
@@ -42,6 +46,9 @@ use Illuminate\Database\Eloquent\Model;
 #[\Illuminate\Database\Eloquent\Attributes\Fillable([
     'name',
     'email',
+])]
+#[\Illuminate\Database\Eloquent\Attributes\Guarded([
+    'is_admin',
 ])]
 #[\Illuminate\Database\Eloquent\Attributes\Hidden([
     'password',
