@@ -1,20 +1,11 @@
 <?php
 
-namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\TablePropertyToTableAttributeRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    protected $fillable = [
-        'name',
-        'email',
-    ];
-
-    protected $hidden = [
-        'password',
-    ];
-
     protected $table = 'users';
 
     protected $primaryKey = 'user_id';
@@ -28,17 +19,10 @@ class User extends Model
 -----
 <?php
 
-namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
+namespace RectorLaravel\Tests\Rector\Class_\TablePropertyToTableAttributeRector\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 
-#[\Illuminate\Database\Eloquent\Attributes\Fillable([
-    'name',
-    'email',
-])]
-#[\Illuminate\Database\Eloquent\Attributes\Hidden([
-    'password',
-])]
 #[\Illuminate\Database\Eloquent\Attributes\Table(table: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
 class User extends Model
 {
