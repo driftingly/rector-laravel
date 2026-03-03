@@ -34,6 +34,8 @@ class User extends Model
     protected $touches = [
         'posts',
     ];
+
+    protected $connection = 'sqlite';
 }
 
 ?>
@@ -47,6 +49,7 @@ use Illuminate\Database\Eloquent\Model;
 #[\Illuminate\Database\Eloquent\Attributes\Appends([
     'full_name',
 ])]
+#[\Illuminate\Database\Eloquent\Attributes\Connection('sqlite')]
 #[\Illuminate\Database\Eloquent\Attributes\Fillable([
     'name',
     'email',
