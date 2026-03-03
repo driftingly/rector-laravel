@@ -30,6 +30,10 @@ class User extends Model
     protected $guarded = [
         'is_admin',
     ];
+
+    protected $touches = [
+        'posts',
+    ];
 }
 
 ?>
@@ -54,6 +58,9 @@ use Illuminate\Database\Eloquent\Model;
     'password',
 ])]
 #[\Illuminate\Database\Eloquent\Attributes\Table(table: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
+#[\Illuminate\Database\Eloquent\Attributes\Touches([
+    'posts',
+])]
 class User extends Model
 {
 }
