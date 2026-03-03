@@ -1089,6 +1089,21 @@ Refactor Model `$casts` property with `casts()` method
 
 <br>
 
+## ModelComparisonToIsMethodRector
+
+Convert model ID comparisons to use the `is()` method
+
+- class: [`RectorLaravel\Rector\Expr\ModelComparisonToIsMethodRector`](../src/Rector/Expr/ModelComparisonToIsMethodRector.php)
+
+```diff
+-$team->user_id === $user->id;
+-$post->author_id === $author->id;
++$team->user()->is($user);
++$post->author()->is($author);
+```
+
+<br>
+
 ## NotFilledBlankFuncCallToBlankFilledFuncCallRector
 
 Swap the use of NotBooleans used with `filled()` and `blank()` to the correct helper.
