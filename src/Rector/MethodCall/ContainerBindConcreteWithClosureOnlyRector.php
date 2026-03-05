@@ -18,10 +18,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class ContainerBindConcreteWithClosureOnlyRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ReturnTypeInferer $returnTypeInferer,
-        private readonly StaticTypeMapper $staticTypeMapper,
-    ) {}
+    /**
+     * @readonly
+     */
+    private ReturnTypeInferer $returnTypeInferer;
+    /**
+     * @readonly
+     */
+    private StaticTypeMapper $staticTypeMapper;
+    public function __construct(ReturnTypeInferer $returnTypeInferer, StaticTypeMapper $staticTypeMapper)
+    {
+        $this->returnTypeInferer = $returnTypeInferer;
+        $this->staticTypeMapper = $staticTypeMapper;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

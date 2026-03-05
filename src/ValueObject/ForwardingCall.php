@@ -4,13 +4,26 @@ namespace RectorLaravel\ValueObject;
 
 use PhpParser\Node\Expr;
 
-final readonly class ForwardingCall
+final class ForwardingCall
 {
-    public function __construct(
-        private Expr $object,
-        private Expr $method,
-        private Expr $args,
-    ) {}
+    /**
+     * @readonly
+     */
+    private Expr $object;
+    /**
+     * @readonly
+     */
+    private Expr $method;
+    /**
+     * @readonly
+     */
+    private Expr $args;
+    public function __construct(Expr $object, Expr $method, Expr $args)
+    {
+        $this->object = $object;
+        $this->method = $method;
+        $this->args = $args;
+    }
 
     public function getObject(): Expr
     {

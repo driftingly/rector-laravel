@@ -88,13 +88,19 @@ CODE_SAMPLE
 
     private function getMethodNameForCast(Cast $cast): ?string
     {
-        return match (true) {
-            $cast instanceof String_ => 'string',
-            $cast instanceof Int_ => 'integer',
-            $cast instanceof Bool_ => 'boolean',
-            $cast instanceof Double => 'float',
-            $cast instanceof Array_ => 'array',
-            default => null,
-        };
+        switch (true) {
+            case $cast instanceof String_:
+                return 'string';
+            case $cast instanceof Int_:
+                return 'integer';
+            case $cast instanceof Bool_:
+                return 'boolean';
+            case $cast instanceof Double:
+                return 'float';
+            case $cast instanceof Array_:
+                return 'array';
+            default:
+                return null;
+        }
     }
 }
