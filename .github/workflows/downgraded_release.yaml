@@ -32,7 +32,7 @@ jobs:
             -   run: cp build/composer-php-74.json composer.json
 
             # run the tests against the downgraded rules
-            -   run: vendor/bin/phpunit tests
+            -   run: vendor/bin/phpunit
 
             # clear the dev files
             -   run: rm -rf build .github tests stubs phpstan.neon phpunit.xml
