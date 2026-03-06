@@ -1,0 +1,123 @@
+<?php
+
+declare(strict_types=1);
+
+namespace RectorLaravel\Rector\Class_;
+
+use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Attribute;
+use PhpParser\Node\AttributeGroup;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Class_;
+use PHPStan\Type\ObjectType;
+use RectorLaravel\AbstractRector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+
+/**
+ * @see \RectorLaravel\Tests\Rector\Class_\HiddenPropertyToHiddenAttributeRector\HiddenPropertyToHiddenAttributeRectorTest
+ */
+final class HiddenPropertyToHiddenAttributeRector extends AbstractRector
+{
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition(
+            'Changes model hidden property to use the hidden attribute',
+            [new CodeSample(
+                <<<'CODE_SAMPLE'
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $hidden = [
+        'password',
+    ];
+}
+CODE_SAMPLE,
+                <<<'CODE_SAMPLE'
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+
+#[Hidden(['password'])]
+class User extends Model
+{
+}
+CODE_SAMPLE
+            )]
+        );
+    }
+
+    /**
+     * @return array<class-string<Node>>
+     */
+    public function getNodeTypes(): array
+    {
+        return [Class_::class];
+    }
+
+    /**
+     * @param  Class_  $node
+     */
+    public function refactor(Node $node): ?Node
+    {
+        if (! $this->isObjectType($node, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
+            return null;
+        }
+
+        $hiddenProperty = $node->getProperty('hidden');
+        if ($hiddenProperty === null) {
+            return null;
+        }
+
+        if (! $hiddenProperty->isProtected()) {
+            return null;
+        }
+
+        $propertyProperty = $hiddenProperty->props[0];
+        if ($propertyProperty->default === null || ! $propertyProperty->default instanceof Array_) {
+            return null;
+        }
+
+        $hiddenArray = $propertyProperty->default;
+
+        if (! $this->isArrayOfStrings($hiddenArray)) {
+            return null;
+        }
+
+        // Add attribute to class
+        $node->attrGroups[] = new AttributeGroup([
+            new Attribute(
+                new Name('\Illuminate\Database\Eloquent\Attributes\Hidden'),
+                [new Arg($hiddenArray)]
+            ),
+        ]);
+
+        // Remove property
+        foreach ($node->stmts as $key => $stmt) {
+            if ($stmt === $hiddenProperty) {
+                unset($node->stmts[$key]);
+                break;
+            }
+        }
+
+        return $node;
+    }
+
+    private function isArrayOfStrings(Array_ $array): bool
+    {
+        foreach ($array->items as $item) {
+            if ($item === null) {
+                return false;
+            }
+
+            if (! $item->value instanceof String_) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
