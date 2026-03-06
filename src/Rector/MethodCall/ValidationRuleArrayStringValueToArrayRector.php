@@ -74,7 +74,7 @@ CODE_SAMPLE
         $changed = false;
 
         foreach ($array->items as $item) {
-            if ($item instanceof ArrayItem) {
+            if ($item instanceof ArrayItem && $item->key !== null) {
                 if ($item->value instanceof String_) {
                     $item->value = $this->processStringRule($item->value);
                     $changed = true;
