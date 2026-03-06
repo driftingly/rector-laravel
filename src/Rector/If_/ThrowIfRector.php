@@ -33,7 +33,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class ThrowIfRector extends AbstractRector
 {
-    public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {}
+    /**
+     * @readonly
+     */
+    private BetterNodeFinder $betterNodeFinder;
+    public function __construct(BetterNodeFinder $betterNodeFinder)
+    {
+        $this->betterNodeFinder = $betterNodeFinder;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -110,7 +117,7 @@ CODE_SAMPLE
         $bannedNodeTypes = [MethodCall::class, StaticCall::class, FuncCall::class, ArrayDimFetch::class, PropertyFetch::class, StaticPropertyFetch::class];
         $this->traverseNodesWithCallable($throw->expr, function (Node $node) use (&$shouldTransform, $bannedNodeTypes, $expr): ?int {
             if (
-                in_array($node::class, $bannedNodeTypes, true)
+                in_array(get_class($node), $bannedNodeTypes, true)
                 || $node instanceof Variable && ! $this->isSafeToTransformWithVariableAccess($node, $expr)
             ) {
                 $shouldTransform = false;

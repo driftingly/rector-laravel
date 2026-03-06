@@ -34,13 +34,18 @@ use Webmozart\Assert\Assert;
 final class FactoryDefinitionRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
+     * @readonly
+     */
+    private ModelFactoryNodeFactory $modelFactoryNodeFactory;
+    /**
      * @var string[]
      */
     private array $allowList = [];
 
-    public function __construct(
-        private readonly ModelFactoryNodeFactory $modelFactoryNodeFactory
-    ) {}
+    public function __construct(ModelFactoryNodeFactory $modelFactoryNodeFactory)
+    {
+        $this->modelFactoryNodeFactory = $modelFactoryNodeFactory;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
