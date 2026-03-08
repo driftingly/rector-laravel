@@ -2,6 +2,7 @@
 
 namespace RectorLaravel\Rector\MethodCall;
 
+use PhpParser\Node\Expr;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
@@ -74,7 +75,7 @@ CODE_SAMPLE
         $changed = false;
 
         foreach ($array->items as $item) {
-            if ($item instanceof ArrayItem && $item->key !== null) {
+            if ($item instanceof ArrayItem && $item->key instanceof Expr) {
                 if ($item->value instanceof String_) {
                     $item->value = $this->processStringRule($item->value);
                     $changed = true;
