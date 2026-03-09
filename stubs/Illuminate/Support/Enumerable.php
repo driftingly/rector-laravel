@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Illuminate\Support;
 
+use IteratorAggregate;
+
 if (class_exists('Illuminate\Support\Enumerable')) {
     return;
 }
@@ -14,7 +16,7 @@ if (class_exists('Illuminate\Support\Enumerable')) {
  * @template-covariant TValue
  *
  * @extends \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
- * @extends \IteratorAggregate<TKey, TValue>
+ * @extends IteratorAggregate<TKey, TValue>
  */
 interface Enumerable
 {
