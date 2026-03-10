@@ -116,7 +116,7 @@ CODE_SAMPLE
     /**
      * @param  TraitUse[]  $traitUses
      */
-    private function replaceTraitsInClass(Class_ $class, array $traitUses): void
+    private function replaceTraitsInClass(Class_ $class, array $traitUses): Class_
     {
         $replacedFirst = false;
 
@@ -141,6 +141,8 @@ CODE_SAMPLE
                 $traitUse->traits = $newTraits;
             }
         }
+        
+        return $class;
     }
 
     private function isQueueTrait(Name $name): bool
