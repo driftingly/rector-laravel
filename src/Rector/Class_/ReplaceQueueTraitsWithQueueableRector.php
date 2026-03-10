@@ -19,8 +19,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
 {
-    public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {}
-
     private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
 
     private const string INTERACTS_WITH_QUEUE_TRAIT = 'Illuminate\Queue\InteractsWithQueue';
@@ -37,6 +35,8 @@ final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
         self::QUEUEABLE_BY_BUS_TRAIT,
         self::SERIALIZES_MODELS_TRAIT,
     ];
+
+    public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -141,7 +141,7 @@ CODE_SAMPLE
                 $traitUse->traits = $newTraits;
             }
         }
-        
+
         return $class;
     }
 
