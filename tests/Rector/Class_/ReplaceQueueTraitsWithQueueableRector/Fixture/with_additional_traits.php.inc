@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 
 class JobWithAdditionalTraits
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, SomeOtherTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SomeOtherTrait, SerializesModels;
 }
 
 ?>
