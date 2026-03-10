@@ -9,6 +9,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
+use Rector\PhpParser\Node\BetterNodeFinder;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -18,6 +19,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
 {
+    public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {}
+
     private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
 
     private const string INTERACTS_WITH_QUEUE_TRAIT = 'Illuminate\Queue\InteractsWithQueue';
@@ -79,7 +82,8 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        $traitUses = $node->getTraitUses();
+        /** @var TraitUse[] $traitUses */
+        $traitUses = $this->betterNodeFinder->findInstancesOf($node, [TraitUse::class]);
 
         if ($traitUses === []) {
             return null;
@@ -89,7 +93,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $this->replaceTraitsInClass($node);
+        $this->replaceTraitsInClass($node, $traitUses);
 
         return $node;
     }
@@ -99,24 +103,29 @@ CODE_SAMPLE
      */
     private function hasAllQueueTraits(array $traitUses): bool
     {
-        $count = 0;
+        $foundTraits = [];
 
         foreach ($traitUses as $traitUse) {
             foreach ($traitUse->traits as $trait) {
-                if ($this->isQueueTrait($trait)) {
-                    $count++;
+                foreach (self::TRAITS_TO_REPLACE as $traitToReplace) {
+                    if ($this->isName($trait, $traitToReplace)) {
+                        $foundTraits[$traitToReplace] = true;
+                    }
                 }
             }
         }
 
-        return $count === 4;
+        return count($foundTraits) === count(self::TRAITS_TO_REPLACE);
     }
 
-    private function replaceTraitsInClass(Class_ $class): void
+    /**
+     * @param  TraitUse[]  $traitUses
+     */
+    private function replaceTraitsInClass(Class_ $class, array $traitUses): void
     {
         $replacedFirst = false;
 
-        foreach ($class->getTraitUses() as $traitUse) {
+        foreach ($traitUses as $traitUse) {
             $newTraits = [];
 
             foreach ($traitUse->traits as $trait) {
