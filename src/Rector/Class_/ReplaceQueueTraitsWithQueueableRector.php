@@ -82,8 +82,7 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var TraitUse[] $traitUses */
-        $traitUses = $this->betterNodeFinder->findInstancesOf($node, [TraitUse::class]);
+        $traitUses = $this->betterNodeFinder->findInstanceOf($node, TraitUse::class);
 
         if ($traitUses === []) {
             return null;
