@@ -23,11 +23,14 @@ class TraitInBetween
 
 namespace RectorLaravel\Tests\Rector\Class_\ReplaceQueueTraitsWithQueueableRector\Fixture;
 
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class TraitInBetween
 {
-    use Queueable;
+    use \Illuminate\Foundation\Queue\Queueable;
     use SomeOtherTrait;
     use AnotherTrait;
 }

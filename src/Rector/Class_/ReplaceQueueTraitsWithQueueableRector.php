@@ -6,12 +6,9 @@ namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\TraitUse;
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Stmt\UseUse;
-use Rector\PhpParser\Node\FileNode;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -55,11 +52,14 @@ class SomeJob
 }
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class SomeJob
 {
-    use Queueable;
+    use \Illuminate\Foundation\Queue\Queueable;
 }
 CODE_SAMPLE
             )]
@@ -71,52 +71,27 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [Namespace_::class, FileNode::class];
+        return [Class_::class];
     }
 
     /**
-     * @param  Namespace_|FileNode  $node
+     * @param  Class_  $node
      */
     public function refactor(Node $node): ?Node
     {
-        if ($node instanceof FileNode && $node->isNamespaced()) {
+        $traitUses = $node->getTraitUses();
+
+        if ($traitUses === []) {
             return null;
         }
 
-        $class = $this->findClassWithAllQueueTraits($node);
-
-        if (! $class instanceof Class_) {
+        if (count($this->findQueueTraits($traitUses)) !== 4) {
             return null;
         }
 
-        $this->replaceTraitsInClass($class);
-        $this->replaceUseStatements($node);
+        $this->replaceTraitsInClass($node);
 
         return $node;
-    }
-
-    /**
-     * @param  Namespace_|FileNode  $node
-     */
-    private function findClassWithAllQueueTraits(Node $node): ?Class_
-    {
-        foreach ($node->stmts as $stmt) {
-            if (! $stmt instanceof Class_) {
-                continue;
-            }
-
-            $traitUses = $stmt->getTraitUses();
-
-            if ($traitUses === []) {
-                continue;
-            }
-
-            if (count($this->findQueueTraits($traitUses)) === 4) {
-                return $stmt;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -150,7 +125,7 @@ CODE_SAMPLE
             foreach ($traitUse->traits as $trait) {
                 if ($this->isQueueTrait($trait)) {
                     if (! $replacedFirst) {
-                        $newTraits[] = new Name('Queueable');
+                        $newTraits[] = new FullyQualified(self::QUEUEABLE_TRAIT);
                         $replacedFirst = true;
                     }
                 } else {
@@ -176,67 +151,5 @@ CODE_SAMPLE
         }
 
         return false;
-    }
-
-    /**
-     * @param  Namespace_|FileNode  $node
-     */
-    private function replaceUseStatements(Node $node): void
-    {
-        $addedNewImport = false;
-        $useStmtsToRemove = [];
-
-        foreach ($node->stmts as $key => $stmt) {
-            if (! $stmt instanceof Use_ || $stmt->type !== Use_::TYPE_NORMAL) {
-                continue;
-            }
-
-            $newUses = [];
-
-            foreach ($stmt->uses as $use) {
-                if (in_array($use->name->toString(), self::TRAITS_TO_REPLACE, true)) {
-                    if (! $addedNewImport) {
-                        $newUses[] = new UseUse(new Name(self::QUEUEABLE_TRAIT));
-                        $addedNewImport = true;
-                    }
-                } else {
-                    $newUses[] = $use;
-                }
-            }
-
-            if ($newUses === []) {
-                $useStmtsToRemove[] = $key;
-            } else {
-                $stmt->uses = $newUses;
-            }
-        }
-
-        foreach (array_reverse($useStmtsToRemove) as $key) {
-            unset($node->stmts[$key]);
-        }
-
-        $node->stmts = array_values($node->stmts);
-
-        if (! $addedNewImport) {
-            $this->addNewImportAtTop($node);
-        }
-    }
-
-    /**
-     * @param  Namespace_|FileNode  $node
-     */
-    private function addNewImportAtTop(Node $node): void
-    {
-        $newUse = new Use_([new UseUse(new Name(self::QUEUEABLE_TRAIT))]);
-
-        foreach ($node->stmts as $key => $stmt) {
-            if ($stmt instanceof Use_) {
-                array_splice($node->stmts, $key, 0, [$newUse]);
-
-                return;
-            }
-        }
-
-        array_unshift($node->stmts, $newUse);
     }
 }
