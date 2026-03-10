@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector;
+use RectorLaravel\Rector\Class_\ReplaceQueueTraitsWithQueueableRector;
 use RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector;
 use RectorLaravel\Rector\MethodCall\RefactorBlueprintGeometryColumnsRector;
 
@@ -19,4 +20,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://github.com/laravel/framework/pull/52285
     $rectorConfig->rule(AssertSeeToAssertSeeHtmlRector::class);
+
+    // https://github.com/laravel/framework/commit/b397704f8a5bae532bd03fa4acf8aa08cd40c4e7
+    $rectorConfig->rule(ReplaceQueueTraitsWithQueueableRector::class);
 };
