@@ -85,7 +85,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($this->findQueueTraits($traitUses)) !== 4) {
+        if (! $this->hasAllQueueTraits($traitUses)) {
             return null;
         }
 
@@ -96,23 +96,20 @@ CODE_SAMPLE
 
     /**
      * @param  TraitUse[]  $traitUses
-     * @return array<string, true>
      */
-    private function findQueueTraits(array $traitUses): array
+    private function hasAllQueueTraits(array $traitUses): bool
     {
-        $foundTraits = [];
+        $count = 0;
 
         foreach ($traitUses as $traitUse) {
             foreach ($traitUse->traits as $trait) {
-                foreach (self::TRAITS_TO_REPLACE as $traitToReplace) {
-                    if ($this->isName($trait, $traitToReplace)) {
-                        $foundTraits[$traitToReplace] = true;
-                    }
+                if ($this->isQueueTrait($trait)) {
+                    $count++;
                 }
             }
         }
 
-        return $foundTraits;
+        return $count === 4;
     }
 
     private function replaceTraitsInClass(Class_ $class): void
