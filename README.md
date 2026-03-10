@@ -175,6 +175,7 @@ Thank you everyone who works so hard on improving this package:
 - [@peterfox](https://github.com/peterfox)
 - [@GeniJaho](https://github.com/GeniJaho)
 - [@driftingly](https://github.com/driftingly)
+- [@calebdw](https://github.com/calebdw)
 - [All Contributors](https://github.com/driftingly/rector-laravel/graphs/contributors)
 
 A special thank you to [Caneco](https://github.com/caneco) for designing the logo!
