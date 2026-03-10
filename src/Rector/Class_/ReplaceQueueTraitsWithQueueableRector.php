@@ -104,10 +104,8 @@ CODE_SAMPLE
 
         foreach ($traitUses as $traitUse) {
             foreach ($traitUse->traits as $trait) {
-                foreach (self::TRAITS_TO_REPLACE as $traitToReplace) {
-                    if ($this->isName($trait, $traitToReplace)) {
-                        $foundTraits[$traitToReplace] = true;
-                    }
+                if ($this->isQueueTrait($trait)) {
+                    $foundTraits[$this->getName($trait)] = true;
                 }
             }
         }
