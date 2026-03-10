@@ -92,9 +92,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $this->replaceTraitsInClass($node, $traitUses);
-
-        return $node;
+        return $this->replaceTraitsInClass($node, $traitUses);
     }
 
     /**
