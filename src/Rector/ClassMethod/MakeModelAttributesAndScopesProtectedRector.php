@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\ClassMethod;
 
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
@@ -136,12 +138,36 @@ CODE_SAMPLE
 
     private function isScopeMethod(ClassMethod $classMethod): bool
     {
-        $name = $this->getName($classMethod);
-
-        if ((bool) preg_match('/^scope.+$/', $name)) {
+        if ($this->phpAttributeAnalyzer->hasPhpAttribute($classMethod, 'Illuminate\Database\Eloquent\Attributes\Scope')) {
             return true;
         }
 
-        return $this->phpAttributeAnalyzer->hasPhpAttribute($classMethod, 'Illuminate\Database\Eloquent\Attributes\Scope');
+        $name = $this->getName($classMethod);
+
+        if (! (bool) preg_match('/^scope.+$/', $name)) {
+            return false;
+        }
+
+        // Skip if method has no parameters
+        if (! isset($classMethod->params[0])) {
+            return false;
+        }
+
+        // Process if return type or first parameter has no type specified
+        if (
+            ! $classMethod->returnType instanceof Node
+            || ($classMethod->params[0] instanceof Param && ! $classMethod->params[0]->type instanceof Node)
+        ) {
+            return true;
+        }
+
+        // Skip if the first parameter is not eloquent builder
+        if (! $this->isObjectType($classMethod->params[0], new ObjectType('Illuminate\Database\Eloquent\Builder'))) {
+            return false;
+        }
+
+        // Process if return type is void or eloquent builder
+        return ($classMethod->returnType instanceof Identifier && $classMethod->returnType->toString() === 'void')
+            || $this->isObjectType($classMethod->returnType, new ObjectType('Illuminate\Database\Eloquent\Builder'));
     }
 }
