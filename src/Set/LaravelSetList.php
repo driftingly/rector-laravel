@@ -40,6 +40,8 @@ final class LaravelSetList
 
     final public const string LARAVEL_120 = __DIR__ . '/../../config/sets/laravel120.php';
 
+    final public const string LARAVEL_130 = __DIR__ . '/../../config/sets/laravel130.php';
+
     final public const string LARAVEL_ARRAYACCESS_TO_METHOD_CALL = __DIR__ . '/../../config/sets/laravel-arrayaccess-to-method-call.php';
 
     final public const string LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL = __DIR__ . '/../../config/sets/laravel-array-str-functions-to-static-call.php';

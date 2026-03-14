@@ -1,4 +1,4 @@
-# 90 Rules Overview
+# 97 Rules Overview
 
 ## AbortIfRector
 
@@ -255,6 +255,27 @@ Convert `app()` to `resolve()` where applicable.
 ```diff
 -app('foo');
 +resolve('foo');
+```
+
+<br>
+
+## AppendsPropertyToAppendsAttributeRector
+
+Changes model appends property to use the appends attribute
+
+- class: [`RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector`](../src/Rector/Class_/AppendsPropertyToAppendsAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Appends;
+
++#[Appends(['full_name'])]
+ class User extends Model
+ {
+-    protected $appends = [
+-        'full_name',
+-    ];
+ }
 ```
 
 <br>
@@ -593,6 +614,25 @@ Refactor `config()` calls to use type-specific methods when the expected type is
 
 <br>
 
+## ConnectionPropertyToConnectionAttributeRector
+
+Changes model connection property to use the Connection attribute
+
+- class: [`RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector`](../src/Rector/Class_/ConnectionPropertyToConnectionAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Connection;
+
++#[Connection('sqlite')]
+ class User extends Model
+ {
+-    protected $connection = 'sqlite';
+ }
+```
+
+<br>
+
 ## ContainerBindConcreteWithClosureOnlyRector
 
 Drop the specified abstract class from the bind method and replace it with a closure that returns the abstract class.
@@ -880,6 +920,49 @@ Use the static factory method instead of global factory function.
 
 <br>
 
+## FillablePropertyToFillableAttributeRector
+
+Changes model fillable property to use the fillable attribute
+
+- class: [`RectorLaravel\Rector\Class_\FillablePropertyToFillableAttributeRector`](../src/Rector/Class_/FillablePropertyToFillableAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Fillable;
+
++#[Fillable(['name', 'email'])]
+ class User extends Model
+ {
+-    protected $fillable = [
+-        'name',
+-        'email',
+-    ];
+ }
+```
+
+<br>
+
+## GuardedPropertyToGuardedAttributeRector
+
+Changes model guarded property to use the guarded attribute
+
+- class: [`RectorLaravel\Rector\Class_\GuardedPropertyToGuardedAttributeRector`](../src/Rector/Class_/GuardedPropertyToGuardedAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Guarded;
+
++#[Guarded(['is_admin'])]
+ class User extends Model
+ {
+-    protected $guarded = [
+-        'is_admin',
+-    ];
+ }
+```
+
+<br>
+
 ## HelperFuncCallToFacadeClassRector
 
 Change `app()` func calls to facade calls
@@ -894,6 +977,27 @@ Change `app()` func calls to facade calls
 -        return app('translator')->trans('value');
 +        return \Illuminate\Support\Facades\App::make('translator')->trans('value');
      }
+ }
+```
+
+<br>
+
+## HiddenPropertyToHiddenAttributeRector
+
+Changes model hidden property to use the hidden attribute
+
+- class: [`RectorLaravel\Rector\Class_\HiddenPropertyToHiddenAttributeRector`](../src/Rector/Class_/HiddenPropertyToHiddenAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Hidden;
+
++#[Hidden(['password'])]
+ class User extends Model
+ {
+-    protected $hidden = [
+-        'password',
+-    ];
  }
 ```
 
@@ -1641,6 +1745,31 @@ Use `Str::startsWith()` or `Str::endsWith()` instead of `substr()` === `$str`
 
 <br>
 
+## TablePropertyToTableAttributeRector
+
+Changes model table-related properties to use the Table attribute
+
+- class: [`RectorLaravel\Rector\Class_\TablePropertyToTableAttributeRector`](../src/Rector/Class_/TablePropertyToTableAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Table;
+
++#[Table(table: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
+ class User extends Model
+ {
+-    protected $table = 'users';
+-
+-    protected $primaryKey = 'user_id';
+-
+-    protected $keyType = 'string';
+-
+-    protected $incrementing = false;
+ }
+```
+
+<br>
+
 ## ThrowIfAndThrowUnlessExceptionsToUseClassStringRector
 
 changes use of a new throw instance to class string
@@ -1669,6 +1798,27 @@ Change if throw to throw_if
 -}
 +throw_if($condition, new Exception());
 +throw_unless($condition, new Exception());
+```
+
+<br>
+
+## TouchesPropertyToTouchesAttributeRector
+
+Changes model touches property to use the touches attribute
+
+- class: [`RectorLaravel\Rector\Class_\TouchesPropertyToTouchesAttributeRector`](../src/Rector/Class_/TouchesPropertyToTouchesAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Touches;
+
++#[Touches(['posts'])]
+ class User extends Model
+ {
+-    protected $touches = [
+-        'posts',
+-    ];
+ }
 ```
 
 <br>
