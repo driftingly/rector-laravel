@@ -86,6 +86,10 @@ CODE_SAMPLE
 
         $appendsArray = $propertyProperty->default;
 
+        if ($appendsArray->items === []) {
+            return null;
+        }
+
         if (! $this->isArrayOfStrings($appendsArray)) {
             return null;
         }

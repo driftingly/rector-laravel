@@ -86,6 +86,10 @@ CODE_SAMPLE
 
         $touchesArray = $propertyProperty->default;
 
+        if ($touchesArray->items === []) {
+            return null;
+        }
+
         if (! $this->isArrayOfStrings($touchesArray)) {
             return null;
         }

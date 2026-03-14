@@ -86,6 +86,10 @@ CODE_SAMPLE
 
         $guardedArray = $propertyProperty->default;
 
+        if ($guardedArray->items === []) {
+            return null;
+        }
+
         if (! $this->isArrayOfStrings($guardedArray)) {
             return null;
         }

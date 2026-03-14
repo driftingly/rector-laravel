@@ -86,6 +86,10 @@ CODE_SAMPLE
 
         $hiddenArray = $propertyProperty->default;
 
+        if ($hiddenArray->items === []) {
+            return null;
+        }
+
         if (! $this->isArrayOfStrings($hiddenArray)) {
             return null;
         }

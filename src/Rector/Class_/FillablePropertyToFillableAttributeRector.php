@@ -87,6 +87,10 @@ CODE_SAMPLE
 
         $fillableArray = $propertyProperty->default;
 
+        if ($fillableArray->items === []) {
+            return null;
+        }
+
         if (! $this->isArrayOfStrings($fillableArray)) {
             return null;
         }
