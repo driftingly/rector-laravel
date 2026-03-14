@@ -13,6 +13,7 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
+use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -22,6 +23,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class HiddenPropertyToHiddenAttributeRector extends AbstractRector
 {
+    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -84,6 +87,10 @@ CODE_SAMPLE
         $hiddenArray = $propertyProperty->default;
 
         if (! $this->isArrayOfStrings($hiddenArray)) {
+            return null;
+        }
+
+        if ($this->phpAttributeAnalyzer->hasPhpAttribute($node, 'Illuminate\Database\Eloquent\Attributes\Hidden')) {
             return null;
         }
 
