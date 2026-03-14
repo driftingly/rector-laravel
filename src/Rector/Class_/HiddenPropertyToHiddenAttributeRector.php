@@ -9,7 +9,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
@@ -90,7 +90,7 @@ CODE_SAMPLE
         // Add attribute to class
         $node->attrGroups[] = new AttributeGroup([
             new Attribute(
-                new Name('\Illuminate\Database\Eloquent\Attributes\Hidden'),
+                new FullyQualified('Illuminate\Database\Eloquent\Attributes\Hidden'),
                 [new Arg($hiddenArray)]
             ),
         ]);
