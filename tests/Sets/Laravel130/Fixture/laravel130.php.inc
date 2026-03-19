@@ -38,6 +38,18 @@ class User extends Model
     protected $connection = 'sqlite';
 }
 
+final class ProcessPodcast implements \Illuminate\Contracts\Queue\ShouldQueue
+{
+    public $tries = 3;
+    public $timeout = 120;
+    public $backoff = [10, 20, 30];
+    public $queue = 'podcasts';
+    public $connection = 'redis';
+    public $failOnTimeout = true;
+    public $maxExceptions = 3;
+    public $uniqueFor = 600;
+}
+
 ?>
 -----
 <?php
@@ -65,6 +77,18 @@ use Illuminate\Database\Eloquent\Model;
     'posts',
 ])]
 class User extends Model
+{
+}
+
+#[\Illuminate\Queue\Attributes\Backoff([10, 20, 30])]
+#[\Illuminate\Queue\Attributes\FailOnTimeout(true)]
+#[\Illuminate\Queue\Attributes\Connection('redis')]
+#[\Illuminate\Queue\Attributes\MaxExceptions(3)]
+#[\Illuminate\Queue\Attributes\Queue('podcasts')]
+#[\Illuminate\Queue\Attributes\Timeout(120)]
+#[\Illuminate\Queue\Attributes\Tries(3)]
+#[\Illuminate\Queue\Attributes\UniqueFor(600)]
+final class ProcessPodcast implements \Illuminate\Contracts\Queue\ShouldQueue
 {
 }
 
