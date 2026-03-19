@@ -19,24 +19,49 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
 {
-    private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
+    /**
+     * @readonly
+     */
+    private BetterNodeFinder $betterNodeFinder;
+    /**
+     * @var string
+     */
+    private const DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
 
-    private const string INTERACTS_WITH_QUEUE_TRAIT = 'Illuminate\Queue\InteractsWithQueue';
+    /**
+     * @var string
+     */
+    private const INTERACTS_WITH_QUEUE_TRAIT = 'Illuminate\Queue\InteractsWithQueue';
 
-    private const string QUEUEABLE_BY_BUS_TRAIT = 'Illuminate\Bus\Queueable';
+    /**
+     * @var string
+     */
+    private const QUEUEABLE_BY_BUS_TRAIT = 'Illuminate\Bus\Queueable';
 
-    private const string SERIALIZES_MODELS_TRAIT = 'Illuminate\Queue\SerializesModels';
+    /**
+     * @var string
+     */
+    private const SERIALIZES_MODELS_TRAIT = 'Illuminate\Queue\SerializesModels';
 
-    private const string QUEUEABLE_TRAIT = 'Illuminate\Foundation\Queue\Queueable';
+    /**
+     * @var string
+     */
+    private const QUEUEABLE_TRAIT = 'Illuminate\Foundation\Queue\Queueable';
 
-    private const array TRAITS_TO_REPLACE = [
+    /**
+     * @var mixed[]
+     */
+    private const TRAITS_TO_REPLACE = [
         self::DISPATCHABLE_TRAIT,
         self::INTERACTS_WITH_QUEUE_TRAIT,
         self::QUEUEABLE_BY_BUS_TRAIT,
         self::SERIALIZES_MODELS_TRAIT,
     ];
 
-    public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {}
+    public function __construct(BetterNodeFinder $betterNodeFinder)
+    {
+        $this->betterNodeFinder = $betterNodeFinder;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

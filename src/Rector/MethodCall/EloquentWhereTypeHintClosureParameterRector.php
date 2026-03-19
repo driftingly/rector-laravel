@@ -22,7 +22,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class EloquentWhereTypeHintClosureParameterRector extends AbstractRector
 {
-    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
+    /**
+     * @readonly
+     */
+    private QueryBuilderAnalyzer $queryBuilderAnalyzer;
+    public function __construct(QueryBuilderAnalyzer $queryBuilderAnalyzer)
+    {
+        $this->queryBuilderAnalyzer = $queryBuilderAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -85,7 +92,10 @@ CODE_SAMPLE
         return null;
     }
 
-    private function isWhereMethodWithClosureOrArrowFunction(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function isWhereMethodWithClosureOrArrowFunction($node): bool
     {
         if (! $this->expectedObjectTypeAndMethodCall($node)) {
             return false;
@@ -95,7 +105,10 @@ CODE_SAMPLE
         ! ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): void
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function changeClosureParamType($node): void
     {
         /** @var ArrowFunction|Closure $closure */
         $closure = $node->getArgs()[0]
@@ -122,7 +135,10 @@ CODE_SAMPLE
         $param->type = new FullyQualified($type);
     }
 
-    private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function expectedObjectTypeAndMethodCall($node): bool
     {
         return $this->queryBuilderAnalyzer->isMatchingCall($node, 'where')
             || $this->queryBuilderAnalyzer->isMatchingCall($node, 'orWhere');

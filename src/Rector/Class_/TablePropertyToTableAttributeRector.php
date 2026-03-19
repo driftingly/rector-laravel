@@ -21,10 +21,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class TablePropertyToTableAttributeRector extends AbstractRector
 {
-    public function __construct(
-        private readonly TableAttributeFactory $tableAttributeFactory,
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-    ) {}
+    /**
+     * @readonly
+     */
+    private TableAttributeFactory $tableAttributeFactory;
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    public function __construct(TableAttributeFactory $tableAttributeFactory, PhpAttributeAnalyzer $phpAttributeAnalyzer)
+    {
+        $this->tableAttributeFactory = $tableAttributeFactory;
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
