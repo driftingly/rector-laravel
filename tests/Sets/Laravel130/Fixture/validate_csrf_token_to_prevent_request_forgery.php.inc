@@ -2,11 +2,9 @@
 
 namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
 
-use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+Route::post('/bar', function () {})->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class]);
 
-Route::post('/bar', function () {})->withoutMiddleware([ValidateCsrfToken::class]);
-
-class CustomValidateCsrfMiddleware extends ValidateCsrfToken
+class CustomValidateCsrfMiddleware extends \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken
 {
     protected $except = [
         'webhooks/*',
@@ -19,11 +17,9 @@ class CustomValidateCsrfMiddleware extends ValidateCsrfToken
 
 namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
 
-use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+Route::post('/bar', function () {})->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class]);
 
-Route::post('/bar', function () {})->withoutMiddleware([PreventRequestForgery::class]);
-
-class CustomValidateCsrfMiddleware extends PreventRequestForgery
+class CustomValidateCsrfMiddleware extends \Illuminate\Foundation\Http\Middleware\PreventRequestForgery
 {
     protected $except = [
         'webhooks/*',

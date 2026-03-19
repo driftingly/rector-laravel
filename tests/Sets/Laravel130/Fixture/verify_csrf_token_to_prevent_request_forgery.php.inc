@@ -2,11 +2,9 @@
 
 namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+Route::post('/foo', function () {})->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
-Route::post('/foo', function () {})->withoutMiddleware([VerifyCsrfToken::class]);
-
-class CustomCsrfMiddleware extends VerifyCsrfToken
+class CustomCsrfMiddleware extends \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken
 {
     protected $except = [
         'stripe/*',
@@ -19,11 +17,9 @@ class CustomCsrfMiddleware extends VerifyCsrfToken
 
 namespace RectorLaravel\Tests\Sets\Laravel130\Fixture;
 
-use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+Route::post('/foo', function () {})->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class]);
 
-Route::post('/foo', function () {})->withoutMiddleware([PreventRequestForgery::class]);
-
-class CustomCsrfMiddleware extends PreventRequestForgery
+class CustomCsrfMiddleware extends \Illuminate\Foundation\Http\Middleware\PreventRequestForgery
 {
     protected $except = [
         'stripe/*',
