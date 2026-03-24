@@ -49,7 +49,7 @@ CODE_SAMPLE,
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Table;
 
-#[Table(table: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
+#[Table(name: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
 class User extends Model
 {
 }
@@ -93,7 +93,7 @@ CODE_SAMPLE
         }
 
         if (! $tableValue instanceof String_ && $hasExistingAttribute) {
-            $tableValue = $this->getExistingAttributeArg($node, $tableAttributeClass, 'table');
+            $tableValue = $this->getExistingAttributeArg($node, $tableAttributeClass, 'name');
             if (! $tableValue instanceof String_) {
                 return null;
             }

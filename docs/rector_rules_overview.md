@@ -1,4 +1,4 @@
-# 98 Rules Overview
+# 106 Rules Overview
 
 ## AbortIfRector
 
@@ -469,6 +469,25 @@ Avoid negated conditionals in `filter()` by using `reject()`, or vice versa.
 
 <br>
 
+## BackoffPropertyToBackoffAttributeRector
+
+Changes the backoff property to use the Backoff attribute
+
+- class: [`RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector`](../src/Rector/Class_/BackoffPropertyToBackoffAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\Backoff;
+
++#[Backoff(3)]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $backoff = 3;
+ }
+```
+
+<br>
+
 ## CallOnAppArrayAccessToStandaloneAssignRector
 
 Replace magical call on `$this->app["something"]` to standalone type assign variable
@@ -920,6 +939,25 @@ Use the static factory method instead of global factory function.
 
 <br>
 
+## FailOnTimeoutPropertyToFailOnTimeoutAttributeRector
+
+Changes the failOnTimeout property to use the FailOnTimeout attribute
+
+- class: [`RectorLaravel\Rector\Class_\FailOnTimeoutPropertyToFailOnTimeoutAttributeRector`](../src/Rector/Class_/FailOnTimeoutPropertyToFailOnTimeoutAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\FailOnTimeout;
+
++#[FailOnTimeout(true)]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $failOnTimeout = true;
+ }
+```
+
+<br>
+
 ## FillablePropertyToFillableAttributeRector
 
 Changes model fillable property to use the fillable attribute
@@ -998,6 +1036,25 @@ Changes model hidden property to use the hidden attribute
 -    protected $hidden = [
 -        'password',
 -    ];
+ }
+```
+
+<br>
+
+## JobConnectionPropertyToJobConnectionAttributeRector
+
+Changes the connection property to use the Connection attribute on queue jobs
+
+- class: [`RectorLaravel\Rector\Class_\JobConnectionPropertyToJobConnectionAttributeRector`](../src/Rector/Class_/JobConnectionPropertyToJobConnectionAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\Connection;
+
++#[Connection('redis')]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $connection = 'redis';
  }
 ```
 
@@ -1112,6 +1169,25 @@ Makes Model attributes and scopes protected
      {
          return $query->where('active', true);
      }
+ }
+```
+
+<br>
+
+## MaxExceptionsPropertyToMaxExceptionsAttributeRector
+
+Changes the maxExceptions property to use the MaxExceptions attribute
+
+- class: [`RectorLaravel\Rector\Class_\MaxExceptionsPropertyToMaxExceptionsAttributeRector`](../src/Rector/Class_/MaxExceptionsPropertyToMaxExceptionsAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\MaxExceptions;
+
++#[MaxExceptions(3)]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $maxExceptions = 3;
  }
 ```
 
@@ -1257,6 +1333,25 @@ Change deprecated `$defer` = true; to `Illuminate\Contracts\Support\DeferrablePr
 -     * @var bool
 -     */
 -    protected $defer = true;
+ }
+```
+
+<br>
+
+## QueuePropertyToQueueAttributeRector
+
+Changes the queue property to use the Queue attribute
+
+- class: [`RectorLaravel\Rector\Class_\QueuePropertyToQueueAttributeRector`](../src/Rector/Class_/QueuePropertyToQueueAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\Queue;
+
++#[Queue('podcasts')]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $queue = 'podcasts';
  }
 ```
 
@@ -1494,6 +1589,27 @@ Replace deprecated faker property fetch with method call
 ```diff
 -$faker->name,
 +$faker->name(),
+```
+
+<br>
+
+## ReplaceQueueTraitsWithQueueableRector
+
+Replace Dispatchable, InteractsWithQueue, Queueable, and SerializesModels traits with the Queueable trait
+
+- class: [`RectorLaravel\Rector\Class_\ReplaceQueueTraitsWithQueueableRector`](../src/Rector/Class_/ReplaceQueueTraitsWithQueueableRector.php)
+
+```diff
+ use Illuminate\Bus\Queueable;
+ use Illuminate\Foundation\Bus\Dispatchable;
+ use Illuminate\Queue\InteractsWithQueue;
+ use Illuminate\Queue\SerializesModels;
+
+ class SomeJob
+ {
+-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
++    use \Illuminate\Foundation\Queue\Queueable;
+ }
 ```
 
 <br>
@@ -1755,7 +1871,7 @@ Changes model table-related properties to use the Table attribute
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Table;
 
-+#[Table(table: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
++#[Table(name: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
  class User extends Model
  {
 -    protected $table = 'users';
@@ -1802,6 +1918,25 @@ Change if throw to throw_if
 
 <br>
 
+## TimeoutPropertyToTimeoutAttributeRector
+
+Changes the timeout property to use the Timeout attribute
+
+- class: [`RectorLaravel\Rector\Class_\TimeoutPropertyToTimeoutAttributeRector`](../src/Rector/Class_/TimeoutPropertyToTimeoutAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\Timeout;
+
++#[Timeout(120)]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $timeout = 120;
+ }
+```
+
+<br>
+
 ## TouchesPropertyToTouchesAttributeRector
 
 Changes model touches property to use the touches attribute
@@ -1818,6 +1953,25 @@ Changes model touches property to use the touches attribute
 -    protected $touches = [
 -        'posts',
 -    ];
+ }
+```
+
+<br>
+
+## TriesPropertyToTriesAttributeRector
+
+Changes the tries property to use the Tries attribute
+
+- class: [`RectorLaravel\Rector\Class_\TriesPropertyToTriesAttributeRector`](../src/Rector/Class_/TriesPropertyToTriesAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\Tries;
+
++#[Tries(3)]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $tries = 3;
  }
 ```
 
@@ -1878,6 +2032,25 @@ Unify Model `$dates` property with `$casts`
      ];
 -
 -    protected $dates = ['birthday'];
+ }
+```
+
+<br>
+
+## UniqueForPropertyToUniqueForAttributeRector
+
+Changes the uniqueFor property to use the UniqueFor attribute
+
+- class: [`RectorLaravel\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector`](../src/Rector/Class_/UniqueForPropertyToUniqueForAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\UniqueFor;
+
++#[UniqueFor(1800)]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $uniqueFor = 1800;
  }
 ```
 
@@ -1993,41 +2166,6 @@ Can be configured for the Postgres driver with `[WhereToWhereLikeRector::USING_P
 +$query->whereLike('name', 'Rector');
 +$query->orWhereLike('name', 'Rector');
 +$query->whereLike('name', 'Rector', true);
-```
-
-<br>
-
-## RemoveDownMethodFromMigrationsRector
-
-Removes the `down()` method from migrations.
-
-- class: [`RectorLaravel\Rector\Class_\RemoveDownMethodFromMigrationsRector`](../src/Rector/Class_/RemoveDownMethodFromMigrationsRector.php)
-
-```diff
- use Illuminate\Database\Migrations\Migration;
- use Illuminate\Database\Schema\Blueprint;
- use Illuminate\Support\Facades\Schema;
-
- class CreateUsersTable extends Migration
- {
-    /**
-     * Run the migrations.
-     */
-     public function up(): void
-     {
-         Schema::create('users', function (Blueprint $table) {
-             $table->id();
-         });
-     }
--
--    /**
--     * Reverse the migrations.
--     */
--    public function down(): void
--    {
--        Schema::dropIfExists('users');
--    }
- }
 ```
 
 <br>
