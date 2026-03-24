@@ -23,7 +23,7 @@ jobs:
                     php-version: 8.3
                     coverage: none
 
-            -   uses: "ramsey/composer-install@v3"
+            -   uses: "ramsey/composer-install@v4"
 
             # downgrade /src to PHP 7.4
             -   run: vendor/bin/rector process src config --config build/rector-downgrade-php-74.php --ansi

@@ -18,7 +18,7 @@ final readonly class TableAttributeFactory
      */
     public function create(Expr $table, array $options): AttributeGroup
     {
-        $args = [new Arg($table, false, false, [], new Identifier('table'))];
+        $args = [new Arg($table, false, false, [], new Identifier('name'))];
 
         foreach ($options as $name => $expr) {
             $args[] = new Arg($expr, false, false, [], new Identifier($name));
