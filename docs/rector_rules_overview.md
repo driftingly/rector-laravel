@@ -1,4 +1,4 @@
-# 97 Rules Overview
+# 98 Rules Overview
 
 ## AbortIfRector
 
@@ -1993,6 +1993,41 @@ Can be configured for the Postgres driver with `[WhereToWhereLikeRector::USING_P
 +$query->whereLike('name', 'Rector');
 +$query->orWhereLike('name', 'Rector');
 +$query->whereLike('name', 'Rector', true);
+```
+
+<br>
+
+## RemoveDownMethodFromMigrationsRector
+
+Removes the `down()` method from migrations.
+
+- class: [`RectorLaravel\Rector\Class_\RemoveDownMethodFromMigrationsRector`](../src/Rector/Class_/RemoveDownMethodFromMigrationsRector.php)
+
+```diff
+ use Illuminate\Database\Migrations\Migration;
+ use Illuminate\Database\Schema\Blueprint;
+ use Illuminate\Support\Facades\Schema;
+
+ class CreateUsersTable extends Migration
+ {
+    /**
+     * Run the migrations.
+     */
+     public function up(): void
+     {
+         Schema::create('users', function (Blueprint $table) {
+             $table->id();
+         });
+     }
+-
+-    /**
+-     * Reverse the migrations.
+-     */
+-    public function down(): void
+-    {
+-        Schema::dropIfExists('users');
+-    }
+ }
 ```
 
 <br>
