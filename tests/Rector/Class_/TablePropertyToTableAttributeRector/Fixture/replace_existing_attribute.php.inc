@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\Class_\TablePropertyToTableAttributeRector\
 
 use Illuminate\Database\Eloquent\Model;
 
-#[\Illuminate\Database\Eloquent\Attributes\Table(table: 'customers')]
+#[\Illuminate\Database\Eloquent\Attributes\Table(name: 'customers')]
 class ReplaceExistingAttribute extends Model
 {
     protected $table = 'users';
@@ -20,7 +20,7 @@ namespace RectorLaravel\Tests\Rector\Class_\TablePropertyToTableAttributeRector\
 
 use Illuminate\Database\Eloquent\Model;
 
-#[\Illuminate\Database\Eloquent\Attributes\Table(table: 'users', key: 'user_id')]
+#[\Illuminate\Database\Eloquent\Attributes\Table(name: 'users', key: 'user_id')]
 class ReplaceExistingAttribute extends Model
 {
 }

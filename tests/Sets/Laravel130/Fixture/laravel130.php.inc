@@ -72,7 +72,7 @@ use Illuminate\Database\Eloquent\Model;
 #[\Illuminate\Database\Eloquent\Attributes\Hidden([
     'password',
 ])]
-#[\Illuminate\Database\Eloquent\Attributes\Table(table: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
+#[\Illuminate\Database\Eloquent\Attributes\Table(name: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
 #[\Illuminate\Database\Eloquent\Attributes\Touches([
     'posts',
 ])]
