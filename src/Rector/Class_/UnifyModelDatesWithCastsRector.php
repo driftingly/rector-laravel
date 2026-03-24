@@ -133,7 +133,7 @@ CODE_SAMPLE
         $missingDates = array_diff($dates, array_keys($casts));
         try {
             Assert::allString($missingDates);
-        } catch (\Webmozart\Assert\InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             return null;
         }
 
