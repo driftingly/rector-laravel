@@ -17,7 +17,7 @@ namespace RectorLaravel\Tests\Rector\Class_\TablePropertyToTableAttributeRector\
 
 use Illuminate\Database\Eloquent\Model;
 
-#[\Illuminate\Database\Eloquent\Attributes\Table(table: 'users')]
+#[\Illuminate\Database\Eloquent\Attributes\Table(name: 'users')]
 class UserOnlyTable extends Model
 {
 }
