@@ -19,6 +19,7 @@ use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
+use Webmozart\Assert\InvalidArgumentException;
 
 /**
  * @changelog https://github.com/laravel/framework/pull/32856
@@ -93,8 +94,15 @@ CODE_SAMPLE
             return null;
         }
 
+        /** @var mixed[] $dates */
         $dates = $this->valueResolver->getValue($datesPropertyProperty->default);
         if (! is_array($dates)) {
+            return null;
+        }
+
+        try {
+            Assert::allString($dates);
+        } catch (InvalidArgumentException) {
             return null;
         }
 
@@ -115,10 +123,19 @@ CODE_SAMPLE
             return null;
         }
 
+        /** @var array<string, mixed> $casts */
         $casts = $this->valueResolver->getValue($castsPropertyProperty->default);
+        if (! is_array($casts)) {
+            return null;
+        }
+
         // exclude attributes added in $casts
         $missingDates = array_diff($dates, array_keys($casts));
-        Assert::allString($missingDates);
+        try {
+            Assert::allString($missingDates);
+        } catch (\Webmozart\Assert\InvalidArgumentException) {
+            return null;
+        }
 
         foreach ($missingDates as $missingDate) {
             $castsPropertyProperty->default->items[] = new ArrayItem(
