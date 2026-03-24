@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\Name\RenameClassRector;
 use RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector;
 use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
@@ -38,4 +39,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
     $rectorConfig->rule(TriesPropertyToTriesAttributeRector::class);
     $rectorConfig->rule(UniqueForPropertyToUniqueForAttributeRector::class);
+
+    // see https://laravel.com/docs/13.x/upgrade#request-forgery-protection
+    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Illuminate\Foundation\Http\Middleware\VerifyCsrfToken' => 'Illuminate\Foundation\Http\Middleware\PreventRequestForgery',
+        'Illuminate\Foundation\Http\Middleware\ValidateCsrfToken' => 'Illuminate\Foundation\Http\Middleware\PreventRequestForgery',
+    ]);
 };
