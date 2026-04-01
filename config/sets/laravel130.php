@@ -16,6 +16,7 @@ use RectorLaravel\Rector\Class_\MaxExceptionsPropertyToMaxExceptionsAttributeRec
 use RectorLaravel\Rector\Class_\QueuePropertyToQueueAttributeRector;
 use RectorLaravel\Rector\Class_\TablePropertyToTableAttributeRector;
 use RectorLaravel\Rector\Class_\TimeoutPropertyToTimeoutAttributeRector;
+use RectorLaravel\Rector\Class_\TimestampsPropertyToTimestampsAttributeRector;
 use RectorLaravel\Rector\Class_\TouchesPropertyToTouchesAttributeRector;
 use RectorLaravel\Rector\Class_\TriesPropertyToTriesAttributeRector;
 use RectorLaravel\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector;
@@ -36,6 +37,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(QueuePropertyToQueueAttributeRector::class);
     $rectorConfig->rule(TablePropertyToTableAttributeRector::class);
     $rectorConfig->rule(TimeoutPropertyToTimeoutAttributeRector::class);
+    $rectorConfig->rule(TimestampsPropertyToTimestampsAttributeRector::class);
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
     $rectorConfig->rule(TriesPropertyToTriesAttributeRector::class);
     $rectorConfig->rule(UniqueForPropertyToUniqueForAttributeRector::class);

@@ -1937,6 +1937,25 @@ Changes the timeout property to use the Timeout attribute
 
 <br>
 
+## TimestampsPropertyToTimestampsAttributeRector
+
+Changes the timestamps property to use the WithoutTimestamps attribute
+
+- class: [`RectorLaravel\Rector\Class_\TimestampsPropertyToTimestampsAttributeRector`](../src/Rector/Class_/TimestampsPropertyToTimestampsAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
+
++#[WithoutTimestamps]
+ final class User extends Model
+ {
+-    public $timestamps = false;
+ }
+```
+
+<br>
+
 ## TouchesPropertyToTouchesAttributeRector
 
 Changes model touches property to use the touches attribute
