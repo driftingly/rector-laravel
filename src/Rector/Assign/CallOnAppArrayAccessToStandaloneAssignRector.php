@@ -27,15 +27,30 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 {
     /**
+     * @readonly
+     */
+    private AppAssignFactory $appAssignFactory;
+    /**
+     * @readonly
+     */
+    private DocBlockUpdater $docBlockUpdater;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
      * @var ServiceNameTypeAndVariableName[]
      */
     private array $serviceNameTypeAndVariableNames = [];
 
     public function __construct(
-        private readonly AppAssignFactory $appAssignFactory,
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly ValueResolver $valueResolver,
+        AppAssignFactory $appAssignFactory,
+        DocBlockUpdater $docBlockUpdater,
+        ValueResolver $valueResolver
     ) {
+        $this->appAssignFactory = $appAssignFactory;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->valueResolver = $valueResolver;
         $this->serviceNameTypeAndVariableNames[] = new ServiceNameTypeAndVariableName(
             'validator',
             'Illuminate\Validation\Factory',

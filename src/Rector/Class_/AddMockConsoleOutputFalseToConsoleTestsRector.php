@@ -33,13 +33,34 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddMockConsoleOutputFalseToConsoleTestsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PropertyFetchAnalyzer $propertyFetchAnalyzer,
-        private readonly SetUpMethodDecorator $setUpMethodDecorator,
-        private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly BetterNodeFinder $betterNodeFinder,
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    /**
+     * @readonly
+     */
+    private PropertyFetchAnalyzer $propertyFetchAnalyzer;
+    /**
+     * @readonly
+     */
+    private SetUpMethodDecorator $setUpMethodDecorator;
+    /**
+     * @readonly
+     */
+    private VisibilityManipulator $visibilityManipulator;
+    /**
+     * @readonly
+     */
+    private BetterNodeFinder $betterNodeFinder;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    public function __construct(PropertyFetchAnalyzer $propertyFetchAnalyzer, SetUpMethodDecorator $setUpMethodDecorator, VisibilityManipulator $visibilityManipulator, BetterNodeFinder $betterNodeFinder, ValueResolver $valueResolver)
+    {
+        $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
+        $this->setUpMethodDecorator = $setUpMethodDecorator;
+        $this->visibilityManipulator = $visibilityManipulator;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->valueResolver = $valueResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

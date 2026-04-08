@@ -23,17 +23,29 @@ use Webmozart\Assert\Assert;
  */
 class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    final public const string ALLOWED_PATTERNS = 'allowed_patterns';
+    /**
+     * @readonly
+     */
+    private QueryBuilderAnalyzer $queryBuilderAnalyzer;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
+     * @var string
+     */
+    public const ALLOWED_PATTERNS = 'allowed_patterns';
 
     /**
      * @var string[]
      */
     private array $allowedPatterns = ['*_at', '*_date', '*_on'];
 
-    public function __construct(
-        private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer,
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    public function __construct(QueryBuilderAnalyzer $queryBuilderAnalyzer, ValueResolver $valueResolver)
+    {
+        $this->queryBuilderAnalyzer = $queryBuilderAnalyzer;
+        $this->valueResolver = $valueResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
