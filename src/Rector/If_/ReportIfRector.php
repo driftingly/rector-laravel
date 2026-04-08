@@ -71,7 +71,6 @@ CODE_SAMPLE
             $this->isName($ifStmts[0]->expr, 'report')
         ) {
             $condition = $node->cond;
-            /** @var FuncCall $abortCall */
             $abortCall = $ifStmts[0]->expr;
 
             if ($this->exceptionUsesVariablesAssignedByCondition($abortCall, $condition)) {

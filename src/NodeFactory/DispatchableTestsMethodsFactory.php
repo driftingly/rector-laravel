@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\NodeFactory;
 
 use PhpParser\Node\Arg;
