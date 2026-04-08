@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel;
 
 use Rector\Rector\AbstractRector as BaseAbstractRector;

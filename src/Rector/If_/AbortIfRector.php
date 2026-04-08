@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\Rector\If_;
 
 use PhpParser\Node;
@@ -71,7 +73,6 @@ CODE_SAMPLE
             $this->isName($ifStmts[0]->expr, 'abort')
         ) {
             $condition = $node->cond;
-            /** @var FuncCall $abortCall */
             $abortCall = $ifStmts[0]->expr;
 
             if ($this->exceptionUsesVariablesAssignedByCondition($abortCall, $condition)) {

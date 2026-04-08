@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\Set\Packages\Faker;
 
 final class FakerSetList
