@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RectorLaravel\Tests\Sets;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Rector\Set\Contract\SetInterface;
+use RectorLaravel\Set\LaravelLevelSetList;
 use RectorLaravel\Set\LaravelSetList;
 use RectorLaravel\Set\LaravelSetProvider;
 
@@ -30,10 +33,7 @@ final class LaravelSetProviderTest extends TestCase
         LaravelSetList::LARAVEL_50,
     ];
 
-    /**
-     * @test
-     */
-    public function it_provides_sets(): void
+    public function testIt_provides_sets(): void
     {
         $laravelSetProvider = new LaravelSetProvider;
 
@@ -43,24 +43,18 @@ final class LaravelSetProviderTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_returns_unique_sets(): void
+    public function testIt_returns_unique_sets(): void
     {
         $laravelSetProvider = new LaravelSetProvider;
 
         $sets = $laravelSetProvider->provide();
 
-        $uniqueSets = array_unique(array_map(fn (SetInterface $set) => $set->getSetFilePath(), $sets));
+        $uniqueSets = array_unique(array_map(fn (SetInterface $set): string => $set->getSetFilePath(), $sets));
 
         Assert::assertCount(count($sets), $uniqueSets);
     }
 
-    /**
-     * @test
-     */
-    public function it_provides_all_laravel_versions(): void
+    public function testIt_provides_all_laravel_versions(): void
     {
         $laravelSetProvider = new LaravelSetProvider;
 
@@ -68,12 +62,18 @@ final class LaravelSetProviderTest extends TestCase
 
         $filePaths = array_filter(
             array_map(
-                fn (SetInterface $set) => $set->getSetFilePath(),
+                fn (SetInterface $set): string => $set->getSetFilePath(),
                 $sets
             ),
-            fn (string $filePath) => in_array($filePath, self::LARAVEL_VERSION_SETS, true),
+            fn (string $filePath): bool => in_array($filePath, self::LARAVEL_VERSION_SETS, true),
         );
 
         Assert::assertSame(self::LARAVEL_VERSION_SETS, array_values($filePaths));
+    }
+
+    public function testIt_exposes_laravel_130_without_attributes_sets(): void
+    {
+        Assert::assertFileExists(LaravelSetList::LARAVEL_130_WITHOUT_ATTRIBUTES);
+        Assert::assertFileExists(LaravelLevelSetList::UP_TO_LARAVEL_130_WITHOUT_ATTRIBUTES);
     }
 }

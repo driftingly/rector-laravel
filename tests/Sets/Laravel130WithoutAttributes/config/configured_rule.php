@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use RectorLaravel\Set\LaravelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->import(__DIR__ . '/laravel130-core.php');
-    $rectorConfig->import(__DIR__ . '/laravel130-attributes.php');
+    $rectorConfig->sets([LaravelSetList::LARAVEL_130_WITHOUT_ATTRIBUTES]);
 };
