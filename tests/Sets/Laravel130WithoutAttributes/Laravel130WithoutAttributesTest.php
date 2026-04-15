@@ -15,6 +15,9 @@ final class Laravel130WithoutAttributesTest extends AbstractRectorTestCase
         return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
+    /**
+     * @test
+     */
     #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
