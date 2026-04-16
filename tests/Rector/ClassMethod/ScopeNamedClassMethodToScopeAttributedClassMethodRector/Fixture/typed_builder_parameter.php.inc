@@ -2,13 +2,14 @@
 
 namespace RectorLaravel\Tests\Rector\ScopeNamedClassMethodToScopeAttributedClassMethodRector\Fixture;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class SomeClass extends Model
+class TypedBuilderParameter extends Model
 {
-    public function scopeSomeMethod($query)
+    public function scopeActive(Builder $query)
     {
-
+        return $query->where('active', 1);
     }
 }
 
@@ -18,14 +19,15 @@ class SomeClass extends Model
 
 namespace RectorLaravel\Tests\Rector\ScopeNamedClassMethodToScopeAttributedClassMethodRector\Fixture;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class SomeClass extends Model
+class TypedBuilderParameter extends Model
 {
     #[\Illuminate\Database\Eloquent\Attributes\Scope]
-    protected function someMethod($query)
+    protected function active(Builder $query)
     {
-
+        return $query->where('active', 1);
     }
 }
 

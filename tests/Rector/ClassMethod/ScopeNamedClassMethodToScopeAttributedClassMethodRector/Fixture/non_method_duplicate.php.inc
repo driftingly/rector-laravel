@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NonDuplicateMethod extends Model
 {
-    public function scopeSomeMethod()
+    public function scopeSomeMethod($query)
     {
 
     }
