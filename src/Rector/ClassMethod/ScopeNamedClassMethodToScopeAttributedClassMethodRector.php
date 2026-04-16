@@ -94,7 +94,7 @@ CODE_SAMPLE
             }
 
             $name = $this->getName($classMethod);
-            $newName = lcfirst(str_replace('scope', '', $name));
+            $newName = lcfirst(substr($name, 5));
 
             if ($classReflection->hasMethod($newName)) {
                 continue;
