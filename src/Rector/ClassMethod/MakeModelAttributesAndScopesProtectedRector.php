@@ -97,7 +97,7 @@ CODE_SAMPLE
             return true;
         }
 
-        if (! $this->isAttributeMethod($classMethod) && ! $this->isScopeMethod($classMethod)) {
+        if (! $this->isAttributeMethod($classMethod) && ! $this->scopeAnalyzer->isScopeMethod($classMethod)) {
             return true;
         }
 
@@ -132,10 +132,5 @@ CODE_SAMPLE
         }
 
         return $this->isObjectType($classMethod->returnType, new ObjectType('Illuminate\Database\Eloquent\Casts\Attribute'));
-    }
-
-    private function isScopeMethod(ClassMethod $classMethod): bool
-    {
-        return $this->scopeAnalyzer->isScopeMethod($classMethod);
     }
 }
