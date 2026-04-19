@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RectorLaravel\NodeAnalyzer;
 
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -24,18 +23,18 @@ final readonly class ScopeAnalyzer
     ) {}
 
     /**
-     * Checks for the "scope" + uppercase char naming convention, a Builder-typed
-     * first parameter, and a void/Builder/untyped return.
+     * Checks for the "scope" + uppercase char naming convention and a
+     * Builder-typed (or untyped) first parameter.
      */
     public function isNamedScope(ClassMethod $classMethod): bool
     {
-        $name = $this->nodeNameResolver->getName($classMethod);
+        $name = (string) $this->nodeNameResolver->getName($classMethod);
 
-        if ($name === null || ! str_starts_with($name, 'scope') || strlen($name) <= 5 || ! ctype_upper($name[5])) {
+        if (! preg_match('/^scope[A-Z].+$/', $name)) {
             return false;
         }
 
-        return $this->hasBuilderFirstParameter($classMethod) && $this->hasScopeReturnType($classMethod);
+        return $this->hasBuilderFirstParameter($classMethod);
     }
 
     /**
@@ -60,18 +59,5 @@ final readonly class ScopeAnalyzer
         }
 
         return $this->nodeTypeResolver->isObjectType($firstParam->type, new ObjectType(self::ELOQUENT_BUILDER));
-    }
-
-    private function hasScopeReturnType(ClassMethod $classMethod): bool
-    {
-        if ($classMethod->returnType === null) {
-            return true;
-        }
-
-        if ($classMethod->returnType instanceof Identifier && $classMethod->returnType->toString() === 'void') {
-            return true;
-        }
-
-        return $this->nodeTypeResolver->isObjectType($classMethod->returnType, new ObjectType(self::ELOQUENT_BUILDER));
     }
 }
