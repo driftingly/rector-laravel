@@ -8,11 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SkipNonScopeSignatures extends Model
 {
-    public function scopeString(Builder $query): string
-    {
-        return 'foo';
-    }
-
     public function scopeParam(string $param): Builder
     {
         return $this->where('foo', true);
