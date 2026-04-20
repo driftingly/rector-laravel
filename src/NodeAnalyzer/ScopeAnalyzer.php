@@ -30,7 +30,7 @@ final readonly class ScopeAnalyzer
     {
         $name = (string) $this->nodeNameResolver->getName($classMethod);
 
-        if (! preg_match('/^scope[A-Z].+$/', $name)) {
+        if (! (bool) preg_match('/^scope[A-Z].+$/', $name)) {
             return false;
         }
 
