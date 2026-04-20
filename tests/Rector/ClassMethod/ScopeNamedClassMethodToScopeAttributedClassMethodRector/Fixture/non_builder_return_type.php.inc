@@ -2,13 +2,14 @@
 
 namespace RectorLaravel\Tests\Rector\ScopeNamedClassMethodToScopeAttributedClassMethodRector\Fixture;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class SomeClass extends Model
+class NonBuilderReturnType extends Model
 {
-    public function scopeSomeMethod($query)
+    public function scopeString(Builder $query): string
     {
-
+        return 'foo';
     }
 }
 
@@ -18,14 +19,15 @@ class SomeClass extends Model
 
 namespace RectorLaravel\Tests\Rector\ScopeNamedClassMethodToScopeAttributedClassMethodRector\Fixture;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class SomeClass extends Model
+class NonBuilderReturnType extends Model
 {
     #[\Illuminate\Database\Eloquent\Attributes\Scope]
-    protected function someMethod($query)
+    protected function string(Builder $query): string
     {
-
+        return 'foo';
     }
 }
 

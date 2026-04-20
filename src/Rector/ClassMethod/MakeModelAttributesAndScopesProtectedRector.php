@@ -9,10 +9,10 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
-use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\ScopeAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -23,7 +23,7 @@ class MakeModelAttributesAndScopesProtectedRector extends AbstractRector
 {
     public function __construct(
         private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer
+        private readonly ScopeAnalyzer $scopeAnalyzer,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -97,7 +97,7 @@ CODE_SAMPLE
             return true;
         }
 
-        if (! $this->isAttributeMethod($classMethod) && ! $this->isScopeMethod($classMethod)) {
+        if (! $this->isAttributeMethod($classMethod) && ! $this->scopeAnalyzer->isScopeMethod($classMethod)) {
             return true;
         }
 
@@ -132,16 +132,5 @@ CODE_SAMPLE
         }
 
         return $this->isObjectType($classMethod->returnType, new ObjectType('Illuminate\Database\Eloquent\Casts\Attribute'));
-    }
-
-    private function isScopeMethod(ClassMethod $classMethod): bool
-    {
-        $name = $this->getName($classMethod);
-
-        if ((bool) preg_match('/^scope.+$/', $name)) {
-            return true;
-        }
-
-        return $this->phpAttributeAnalyzer->hasPhpAttribute($classMethod, 'Illuminate\Database\Eloquent\Attributes\Scope');
     }
 }

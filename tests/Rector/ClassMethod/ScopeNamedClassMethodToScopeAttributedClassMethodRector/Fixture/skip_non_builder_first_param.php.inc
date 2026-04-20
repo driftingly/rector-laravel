@@ -4,16 +4,10 @@ namespace RectorLaravel\Tests\Rector\ScopeNamedClassMethodToScopeAttributedClass
 
 use Illuminate\Database\Eloquent\Model;
 
-class NonDuplicateMethod extends Model
+class SkipNonBuilderFirstParam extends Model
 {
-    public function scopeSomeMethod($query)
+    public function scopeCategory(string $category): void
     {
-
-    }
-
-    public function someMethod()
-    {
-
     }
 }
 
