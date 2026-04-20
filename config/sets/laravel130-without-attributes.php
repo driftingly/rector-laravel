@@ -6,5 +6,4 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/laravel130-core.php');
-    $rectorConfig->import(__DIR__ . '/laravel130-attributes.php');
 };
