@@ -37,4 +37,6 @@ final class LaravelLevelSetList
     final public const string UP_TO_LARAVEL_120 = __DIR__ . '/../../config/sets/level/up-to-laravel-120.php';
 
     final public const string UP_TO_LARAVEL_130 = __DIR__ . '/../../config/sets/level/up-to-laravel-130.php';
+
+    final public const string UP_TO_LARAVEL_130_WITHOUT_ATTRIBUTES = __DIR__ . '/../../config/sets/level/up-to-laravel-130-without-attributes.php';
 }
