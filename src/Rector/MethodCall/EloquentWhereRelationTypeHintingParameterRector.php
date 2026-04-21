@@ -11,6 +11,8 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -72,15 +74,19 @@ CODE_SAMPLE
         return [MethodCall::class, StaticCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    /**
+     * @param  MethodCall|StaticCall  $node
+     */
+    public function refactor(Node $node): MethodCall|StaticCall|null
     {
-        if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
-            return null;
+        $type = new ObjectType('Illuminate\Contracts\Database\Eloquent\Builder');
+
+        if ($node instanceof MethodCall) {
+            $type = $this->getType($node->var);
         }
 
-        if ($this->isWhereRelationMethodWithClosureOrArrowFunction($node)) {
-            $this->changeClosureParamType($node);
-
+        /** @phpstan-ignore argument.type */
+        if ($this->isWhereRelationMethodWithClosureOrArrowFunction($node) && $this->changeClosureParamType($node, $type)) {
             return $node;
         }
 
@@ -103,7 +109,10 @@ CODE_SAMPLE
         ! ($node->getArgs()[$position]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): void
+    /**
+     * @param  ObjectType  $type
+     */
+    private function changeClosureParamType(MethodCall|StaticCall $node, Type $type): bool
     {
         // Morph methods have the closure in the 3rd position, others use the 2nd.
         $position = $this->isNames(
@@ -115,16 +124,22 @@ CODE_SAMPLE
         $closure = $node->getArgs()[$position]->value;
 
         if (! isset($closure->getParams()[0])) {
-            return;
+            return false;
         }
 
         $param = $closure->getParams()[0];
 
         if ($param->type instanceof Name) {
-            return;
+            return false;
         }
 
-        $param->type = new FullyQualified('Illuminate\Contracts\Database\Query\Builder');
+        if ($type->isObject()->no()) {
+            return false;
+        }
+
+        $param->type = new FullyQualified($type->getClassName());
+
+        return true;
     }
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
