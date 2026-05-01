@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector;
+namespace RectorLaravel\Tests\Sets\Laravel130WithoutAttributes;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class DispatchToHelperFunctionsRectorTest extends AbstractRectorTestCase
+final class Laravel130WithoutAttributesTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {

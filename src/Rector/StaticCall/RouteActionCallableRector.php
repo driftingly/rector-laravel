@@ -243,7 +243,7 @@ CODE_SAMPLE
         }
 
         [$controller, $method] = $segments;
-        $namespace = $this->getNamespace($this->file->getFilePath());
+        $namespace = $this->getNamespace($this->getFile()->getFilePath());
         if ($groupNamespace !== null) {
             $namespace .= '\\' . $groupNamespace;
         }

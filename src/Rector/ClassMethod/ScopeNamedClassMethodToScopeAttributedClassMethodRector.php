@@ -15,6 +15,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\ScopeAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -28,6 +29,7 @@ final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends Abst
     public function __construct(
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
         private readonly ReflectionProvider $reflectionProvider,
+        private readonly ScopeAnalyzer $scopeAnalyzer,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -87,13 +89,12 @@ CODE_SAMPLE
                 continue;
             }
 
-            $name = $this->getName($classMethod);
-            // make sure it starts with scope and the next character is upper case
-            if (! str_starts_with($name, 'scope') || ! ctype_upper(substr($name, 5, 1))) {
+            if (! $this->scopeAnalyzer->isNamedScope($classMethod)) {
                 continue;
             }
 
-            $newName = lcfirst(str_replace('scope', '', $name));
+            $name = $this->getName($classMethod);
+            $newName = lcfirst(substr($name, 5));
 
             if ($classReflection->hasMethod($newName)) {
                 continue;
