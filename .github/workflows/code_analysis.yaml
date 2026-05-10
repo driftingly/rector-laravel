@@ -33,6 +33,10 @@ jobs:
                         name: 'PHPStan'
                         run: composer phpstan
 
+                    -
+                        name: 'Structarmed'
+                        run: composer structarmed
+
         name: ${{ matrix.actions.name }}
 
         steps:

@@ -20,7 +20,8 @@
         "symplify/rule-doc-generator": "^12.2",
         "tightenco/duster": "^3.1",
         "nette/utils": "^4.0",
-        "tracy/tracy": "^2.10"
+        "tracy/tracy": "^2.10",
+        "boundwize/structarmed": "^0.3.3"
     },
     "autoload": {
         "psr-4": {
@@ -37,6 +38,7 @@
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --ansi",
+        "structarmed": "vendor/bin/structarmed analyze",
         "test": "vendor/bin/phpunit tests",
         "lint": "vendor/bin/duster lint",
         "fix": "vendor/bin/duster fix",
@@ -48,7 +50,8 @@
             "@fix",
             "@phpstan",
             "@docs",
-            "@test"
+            "@test",
+            "@structarmed"
         ],
         "make:rule": "php commands/make-rule.php"
     },

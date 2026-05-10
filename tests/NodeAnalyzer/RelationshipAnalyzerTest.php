@@ -1,6 +1,6 @@
 <?php
 
-namespace NodeAnalyzer;
+namespace RectorLaravel\Tests\NodeAnalyzer;
 
 use Exception;
 use PhpParser\Node\Expr\MethodCall;
