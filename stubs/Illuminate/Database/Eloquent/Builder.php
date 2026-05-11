@@ -11,7 +11,7 @@ if (class_exists('Illuminate\Database\Eloquent\Builder')) {
 /**
  * @template TModel of \Illuminate\Database\Eloquent\Model
  *
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin QueryBuilder
  */
 class Builder extends QueryBuilder implements \Illuminate\Contracts\Database\Eloquent\Builder
 {

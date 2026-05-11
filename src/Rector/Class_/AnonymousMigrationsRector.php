@@ -11,6 +11,7 @@ use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\NodeAnalyzer\ClassAnalyzer;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\AnonymousMigrationsRector\AnonymousMigrationsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -18,7 +19,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://github.com/laravel/framework/pull/36906
  * @changelog https://github.com/laravel/framework/pull/37352
  *
- * @see \RectorLaravel\Tests\Rector\Class_\AnonymousMigrationsRector\AnonymousMigrationsRectorTest
+ * @see AnonymousMigrationsRectorTest
  */
 final class AnonymousMigrationsRector extends AbstractRector
 {

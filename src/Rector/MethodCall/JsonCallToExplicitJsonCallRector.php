@@ -12,11 +12,12 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\JsonCallToExplicitJsonCallRector\JsonCallToExplicitJsonCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\JsonCallToExplicitJsonCallRector\JsonCallToExplicitJsonCallRectorTest
+ * @see JsonCallToExplicitJsonCallRectorTest
  */
 final class JsonCallToExplicitJsonCallRector extends AbstractRector
 {

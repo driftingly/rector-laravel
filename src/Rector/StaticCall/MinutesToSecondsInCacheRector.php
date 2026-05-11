@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\Int_;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\StaticCall\MinutesToSecondsInCacheRector\MinutesToSecondsInCacheRectorTest;
 use RectorLaravel\ValueObject\TypeToTimeMethodAndPosition;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -20,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://github.com/laravel/framework/pull/27276
  * @changelog https://laravel.com/docs/5.8/upgrade#cache-ttl-in-seconds
  *
- * @see \RectorLaravel\Tests\Rector\StaticCall\MinutesToSecondsInCacheRector\MinutesToSecondsInCacheRectorTest
+ * @see MinutesToSecondsInCacheRectorTest
  */
 final class MinutesToSecondsInCacheRector extends AbstractRector
 {

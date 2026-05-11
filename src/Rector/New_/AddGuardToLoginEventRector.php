@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\New_\AddGuardToLoginEventRector\AddGuardToLoginEventRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @changelog https://github.com/laravel/framework/commit/f5d8c0a673aa9fc6cd94aa4858a0027fe550a22e#diff-162a49c054acde9f386ec735607b95bc4a1c0c765a6f46da8de9a8a4ef5199d3
  * @changelog https://github.com/laravel/framework/pull/25261
  *
- * @see \RectorLaravel\Tests\Rector\New_\AddGuardToLoginEventRector\AddGuardToLoginEventRectorTest
+ * @see AddGuardToLoginEventRectorTest
  */
 final class AddGuardToLoginEventRector extends AbstractRector
 {

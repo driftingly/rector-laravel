@@ -13,11 +13,12 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
+use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\EloquentWhereRelationTypeHintingParameterRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\EloquentWhereRelationTypeHintingParameterRector\EloquentWhereRelationTypeHintingParameterRectorTest
+ * @see EloquentWhereRelationTypeHintingParameterRectorTest
  */
 class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
 {

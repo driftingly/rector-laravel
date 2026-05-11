@@ -8,11 +8,12 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\Cast\String_;
 use PhpParser\Node\Expr\StaticCall;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Cast\DatabaseExpressionCastsToMethodCallRector\DatabaseExpressionCastsToMethodCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Cast\DatabaseExpressionCastsToMethodCallRector\DatabaseExpressionCastsToMethodCallRectorTest
+ * @see DatabaseExpressionCastsToMethodCallRectorTest
  */
 final class DatabaseExpressionCastsToMethodCallRector extends AbstractRector
 {

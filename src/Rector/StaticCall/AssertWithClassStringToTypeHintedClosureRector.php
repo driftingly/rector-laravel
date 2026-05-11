@@ -12,11 +12,12 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name\FullyQualified;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\FacadeAssertionAnalyzer;
+use RectorLaravel\Tests\Rector\StaticCall\AssertWithClassStringToTypeHintedClosureRector\AssertWithClassStringToTypeHintedClosureRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\StaticCall\AssertWithClassStringToTypeHintedClosureRector\AssertWithClassStringToTypeHintedClosureRectorTest
+ * @see AssertWithClassStringToTypeHintedClosureRectorTest
  */
 final class AssertWithClassStringToTypeHintedClosureRector extends AbstractRector
 {

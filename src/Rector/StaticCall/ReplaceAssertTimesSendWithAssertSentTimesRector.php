@@ -7,11 +7,12 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\StaticCall\ReplaceAssertTimesSendWithAssertSentTimesRector\ReplaceAssertTimesSendWithAssertSentTimesRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\StaticCall\ReplaceAssertTimesSendWithAssertSentTimesRector\ReplaceAssertTimesSendWithAssertSentTimesRectorTest
+ * @see ReplaceAssertTimesSendWithAssertSentTimesRectorTest
  */
 class ReplaceAssertTimesSendWithAssertSentTimesRector extends AbstractRector
 {

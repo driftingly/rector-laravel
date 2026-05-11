@@ -7,12 +7,13 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\StaticCall\CarbonToDateFacadeRector\CarbonToDateFacadeRectorTest;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\StaticCall\CarbonToDateFacadeRector\CarbonToDateFacadeRectorTest
+ * @see CarbonToDateFacadeRectorTest
  */
 final class CarbonToDateFacadeRector extends AbstractRector
 {

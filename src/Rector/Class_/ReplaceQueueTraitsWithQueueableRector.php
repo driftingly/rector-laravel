@@ -11,11 +11,12 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\ReplaceQueueTraitsWithQueueableRector\ReplaceQueueTraitsWithQueueableRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Class_\ReplaceQueueTraitsWithQueueableRector\ReplaceQueueTraitsWithQueueableRectorTest
+ * @see ReplaceQueueTraitsWithQueueableRectorTest
  */
 final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
 {

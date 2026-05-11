@@ -21,6 +21,7 @@ use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\PhpParser\Node\FileNode;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\ModelFactoryNodeFactory;
+use RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\FactoryDefinitionRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -29,7 +30,7 @@ use Webmozart\Assert\Assert;
  * @changelog https://laravel.com/docs/7.x/database-testing#writing-factories
  * @changelog https://laravel.com/docs/8.x/database-testing#defining-model-factories
  *
- * @see \RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\FactoryDefinitionRectorTest
+ * @see FactoryDefinitionRectorTest
  */
 final class FactoryDefinitionRector extends AbstractRector implements ConfigurableRectorInterface
 {

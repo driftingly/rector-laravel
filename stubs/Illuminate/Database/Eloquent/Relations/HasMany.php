@@ -2,6 +2,8 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Illuminate\Database\Eloquent\Collection;
+
 if (class_exists('Illuminate\Database\Eloquent\Relations\HasMany')) {
     return;
 }
@@ -10,6 +12,6 @@ if (class_exists('Illuminate\Database\Eloquent\Relations\HasMany')) {
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  *
- * @extends \Illuminate\Database\Eloquent\Relations\HasOneOrMany<TRelatedModel, TDeclaringModel, \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>>
+ * @extends HasOneOrMany<TRelatedModel, TDeclaringModel, Collection<int, TRelatedModel>>
  */
 class HasMany extends HasOneOrMany {}
