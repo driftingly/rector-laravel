@@ -18,11 +18,12 @@ use PhpParser\Node\Stmt\If_;
 use PhpParser\NodeVisitor;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\If_\AbortIfRector\AbortIfRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\If_\AbortIfRector\AbortIfRectorTest
+ * @see AbortIfRectorTest
  */
 class AbortIfRector extends AbstractRector
 {

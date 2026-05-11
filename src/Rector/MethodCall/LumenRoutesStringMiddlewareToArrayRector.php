@@ -11,11 +11,12 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\LumenRouteRegisteringMethodAnalyzer;
+use RectorLaravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector\LumenRoutesStringMiddlewareToArrayRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\LumenRoutesStringMiddlewareToArrayRector\LumenRoutesStringMiddlewareToArrayRectorTest
+ * @see LumenRoutesStringMiddlewareToArrayRectorTest
  */
 final class LumenRoutesStringMiddlewareToArrayRector extends AbstractRector
 {

@@ -13,11 +13,12 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector\UniqueForPropertyToUniqueForAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector\UniqueForPropertyToUniqueForAttributeRectorTest
+ * @see UniqueForPropertyToUniqueForAttributeRectorTest
  */
 final class UniqueForPropertyToUniqueForAttributeRector extends AbstractRector
 {

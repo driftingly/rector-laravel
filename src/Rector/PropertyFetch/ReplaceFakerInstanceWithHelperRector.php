@@ -16,11 +16,12 @@ use PHPStan\Reflection\ReflectionProvider;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeVisitor\RandomEnumContextNodeVisitor;
+use RectorLaravel\Tests\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector\ReplaceFakerInstanceWithHelperRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector\ReplaceFakerInstanceWithHelperRectorTest
+ * @see ReplaceFakerInstanceWithHelperRectorTest
  */
 final class ReplaceFakerInstanceWithHelperRector extends AbstractRector
 {

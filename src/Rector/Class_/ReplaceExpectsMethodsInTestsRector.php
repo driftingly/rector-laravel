@@ -16,12 +16,13 @@ use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\ExpectedClassMethodAnalyzer;
 use RectorLaravel\NodeFactory\DispatchableTestsMethodsFactory;
+use RectorLaravel\Tests\Rector\Class_\ReplaceExpectsMethodsInTestsRector\ReplaceExpectsMethodsInTestsRectorTest;
 use RectorLaravel\ValueObject\ExpectedClassMethodMethodCalls;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Class_\ReplaceExpectsMethodsInTestsRector\ReplaceExpectsMethodsInTestsRectorTest
+ * @see ReplaceExpectsMethodsInTestsRectorTest
  */
 class ReplaceExpectsMethodsInTestsRector extends AbstractRector
 {

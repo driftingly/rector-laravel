@@ -7,11 +7,12 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\StaticCall;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\ArrayDimFetch\EnvVariableToEnvHelperRector\EnvVariableToEnvHelperRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ArrayDimFetch\EnvVariableToEnvHelperRector\EnvVariableToEnvHelperRectorTest
+ * @see EnvVariableToEnvHelperRectorTest
  */
 class EnvVariableToEnvHelperRector extends AbstractRector
 {

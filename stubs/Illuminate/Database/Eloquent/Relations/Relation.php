@@ -2,6 +2,9 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
 if (class_exists('Illuminate\Database\Eloquent\Relations\Relation')) {
     return;
 }
@@ -11,14 +14,14 @@ if (class_exists('Illuminate\Database\Eloquent\Relations\Relation')) {
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  * @template TResult
  *
- * @mixin \Illuminate\Database\Eloquent\Builder<TRelatedModel>
+ * @mixin Builder<TRelatedModel>
  */
 abstract class Relation
 {
     /**
      * An array to map morph names to their class names in the database.
      *
-     * @var array<string, class-string<\Illuminate\Database\Eloquent\Model>>
+     * @var array<string, class-string<Model>>
      */
     public static $morphMap = [];
 
@@ -46,7 +49,7 @@ abstract class Relation
     /**
      * The Eloquent query builder instance.
      *
-     * @var \Illuminate\Database\Eloquent\Builder<TRelatedModel>
+     * @var Builder<TRelatedModel>
      */
     protected $query;
 

@@ -8,11 +8,12 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\Empty_;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Empty_\EmptyToBlankAndFilledFuncRector\EmptyToBlankAndFilledFuncRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Empty_\EmptyToBlankAndFilledFuncRector\EmptyToBlankAndFilledFuncRectorTest
+ * @see EmptyToBlankAndFilledFuncRectorTest
  */
 class EmptyToBlankAndFilledFuncRector extends AbstractRector
 {

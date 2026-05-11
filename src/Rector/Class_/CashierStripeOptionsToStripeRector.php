@@ -13,13 +13,14 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\CashierStripeOptionsToStripeRector\CashierStripeOptionsToStripeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md#upgrading-to-130-from-12x
  *
- * @see \RectorLaravel\Tests\Rector\Class_\CashierStripeOptionsToStripeRector\CashierStripeOptionsToStripeRectorTest
+ * @see CashierStripeOptionsToStripeRectorTest
  */
 final class CashierStripeOptionsToStripeRector extends AbstractRector
 {

@@ -6,11 +6,12 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\AppToResolveRector\AppToResolveRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\FuncCall\AppToResolveRector\AppToResolveRectorTest
+ * @see AppToResolveRectorTest
  */
 class AppToResolveRector extends AbstractRector
 {

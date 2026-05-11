@@ -8,11 +8,12 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\FuncCall;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\NotFilledBlankFuncCallToBlankFilledFuncCallRector\NotFilledBlankFuncCallToBlankFilledFuncCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\FuncCall\NotFilledBlankFuncCallToBlankFilledFuncCallRector\NotFilledBlankFuncCallToBlankFilledFuncCallRectorTest
+ * @see NotFilledBlankFuncCallToBlankFilledFuncCallRectorTest
  */
 class NotFilledBlankFuncCallToBlankFilledFuncCallRector extends AbstractRector
 {

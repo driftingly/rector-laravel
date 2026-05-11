@@ -9,11 +9,12 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector\ThrowIfAndThrowUnlessExceptionsToUseClassStringRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector\ThrowIfAndThrowUnlessExceptionsToUseClassStringRectorTest
+ * @see ThrowIfAndThrowUnlessExceptionsToUseClassStringRectorTest
  */
 class ThrowIfAndThrowUnlessExceptionsToUseClassStringRector extends AbstractRector
 {

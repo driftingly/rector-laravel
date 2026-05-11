@@ -27,12 +27,14 @@ use Rector\PHPStan\ScopeFetcher;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\ApplicationAnalyzer;
+use RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorNewGenericsTest;
+use RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorOldGenericsTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorNewGenericsTest
- * @see \RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorOldGenericsTest
+ * @see AddGenericReturnTypeToRelationsRectorNewGenericsTest
+ * @see AddGenericReturnTypeToRelationsRectorOldGenericsTest
  */
 class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {

@@ -9,11 +9,12 @@ use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\StaticCall;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeVisitor\ArrayDimFetchContextNodeVisitor;
+use RectorLaravel\Tests\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector\ServerVariableToRequestFacadeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector\ServerVariableToRequestFacadeRectorTest
+ * @see ServerVariableToRequestFacadeRectorTest
  */
 class ServerVariableToRequestFacadeRector extends AbstractRector
 {

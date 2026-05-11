@@ -12,13 +12,14 @@ use PHPStan\Reflection\ReflectionProvider;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\StaticCallAnalyzer;
+use RectorLaravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector\AddParentRegisterToEventServiceProviderRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://laravel.com/docs/8.x/upgrade#the-event-service-provider-class
  *
- * @see \RectorLaravel\Tests\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRector\AddParentRegisterToEventServiceProviderRectorTest
+ * @see AddParentRegisterToEventServiceProviderRectorTest
  */
 final class AddParentRegisterToEventServiceProviderRector extends AbstractRector
 {

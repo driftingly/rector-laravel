@@ -16,6 +16,7 @@ use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\NodeManipulator\ClassInsertManipulator;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\UnifyModelDatesWithCastsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -24,7 +25,7 @@ use Webmozart\Assert\InvalidArgumentException;
 /**
  * @changelog https://github.com/laravel/framework/pull/32856
  *
- * @see \RectorLaravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\UnifyModelDatesWithCastsRectorTest
+ * @see UnifyModelDatesWithCastsRectorTest
  */
 final class UnifyModelDatesWithCastsRector extends AbstractRector
 {

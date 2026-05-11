@@ -13,6 +13,8 @@ use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector\AddHasFactoryToModelsRectorConfiguredTest;
+use RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector\AddHasFactoryToModelsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -20,8 +22,8 @@ use Webmozart\Assert\Assert;
 /**
  * @changelog https://github.com/laravel/framework/pull/39310
  *
- * @see \RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector\AddHasFactoryToModelsRectorTest
- * @see \RectorLaravel\Tests\Rector\Class_\AddHasFactoryToModelsRector\AddHasFactoryToModelsRectorConfiguredTest
+ * @see AddHasFactoryToModelsRectorTest
+ * @see AddHasFactoryToModelsRectorConfiguredTest
  */
 final class AddHasFactoryToModelsRector extends AbstractRector implements ConfigurableRectorInterface
 {

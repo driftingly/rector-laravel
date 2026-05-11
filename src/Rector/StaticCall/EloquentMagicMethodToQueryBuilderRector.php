@@ -16,12 +16,13 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector\EloquentMagicMethodToQueryBuilderRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**
- * @see \RectorLaravel\Tests\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector\EloquentMagicMethodToQueryBuilderRectorTest
+ * @see EloquentMagicMethodToQueryBuilderRectorTest
  */
 final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector implements ConfigurableRectorInterface
 {

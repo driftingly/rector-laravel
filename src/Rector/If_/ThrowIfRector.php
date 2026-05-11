@@ -25,11 +25,12 @@ use PhpParser\NodeVisitor;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\If_\ThrowIfRector\ThrowIfRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\If_\ThrowIfRector\ThrowIfRectorTest
+ * @see ThrowIfRectorTest
  */
 class ThrowIfRector extends AbstractRector
 {

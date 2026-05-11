@@ -9,11 +9,12 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\ReverseConditionableMethodCallRector\ReverseConditionableMethodCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\ReverseConditionableMethodCallRector\ReverseConditionableMethodCallRectorTest
+ * @see ReverseConditionableMethodCallRectorTest
  */
 class ReverseConditionableMethodCallRector extends AbstractRector
 {
