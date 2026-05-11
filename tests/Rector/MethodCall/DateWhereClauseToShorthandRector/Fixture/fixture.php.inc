@@ -4,12 +4,8 @@ namespace RectorLaravel\Tests\Rector\MethodCall\DateWhereClauseToShorthandRector
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
-
-final class Post extends Model
-{
-}
+use RectorLaravel\Tests\Rector\MethodCall\DateWhereClauseToShorthandRector\Source\Post;
 
 final class SomeClass
 {
@@ -46,12 +42,8 @@ namespace RectorLaravel\Tests\Rector\MethodCall\DateWhereClauseToShorthandRector
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
-
-final class Post extends Model
-{
-}
+use RectorLaravel\Tests\Rector\MethodCall\DateWhereClauseToShorthandRector\Source\Post;
 
 final class SomeClass
 {

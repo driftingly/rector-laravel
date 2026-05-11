@@ -14,6 +14,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -31,7 +32,7 @@ final class DateWhereClauseToShorthandRector extends AbstractRector
             '>' => 'whereFuture',
             '>=' => 'whereNowOrFuture',
         ],
-        'orwhere' => [
+        'orWhere' => [
             '<' => 'orWherePast',
             '<=' => 'orWhereNowOrPast',
             '>' => 'orWhereFuture',
@@ -40,14 +41,14 @@ final class DateWhereClauseToShorthandRector extends AbstractRector
     ];
 
     private const array WHERE_TODAY_METHODS = [
-        'wheredate' => [
+        'whereDate' => [
             '=' => 'whereToday',
             '<' => 'whereBeforeToday',
             '<=' => 'whereTodayOrBefore',
             '>' => 'whereAfterToday',
             '>=' => 'whereTodayOrAfter',
         ],
-        'orwheredate' => [
+        'orWhereDate' => [
             '=' => 'orWhereToday',
             '<' => 'orWhereBeforeToday',
             '<=' => 'orWhereTodayOrBefore',
@@ -55,6 +56,10 @@ final class DateWhereClauseToShorthandRector extends AbstractRector
             '>=' => 'orWhereTodayOrAfter',
         ],
     ];
+
+    public function __construct(
+        private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer,
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -97,11 +102,14 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isSupportedCaller($node)) {
+        $callName = $this->getName($node->name);
+        if (! is_string($callName)) {
             return null;
         }
 
-        $callName = strtolower((string) $this->getName($node->name));
+        if (! $this->queryBuilderAnalyzer->isMatchingCall($node, $callName)) {
+            return null;
+        }
 
         if (isset(self::WHERE_NOW_METHODS[$callName])) {
             return $this->refactorWhereNowCall($node, $callName);
@@ -112,17 +120,6 @@ CODE_SAMPLE
         }
 
         return null;
-    }
-
-    private function isSupportedCaller(MethodCall|StaticCall $node): bool
-    {
-        if ($node instanceof StaticCall) {
-            return $this->isObjectType($node->class, new ObjectType('Illuminate\Database\Eloquent\Model'));
-        }
-
-        return $this->isObjectType($node->var, new ObjectType('Illuminate\Contracts\Database\Query\Builder'))
-            || $this->isObjectType($node->var, new ObjectType('Illuminate\Database\Query\Builder'))
-            || $this->isObjectType($node->var, new ObjectType('Illuminate\Database\Eloquent\Builder'));
     }
 
     private function refactorWhereNowCall(MethodCall|StaticCall $node, string $callName): ?Node
@@ -216,7 +213,7 @@ CODE_SAMPLE
             return $this->isName($expr, 'now') && $expr->args === [];
         }
 
-        return $this->isCarbonStaticCallNamed($expr, 'now');
+        return $this->isDateTimeStaticCallNamed($expr, 'now');
     }
 
     private function isTodayExpression(Expr $expr): bool
@@ -225,10 +222,10 @@ CODE_SAMPLE
             return $this->isName($expr, 'today') && $expr->args === [];
         }
 
-        return $this->isCarbonStaticCallNamed($expr, 'today');
+        return $this->isDateTimeStaticCallNamed($expr, 'today');
     }
 
-    private function isCarbonStaticCallNamed(Expr $expr, string $methodName): bool
+    private function isDateTimeStaticCallNamed(Expr $expr, string $methodName): bool
     {
         if (! $expr instanceof StaticCall) {
             return false;
@@ -238,7 +235,9 @@ CODE_SAMPLE
             return false;
         }
 
-        return $this->isObjectType($expr->class, new ObjectType('Carbon\Carbon'))
-            || $this->isObjectType($expr->class, new ObjectType('Illuminate\Support\Carbon'));
+        $objectType = new ObjectType('DateTimeInterface');
+        $callerType = $this->nodeTypeResolver->getType($expr->class);
+
+        return $objectType->isSuperTypeOf($callerType)->yes();
     }
 }
