@@ -15,13 +15,14 @@ use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\ReplaceServiceContainerCallArgRector\ReplaceServiceContainerCallArgRectorTest;
 use RectorLaravel\ValueObject\ReplaceServiceContainerCallArg;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\ReplaceServiceContainerCallArgRector\ReplaceServiceContainerCallArgRectorTest
+ * @see ReplaceServiceContainerCallArgRectorTest
  */
 class ReplaceServiceContainerCallArgRector extends AbstractRector implements ConfigurableRectorInterface
 {

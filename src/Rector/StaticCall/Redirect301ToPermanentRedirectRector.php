@@ -11,13 +11,14 @@ use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\StaticCall\Redirect301ToPermanentRedirectRector\Redirect301ToPermanentRedirectRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://laravel.com/docs/5.7/upgrade
  *
- * @see \RectorLaravel\Tests\Rector\StaticCall\Redirect301ToPermanentRedirectRector\Redirect301ToPermanentRedirectRectorTest
+ * @see Redirect301ToPermanentRedirectRectorTest
  */
 final class Redirect301ToPermanentRedirectRector extends AbstractRector
 {

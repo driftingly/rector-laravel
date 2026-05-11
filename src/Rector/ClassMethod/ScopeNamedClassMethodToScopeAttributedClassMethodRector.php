@@ -16,11 +16,12 @@ use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\ScopeAnalyzer;
+use RectorLaravel\Tests\Rector\ClassMethod\ScopeNamedClassMethodToScopeAttributedClassMethodRector\ScopeNamedClassMethodToScopeAttributedClassMethodRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ClassMethod\ScopeNamedClassMethodToScopeAttributedClassMethodRector\ScopeNamedClassMethodToScopeAttributedClassMethodRectorTest
+ * @see ScopeNamedClassMethodToScopeAttributedClassMethodRectorTest
  */
 final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends AbstractRector
 {

@@ -12,11 +12,12 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Expr\SubStrToStartsWithOrEndsWithStaticMethodCallRector\SubStrToStartsWithOrEndsWithStaticMethodCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Expr\SubStrToStartsWithOrEndsWithStaticMethodCallRector\SubStrToStartsWithOrEndsWithStaticMethodCallRectorTest
+ * @see SubStrToStartsWithOrEndsWithStaticMethodCallRectorTest
  */
 class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
@@ -58,7 +59,7 @@ CODE_SAMPLE
             return null;
         }
 
-        /** @var Expr\FuncCall|null $functionCall */
+        /** @var FuncCall|null $functionCall */
         $functionCall = array_values(
             array_filter([$node->left, $node->right], fn ($node) => $node instanceof FuncCall && $this->isName(
                 $node,

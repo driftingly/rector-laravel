@@ -18,13 +18,14 @@ use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector\AddExtendsAnnotationToModelFactoriesRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://github.com/laravel/framework/pull/39169
  *
- * @see \RectorLaravel\Tests\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector\AddExtendsAnnotationToModelFactoriesRectorTest
+ * @see AddExtendsAnnotationToModelFactoriesRectorTest
  */
 final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
 {

@@ -15,11 +15,12 @@ use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\ModelCastsPropertyToCastsMethodRector\ModelCastsPropertyToCastsMethodRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Class_\ModelCastsPropertyToCastsMethodRector\ModelCastsPropertyToCastsMethodRectorTest
+ * @see ModelCastsPropertyToCastsMethodRectorTest
  */
 class ModelCastsPropertyToCastsMethodRector extends AbstractRector
 {

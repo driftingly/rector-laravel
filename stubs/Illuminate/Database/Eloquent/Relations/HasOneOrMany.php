@@ -7,6 +7,6 @@ namespace Illuminate\Database\Eloquent\Relations;
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  * @template TResult
  *
- * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TDeclaringModel, TResult>
+ * @extends Relation<TRelatedModel, TDeclaringModel, TResult>
  */
 abstract class HasOneOrMany extends Relation {}

@@ -15,11 +15,12 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\HiddenPropertyToHiddenAttributeRector\HiddenPropertyToHiddenAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Class_\HiddenPropertyToHiddenAttributeRector\HiddenPropertyToHiddenAttributeRectorTest
+ * @see HiddenPropertyToHiddenAttributeRectorTest
  */
 final class HiddenPropertyToHiddenAttributeRector extends AbstractRector
 {

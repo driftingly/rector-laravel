@@ -17,11 +17,12 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector\ValidationRuleArrayStringValueToArrayRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector\ValidationRuleArrayStringValueToArrayRectorTest
+ * @see ValidationRuleArrayStringValueToArrayRectorTest
  */
 class ValidationRuleArrayStringValueToArrayRector extends AbstractRector
 {

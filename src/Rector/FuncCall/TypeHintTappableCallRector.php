@@ -12,11 +12,12 @@ use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\TypeHintTappableCallRector\TypeHintTappableCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\FuncCall\TypeHintTappableCallRector\TypeHintTappableCallRectorTest
+ * @see TypeHintTappableCallRectorTest
  */
 class TypeHintTappableCallRector extends AbstractRector
 {

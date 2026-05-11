@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector\FactoryFuncCallToStaticCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -19,7 +20,7 @@ use Webmozart\Assert\Assert;
  * @changelog https://laravel.com/docs/7.x/database-testing#creating-models
  * @changelog https://laravel.com/docs/8.x/database-testing#instantiating-models
  *
- * @see \RectorLaravel\Tests\Rector\FuncCall\FactoryFuncCallToStaticCallRector\FactoryFuncCallToStaticCallRectorTest
+ * @see FactoryFuncCallToStaticCallRectorTest
  */
 final class FactoryFuncCallToStaticCallRector extends AbstractRector implements ConfigurableRectorInterface
 {

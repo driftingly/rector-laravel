@@ -9,13 +9,14 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\RemoveModelPropertyFromFactoriesRector\RemoveModelPropertyFromFactoriesRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://github.com/laravel/framework/pull/39310
  *
- * @see \RectorLaravel\Tests\Rector\Class_\RemoveModelPropertyFromFactoriesRector\RemoveModelPropertyFromFactoriesRectorTest
+ * @see RemoveModelPropertyFromFactoriesRectorTest
  */
 final class RemoveModelPropertyFromFactoriesRector extends AbstractRector
 {

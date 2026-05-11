@@ -9,11 +9,12 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector\AssertSeeToAssertSeeHtmlRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector\AssertSeeToAssertSeeHtmlRectorTest
+ * @see AssertSeeToAssertSeeHtmlRectorTest
  */
 final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
 {

@@ -21,6 +21,7 @@ use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -30,7 +31,7 @@ use Webmozart\Assert\Assert;
  * @changelog https://github.com/laravel/framework/pull/38868
  * @changelog https://wiki.php.net/rfc/nullsafe_operator
  *
- * @see \RectorLaravel\Tests\Rector\PropertyFetch\OptionalToNullsafeOperatorRector\OptionalToNullsafeOperatorRectorTest
+ * @see OptionalToNullsafeOperatorRectorTest
  */
 final class OptionalToNullsafeOperatorRector extends AbstractRector implements ConfigurableRectorInterface, MinPhpVersionInterface
 {

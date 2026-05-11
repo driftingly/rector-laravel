@@ -13,11 +13,12 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\Class_\ConnectionPropertyToConnectionAttributeRector\ConnectionPropertyToConnectionAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Class_\ConnectionPropertyToConnectionAttributeRector\ConnectionPropertyToConnectionAttributeRectorTest
+ * @see ConnectionPropertyToConnectionAttributeRectorTest
  */
 final class ConnectionPropertyToConnectionAttributeRector extends AbstractRector
 {

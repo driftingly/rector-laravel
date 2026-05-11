@@ -123,7 +123,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return array<string, list<Node\Arg>>|null
+     * @return array<string, list<Arg>>|null
      */
     private function findQueryStringProperties(Property $property): ?array
     {
@@ -178,7 +178,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  list<Node\Arg>  $args
+     * @param  list<Arg>  $args
      */
     private function addUrlAttributeToProperty(Property $property, array $args): void
     {
@@ -194,7 +194,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return list<Node\Arg>|null
+     * @return list<Arg>|null
      */
     private function processArrayOptionsIntoArgs(Array_ $array): ?array
     {

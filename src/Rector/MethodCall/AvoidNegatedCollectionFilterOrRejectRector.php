@@ -12,11 +12,12 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\AvoidNegatedCollectionFilterOrRejectRector\AvoidNegatedCollectionFilterOrRejectRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\AvoidNegatedCollectionFilterOrRejectRector\AvoidNegatedCollectionFilterOrRejectRectorTest
+ * @see AvoidNegatedCollectionFilterOrRejectRectorTest
  */
 final class AvoidNegatedCollectionFilterOrRejectRector extends AbstractRector
 {

@@ -19,13 +19,14 @@ use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\StaticCall\RequestStaticValidateToInjectRector\RequestStaticValidateToInjectRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://github.com/laravel/framework/pull/27276
  *
- * @see \RectorLaravel\Tests\Rector\StaticCall\RequestStaticValidateToInjectRector\RequestStaticValidateToInjectRectorTest
+ * @see RequestStaticValidateToInjectRectorTest
  */
 final class RequestStaticValidateToInjectRector extends AbstractRector
 {
