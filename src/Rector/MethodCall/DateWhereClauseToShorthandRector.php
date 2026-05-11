@@ -131,7 +131,11 @@ CODE_SAMPLE
             return null;
         }
 
-        $operator = $this->resolveStringArgumentValue($node->args[1] ?? null);
+        if (! $node->args[1] instanceof Arg) {
+            return null;
+        }
+
+        $operator = $this->resolveStringArgumentValue($node->args[1]);
         if ($operator === null || ! isset(self::WHERE_NOW_METHODS[$callName][$operator])) {
             return null;
         }
@@ -165,7 +169,11 @@ CODE_SAMPLE
             return null;
         }
 
-        $operator = $this->resolveStringArgumentValue($node->args[1] ?? null);
+        if (! $node->args[1] instanceof Arg) {
+            return null;
+        }
+
+        $operator = $this->resolveStringArgumentValue($node->args[1]);
         if ($operator === null || ! isset(self::WHERE_TODAY_METHODS[$callName][$operator])) {
             return null;
         }
@@ -181,12 +189,8 @@ CODE_SAMPLE
         return $this->renameAndKeepFirstArgument($node, self::WHERE_TODAY_METHODS[$callName][$operator]);
     }
 
-    private function resolveStringArgumentValue(?Arg $arg): ?string
+    private function resolveStringArgumentValue(Arg $arg): ?string
     {
-        if (! $arg instanceof Arg) {
-            return null;
-        }
-
         if (! $arg->value instanceof String_) {
             return null;
         }
