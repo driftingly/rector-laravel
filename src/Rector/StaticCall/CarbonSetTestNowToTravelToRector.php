@@ -7,8 +7,10 @@ namespace RectorLaravel\Rector\StaticCall;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\This_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
@@ -79,11 +81,7 @@ CODE_SAMPLE
 
         $scope = ScopeFetcher::fetch($node);
 
-        if (! $scope->isInClass()) {
-            return null;
-        }
-
-        if (! $scope->getClassReflection()->isSubclassOfClass($this->reflectionProvider->getClass('Illuminate\Foundation\Testing\TestCase'))) {
+        if (! $this->isInLaravelTestCaseScope($scope)) {
             return null;
         }
 
@@ -104,6 +102,21 @@ CODE_SAMPLE
             'travelTo',
             $args,
         );
+    }
+
+    private function isInLaravelTestCaseScope(Scope $scope): bool
+    {
+        $testCaseClass = 'Illuminate\Foundation\Testing\TestCase';
+
+        if ($scope->isInClass()) {
+            return $scope->getClassReflection()->isSubclassOfClass($this->reflectionProvider->getClass($testCaseClass));
+        }
+
+        // Pest / other closures: `@param-closure-this` on the test runner makes `$this` a TestCase.
+        $thisType = $scope->getType(new This_());
+        $laravelTestCaseType = new ObjectType($testCaseClass);
+
+        return $laravelTestCaseType->isSuperTypeOf($thisType)->yes();
     }
 
     private function isCarbon(Node $node): bool
