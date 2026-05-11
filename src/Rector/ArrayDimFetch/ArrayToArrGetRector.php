@@ -22,11 +22,12 @@ use PhpParser\NodeVisitor;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayToArrGetRector\ArrayToArrGetRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayToArrGetRector\ArrayToArrGetRectorTest
+ * @see ArrayToArrGetRectorTest
  */
 final class ArrayToArrGetRector extends AbstractRector
 {
@@ -175,7 +176,7 @@ CODE_SAMPLE
                 return null;
             }
 
-            /** @var scalar $dim */
+            /** @var Scalar $dim */
             $dim = $current->dim;
             array_unshift($keys, $dim);
             $current = $current->var;
@@ -193,7 +194,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  array<scalar>  $keys
+     * @param  array<Scalar>  $keys
      */
     private function createDotNotationString(array $keys): ?String_
     {

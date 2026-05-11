@@ -12,6 +12,7 @@ use PhpParser\Node\VariadicPlaceholder;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\FactoryApplyingStatesRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -20,7 +21,7 @@ use Webmozart\Assert\Assert;
  * @changelog https://laravel.com/docs/7.x/database-testing#creating-models
  * @changelog https://laravel.com/docs/8.x/database-testing#applying-states
  *
- * @see \RectorLaravel\Tests\Rector\MethodCall\FactoryApplyingStatesRector\FactoryApplyingStatesRectorTest
+ * @see FactoryApplyingStatesRectorTest
  */
 final class FactoryApplyingStatesRector extends AbstractRector
 {

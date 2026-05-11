@@ -2,6 +2,8 @@
 
 namespace Illuminate\Database\Query;
 
+use Illuminate\Contracts\Database\Query\Expression;
+
 if (class_exists('Illuminate\Database\Query\Builder')) {
     return;
 }
@@ -23,7 +25,7 @@ class Builder implements \Illuminate\Contracts\Database\Query\Builder
     public function orderByDesc($column): static {}
 
     /**
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
+     * @param  Expression|string  $column
      * @return mixed
      */
     public function max($column) {}
@@ -31,7 +33,7 @@ class Builder implements \Illuminate\Contracts\Database\Query\Builder
     /**
      * Add a "where null" clause to the query.
      *
-     * @param  string|array|\Illuminate\Contracts\Database\Query\Expression  $columns
+     * @param  string|array|Expression  $columns
      * @param  string  $boolean
      * @param  bool  $not
      * @return $this

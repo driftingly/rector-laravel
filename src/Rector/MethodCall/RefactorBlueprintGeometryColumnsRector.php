@@ -9,11 +9,12 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\RefactorBlueprintGeometryColumnsRector\RefactorBlueprintGeometryColumnsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\RefactorBlueprintGeometryColumnsRector\RefactorBlueprintGeometryColumnsRectorTest
+ * @see RefactorBlueprintGeometryColumnsRectorTest
  */
 class RefactorBlueprintGeometryColumnsRector extends AbstractRector
 {

@@ -12,13 +12,14 @@ use PHPStan\Reflection\ReflectionProvider;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\StaticCallAnalyzer;
+use RectorLaravel\Tests\Rector\ClassMethod\AddParentBootToModelClassMethodRector\AddParentBootToModelClassMethodRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://laracasts.com/discuss/channels/laravel/laravel-57-upgrade-observer-problem
  *
- * @see \RectorLaravel\Tests\Rector\ClassMethod\AddParentBootToModelClassMethodRector\AddParentBootToModelClassMethodRectorTest
+ * @see AddParentBootToModelClassMethodRectorTest
  */
 final class AddParentBootToModelClassMethodRector extends AbstractRector
 {

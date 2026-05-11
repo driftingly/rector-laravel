@@ -13,11 +13,12 @@ use Rector\PHPStan\ScopeFetcher;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\ScopeAnalyzer;
+use RectorLaravel\Tests\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector\MakeModelAttributesAndScopesProtectedRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector\MakeModelAttributesAndScopesProtectedRectorTest
+ * @see MakeModelAttributesAndScopesProtectedRectorTest
  */
 class MakeModelAttributesAndScopesProtectedRector extends AbstractRector
 {

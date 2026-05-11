@@ -8,11 +8,12 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector\ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector\ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRectorTest
+ * @see ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRectorTest
  */
 class ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector extends AbstractRector
 {

@@ -12,11 +12,12 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypeCombinator;
 use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\ConvertEnumerableToArrayToAllRector\ConvertEnumerableToArrayToAllRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\ConvertEnumerableToArrayToAllRector\ConvertEnumerableToArrayToAllRectorTest
+ * @see ConvertEnumerableToArrayToAllRectorTest
  */
 final class ConvertEnumerableToArrayToAllRector extends AbstractRector
 {

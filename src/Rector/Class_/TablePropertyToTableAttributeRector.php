@@ -13,11 +13,12 @@ use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\TableAttributeFactory;
+use RectorLaravel\Tests\Rector\Class_\TablePropertyToTableAttributeRector\TablePropertyToTableAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Class_\TablePropertyToTableAttributeRector\TablePropertyToTableAttributeRectorTest
+ * @see TablePropertyToTableAttributeRectorTest
  */
 final class TablePropertyToTableAttributeRector extends AbstractRector
 {

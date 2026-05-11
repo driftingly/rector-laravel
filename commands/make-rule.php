@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+use RectorLaravel\Commands\MakeRuleCommand;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 // Parse command line arguments
@@ -21,5 +23,5 @@ foreach ($argv as $i => $arg) {
     }
 }
 
-$command = new \RectorLaravel\Commands\MakeRuleCommand;
+$command = new MakeRuleCommand;
 exit($command->execute($ruleName, $configurable));

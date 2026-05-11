@@ -11,13 +11,14 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassLike;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector\AddArgumentDefaultValueRectorTest;
 use RectorLaravel\ValueObject\AddArgumentDefaultValue;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ClassMethod\AddArgumentDefaultValueRector\AddArgumentDefaultValueRectorTest
+ * @see AddArgumentDefaultValueRectorTest
  */
 final class AddArgumentDefaultValueRector extends AbstractRector implements ConfigurableRectorInterface
 {

@@ -30,7 +30,7 @@ abstract class Model
     protected $primaryKey = 'id';
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @return Builder<static>
      */
     public static function query(): Builder
     {

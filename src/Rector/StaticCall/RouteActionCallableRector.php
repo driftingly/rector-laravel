@@ -22,6 +22,7 @@ use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Reflection\ReflectionResolver;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\RouterRegisterNodeAnalyzer;
+use RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\RouteActionCallableRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -29,7 +30,7 @@ use Webmozart\Assert\Assert;
 /**
  * @changelog https://laravel.com/docs/8.x/upgrade#automatic-controller-namespace-prefixing
  *
- * @see \RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\RouteActionCallableRectorTest
+ * @see RouteActionCallableRectorTest
  */
 final class RouteActionCallableRector extends AbstractRector implements ConfigurableRectorInterface
 {

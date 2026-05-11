@@ -14,12 +14,13 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeVisitor\ArrayDimFetchContextNodeVisitor;
+use RectorLaravel\Tests\Rector\ArrayDimFetch\RequestVariablesToRequestFacadeRector\RequestVariablesToRequestFacadeRectorTest;
 use RectorLaravel\ValueObject\ReplaceRequestKeyAndMethodValue;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\ArrayDimFetch\RequestVariablesToRequestFacadeRector\RequestVariablesToRequestFacadeRectorTest
+ * @see RequestVariablesToRequestFacadeRectorTest
  */
 class RequestVariablesToRequestFacadeRector extends AbstractRector
 {
