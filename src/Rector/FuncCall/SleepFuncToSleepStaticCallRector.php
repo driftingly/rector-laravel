@@ -8,11 +8,12 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Expression;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\SleepFuncToSleepStaticCallRector\SleepFuncToSleepStaticCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\FuncCall\SleepFuncToSleepStaticCallRector\SleepFuncToSleepStaticCallRectorTest
+ * @see SleepFuncToSleepStaticCallRectorTest
  */
 class SleepFuncToSleepStaticCallRector extends AbstractRector
 {

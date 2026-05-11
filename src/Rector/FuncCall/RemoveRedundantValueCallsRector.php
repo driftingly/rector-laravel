@@ -8,11 +8,12 @@ use PhpParser\Node\Name;
 use PHPStan\Type\ClosureType;
 use PHPStan\Type\MixedType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\RemoveRedundantValueCallsRector\RemoveRedundantValueCallsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\FuncCall\RemoveRedundantValueCallsRector\RemoveRedundantValueCallsRectorTest
+ * @see RemoveRedundantValueCallsRectorTest
  */
 class RemoveRedundantValueCallsRector extends AbstractRector
 {

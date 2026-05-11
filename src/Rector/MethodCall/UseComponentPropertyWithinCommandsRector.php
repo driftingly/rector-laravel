@@ -14,11 +14,12 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\MethodCall\UseComponentPropertyWithinCommandsRector\UseComponentPropertyWithinCommandsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\UseComponentPropertyWithinCommandsRector\UseComponentPropertyWithinCommandsRectorTest
+ * @see UseComponentPropertyWithinCommandsRectorTest
  */
 class UseComponentPropertyWithinCommandsRector extends AbstractRector
 {

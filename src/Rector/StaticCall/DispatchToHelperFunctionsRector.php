@@ -12,12 +12,13 @@ use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\DispatchToHelperFunctionsRectorTest;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\DispatchToHelperFunctionsRectorTest
+ * @see DispatchToHelperFunctionsRectorTest
  */
 final class DispatchToHelperFunctionsRector extends AbstractRector
 {

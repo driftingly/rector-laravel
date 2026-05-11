@@ -10,12 +10,13 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\RemoveDumpDataDeadCodeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**
- * @see \RectorLaravel\Tests\Rector\FuncCall\RemoveDumpDataDeadCodeRector\RemoveDumpDataDeadCodeRectorTest
+ * @see RemoveDumpDataDeadCodeRectorTest
  */
 final class RemoveDumpDataDeadCodeRector extends AbstractRector implements ConfigurableRectorInterface
 {

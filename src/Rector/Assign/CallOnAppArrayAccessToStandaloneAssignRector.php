@@ -17,12 +17,13 @@ use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\AppAssignFactory;
+use RectorLaravel\Tests\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector\CallOnAppArrayAccessToStandaloneAssignRectorTest;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector\CallOnAppArrayAccessToStandaloneAssignRectorTest
+ * @see CallOnAppArrayAccessToStandaloneAssignRectorTest
  */
 final class CallOnAppArrayAccessToStandaloneAssignRector extends AbstractRector
 {

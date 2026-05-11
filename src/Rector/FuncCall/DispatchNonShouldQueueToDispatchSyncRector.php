@@ -17,11 +17,12 @@ use PHPStan\Type\ClosureType;
 use PHPStan\Type\ObjectType;
 use Rector\StaticTypeMapper\ValueObject\Type\AliasedObjectType;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\DispatchNonShouldQueueToDispatchSyncRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector\DispatchNonShouldQueueToDispatchSyncRectorTest
+ * @see DispatchNonShouldQueueToDispatchSyncRectorTest
  */
 class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
 {

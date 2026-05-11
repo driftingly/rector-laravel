@@ -13,6 +13,6 @@ if (class_exists('Illuminate\Support\Collection')) {
  *
  * @template-covariant TValue
  *
- * @implements \Illuminate\Support\Enumerable<TKey, TValue>
+ * @implements Enumerable<TKey, TValue>
  */
 class Collection implements Enumerable {}

@@ -14,11 +14,12 @@ use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
+use RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector\EloquentWhereTypeHintClosureParameterRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \RectorLaravel\Tests\Rector\MethodCall\EloquentWhereTypeHintClosureParameterRector\EloquentWhereTypeHintClosureParameterRectorTest
+ * @see EloquentWhereTypeHintClosureParameterRectorTest
  */
 class EloquentWhereTypeHintClosureParameterRector extends AbstractRector
 {

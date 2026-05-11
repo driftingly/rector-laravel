@@ -15,6 +15,6 @@ class SomeFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return \UserLand\SomeService::class;
+        return SomeService::class;
     }
 }
