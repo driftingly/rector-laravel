@@ -15,13 +15,14 @@ use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
+use RectorLaravel\Tests\Rector\MethodCall\DateWhereClauseToShorthandRector\DateWhereClauseToShorthandRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://github.com/laravel/framework/pull/54408
  *
- * @see \RectorLaravel\Tests\Rector\MethodCall\DateWhereClauseToShorthandRector\DateWhereClauseToShorthandRectorTest
+ * @see DateWhereClauseToShorthandRectorTest
  */
 final class DateWhereClauseToShorthandRector extends AbstractRector
 {

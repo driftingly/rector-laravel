@@ -4,6 +4,4 @@ namespace RectorLaravel\Tests\Rector\MethodCall\DateWhereClauseToShorthandRector
 
 use Illuminate\Database\Eloquent\Model;
 
-final class Post extends Model
-{
-}
+final class Post extends Model {}
