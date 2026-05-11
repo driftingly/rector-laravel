@@ -1,5 +1,5 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRector\Source;
+namespace RectorLaravel\Tests\Rector\Namespace_\FactoryDefinitionRectorConfigured\Source;
 
 class Model {}
