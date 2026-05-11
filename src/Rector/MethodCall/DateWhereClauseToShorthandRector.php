@@ -67,6 +67,8 @@ use Carbon\Carbon;
 
 $query->where('published_at', '<', Carbon::now());
 $query->whereDate('published_at', '=', Carbon::today());
+$query->where('published_at', '<=', now());
+$query->whereDate('published_at', '>=', today());
 CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
@@ -74,6 +76,8 @@ use Carbon\Carbon;
 
 $query->wherePast('published_at');
 $query->whereToday('published_at');
+$query->whereNowOrPast('published_at');
+$query->whereTodayOrAfter('published_at');
 CODE_SAMPLE
                 ),
             ]
