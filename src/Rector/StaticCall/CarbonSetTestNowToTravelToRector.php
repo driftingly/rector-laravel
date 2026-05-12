@@ -7,7 +7,6 @@ namespace RectorLaravel\Rector\StaticCall;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\This_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
@@ -114,7 +113,7 @@ CODE_SAMPLE
         }
 
         // Pest / other closures: `@param-closure-this` on the test runner makes `$this` a TestCase.
-        $thisType = $scope->getType(new This_());
+        $thisType = $scope->getType(new Variable('this'));
         $laravelTestCaseType = new ObjectType($testCaseClass);
 
         return $laravelTestCaseType->isSuperTypeOf($thisType)->yes();
