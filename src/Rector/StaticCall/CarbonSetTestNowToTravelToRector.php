@@ -114,9 +114,9 @@ CODE_SAMPLE
 
         // Pest / other closures: `@param-closure-this` on the test runner makes `$this` a TestCase.
         $thisType = $scope->getType(new Variable('this'));
-        $laravelTestCaseType = new ObjectType($testCaseClass);
+        $objectType = new ObjectType($testCaseClass);
 
-        return $laravelTestCaseType->isSuperTypeOf($thisType)->yes();
+        return $objectType->isSuperTypeOf($thisType)->yes();
     }
 
     private function isCarbon(Node $node): bool
