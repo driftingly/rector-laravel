@@ -6,6 +6,7 @@ use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector;
 use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
+use RectorLaravel\Rector\Class_\DescriptionPropertyToDescriptionAttributeRector;
 use RectorLaravel\Rector\Class_\FailOnTimeoutPropertyToFailOnTimeoutAttributeRector;
 use RectorLaravel\Rector\Class_\FillablePropertyToFillableAttributeRector;
 use RectorLaravel\Rector\Class_\GuardedPropertyToGuardedAttributeRector;
@@ -26,6 +27,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AppendsPropertyToAppendsAttributeRector::class);
     $rectorConfig->rule(BackoffPropertyToBackoffAttributeRector::class);
     $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
+    $rectorConfig->rule(DescriptionPropertyToDescriptionAttributeRector::class);
     $rectorConfig->rule(FailOnTimeoutPropertyToFailOnTimeoutAttributeRector::class);
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
