@@ -20,6 +20,7 @@ use RectorLaravel\Rector\Class_\TimeoutPropertyToTimeoutAttributeRector;
 use RectorLaravel\Rector\Class_\TouchesPropertyToTouchesAttributeRector;
 use RectorLaravel\Rector\Class_\TriesPropertyToTriesAttributeRector;
 use RectorLaravel\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector;
+use RectorLaravel\Rector\Class_\WithoutRelationsPropertyToWithoutRelationsAttributeRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
@@ -41,4 +42,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
     $rectorConfig->rule(TriesPropertyToTriesAttributeRector::class);
     $rectorConfig->rule(UniqueForPropertyToUniqueForAttributeRector::class);
+    $rectorConfig->rule(WithoutRelationsPropertyToWithoutRelationsAttributeRector::class);
 };
