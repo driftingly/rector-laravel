@@ -7,7 +7,6 @@ namespace RectorLaravel\Rector\Class_;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
-use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
@@ -92,7 +91,7 @@ CODE_SAMPLE
         }
 
         $value = $propertyProperty->default;
-        if (! $value instanceof ConstFetch || $value->name->toLowerString() !== 'true') {
+        if (! $this->getType($value)->isTrue()->yes()) {
             return null;
         }
 

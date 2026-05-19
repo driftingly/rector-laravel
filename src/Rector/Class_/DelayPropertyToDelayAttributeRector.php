@@ -92,6 +92,9 @@ CODE_SAMPLE
         }
 
         $value = $propertyProperty->default;
+        if (! $this->getType($value)->isInteger()->yes()) {
+            return null;
+        }
 
         $node->attrGroups[] = new AttributeGroup([
             new Attribute(
