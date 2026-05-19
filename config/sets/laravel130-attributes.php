@@ -20,6 +20,7 @@ use RectorLaravel\Rector\Class_\TouchesPropertyToTouchesAttributeRector;
 use RectorLaravel\Rector\Class_\TriesPropertyToTriesAttributeRector;
 use RectorLaravel\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector;
 use RectorLaravel\Rector\Class_\VisiblePropertyToVisibleAttributeRector;
+use RectorLaravel\Rector\Class_\WithoutIncrementingPropertyToWithoutIncrementingAttributeRector;
 use RectorLaravel\Rector\Class_\WithoutTimestampsPropertyToWithoutTimestampsAttributeRector;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -42,5 +43,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(TriesPropertyToTriesAttributeRector::class);
     $rectorConfig->rule(UniqueForPropertyToUniqueForAttributeRector::class);
     $rectorConfig->rule(VisiblePropertyToVisibleAttributeRector::class);
+    $rectorConfig->rule(WithoutIncrementingPropertyToWithoutIncrementingAttributeRector::class);
     $rectorConfig->rule(WithoutTimestampsPropertyToWithoutTimestampsAttributeRector::class);
 };
