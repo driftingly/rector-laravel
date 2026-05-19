@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\Class_\AliasesPropertyToAliasesAttributeRector;
 use RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector;
 use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
@@ -24,6 +25,7 @@ use RectorLaravel\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
+    $rectorConfig->rule(AliasesPropertyToAliasesAttributeRector::class);
     $rectorConfig->rule(AppendsPropertyToAppendsAttributeRector::class);
     $rectorConfig->rule(BackoffPropertyToBackoffAttributeRector::class);
     $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
