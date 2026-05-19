@@ -5,7 +5,9 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector;
 use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
+use RectorLaravel\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
+use RectorLaravel\Rector\Class_\DateFormatPropertyToDateFormatAttributeRector;
 use RectorLaravel\Rector\Class_\FailOnTimeoutPropertyToFailOnTimeoutAttributeRector;
 use RectorLaravel\Rector\Class_\FillablePropertyToFillableAttributeRector;
 use RectorLaravel\Rector\Class_\GuardedPropertyToGuardedAttributeRector;
@@ -18,13 +20,18 @@ use RectorLaravel\Rector\Class_\TimeoutPropertyToTimeoutAttributeRector;
 use RectorLaravel\Rector\Class_\TouchesPropertyToTouchesAttributeRector;
 use RectorLaravel\Rector\Class_\TriesPropertyToTriesAttributeRector;
 use RectorLaravel\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector;
+use RectorLaravel\Rector\Class_\VisiblePropertyToVisibleAttributeRector;
+use RectorLaravel\Rector\Class_\WithoutIncrementingPropertyToWithoutIncrementingAttributeRector;
+use RectorLaravel\Rector\Class_\WithoutTimestampsPropertyToWithoutTimestampsAttributeRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
     $rectorConfig->rule(AppendsPropertyToAppendsAttributeRector::class);
+    $rectorConfig->rule(CollectedByPropertyToCollectedByAttributeRector::class);
     $rectorConfig->rule(BackoffPropertyToBackoffAttributeRector::class);
     $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
+    $rectorConfig->rule(DateFormatPropertyToDateFormatAttributeRector::class);
     $rectorConfig->rule(FailOnTimeoutPropertyToFailOnTimeoutAttributeRector::class);
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
@@ -37,4 +44,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
     $rectorConfig->rule(TriesPropertyToTriesAttributeRector::class);
     $rectorConfig->rule(UniqueForPropertyToUniqueForAttributeRector::class);
+    $rectorConfig->rule(VisiblePropertyToVisibleAttributeRector::class);
+    $rectorConfig->rule(WithoutIncrementingPropertyToWithoutIncrementingAttributeRector::class);
+    $rectorConfig->rule(WithoutTimestampsPropertyToWithoutTimestampsAttributeRector::class);
 };
