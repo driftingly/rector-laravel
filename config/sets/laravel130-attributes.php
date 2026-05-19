@@ -8,7 +8,6 @@ use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
 use RectorLaravel\Rector\Class_\ErrorBagPropertyToErrorBagAttributeRector;
 use RectorLaravel\Rector\Class_\FailOnTimeoutPropertyToFailOnTimeoutAttributeRector;
-use RectorLaravel\Rector\Class_\FailOnUnknownFieldsPropertyToFailOnUnknownFieldsAttributeRector;
 use RectorLaravel\Rector\Class_\FillablePropertyToFillableAttributeRector;
 use RectorLaravel\Rector\Class_\GuardedPropertyToGuardedAttributeRector;
 use RectorLaravel\Rector\Class_\HiddenPropertyToHiddenAttributeRector;
@@ -30,7 +29,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
     $rectorConfig->rule(ErrorBagPropertyToErrorBagAttributeRector::class);
     $rectorConfig->rule(FailOnTimeoutPropertyToFailOnTimeoutAttributeRector::class);
-    $rectorConfig->rule(FailOnUnknownFieldsPropertyToFailOnUnknownFieldsAttributeRector::class);
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
     $rectorConfig->rule(HiddenPropertyToHiddenAttributeRector::class);
