@@ -8,6 +8,8 @@ use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
 use RectorLaravel\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
 use RectorLaravel\Rector\Class_\DateFormatPropertyToDateFormatAttributeRector;
+use RectorLaravel\Rector\Class_\DelayPropertyToDelayAttributeRector;
+use RectorLaravel\Rector\Class_\DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector;
 use RectorLaravel\Rector\Class_\FailOnTimeoutPropertyToFailOnTimeoutAttributeRector;
 use RectorLaravel\Rector\Class_\FillablePropertyToFillableAttributeRector;
 use RectorLaravel\Rector\Class_\GuardedPropertyToGuardedAttributeRector;
@@ -31,6 +33,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(CollectedByPropertyToCollectedByAttributeRector::class);
     $rectorConfig->rule(BackoffPropertyToBackoffAttributeRector::class);
     $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
+    $rectorConfig->rule(DelayPropertyToDelayAttributeRector::class);
+    $rectorConfig->rule(DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector::class);
     $rectorConfig->rule(DateFormatPropertyToDateFormatAttributeRector::class);
     $rectorConfig->rule(FailOnTimeoutPropertyToFailOnTimeoutAttributeRector::class);
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
