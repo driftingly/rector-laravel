@@ -6,6 +6,7 @@ use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\Class_\AliasesPropertyToAliasesAttributeRector;
 use RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector;
 use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
+use RectorLaravel\Rector\Class_\CommandHiddenPropertyToHiddenAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
 use RectorLaravel\Rector\Class_\DescriptionPropertyToDescriptionAttributeRector;
 use RectorLaravel\Rector\Class_\FailOnTimeoutPropertyToFailOnTimeoutAttributeRector;
@@ -29,6 +30,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AliasesPropertyToAliasesAttributeRector::class);
     $rectorConfig->rule(AppendsPropertyToAppendsAttributeRector::class);
     $rectorConfig->rule(BackoffPropertyToBackoffAttributeRector::class);
+    $rectorConfig->rule(CommandHiddenPropertyToHiddenAttributeRector::class);
     $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
     $rectorConfig->rule(DescriptionPropertyToDescriptionAttributeRector::class);
     $rectorConfig->rule(FailOnTimeoutPropertyToFailOnTimeoutAttributeRector::class);
