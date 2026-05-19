@@ -10,10 +10,11 @@ use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use RectorLaravel\AbstractRector;
@@ -124,7 +125,7 @@ CODE_SAMPLE
         }
 
         $newClass = $onlyStmt->expr->class;
-        if (! $newClass instanceof Node\Name) {
+        if (! $newClass instanceof Name) {
             return null;
         }
 

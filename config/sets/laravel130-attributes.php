@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector;
-use RectorLaravel\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector;
 use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
+use RectorLaravel\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
 use RectorLaravel\Rector\Class_\DateFormatPropertyToDateFormatAttributeRector;
 use RectorLaravel\Rector\Class_\FailOnTimeoutPropertyToFailOnTimeoutAttributeRector;
