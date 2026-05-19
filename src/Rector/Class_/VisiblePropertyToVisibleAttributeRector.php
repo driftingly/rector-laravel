@@ -10,7 +10,6 @@ use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
@@ -124,7 +123,7 @@ CODE_SAMPLE
                 return false;
             }
 
-            if (! $item->value instanceof String_) {
+            if (! $this->getType($item->value)->isString()->yes()) {
                 return false;
             }
         }
