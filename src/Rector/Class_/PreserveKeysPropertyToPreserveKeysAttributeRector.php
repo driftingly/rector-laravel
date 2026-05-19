@@ -88,7 +88,7 @@ CODE_SAMPLE
         }
 
         $value = $propertyProperty->default;
-        if (! $value instanceof ConstFetch || $value->name->toLowerString() !== 'true') {
+        if (! $this->getType($value)->isTrue()->yes() && (! $value instanceof ConstFetch || $value->name->toLowerString() !== 'true')) {
             return null;
         }
 
