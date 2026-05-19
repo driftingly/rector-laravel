@@ -9,8 +9,10 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
@@ -29,15 +31,23 @@ final class CollectedByPropertyToCollectedByAttributeRector extends AbstractRect
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Changes model collectionClass property to use the CollectedBy attribute',
+            'Changes model newCollection method to use the CollectedBy attribute',
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use App\Collections\UserCollection;
 
 class User extends Model
 {
-    protected $collectionClass = UserCollection::class;
+    /**
+     * @param  array<int, \Illuminate\Database\Eloquent\Model>  $models
+     * @return \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model>
+     */
+    public function newCollection(array $models = []): Collection
+    {
+        return new UserCollection($models);
+    }
 }
 CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
@@ -71,26 +81,17 @@ CODE_SAMPLE
             return null;
         }
 
-        $collectionClassProperty = $node->getProperty('collectionClass');
-        if ($collectionClassProperty === null) {
-            return null;
-        }
-
-        if (! $collectionClassProperty->isProtected()) {
-            return null;
-        }
-
-        $propertyProperty = $collectionClassProperty->props[0];
-        if ($propertyProperty->default === null) {
-            return null;
-        }
-
-        $value = $propertyProperty->default;
-        if (! $value instanceof ClassConstFetch && ! $value instanceof String_) {
-            return null;
-        }
-
         if ($this->phpAttributeAnalyzer->hasPhpAttribute($node, 'Illuminate\Database\Eloquent\Attributes\CollectedBy')) {
+            return null;
+        }
+
+        $newCollectionMethod = $node->getMethod('newCollection');
+        if (! $newCollectionMethod instanceof ClassMethod) {
+            return null;
+        }
+
+        $value = $this->resolveCollectedByValue($newCollectionMethod);
+        if (! $value instanceof ClassConstFetch) {
             return null;
         }
 
@@ -102,12 +103,31 @@ CODE_SAMPLE
         ]);
 
         foreach ($node->stmts as $key => $stmt) {
-            if ($stmt === $collectionClassProperty) {
+            if ($stmt === $newCollectionMethod) {
                 unset($node->stmts[$key]);
                 break;
             }
         }
 
         return $node;
+    }
+
+    private function resolveCollectedByValue(ClassMethod $classMethod): ?ClassConstFetch
+    {
+        if ($classMethod->stmts === null || count($classMethod->stmts) !== 1) {
+            return null;
+        }
+
+        $onlyStmt = $classMethod->stmts[0];
+        if (! $onlyStmt instanceof Return_ || ! $onlyStmt->expr instanceof New_) {
+            return null;
+        }
+
+        $newClass = $onlyStmt->expr->class;
+        if (! $newClass instanceof Node\Name) {
+            return null;
+        }
+
+        return new ClassConstFetch($newClass, 'class');
     }
 }

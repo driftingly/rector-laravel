@@ -2,13 +2,21 @@
 
 namespace RectorLaravel\Tests\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector\Fixture;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class UserCollection extends \Illuminate\Database\Eloquent\Collection {}
 
 class User extends Model
 {
-    protected $collectionClass = UserCollection::class;
+    /**
+     * @param array<int, \Illuminate\Database\Eloquent\Model> $models
+     * @return \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model>
+     */
+    public function newCollection(array $models = []): Collection
+    {
+        return new UserCollection($models);
+    }
 }
 
 ?>
@@ -17,6 +25,7 @@ class User extends Model
 
 namespace RectorLaravel\Tests\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector\Fixture;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class UserCollection extends \Illuminate\Database\Eloquent\Collection {}

@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class SkipNotAModel
 {
-    protected $collectionClass = \Illuminate\Database\Eloquent\Collection::class;
+    public function newCollection(array $models = []): \Illuminate\Database\Eloquent\Collection
+    {
+        return new \Illuminate\Database\Eloquent\Collection($models);
+    }
 }
 
 ?>
