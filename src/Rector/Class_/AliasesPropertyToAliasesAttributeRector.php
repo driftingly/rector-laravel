@@ -123,7 +123,7 @@ CODE_SAMPLE
                 return false;
             }
 
-            if (! $item->value instanceof String_) {
+            if ($this->getType($item->value)->isString()->no()) {
                 return false;
             }
         }
