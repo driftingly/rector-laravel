@@ -3,22 +3,27 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\Class_\AliasesPropertyToAliasesAttributeRector;
 use RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector;
 use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
 use RectorLaravel\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector;
 use RectorLaravel\Rector\Class_\CollectsPropertyToCollectsAttributeRector;
+use RectorLaravel\Rector\Class_\CommandHiddenPropertyToHiddenAttributeRector;
 use RectorLaravel\Rector\Class_\ConnectionPropertyToConnectionAttributeRector;
 use RectorLaravel\Rector\Class_\DateFormatPropertyToDateFormatAttributeRector;
 use RectorLaravel\Rector\Class_\DelayPropertyToDelayAttributeRector;
 use RectorLaravel\Rector\Class_\DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector;
+use RectorLaravel\Rector\Class_\DescriptionPropertyToDescriptionAttributeRector;
 use RectorLaravel\Rector\Class_\FailOnTimeoutPropertyToFailOnTimeoutAttributeRector;
 use RectorLaravel\Rector\Class_\FillablePropertyToFillableAttributeRector;
 use RectorLaravel\Rector\Class_\GuardedPropertyToGuardedAttributeRector;
+use RectorLaravel\Rector\Class_\HelpPropertyToHelpAttributeRector;
 use RectorLaravel\Rector\Class_\HiddenPropertyToHiddenAttributeRector;
 use RectorLaravel\Rector\Class_\JobConnectionPropertyToJobConnectionAttributeRector;
 use RectorLaravel\Rector\Class_\MaxExceptionsPropertyToMaxExceptionsAttributeRector;
 use RectorLaravel\Rector\Class_\PreserveKeysPropertyToPreserveKeysAttributeRector;
 use RectorLaravel\Rector\Class_\QueuePropertyToQueueAttributeRector;
+use RectorLaravel\Rector\Class_\SignaturePropertyToSignatureAttributeRector;
 use RectorLaravel\Rector\Class_\TablePropertyToTableAttributeRector;
 use RectorLaravel\Rector\Class_\TimeoutPropertyToTimeoutAttributeRector;
 use RectorLaravel\Rector\Class_\TouchesPropertyToTouchesAttributeRector;
@@ -31,9 +36,13 @@ use RectorLaravel\Rector\Class_\WithoutTimestampsPropertyToWithoutTimestampsAttr
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
+    $rectorConfig->rule(AliasesPropertyToAliasesAttributeRector::class);
     $rectorConfig->rule(AppendsPropertyToAppendsAttributeRector::class);
     $rectorConfig->rule(CollectedByPropertyToCollectedByAttributeRector::class);
     $rectorConfig->rule(BackoffPropertyToBackoffAttributeRector::class);
+    $rectorConfig->rule(CommandHiddenPropertyToHiddenAttributeRector::class);
+    $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
+    $rectorConfig->rule(DescriptionPropertyToDescriptionAttributeRector::class);
     $rectorConfig->rule(CollectsPropertyToCollectsAttributeRector::class);
     $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
     $rectorConfig->rule(DelayPropertyToDelayAttributeRector::class);
@@ -42,11 +51,13 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FailOnTimeoutPropertyToFailOnTimeoutAttributeRector::class);
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
+    $rectorConfig->rule(HelpPropertyToHelpAttributeRector::class);
     $rectorConfig->rule(HiddenPropertyToHiddenAttributeRector::class);
     $rectorConfig->rule(JobConnectionPropertyToJobConnectionAttributeRector::class);
     $rectorConfig->rule(MaxExceptionsPropertyToMaxExceptionsAttributeRector::class);
     $rectorConfig->rule(PreserveKeysPropertyToPreserveKeysAttributeRector::class);
     $rectorConfig->rule(QueuePropertyToQueueAttributeRector::class);
+    $rectorConfig->rule(SignaturePropertyToSignatureAttributeRector::class);
     $rectorConfig->rule(TablePropertyToTableAttributeRector::class);
     $rectorConfig->rule(TimeoutPropertyToTimeoutAttributeRector::class);
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
