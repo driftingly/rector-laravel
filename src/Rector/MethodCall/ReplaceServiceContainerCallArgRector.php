@@ -63,8 +63,9 @@ CODE_SAMPLE,
 
     /**
      * @param  MethodCall|StaticCall|FuncCall  $node
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\FuncCall|null
      */
-    public function refactor(Node $node): MethodCall|StaticCall|FuncCall|null
+    public function refactor(Node $node)
     {
         if (! $this->validMethodCall($node) &&
             ! $this->validFuncCall($node)) {
@@ -94,7 +95,10 @@ CODE_SAMPLE,
         $this->replaceServiceContainerCallArgs = $configuration;
     }
 
-    private function isMatchForChangeServiceContainerCallArgValue(Arg $arg, ClassConstFetch|string $oldService): bool
+    /**
+     * @param \PhpParser\Node\Expr\ClassConstFetch|string $oldService
+     */
+    private function isMatchForChangeServiceContainerCallArgValue(Arg $arg, $oldService): bool
     {
         if ($arg->value instanceof ClassConstFetch && $oldService instanceof ClassConstFetch) {
             if ($arg->value->class instanceof Expr || $oldService->class instanceof Expr) {
@@ -109,7 +113,10 @@ CODE_SAMPLE,
         return false;
     }
 
-    private function replaceCallArgValue(Arg $arg, ClassConstFetch|string $newService): void
+    /**
+     * @param \PhpParser\Node\Expr\ClassConstFetch|string $newService
+     */
+    private function replaceCallArgValue(Arg $arg, $newService): void
     {
         if ($newService instanceof ClassConstFetch) {
             $arg->value = $newService;
@@ -120,7 +127,10 @@ CODE_SAMPLE,
         $arg->value = new String_($newService);
     }
 
-    private function validMethodCall(StaticCall|MethodCall|FuncCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\FuncCall $node
+     */
+    private function validMethodCall($node): bool
     {
         if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
             return false;
@@ -134,15 +144,22 @@ CODE_SAMPLE,
             return false;
         }
 
-        [$callObject, $class] = match (true) {
-            $node instanceof MethodCall => [$node->var, 'Illuminate\Contracts\Container\Container'],
-            $node instanceof StaticCall => [$node->class, 'Illuminate\Support\Facades\Application'],
-        };
+        switch (true) {
+            case $node instanceof MethodCall:
+                [$callObject, $class] = [$node->var, 'Illuminate\Contracts\Container\Container'];
+                break;
+            case $node instanceof StaticCall:
+                [$callObject, $class] = [$node->class, 'Illuminate\Support\Facades\Application'];
+                break;
+        }
 
         return $this->isObjectType($callObject, new ObjectType($class));
     }
 
-    private function validFuncCall(StaticCall|MethodCall|FuncCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\FuncCall $node
+     */
+    private function validFuncCall($node): bool
     {
         if (! $node instanceof FuncCall) {
             return false;

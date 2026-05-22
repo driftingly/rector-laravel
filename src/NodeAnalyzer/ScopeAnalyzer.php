@@ -10,17 +10,36 @@ use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 
-final readonly class ScopeAnalyzer
+final class ScopeAnalyzer
 {
-    private const string SCOPE_ATTRIBUTE = 'Illuminate\Database\Eloquent\Attributes\Scope';
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @readonly
+     */
+    private NodeTypeResolver $nodeTypeResolver;
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    /**
+     * @var string
+     */
+    private const SCOPE_ATTRIBUTE = 'Illuminate\Database\Eloquent\Attributes\Scope';
 
-    private const string ELOQUENT_BUILDER = 'Illuminate\Database\Eloquent\Builder';
+    /**
+     * @var string
+     */
+    private const ELOQUENT_BUILDER = 'Illuminate\Database\Eloquent\Builder';
 
-    public function __construct(
-        private NodeNameResolver $nodeNameResolver,
-        private NodeTypeResolver $nodeTypeResolver,
-        private PhpAttributeAnalyzer $phpAttributeAnalyzer,
-    ) {}
+    public function __construct(NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver, PhpAttributeAnalyzer $phpAttributeAnalyzer)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodeTypeResolver = $nodeTypeResolver;
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+    }
 
     /**
      * Checks for the "scope" + uppercase char naming convention and a

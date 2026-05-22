@@ -6,13 +6,26 @@ namespace RectorLaravel\ValueObject;
 
 use PHPStan\Type\ObjectType;
 
-final readonly class TypeToTimeMethodAndPosition
+final class TypeToTimeMethodAndPosition
 {
-    public function __construct(
-        private string $type,
-        private string $methodName,
-        private int $position
-    ) {}
+    /**
+     * @readonly
+     */
+    private string $type;
+    /**
+     * @readonly
+     */
+    private string $methodName;
+    /**
+     * @readonly
+     */
+    private int $position;
+    public function __construct(string $type, string $methodName, int $position)
+    {
+        $this->type = $type;
+        $this->methodName = $methodName;
+        $this->position = $position;
+    }
 
     public function getObjectType(): ObjectType
     {
