@@ -38,36 +38,44 @@ use RectorLaravel\Rector\Class_\WithoutTimestampsPropertyToWithoutTimestampsAttr
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
 
+    // Console
     $rectorConfig->rule(AliasesPropertyToAliasesAttributeRector::class);
+    $rectorConfig->rule(CommandHiddenPropertyToHiddenAttributeRector::class);
+    $rectorConfig->rule(DescriptionPropertyToDescriptionAttributeRector::class);
+    $rectorConfig->rule(HelpPropertyToHelpAttributeRector::class);
+    $rectorConfig->rule(SignaturePropertyToSignatureAttributeRector::class);
+
+    // Eloquent
     $rectorConfig->rule(AppendsPropertyToAppendsAttributeRector::class);
     $rectorConfig->rule(CollectedByPropertyToCollectedByAttributeRector::class);
-    $rectorConfig->rule(BackoffPropertyToBackoffAttributeRector::class);
-    $rectorConfig->rule(CommandHiddenPropertyToHiddenAttributeRector::class);
     $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
-    $rectorConfig->rule(ErrorBagPropertyToErrorBagAttributeRector::class);
-    $rectorConfig->rule(DescriptionPropertyToDescriptionAttributeRector::class);
-    $rectorConfig->rule(CollectsPropertyToCollectsAttributeRector::class);
-    $rectorConfig->rule(ConnectionPropertyToConnectionAttributeRector::class);
-    $rectorConfig->rule(DelayPropertyToDelayAttributeRector::class);
-    $rectorConfig->rule(DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector::class);
     $rectorConfig->rule(DateFormatPropertyToDateFormatAttributeRector::class);
-    $rectorConfig->rule(FailOnTimeoutPropertyToFailOnTimeoutAttributeRector::class);
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
-    $rectorConfig->rule(HelpPropertyToHelpAttributeRector::class);
     $rectorConfig->rule(HiddenPropertyToHiddenAttributeRector::class);
-    $rectorConfig->rule(JobConnectionPropertyToJobConnectionAttributeRector::class);
-    $rectorConfig->rule(MaxExceptionsPropertyToMaxExceptionsAttributeRector::class);
-    $rectorConfig->rule(PreserveKeysPropertyToPreserveKeysAttributeRector::class);
-    $rectorConfig->rule(QueuePropertyToQueueAttributeRector::class);
-    $rectorConfig->rule(StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector::class);
-    $rectorConfig->rule(SignaturePropertyToSignatureAttributeRector::class);
     $rectorConfig->rule(TablePropertyToTableAttributeRector::class);
-    $rectorConfig->rule(TimeoutPropertyToTimeoutAttributeRector::class);
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
-    $rectorConfig->rule(TriesPropertyToTriesAttributeRector::class);
-    $rectorConfig->rule(UniqueForPropertyToUniqueForAttributeRector::class);
     $rectorConfig->rule(VisiblePropertyToVisibleAttributeRector::class);
     $rectorConfig->rule(WithoutIncrementingPropertyToWithoutIncrementingAttributeRector::class);
     $rectorConfig->rule(WithoutTimestampsPropertyToWithoutTimestampsAttributeRector::class);
+
+    // API Resource
+    $rectorConfig->rule(CollectsPropertyToCollectsAttributeRector::class);
+    $rectorConfig->rule(PreserveKeysPropertyToPreserveKeysAttributeRector::class);
+
+    // Form Request
+    $rectorConfig->rule(ErrorBagPropertyToErrorBagAttributeRector::class);
+    $rectorConfig->rule(StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector::class);
+
+    // Queue
+    $rectorConfig->rule(BackoffPropertyToBackoffAttributeRector::class);
+    $rectorConfig->rule(DelayPropertyToDelayAttributeRector::class);
+    $rectorConfig->rule(DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector::class);
+    $rectorConfig->rule(FailOnTimeoutPropertyToFailOnTimeoutAttributeRector::class);
+    $rectorConfig->rule(JobConnectionPropertyToJobConnectionAttributeRector::class);
+    $rectorConfig->rule(MaxExceptionsPropertyToMaxExceptionsAttributeRector::class);
+    $rectorConfig->rule(QueuePropertyToQueueAttributeRector::class);
+    $rectorConfig->rule(TimeoutPropertyToTimeoutAttributeRector::class);
+    $rectorConfig->rule(TriesPropertyToTriesAttributeRector::class);
+    $rectorConfig->rule(UniqueForPropertyToUniqueForAttributeRector::class);
 };
