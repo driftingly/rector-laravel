@@ -126,6 +126,10 @@ CODE_SAMPLE
                             new ObjectType($argumentFuncCallToMethodCall->getClass()),
                         );
 
+                        if (! $expr instanceof FuncCall) {
+                            return null;
+                        }
+
                         $hasChanged = true;
 
                         return $this->refactorFuncCallToMethodCall($node, $argumentFuncCallToMethodCall, $expr);
@@ -137,6 +141,10 @@ CODE_SAMPLE
                             $classMethod,
                             new ObjectType($argumentFuncCallToMethodCall->getClass()),
                         );
+
+                        if (! $expr instanceof FuncCall) {
+                            return null;
+                        }
 
                         $hasChanged = true;
 
