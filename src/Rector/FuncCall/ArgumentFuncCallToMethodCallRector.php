@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -126,6 +127,10 @@ CODE_SAMPLE
                             new ObjectType($argumentFuncCallToMethodCall->getClass()),
                         );
 
+                        if (! $expr instanceof Expr) {
+                            return null;
+                        }
+
                         $hasChanged = true;
 
                         return $this->refactorFuncCallToMethodCall($node, $argumentFuncCallToMethodCall, $expr);
@@ -137,6 +142,10 @@ CODE_SAMPLE
                             $classMethod,
                             new ObjectType($argumentFuncCallToMethodCall->getClass()),
                         );
+
+                        if (! $expr instanceof Expr) {
+                            return null;
+                        }
 
                         $hasChanged = true;
 
