@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\StaticCall;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\ArrayDimFetch\EnvVariableToEnvHelperRector\EnvVariableToEnvHelperRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -41,6 +42,10 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?StaticCall
     {
+        if ($node->getAttribute(AttributeKey::IS_BEING_ASSIGNED) === true) {
+            return null;
+        }
+
         if (! $this->isName($node->var, '_ENV')) {
             return null;
         }
