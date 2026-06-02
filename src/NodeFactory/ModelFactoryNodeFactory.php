@@ -26,15 +26,31 @@ use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\PhpParser\Node\Value\ValueResolver;
 
-final readonly class ModelFactoryNodeFactory
+final class ModelFactoryNodeFactory
 {
-    private const string THIS = 'this';
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @readonly
+     */
+    private NodeFactory $nodeFactory;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
+     * @var string
+     */
+    private const THIS = 'this';
 
-    public function __construct(
-        private NodeNameResolver $nodeNameResolver,
-        private NodeFactory $nodeFactory,
-        private ValueResolver $valueResolver,
-    ) {}
+    public function __construct(NodeNameResolver $nodeNameResolver, NodeFactory $nodeFactory, ValueResolver $valueResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodeFactory = $nodeFactory;
+        $this->valueResolver = $valueResolver;
+    }
 
     public function createEmptyFactory(string $name, Expr $expr): Class_
     {
@@ -62,7 +78,10 @@ final readonly class ModelFactoryNodeFactory
         return $class;
     }
 
-    public function createDefinition(Closure|ArrowFunction $callable): ClassMethod
+    /**
+     * @param \PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $callable
+     */
+    public function createDefinition($callable): ClassMethod
     {
         if (isset($callable->params[0])) {
             $this->fakerVariableToPropertyFetch($callable->getStmts(), $callable->params[0]);
@@ -113,7 +132,10 @@ final readonly class ModelFactoryNodeFactory
         return $this->createPublicMethod('configure', [$return]);
     }
 
-    public function appendConfigure(ClassMethod $classMethod, string $name, Closure|ArrowFunction $callable): void
+    /**
+     * @param \PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $callable
+     */
+    public function appendConfigure(ClassMethod $classMethod, string $name, $callable): void
     {
         SimpleCallableNodeTraverser::traverseNodesWithCallable(
             (array) $classMethod->stmts,

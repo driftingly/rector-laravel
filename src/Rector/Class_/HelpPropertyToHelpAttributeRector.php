@@ -23,9 +23,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class HelpPropertyToHelpAttributeRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-    ) {}
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer)
+    {
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

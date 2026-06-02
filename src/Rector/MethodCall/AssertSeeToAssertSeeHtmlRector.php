@@ -19,6 +19,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
 {
     /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
      * @var string[]
      */
     protected array $methodsToReplace = [
@@ -27,9 +31,10 @@ final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
         'assertSeeInOrder' => 'assertSeeHtmlInOrder',
     ];
 
-    public function __construct(
-        private readonly ValueResolver $valueResolver
-    ) {}
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

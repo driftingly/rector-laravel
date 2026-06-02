@@ -29,11 +29,24 @@ use Webmozart\Assert\InvalidArgumentException;
  */
 final class UnifyModelDatesWithCastsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ClassInsertManipulator $classInsertManipulator,
-        private readonly ValueResolver $valueResolver,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
-    ) {}
+    /**
+     * @readonly
+     */
+    private ClassInsertManipulator $classInsertManipulator;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
+     * @readonly
+     */
+    private PhpDocInfoFactory $phpDocInfoFactory;
+    public function __construct(ClassInsertManipulator $classInsertManipulator, ValueResolver $valueResolver, PhpDocInfoFactory $phpDocInfoFactory)
+    {
+        $this->classInsertManipulator = $classInsertManipulator;
+        $this->valueResolver = $valueResolver;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -103,7 +116,7 @@ CODE_SAMPLE
 
         try {
             Assert::allString($dates);
-        } catch (InvalidArgumentException) {
+        } catch (InvalidArgumentException $exception) {
             return null;
         }
 
@@ -134,7 +147,7 @@ CODE_SAMPLE
         $missingDates = array_diff($dates, array_keys($casts));
         try {
             Assert::allString($missingDates);
-        } catch (InvalidArgumentException) {
+        } catch (InvalidArgumentException $exception) {
             return null;
         }
 

@@ -26,7 +26,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DateWhereClauseToShorthandRector extends AbstractRector
 {
-    private const array WHERE_NOW_METHODS = [
+    /**
+     * @readonly
+     */
+    private QueryBuilderAnalyzer $queryBuilderAnalyzer;
+    /**
+     * @var mixed[]
+     */
+    private const WHERE_NOW_METHODS = [
         'where' => [
             '<' => 'wherePast',
             '<=' => 'whereNowOrPast',
@@ -41,7 +48,10 @@ final class DateWhereClauseToShorthandRector extends AbstractRector
         ],
     ];
 
-    private const array WHERE_TODAY_METHODS = [
+    /**
+     * @var mixed[]
+     */
+    private const WHERE_TODAY_METHODS = [
         'whereDate' => [
             '=' => 'whereToday',
             '<' => 'whereBeforeToday',
@@ -58,9 +68,10 @@ final class DateWhereClauseToShorthandRector extends AbstractRector
         ],
     ];
 
-    public function __construct(
-        private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer,
-    ) {}
+    public function __construct(QueryBuilderAnalyzer $queryBuilderAnalyzer)
+    {
+        $this->queryBuilderAnalyzer = $queryBuilderAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -123,7 +134,10 @@ CODE_SAMPLE
         return null;
     }
 
-    private function refactorWhereNowCall(MethodCall|StaticCall $node, string $callName): ?Node
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function refactorWhereNowCall($node, string $callName): ?Node
     {
         if (count($node->args) !== 3) {
             return null;
@@ -149,7 +163,10 @@ CODE_SAMPLE
         return $this->renameAndKeepFirstArgument($node, self::WHERE_NOW_METHODS[$callName][$operator]);
     }
 
-    private function refactorWhereTodayCall(MethodCall|StaticCall $node, string $callName): ?Node
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function refactorWhereTodayCall($node, string $callName): ?Node
     {
         if (count($node->args) === 2) {
             if (! isset($node->args[1]) || ! $node->args[1] instanceof Arg) {
@@ -196,7 +213,10 @@ CODE_SAMPLE
         return $arg->value->value;
     }
 
-    private function renameAndKeepFirstArgument(MethodCall|StaticCall $node, string $methodName): Node
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function renameAndKeepFirstArgument($node, string $methodName): Node
     {
         if (! isset($node->args[0])) {
             return $node;

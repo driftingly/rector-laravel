@@ -23,9 +23,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
 {
     /**
+     * @readonly
+     */
+    private QueryBuilderAnalyzer $queryBuilderAnalyzer;
+    /**
      * @var string[]
      */
-    private const array METHODS = [
+    private const METHODS = [
         'whereHas',
         'orWhereHas',
         'whereDoesntHave',
@@ -36,7 +40,10 @@ class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
         'orWhereDoesntHaveMorph',
     ];
 
-    public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
+    public function __construct(QueryBuilderAnalyzer $queryBuilderAnalyzer)
+    {
+        $this->queryBuilderAnalyzer = $queryBuilderAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -85,7 +92,10 @@ CODE_SAMPLE
         return null;
     }
 
-    private function isWhereRelationMethodWithClosureOrArrowFunction(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function isWhereRelationMethodWithClosureOrArrowFunction($node): bool
     {
         if (! $this->expectedObjectTypeAndMethodCall($node)) {
             return false;
@@ -97,7 +107,10 @@ CODE_SAMPLE
         ! ($node->getArgs()[$position]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): ?Node
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function changeClosureParamType($node): ?Node
     {
         $position = $this->getPosition($node);
 
@@ -119,7 +132,10 @@ CODE_SAMPLE
         return $node;
     }
 
-    private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function expectedObjectTypeAndMethodCall($node): bool
     {
         foreach (self::METHODS as $method) {
             if ($this->queryBuilderAnalyzer->isMatchingCall($node, $method)) {
@@ -130,7 +146,10 @@ CODE_SAMPLE
         return false;
     }
 
-    private function getPosition(MethodCall|StaticCall $node): int
+    /**
+     * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $node
+     */
+    private function getPosition($node): int
     {
         // Morph methods have the closure in the 3rd position, others use the 2nd.
         return $this->isNames(
