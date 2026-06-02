@@ -73,16 +73,13 @@ CODE_SAMPLE
         return [MethodCall::class, StaticCall::class];
     }
 
+    /**
+     * @param  MethodCall|StaticCall  $node
+     */
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
-            return null;
-        }
-
         if ($this->isWhereRelationMethodWithClosureOrArrowFunction($node)) {
-            $this->changeClosureParamType($node);
-
-            return $node;
+            return $this->changeClosureParamType($node);
         }
 
         return null;
@@ -94,38 +91,32 @@ CODE_SAMPLE
             return false;
         }
 
-        // Morph methods have the closure in the 3rd position, others use the 2nd.
-        $position = $this->isNames(
-            $node->name,
-            ['whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph']
-        ) ? 2 : 1;
+        $position = $this->getPosition($node);
 
         return ! (! ($node->getArgs()[$position]->value ?? null) instanceof Closure &&
         ! ($node->getArgs()[$position]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): void
+    private function changeClosureParamType(MethodCall|StaticCall $node): ?Node
     {
-        // Morph methods have the closure in the 3rd position, others use the 2nd.
-        $position = $this->isNames(
-            $node->name,
-            ['whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph']
-        ) ? 2 : 1;
+        $position = $this->getPosition($node);
 
         /** @var ArrowFunction|Closure $closure */
         $closure = $node->getArgs()[$position]->value;
 
         if (! isset($closure->getParams()[0])) {
-            return;
+            return null;
         }
 
         $param = $closure->getParams()[0];
 
         if ($param->type instanceof Name) {
-            return;
+            return null;
         }
 
         $param->type = new FullyQualified('Illuminate\Contracts\Database\Query\Builder');
+
+        return $node;
     }
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
@@ -137,5 +128,14 @@ CODE_SAMPLE
         }
 
         return false;
+    }
+
+    private function getPosition(MethodCall|StaticCall $node): int
+    {
+        // Morph methods have the closure in the 3rd position, others use the 2nd.
+        return $this->isNames(
+            $node->name,
+            ['whereHasMorph', 'orWhereHasMorph', 'whereDoesntHaveMorph', 'orWhereDoesntHaveMorph']
+        ) ? 2 : 1;
     }
 }
