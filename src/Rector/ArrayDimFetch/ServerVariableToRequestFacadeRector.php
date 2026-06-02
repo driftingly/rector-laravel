@@ -51,7 +51,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_SERVER_VARIABLE) === true) {
+        if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_SUPERGLOBAL_ASSIGN) === true) {
             return null;
         }
 

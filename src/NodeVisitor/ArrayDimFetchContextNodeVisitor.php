@@ -21,8 +21,10 @@ use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implements DecoratingNodeVisitorInterface
 {
     public const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR = 'is_inside_array_dim_fetch_with_dim_not_scalar';
-    public const string IS_IN_SERVER_VARIABLE = 'is_in_server_variable';
+    public const string IS_IN_SUPERGLOBAL_ASSIGN = 'is_in_superglobal_assign';
     public const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR = 'is_inside_array_dim_fetch_with_dim_not_expr';
+
+    private const array SUPERGLOBAL_NAMES = ['_SERVER', '_GET', '_POST', '_REQUEST', '_ENV'];
 
     public function __construct(
         private readonly NodeNameResolver $nodeNameResolver
@@ -32,15 +34,13 @@ final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implemen
     {
         if (! $node instanceof ArrayDimFetch) {
             if (in_array($node::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
-                && (! $node instanceof Assign || $node->var instanceof ArrayDimFetch && $this->nodeNameResolver->isName($node->var->var, '_SERVER'))) {
+                && (! $node instanceof Assign || $this->isSuperglobalAssign($node))) {
                 SimpleCallableNodeTraverser::traverseNodesWithCallable($node, function (Node $subNode) {
-                    if (! $subNode instanceof ArrayDimFetch) {
-                        return null;
+                    if ($subNode instanceof ArrayDimFetch || $subNode instanceof Variable) {
+                        $subNode->setAttribute(self::IS_IN_SUPERGLOBAL_ASSIGN, true);
                     }
 
-                    $subNode->setAttribute(self::IS_IN_SERVER_VARIABLE, true);
-
-                    return $subNode;
+                    return null;
                 });
             }
 
@@ -74,5 +74,22 @@ final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implemen
         });
 
         return null;
+    }
+
+    private function isSuperglobalAssign(Node $node): bool
+    {
+        if (! $node instanceof Assign) {
+            return false;
+        }
+
+        if ($node->var instanceof ArrayDimFetch && $node->var->var instanceof Variable) {
+            return $this->nodeNameResolver->isNames($node->var->var, self::SUPERGLOBAL_NAMES);
+        }
+
+        if ($node->var instanceof Variable) {
+            return $this->nodeNameResolver->isNames($node->var, self::SUPERGLOBAL_NAMES);
+        }
+
+        return false;
     }
 }

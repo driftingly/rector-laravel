@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeVisitor\ArrayDimFetchContextNodeVisitor;
 use RectorLaravel\Tests\Rector\ArrayDimFetch\RequestVariablesToRequestFacadeRector\RequestVariablesToRequestFacadeRectorTest;
@@ -67,6 +68,17 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): StaticCall|NotIdentical|null
     {
+        // skip direct assignment targets: $_POST = $data, $_POST['key'] = $value
+        if ($node->getAttribute(AttributeKey::IS_BEING_ASSIGNED) === true) {
+            return null;
+        }
+
+        // skip inner nodes of superglobal assignments (e.g. the $_POST Variable
+        // inside $_POST['key'] = ...) and non-assignment contexts like isset/unset
+        if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_SUPERGLOBAL_ASSIGN) === true) {
+            return null;
+        }
+
         if ($node instanceof Variable) {
             if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR) === true) {
                 return null;
