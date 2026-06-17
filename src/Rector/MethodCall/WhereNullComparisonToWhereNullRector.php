@@ -60,6 +60,10 @@ CODE_SAMPLE
         $type = null;
 
         if (count($args) === 1) {
+            if (! $args[0] instanceof Arg || ! $this->getType($args[0]->value)->isString()->yes()) {
+                return null;
+            }
+
             return $this->nodeFactory->createMethodCall(
                 $node->var,
                 'whereNull',

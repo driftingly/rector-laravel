@@ -71,16 +71,13 @@ CODE_SAMPLE
         return [MethodCall::class, StaticCall::class];
     }
 
+    /**
+     * @param  MethodCall|StaticCall  $node
+     */
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof MethodCall && ! $node instanceof StaticCall) {
-            return null;
-        }
-
         if ($this->isWhereMethodWithClosureOrArrowFunction($node)) {
-            $this->changeClosureParamType($node);
-
-            return $node;
+            return $this->changeClosureParamType($node);
         }
 
         return null;
@@ -96,20 +93,20 @@ CODE_SAMPLE
         ! ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction);
     }
 
-    private function changeClosureParamType(MethodCall|StaticCall $node): void
+    private function changeClosureParamType(MethodCall|StaticCall $node): ?Node
     {
         /** @var ArrowFunction|Closure $closure */
         $closure = $node->getArgs()[0]
             ->value;
 
         if (! isset($closure->getParams()[0])) {
-            return;
+            return null;
         }
 
         $param = $closure->getParams()[0];
 
         if ($param->type instanceof Name) {
-            return;
+            return null;
         }
 
         $classOrVar = $node instanceof MethodCall
@@ -121,6 +118,8 @@ CODE_SAMPLE
             : 'Illuminate\Contracts\Database\Query\Builder';
 
         $param->type = new FullyQualified($type);
+
+        return $node;
     }
 
     private function expectedObjectTypeAndMethodCall(MethodCall|StaticCall $node): bool
