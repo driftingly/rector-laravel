@@ -10,11 +10,17 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use PHPUnit\Framework\Assert;
+use Rector\NodeTypeResolver\Reflection\BetterReflection\SourceLocatorProvider\DynamicSourceLocatorProvider;
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
 use RectorLaravel\NodeAnalyzer\LaravelServiceAnalyzer;
 
 class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->make(DynamicSourceLocatorProvider::class)->reset();
+    }
     /**
      * @test
      */
