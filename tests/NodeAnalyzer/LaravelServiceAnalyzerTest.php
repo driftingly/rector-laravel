@@ -21,6 +21,7 @@ class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
         parent::setUp();
         $this->make(DynamicSourceLocatorProvider::class)->reset();
     }
+
     /**
      * @test
      */
