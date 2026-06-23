@@ -10,7 +10,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
@@ -24,7 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CarbonSetTestNowToTravelToRector extends AbstractRector
 {
-    public function __construct(private readonly ReflectionProvider $reflectionProvider) {}
+    private const string TEST_CASE_CLASS = 'Illuminate\Foundation\Testing\TestCase';
 
     /**
      * @throws PoorDocumentationException
@@ -106,15 +105,13 @@ CODE_SAMPLE
 
     private function isInLaravelTestCaseScope(Scope $scope): bool
     {
-        $testCaseClass = 'Illuminate\Foundation\Testing\TestCase';
-
         if ($scope->isInClass()) {
-            return $scope->getClassReflection()->isSubclassOfClass($this->reflectionProvider->getClass($testCaseClass));
+            return $scope->getClassReflection()->is(self::TEST_CASE_CLASS);
         }
 
         // Pest / other closures: `@param-closure-this` on the test runner makes `$this` a TestCase.
         $thisType = $scope->getType(new Variable('this'));
-        $objectType = new ObjectType($testCaseClass);
+        $objectType = new ObjectType(self::TEST_CASE_CLASS);
 
         return $objectType->isSuperTypeOf($thisType)->yes();
     }
