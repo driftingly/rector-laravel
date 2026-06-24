@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\StaticCall;
 
-use Illuminate\Support\Facades\Route;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
