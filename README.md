@@ -140,6 +140,7 @@ return RectorConfig::configure()
 | [UseComponentPropertyWithinCommandsRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/UseComponentPropertyWithinCommandsRector.php) | Use `$this->components` property within commands. |
 | [UseForwardsCallsTraitRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Class_/UseForwardsCallsTraitRector.php) | Replaces the use of `call_user_func` and `call_user_func_array` method with the CallForwarding trait. |
 | [EmptyToBlankAndFilledFuncRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Empty_/EmptyToBlankAndFilledFuncRector.php) | Converts `empty()` to `blank()` and `filled()` |
+| [RemoveDownMethodFromMigrationsRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/Class_/RemoveDownMethodFromMigrationsRector.php) | Removes the `down()` method from migrations. |
 
 ## Creating New Rules
 
