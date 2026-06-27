@@ -24,11 +24,6 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * Rewrites factory ->has()/->for() calls into their magic method equivalents, folding any
- * count and literal state into the arguments (e.g. ->has(Variation::factory()->times(3)) becomes
- * ->hasVariations(3)). Genuine relationships with simple factories qualify, including polymorphic
- * has-side relations; only the inverse morphTo is excluded.
- *
  * @see FactoryHasForToMagicMethodRectorTest
  */
 final class FactoryHasForToMagicMethodRector extends AbstractRector
@@ -85,14 +80,14 @@ CODE_SAMPLE
         return $node;
     }
 
-    protected function isRelationshipCall(MethodCall $node): bool
+    private function isRelationshipCall(MethodCall $node): bool
     {
         return $this->isNames($node->name, ['has', 'for'])
             && in_array(count($node->args), [1, 2], true)
             && $node->args[0] instanceof Arg;
     }
 
-    protected function resolveFactoryClass(Expr $expr): ?string
+    private function resolveFactoryClass(Expr $expr): ?string
     {
         while ($expr instanceof MethodCall) {
             $expr = $expr->var;
@@ -108,7 +103,7 @@ CODE_SAMPLE
     /**
      * @return list<Expr>|null
      */
-    protected function magicMethodArguments(MethodCall $node, Expr $factory): ?array
+    private function magicMethodArguments(MethodCall $node, Expr $factory): ?array
     {
         $count = null;
         $state = null;
@@ -162,7 +157,7 @@ CODE_SAMPLE
     /**
      * @return array{Expr|null, Array_|null}|null
      */
-    protected function mergeFactoryArguments(StaticCall $factory, ?Expr $count, ?Array_ $state): ?array
+    private function mergeFactoryArguments(StaticCall $factory, ?Expr $count, ?Array_ $state): ?array
     {
         if ($factory->args === []) {
             return [$count, $state];
@@ -195,14 +190,14 @@ CODE_SAMPLE
         return [$first, $this->mergeState($second->value, $state)];
     }
 
-    protected function mergeState(Array_ $factoryState, ?Array_ $chainState): Array_
+    private function mergeState(Array_ $factoryState, ?Array_ $chainState): Array_
     {
         return $chainState === null
             ? $factoryState
             : new Array_(array_merge($factoryState->items, $chainState->items));
     }
 
-    protected function resolveRelation(MethodCall $node, string $relatedClass): ?string
+    private function resolveRelation(MethodCall $node, string $relatedClass): ?string
     {
         $model = $this->resolveFactoryClass($node->var);
 
@@ -219,7 +214,7 @@ CODE_SAMPLE
         return $relation;
     }
 
-    protected function guessRelationName(MethodCall $node, string $model, string $relatedClass): ?string
+    private function guessRelationName(MethodCall $node, string $model, string $relatedClass): ?string
     {
         if (isset($node->args[1]) && $node->args[1] instanceof Arg && $node->args[1]->value instanceof String_) {
             return $node->args[1]->value->value;
@@ -227,7 +222,7 @@ CODE_SAMPLE
 
         $basename = basename(str_replace('\\', '/', $relatedClass));
         $singular = lcfirst($basename);
-        $plural = lcfirst($this->pluralize($basename));
+        $plural = lcfirst($this->pluralise($basename));
 
         if ($this->isName($node->name, 'has') && method_exists($model, $plural)) {
             return $plural;
@@ -241,7 +236,7 @@ CODE_SAMPLE
      * candidate relation name that is then verified with method_exists(), so an inexact guess
      * simply causes the rule to fall back to the singular form or skip the node.
      */
-    protected function pluralize(string $word): string
+    private function pluralise(string $word): string
     {
         $lower = strtolower($word);
 
@@ -256,7 +251,7 @@ CODE_SAMPLE
         return $word . 's';
     }
 
-    protected function isEncapsulatableRelation(string $model, string $relation): bool
+    private function isEncapsulatableRelation(string $model, string $relation): bool
     {
         if (! method_exists($model, $relation)) {
             return false;
