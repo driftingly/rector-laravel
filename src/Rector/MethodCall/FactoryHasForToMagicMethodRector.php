@@ -75,16 +75,16 @@ CODE_SAMPLE
         }
 
         $node->name = new Identifier($this->getName($node->name) . ucfirst($relation));
-        $node->args = array_map(static fn (Expr $value): Arg => new Arg($value), $arguments);
+        $node->args = array_map(static fn (Expr $expr): Arg => new Arg($expr), $arguments);
 
         return $node;
     }
 
-    private function isRelationshipCall(MethodCall $node): bool
+    private function isRelationshipCall(MethodCall $methodCall): bool
     {
-        return $this->isNames($node->name, ['has', 'for'])
-            && in_array(count($node->args), [1, 2], true)
-            && $node->args[0] instanceof Arg;
+        return $this->isNames($methodCall->name, ['has', 'for'])
+            && in_array(count($methodCall->args), [1, 2], true)
+            && $methodCall->args[0] instanceof Arg;
     }
 
     private function resolveFactoryClass(Expr $expr): ?string
@@ -103,32 +103,32 @@ CODE_SAMPLE
     /**
      * @return list<Expr>|null
      */
-    private function magicMethodArguments(MethodCall $node, Expr $factory): ?array
+    private function magicMethodArguments(MethodCall $methodCall, Expr $expr): ?array
     {
         $count = null;
         $state = null;
 
-        while ($factory instanceof MethodCall) {
-            $name = $this->getName($factory->name);
-            $value = $factory->args[0]->value ?? null;
+        while ($expr instanceof MethodCall) {
+            $name = $this->getName($expr->name);
+            $value = $expr->args[0]->value ?? null;
 
-            if (count($factory->args) !== 1 || ! $value instanceof Expr || ! in_array($name, ['times', 'count', 'state'], true)) {
+            if (count($expr->args) !== 1 || ! $value instanceof Expr || ! in_array($name, ['times', 'count', 'state'], true)) {
                 return null;
             }
 
-            if ($name === 'state' && $state === null && $value instanceof Array_) {
+            if ($name === 'state' && !$state instanceof Array_ && $value instanceof Array_) {
                 $state = $value;
-            } elseif ($name !== 'state' && $count === null) {
+            } elseif ($name !== 'state' && !$count instanceof Expr) {
                 $count = $value;
             } else {
                 return null;
             }
 
-            $factory = $factory->var;
+            $expr = $expr->var;
         }
 
-        if ($factory instanceof StaticCall) {
-            $merged = $this->mergeFactoryArguments($factory, $count, $state);
+        if ($expr instanceof StaticCall) {
+            $merged = $this->mergeFactoryArguments($expr, $count, $state);
 
             if ($merged === null) {
                 return null;
@@ -137,7 +137,7 @@ CODE_SAMPLE
             [$count, $state] = $merged;
         }
 
-        if ($this->isName($node->name, 'for')) {
+        if ($this->isName($methodCall->name, 'for')) {
             return $state instanceof Array_ ? [$state] : [];
         }
 
@@ -157,55 +157,55 @@ CODE_SAMPLE
     /**
      * @return array{Expr|null, Array_|null}|null
      */
-    private function mergeFactoryArguments(StaticCall $factory, ?Expr $count, ?Array_ $state): ?array
+    private function mergeFactoryArguments(StaticCall $staticCall, ?Expr $expr, ?Array_ $array): ?array
     {
-        if ($factory->args === []) {
-            return [$count, $state];
+        if ($staticCall->args === []) {
+            return [$expr, $array];
         }
 
-        if (count($factory->args) > 2 || ! $factory->args[0] instanceof Arg) {
+        if (count($staticCall->args) > 2 || ! $staticCall->args[0] instanceof Arg) {
             return null;
         }
 
-        $first = $factory->args[0]->value;
+        $first = $staticCall->args[0]->value;
 
         if ($first instanceof Array_) {
-            return count($factory->args) === 1 ? [$count, $this->mergeState($first, $state)] : null;
+            return count($staticCall->args) === 1 ? [$expr, $this->mergeState($first, $array)] : null;
         }
 
-        if ($count !== null || ! is_numeric($this->valueResolver->getValue($first))) {
+        if ($expr instanceof Expr || ! is_numeric($this->valueResolver->getValue($first))) {
             return null;
         }
 
-        $second = $factory->args[1] ?? null;
+        $second = $staticCall->args[1] ?? null;
 
         if ($second === null) {
-            return [$first, $state];
+            return [$first, $array];
         }
 
         if (! $second instanceof Arg || ! $second->value instanceof Array_) {
             return null;
         }
 
-        return [$first, $this->mergeState($second->value, $state)];
+        return [$first, $this->mergeState($second->value, $array)];
     }
 
     private function mergeState(Array_ $factoryState, ?Array_ $chainState): Array_
     {
-        return $chainState === null
-            ? $factoryState
-            : new Array_(array_merge($factoryState->items, $chainState->items));
+        return $chainState instanceof Array_
+            ? new Array_(array_merge($factoryState->items, $chainState->items))
+            : $factoryState;
     }
 
-    private function resolveRelation(MethodCall $node, string $relatedClass): ?string
+    private function resolveRelation(MethodCall $methodCall, string $relatedClass): ?string
     {
-        $model = $this->resolveFactoryClass($node->var);
+        $model = $this->resolveFactoryClass($methodCall->var);
 
         if ($model === null || ! is_subclass_of($model, Model::class)) {
             return null;
         }
 
-        $relation = $this->guessRelationName($node, $model, $relatedClass);
+        $relation = $this->guessRelationName($methodCall, $model, $relatedClass);
 
         if ($relation === null || ! $this->isEncapsulatableRelation($model, $relation)) {
             return null;
@@ -214,17 +214,17 @@ CODE_SAMPLE
         return $relation;
     }
 
-    private function guessRelationName(MethodCall $node, string $model, string $relatedClass): ?string
+    private function guessRelationName(MethodCall $methodCall, string $model, string $relatedClass): ?string
     {
-        if (isset($node->args[1]) && $node->args[1] instanceof Arg && $node->args[1]->value instanceof String_) {
-            return $node->args[1]->value->value;
+        if (isset($methodCall->args[1]) && $methodCall->args[1] instanceof Arg && $methodCall->args[1]->value instanceof String_) {
+            return $methodCall->args[1]->value->value;
         }
 
         $basename = basename(str_replace('\\', '/', $relatedClass));
         $singular = lcfirst($basename);
         $plural = lcfirst($this->pluralise($basename));
 
-        if ($this->isName($node->name, 'has') && method_exists($model, $plural)) {
+        if ($this->isName($methodCall->name, 'has') && method_exists($model, $plural)) {
             return $plural;
         }
 
