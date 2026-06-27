@@ -116,9 +116,9 @@ CODE_SAMPLE
                 return null;
             }
 
-            if ($name === 'state' && !$state instanceof Array_ && $value instanceof Array_) {
+            if ($name === 'state' && ! $state instanceof Array_ && $value instanceof Array_) {
                 $state = $value;
-            } elseif ($name !== 'state' && !$count instanceof Expr) {
+            } elseif ($name !== 'state' && ! $count instanceof Expr) {
                 $count = $value;
             } else {
                 return null;
