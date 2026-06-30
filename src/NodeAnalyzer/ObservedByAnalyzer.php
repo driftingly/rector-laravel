@@ -18,7 +18,10 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
+use Rector\Configuration\Option;
+use Rector\Configuration\Parameter\SimpleParameterProvider;
 use Rector\Contract\DependencyInjection\ResettableInterface;
+use Rector\FileSystem\FilesFinder;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 use Rector\PhpParser\Parser\RectorParser;
@@ -44,11 +47,17 @@ final class ObservedByAnalyzer implements ResettableInterface
      */
     private array $classFilePaths = [];
 
+    /**
+     * @var array<string, true>
+     */
+    private array $indexedFilePaths = [];
+
     private ?string $initializedProjectRoot = null;
 
     public function __construct(
         private readonly RectorParser $rectorParser,
         private readonly NodeNameResolver $nodeNameResolver,
+        private readonly FilesFinder $filesFinder,
     ) {}
 
     public function reset(): void
@@ -56,16 +65,17 @@ final class ObservedByAnalyzer implements ResettableInterface
         $this->observerClassesByModel = [];
         $this->canUpdateModelCache = [];
         $this->classFilePaths = [];
+        $this->indexedFilePaths = [];
         $this->initializedProjectRoot = null;
     }
 
-    public function matchObserveStaticCall(StaticCall $staticCall): ?ObservedByRegistration
+    public function matchObserveStaticCall(StaticCall $staticCall, ?string $currentClassName = null): ?ObservedByRegistration
     {
         if (! $this->nodeNameResolver->isName($staticCall->name, 'observe')) {
             return null;
         }
 
-        $modelClass = $this->nodeNameResolver->getName($staticCall->class);
+        $modelClass = $this->resolveObservedModelClass($staticCall, $currentClassName);
         if (! is_string($modelClass)) {
             return null;
         }
@@ -78,12 +88,39 @@ final class ObservedByAnalyzer implements ResettableInterface
         return new ObservedByRegistration($modelClass, $observerClasses);
     }
 
+    public function resolveCurrentClassName(Node $node): ?string
+    {
+        $parentNode = $node->getAttribute('parent');
+        while ($parentNode instanceof Node) {
+            if ($parentNode instanceof Class_) {
+                return $this->resolveClassName($parentNode);
+            }
+
+            $parentNode = $parentNode->getAttribute('parent');
+        }
+
+        $scope = $node->getAttribute('scope');
+        if (! is_object($scope) || ! method_exists($scope, 'getClassReflection')) {
+            return null;
+        }
+
+        /** @var object{getClassReflection: callable(): mixed} $scope */
+        $classReflection = $scope->getClassReflection();
+        if (! is_object($classReflection) || ! method_exists($classReflection, 'getName')) {
+            return null;
+        }
+
+        $className = $classReflection->getName();
+
+        return is_string($className) ? $className : null;
+    }
+
     /**
      * @return list<class-string>
      */
     public function resolveObserverClassesForModel(string $modelClass, string $currentFilePath): array
     {
-        $this->initializeFromProjectRoot($this->resolveProjectRoot($currentFilePath));
+        $this->initializeFromProjectRoot($this->resolveProjectRoot($currentFilePath), $currentFilePath);
 
         return $this->observerClassesByModel[$modelClass] ?? [];
     }
@@ -145,7 +182,7 @@ final class ObservedByAnalyzer implements ResettableInterface
      */
     public function canUpdateModel(string $modelClass, array $observerClasses, string $currentFilePath): bool
     {
-        $this->initializeFromProjectRoot($this->resolveProjectRoot($currentFilePath));
+        $this->initializeFromProjectRoot($this->resolveProjectRoot($currentFilePath), $currentFilePath);
 
         $cacheKey = $modelClass . '|' . implode('|', $observerClasses);
         if (array_key_exists($cacheKey, $this->canUpdateModelCache)) {
@@ -264,24 +301,31 @@ final class ObservedByAnalyzer implements ResettableInterface
         return $this->uniqueObserverClasses($observerClasses);
     }
 
-    private function initializeFromProjectRoot(string $projectRoot): void
+    private function initializeFromProjectRoot(string $projectRoot, string $currentFilePath): void
     {
         if ($this->initializedProjectRoot === $projectRoot) {
+            if (! isset($this->indexedFilePaths[$currentFilePath]) && is_file($currentFilePath)) {
+                $this->collectObserveRegistrationsFromFile($currentFilePath);
+            }
+
             return;
         }
 
         $this->observerClassesByModel = [];
         $this->canUpdateModelCache = [];
         $this->classFilePaths = [];
+        $this->indexedFilePaths = [];
         $this->initializedProjectRoot = $projectRoot;
 
-        foreach ($this->findPhpFiles($projectRoot) as $filePath) {
+        foreach ($this->resolveProjectFiles($projectRoot, $currentFilePath) as $filePath) {
             $this->collectObserveRegistrationsFromFile($filePath);
         }
     }
 
     private function collectObserveRegistrationsFromFile(string $filePath): void
     {
+        $this->indexedFilePaths[$filePath] = true;
+
         try {
             $stmts = $this->rectorParser->parseFile($filePath);
         } catch (Throwable) {
@@ -295,44 +339,46 @@ final class ObservedByAnalyzer implements ResettableInterface
         $resolvedStmts = $this->resolveNames($stmts);
 
         SimpleCallableNodeTraverser::traverseNodesWithCallable($resolvedStmts, function (Node $node) use ($filePath): null {
-            if ($node instanceof Class_) {
-                $className = $this->resolveClassName($node);
-                if (is_string($className) && ! array_key_exists($className, $this->classFilePaths)) {
-                    $this->classFilePaths[$className] = $filePath;
-                }
-
+            if (! $node instanceof Class_) {
                 return null;
             }
 
-            if (! $node instanceof ClassMethod) {
+            $className = $this->resolveClassName($node);
+            if (! is_string($className)) {
                 return null;
             }
 
-            if (! $this->nodeNameResolver->isName($node->name, 'boot')) {
-                return null;
+            if (! array_key_exists($className, $this->classFilePaths)) {
+                $this->classFilePaths[$className] = $filePath;
             }
 
-            foreach ((array) $node->stmts as $stmt) {
-                if (! $stmt instanceof Expression) {
+            foreach ($node->getMethods() as $classMethod) {
+                if (! $this->isObserverRegistrationMethod($classMethod)) {
                     continue;
                 }
 
-                if (! $stmt->expr instanceof StaticCall) {
-                    continue;
-                }
+                foreach ((array) $classMethod->stmts as $stmt) {
+                    if (! $stmt instanceof Expression) {
+                        continue;
+                    }
 
-                /** @var StaticCall $staticCall */
-                $staticCall = $stmt->expr;
-                $observedByRegistration = $this->matchObserveStaticCall($staticCall);
-                if (! $observedByRegistration instanceof ObservedByRegistration) {
-                    continue;
-                }
+                    if (! $stmt->expr instanceof StaticCall) {
+                        continue;
+                    }
 
-                $existingObserverClasses = $this->observerClassesByModel[$observedByRegistration->modelClass] ?? [];
-                $this->observerClassesByModel[$observedByRegistration->modelClass] = $this->uniqueObserverClasses([
-                    ...$existingObserverClasses,
-                    ...$observedByRegistration->observerClasses,
-                ]);
+                    /** @var StaticCall $staticCall */
+                    $staticCall = $stmt->expr;
+                    $observedByRegistration = $this->matchObserveStaticCall($staticCall, $className);
+                    if (! $observedByRegistration instanceof ObservedByRegistration) {
+                        continue;
+                    }
+
+                    $existingObserverClasses = $this->observerClassesByModel[$observedByRegistration->modelClass] ?? [];
+                    $this->observerClassesByModel[$observedByRegistration->modelClass] = $this->uniqueObserverClasses([
+                        ...$existingObserverClasses,
+                        ...$observedByRegistration->observerClasses,
+                    ]);
+                }
             }
 
             return null;
@@ -407,48 +453,34 @@ final class ObservedByAnalyzer implements ResettableInterface
     }
 
     /**
-     * @return iterable<string>
+     * @return list<string>
      */
-    private function findPhpFiles(string $projectRoot): iterable
+    private function resolveProjectFiles(string $projectRoot, string $currentFilePath): array
     {
-        $directories = [$projectRoot];
+        $configuredPaths = array_filter(
+            SimpleParameterProvider::provideArrayParameter(Option::PATHS),
+            static fn (mixed $path): bool => is_string($path)
+        );
 
-        while ($directories !== []) {
-            $directory = array_pop($directories);
-            if (! is_string($directory)) {
-                continue;
-            }
+        $projectPaths = [];
 
-            $items = scandir($directory);
-            if ($items === false) {
-                continue;
-            }
-
-            sort($items);
-
-            foreach ($items as $item) {
-                if ($item === '.' || $item === '..') {
-                    continue;
-                }
-
-                $path = $directory . '/' . $item;
-
-                if (is_dir($path)) {
-                    if (in_array($item, ['.git', '.idea', '.vscode', 'build', 'vendor'], true)) {
-                        continue;
-                    }
-
-                    $directories[] = $path;
-                    continue;
-                }
-
-                if (! str_ends_with($path, '.php')) {
-                    continue;
-                }
-
-                yield $path;
+        foreach ($configuredPaths as $configuredPath) {
+            if ($configuredPath === $projectRoot || str_starts_with($configuredPath, $projectRoot . '/')) {
+                $projectPaths[] = $configuredPath;
             }
         }
+
+        if ($projectPaths === []) {
+            $projectPaths = [$projectRoot];
+        }
+
+        $filePaths = $this->filesFinder->findInDirectoriesAndFiles($projectPaths, ['php']);
+
+        if (is_file($currentFilePath)) {
+            $filePaths[] = $currentFilePath;
+        }
+
+        return array_values(array_unique($filePaths));
     }
 
     /**
@@ -458,6 +490,25 @@ final class ObservedByAnalyzer implements ResettableInterface
     private function uniqueObserverClasses(array $observerClasses): array
     {
         return array_values(array_unique($observerClasses));
+    }
+
+    private function isObserverRegistrationMethod(ClassMethod $classMethod): bool
+    {
+        return $this->nodeNameResolver->isNames($classMethod->name, ['boot', 'booted']);
+    }
+
+    private function resolveObservedModelClass(StaticCall $staticCall, ?string $currentClassName): ?string
+    {
+        if ($currentClassName !== null && $staticCall->class instanceof Name && $this->nodeNameResolver->isNames($staticCall->class, ['self', 'static'])) {
+            return $currentClassName;
+        }
+
+        $modelClass = $this->nodeNameResolver->getName($staticCall->class);
+        if (! is_string($modelClass)) {
+            return null;
+        }
+
+        return $modelClass;
     }
 
     private function resolveClassName(Class_ $class): ?string

@@ -70,9 +70,11 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): Node|int|null
     {
-        if (! $this->isName($node->name, 'boot')) {
+        if (! $this->isNames($node->name, ['boot', 'booted'])) {
             return null;
         }
+
+        $currentClassName = $this->observedByAnalyzer->resolveCurrentClassName($node);
 
         $hasChanged = false;
 
@@ -88,7 +90,7 @@ CODE_SAMPLE
             /** @var StaticCall $staticCall */
             $staticCall = $stmt->expr;
 
-            $observedByRegistration = $this->observedByAnalyzer->matchObserveStaticCall($staticCall);
+            $observedByRegistration = $this->observedByAnalyzer->matchObserveStaticCall($staticCall, $currentClassName);
             if (! $observedByRegistration instanceof ObservedByRegistration) {
                 continue;
             }

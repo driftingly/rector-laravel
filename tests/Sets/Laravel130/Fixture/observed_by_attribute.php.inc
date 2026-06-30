@@ -8,6 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+	public static function booted(): void
+	{
+		static::observe(UserObserver::class);
+	}
 }
 
 ?>
