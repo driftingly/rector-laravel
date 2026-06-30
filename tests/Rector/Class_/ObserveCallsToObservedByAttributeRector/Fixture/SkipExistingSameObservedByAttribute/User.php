@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Tests\Rector\Class_\ObserveCallsToObservedByAttributeRector\Fixture\SkipExistingSameObservedByAttribute;
 
-final class UserObserver
-{
-}
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-final class AppServiceProvider
+class User extends Authenticatable
 {
-    public function boot(): void
-    {
-        User::observe(UserObserver::class);
-    }
 }

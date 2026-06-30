@@ -2,11 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Sets\Laravel130\Fixture\ObservedByAttribute;
-
-final class UserObserver
-{
-}
+namespace RectorLaravel\Tests\Rector\Class_\ObserveCallsToObservedByAttributeRector\Fixture\SkipNotAModel;
 
 final class AppServiceProvider
 {

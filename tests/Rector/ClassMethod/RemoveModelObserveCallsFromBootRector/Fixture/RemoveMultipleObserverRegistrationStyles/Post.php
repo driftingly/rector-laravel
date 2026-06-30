@@ -6,10 +6,6 @@ namespace RectorLaravel\Tests\Rector\ClassMethod\RemoveModelObserveCallsFromBoot
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
-{
-}
-
 class Post extends Model
 {
 }

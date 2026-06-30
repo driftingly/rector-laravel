@@ -8,14 +8,14 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name\FullyQualified;
 
 final class ObservedByAttributeFactory
 {
     /**
-     * @param  list<class-string>  $observerClasses
+     * @param  list<string>  $observerClasses
      */
     public function create(array $observerClasses): AttributeGroup
     {

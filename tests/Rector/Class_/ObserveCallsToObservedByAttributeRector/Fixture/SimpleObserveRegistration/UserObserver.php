@@ -7,11 +7,3 @@ namespace RectorLaravel\Tests\Rector\Class_\ObserveCallsToObservedByAttributeRec
 final class UserObserver
 {
 }
-
-final class AppServiceProvider
-{
-    public function boot(): void
-    {
-        User::observe(UserObserver::class);
-    }
-}

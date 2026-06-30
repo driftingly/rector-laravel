@@ -83,14 +83,12 @@ CODE_SAMPLE
                 continue;
             }
 
-            if (! $stmt->expr instanceof StaticCall) {
+            $expr = $stmt->expr;
+            if (! $expr instanceof StaticCall) {
                 continue;
             }
 
-            /** @var StaticCall $staticCall */
-            $staticCall = $stmt->expr;
-
-            $observedByRegistration = $this->observedByAnalyzer->matchObserveStaticCall($staticCall, $currentClassName);
+            $observedByRegistration = $this->observedByAnalyzer->matchObserveStaticCall($expr, $currentClassName);
             if (! $observedByRegistration instanceof ObservedByRegistration) {
                 continue;
             }

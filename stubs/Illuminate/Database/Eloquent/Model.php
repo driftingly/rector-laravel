@@ -37,6 +37,8 @@ abstract class Model
         return new Builder;
     }
 
+    public static function observe(string $observer): void {}
+
     /**
      * Exists in the Illuminate/Database/Eloquent/Concerns/HasTimestamps trait
      * Put here for simplicity

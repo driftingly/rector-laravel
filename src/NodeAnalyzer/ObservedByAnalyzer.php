@@ -11,11 +11,12 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\VariadicPlaceholder;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use Rector\Configuration\Option;
@@ -33,7 +34,7 @@ final class ObservedByAnalyzer implements ResettableInterface
     private const string OBSERVED_BY_ATTRIBUTE = 'Illuminate\\Database\\Eloquent\\Attributes\\ObservedBy';
 
     /**
-     * @var array<string, list<class-string>>
+     * @var array<string, list<string>>
      */
     private array $observerClassesByModel = [];
 
@@ -43,7 +44,7 @@ final class ObservedByAnalyzer implements ResettableInterface
     private array $canUpdateModelCache = [];
 
     /**
-     * @var array<class-string, string>
+     * @var array<string, string>
      */
     private array $classFilePaths = [];
 
@@ -104,19 +105,18 @@ final class ObservedByAnalyzer implements ResettableInterface
             return null;
         }
 
-        /** @var object{getClassReflection: callable(): mixed} $scope */
-        $classReflection = $scope->getClassReflection();
+        $classReflection = call_user_func([$scope, 'getClassReflection']);
         if (! is_object($classReflection) || ! method_exists($classReflection, 'getName')) {
             return null;
         }
 
-        $className = $classReflection->getName();
+        $className = call_user_func([$classReflection, 'getName']);
 
         return is_string($className) ? $className : null;
     }
 
     /**
-     * @return list<class-string>
+     * @return list<string>
      */
     public function resolveObserverClassesForModel(string $modelClass, string $currentFilePath): array
     {
@@ -126,7 +126,7 @@ final class ObservedByAnalyzer implements ResettableInterface
     }
 
     /**
-     * @return list<class-string>|null
+     * @return list<string>|null
      */
     public function resolveExistingObservedByClasses(Class_ $class): ?array
     {
@@ -158,7 +158,7 @@ final class ObservedByAnalyzer implements ResettableInterface
 
     public function isLikelyEloquentModelClass(Class_ $class): bool
     {
-        if (! $class->extends instanceof Node\Name) {
+        if (! $class->extends instanceof Name) {
             return false;
         }
 
@@ -178,7 +178,7 @@ final class ObservedByAnalyzer implements ResettableInterface
     }
 
     /**
-     * @param  list<class-string>  $observerClasses
+     * @param  list<string>  $observerClasses
      */
     public function canUpdateModel(string $modelClass, array $observerClasses, string $currentFilePath): bool
     {
@@ -212,8 +212,8 @@ final class ObservedByAnalyzer implements ResettableInterface
     }
 
     /**
-     * @param  Arg[]  $args
-     * @return list<class-string>|null
+     * @param  array<Arg|VariadicPlaceholder>  $args
+     * @return list<string>|null
      */
     private function resolveObserverClassesFromArgs(array $args): ?array
     {
@@ -221,7 +221,11 @@ final class ObservedByAnalyzer implements ResettableInterface
             return null;
         }
 
-        if ($args[0]->name !== null) {
+        if (! $args[0] instanceof Arg) {
+            return null;
+        }
+
+        if ($args[0]->name instanceof Identifier) {
             return null;
         }
 
@@ -229,7 +233,7 @@ final class ObservedByAnalyzer implements ResettableInterface
     }
 
     /**
-     * @return list<class-string>|null
+     * @return list<string>|null
      */
     private function resolveObserverClassesFromAttribute(Attribute $attribute): ?array
     {
@@ -237,7 +241,7 @@ final class ObservedByAnalyzer implements ResettableInterface
             return null;
         }
 
-        if ($attribute->args[0]->name !== null) {
+        if ($attribute->args[0]->name instanceof Identifier) {
             return null;
         }
 
@@ -245,7 +249,7 @@ final class ObservedByAnalyzer implements ResettableInterface
     }
 
     /**
-     * @return list<class-string>|null
+     * @return list<string>|null
      */
     private function resolveObserverClassesFromExpr(Expr $expr): ?array
     {
@@ -362,13 +366,12 @@ final class ObservedByAnalyzer implements ResettableInterface
                         continue;
                     }
 
-                    if (! $stmt->expr instanceof StaticCall) {
+                    $expr = $stmt->expr;
+                    if (! $expr instanceof StaticCall) {
                         continue;
                     }
 
-                    /** @var StaticCall $staticCall */
-                    $staticCall = $stmt->expr;
-                    $observedByRegistration = $this->matchObserveStaticCall($staticCall, $className);
+                    $observedByRegistration = $this->matchObserveStaticCall($expr, $className);
                     if (! $observedByRegistration instanceof ObservedByRegistration) {
                         continue;
                     }
@@ -386,8 +389,8 @@ final class ObservedByAnalyzer implements ResettableInterface
     }
 
     /**
-     * @param  array<int, Namespace_|Class_|Node\Stmt>  $stmts
-     * @return array<int, Namespace_|Class_|Node\Stmt>
+     * @param  array<Node\Stmt>  $stmts
+     * @return array<Node\Stmt>
      */
     private function resolveNames(array $stmts): array
     {
@@ -399,7 +402,7 @@ final class ObservedByAnalyzer implements ResettableInterface
         $nodeTraverser = new NodeTraverser;
         $nodeTraverser->addVisitor($nameResolver);
 
-        /** @var array<int, Namespace_|Class_|Node\Stmt> $resolvedStmts */
+        /** @var array<Node\Stmt> $resolvedStmts */
         $resolvedStmts = $nodeTraverser->traverse($stmts);
 
         return $resolvedStmts;
@@ -459,7 +462,7 @@ final class ObservedByAnalyzer implements ResettableInterface
     {
         $configuredPaths = array_filter(
             SimpleParameterProvider::provideArrayParameter(Option::PATHS),
-            static fn (mixed $path): bool => is_string($path)
+            is_string(...)
         );
 
         $projectPaths = [];
@@ -484,8 +487,8 @@ final class ObservedByAnalyzer implements ResettableInterface
     }
 
     /**
-     * @param  list<class-string>  $observerClasses
-     * @return list<class-string>
+     * @param  list<string>  $observerClasses
+     * @return list<string>
      */
     private function uniqueObserverClasses(array $observerClasses): array
     {
@@ -513,11 +516,11 @@ final class ObservedByAnalyzer implements ResettableInterface
 
     private function resolveClassName(Class_ $class): ?string
     {
-        if (property_exists($class, 'namespacedName') && $class->namespacedName instanceof Name) {
+        if ($class->namespacedName instanceof Name) {
             return $class->namespacedName->toString();
         }
 
-        if ($class->name === null) {
+        if (! $class->name instanceof Identifier) {
             return null;
         }
 

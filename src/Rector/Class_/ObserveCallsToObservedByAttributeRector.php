@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use RectorLaravel\AbstractRector;
@@ -144,11 +145,11 @@ CODE_SAMPLE
 
     private function resolveClassName(Class_ $class): ?string
     {
-        if (property_exists($class, 'namespacedName') && $class->namespacedName instanceof Name) {
+        if ($class->namespacedName instanceof Name) {
             return $class->namespacedName->toString();
         }
 
-        if ($class->name === null) {
+        if (! $class->name instanceof Identifier) {
             return null;
         }
 

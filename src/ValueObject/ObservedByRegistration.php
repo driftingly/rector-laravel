@@ -7,7 +7,7 @@ namespace RectorLaravel\ValueObject;
 final readonly class ObservedByRegistration
 {
     /**
-     * @param  list<class-string>  $observerClasses
+     * @param  list<string>  $observerClasses
      */
     public function __construct(
         public string $modelClass,
