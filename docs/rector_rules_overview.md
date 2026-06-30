@@ -1,4 +1,4 @@
-# 106 Rules Overview
+# 108 Rules Overview
 
 ## AbortIfRector
 
@@ -1284,6 +1284,25 @@ Swap the use of NotBooleans used with `filled()` and `blank()` to the correct he
 
 <br>
 
+## ObserveCallsToObservedByAttributeRector
+
+Changes manual model `observe()` registrations in boot methods to use the `ObservedBy` attribute
+
+- class: [`RectorLaravel\Rector\Class_\ObserveCallsToObservedByAttributeRector`](../src/Rector/Class_/ObserveCallsToObservedByAttributeRector.php)
+
+```diff
+ use App\Observers\UserObserver;
++use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+ use Illuminate\Foundation\Auth\User as Authenticatable;
+
++#[ObservedBy([UserObserver::class])]
+ class User extends Authenticatable
+ {
+ }
+```
+
+<br>
+
 ## NowFuncWithStartOfDayMethodCallToTodayFuncRector
 
 Use `today()` instead of `now()->startOfDay()`
@@ -1352,6 +1371,28 @@ Changes the queue property to use the Queue attribute
  final class ProcessPodcast implements ShouldQueue
  {
 -    public $queue = 'podcasts';
+ }
+```
+
+<br>
+
+## RemoveModelObserveCallsFromBootRector
+
+Removes direct model `observe()` registrations from boot methods when they can be represented by `ObservedBy`
+
+- class: [`RectorLaravel\Rector\ClassMethod\RemoveModelObserveCallsFromBootRector`](../src/Rector/ClassMethod/RemoveModelObserveCallsFromBootRector.php)
+
+```diff
+ use App\Models\User;
+ use App\Observers\UserObserver;
+
+ class AppServiceProvider
+ {
+     public function boot(): void
+     {
+-        User::observe(UserObserver::class);
+         $this->bootSomethingElse();
+     }
  }
 ```
 
