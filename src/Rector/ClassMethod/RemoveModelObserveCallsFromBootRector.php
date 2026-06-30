@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\NodeVisitor;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\ObservedByAnalyzer;
 use RectorLaravel\Tests\Rector\ClassMethod\RemoveModelObserveCallsFromBootRector\RemoveModelObserveCallsFromBootRectorTest;
@@ -67,7 +68,7 @@ CODE_SAMPLE
     /**
      * @param  ClassMethod  $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|int|null
     {
         if (! $this->isName($node->name, 'boot')) {
             return null;
@@ -105,6 +106,10 @@ CODE_SAMPLE
         }
 
         $node->stmts = array_values((array) $node->stmts);
+
+        if ($node->stmts === []) {
+            return NodeVisitor::REMOVE_NODE;
+        }
 
         return $node;
     }

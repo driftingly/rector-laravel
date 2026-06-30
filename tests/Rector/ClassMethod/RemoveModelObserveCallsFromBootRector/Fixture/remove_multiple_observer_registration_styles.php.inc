@@ -35,9 +35,6 @@ namespace RectorLaravel\Tests\Rector\ClassMethod\RemoveModelObserveCallsFromBoot
 
 final class AppServiceProvider
 {
-    public function boot(): void
-    {
-    }
 }
 
 final class FirstObserver
