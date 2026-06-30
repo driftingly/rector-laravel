@@ -22,6 +22,7 @@ use RectorLaravel\Rector\Class_\HelpPropertyToHelpAttributeRector;
 use RectorLaravel\Rector\Class_\HiddenPropertyToHiddenAttributeRector;
 use RectorLaravel\Rector\Class_\JobConnectionPropertyToJobConnectionAttributeRector;
 use RectorLaravel\Rector\Class_\MaxExceptionsPropertyToMaxExceptionsAttributeRector;
+use RectorLaravel\Rector\Class_\ObserveCallsToObservedByAttributeRector;
 use RectorLaravel\Rector\Class_\PreserveKeysPropertyToPreserveKeysAttributeRector;
 use RectorLaravel\Rector\Class_\QueuePropertyToQueueAttributeRector;
 use RectorLaravel\Rector\Class_\SignaturePropertyToSignatureAttributeRector;
@@ -34,6 +35,7 @@ use RectorLaravel\Rector\Class_\UniqueForPropertyToUniqueForAttributeRector;
 use RectorLaravel\Rector\Class_\VisiblePropertyToVisibleAttributeRector;
 use RectorLaravel\Rector\Class_\WithoutIncrementingPropertyToWithoutIncrementingAttributeRector;
 use RectorLaravel\Rector\Class_\WithoutTimestampsPropertyToWithoutTimestampsAttributeRector;
+use RectorLaravel\Rector\ClassMethod\RemoveModelObserveCallsFromBootRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
@@ -53,6 +55,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
     $rectorConfig->rule(HiddenPropertyToHiddenAttributeRector::class);
+    $rectorConfig->rule(ObserveCallsToObservedByAttributeRector::class);
+    $rectorConfig->rule(RemoveModelObserveCallsFromBootRector::class);
     $rectorConfig->rule(TablePropertyToTableAttributeRector::class);
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
     $rectorConfig->rule(VisiblePropertyToVisibleAttributeRector::class);
