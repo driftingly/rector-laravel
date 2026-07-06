@@ -1,4 +1,4 @@
-# 106 Rules Overview
+# 124 Rules Overview
 
 ## AbortIfRector
 
@@ -203,6 +203,25 @@ Add `parent::register();` call to `register()` class method in child of `Illumin
      {
 +        parent::register();
      }
+ }
+```
+
+<br>
+
+## AliasesPropertyToAliasesAttributeRector
+
+Changes the aliases property to use the Aliases attribute
+
+- class: [`RectorLaravel\Rector\Class_\AliasesPropertyToAliasesAttributeRector`](../src/Rector/Class_/AliasesPropertyToAliasesAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Aliases;
+
++#[Aliases(['email:send'])]
+ class SendEmails extends Command
+ {
+-    protected $aliases = ['email:send'];
  }
 ```
 
@@ -612,6 +631,73 @@ Refactor `whereDate()` queries to include both date and time comparisons with Ca
 
 <br>
 
+## CollectedByPropertyToCollectedByAttributeRector
+
+Changes model newCollection method to use the CollectedBy attribute
+
+- class: [`RectorLaravel\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector`](../src/Rector/Class_/CollectedByPropertyToCollectedByAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+-use Illuminate\Database\Eloquent\Collection;
+ use App\Collections\UserCollection;
++use Illuminate\Database\Eloquent\Attributes\CollectedBy;
+
++#[CollectedBy(UserCollection::class)]
+ class User extends Model
+ {
+-    /**
+-     * @param  array<int, \Illuminate\Database\Eloquent\Model>  $models
+-     * @return \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model>
+-     */
+-    public function newCollection(array $models = []): Collection
+-    {
+-        return new UserCollection($models);
+-    }
+ }
+```
+
+<br>
+
+## CollectsPropertyToCollectsAttributeRector
+
+Changes the collects property to use the Collects attribute
+
+- class: [`RectorLaravel\Rector\Class_\CollectsPropertyToCollectsAttributeRector`](../src/Rector/Class_/CollectsPropertyToCollectsAttributeRector.php)
+
+```diff
+ use App\Http\Resources\UserResource;
++use Illuminate\Http\Resources\Attributes\Collects;
+ use Illuminate\Http\Resources\Json\JsonResource;
+
++#[Collects(UserResource::class)]
+ class UserCollection extends JsonResource
+ {
+-    protected $collects = UserResource::class;
+ }
+```
+
+<br>
+
+## CommandHiddenPropertyToHiddenAttributeRector
+
+Changes the hidden property to use the Hidden attribute on console commands
+
+- class: [`RectorLaravel\Rector\Class_\CommandHiddenPropertyToHiddenAttributeRector`](../src/Rector/Class_/CommandHiddenPropertyToHiddenAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Hidden;
+
++#[Hidden]
+ class SendEmails extends Command
+ {
+-    protected $hidden = true;
+ }
+```
+
+<br>
+
 ## ConfigToTypedConfigMethodCallRector
 
 Refactor `config()` calls to use type-specific methods when the expected type is known
@@ -708,6 +794,103 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
+## DateFormatPropertyToDateFormatAttributeRector
+
+Changes model dateFormat property to use the DateFormat attribute
+
+- class: [`RectorLaravel\Rector\Class_\DateFormatPropertyToDateFormatAttributeRector`](../src/Rector/Class_/DateFormatPropertyToDateFormatAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\DateFormat;
+
++#[DateFormat('U')]
+ class User extends Model
+ {
+-    protected $dateFormat = 'U';
+ }
+```
+
+<br>
+
+## DateWhereClauseToShorthandRector
+
+Replace date comparison where clauses with Laravel query builder shorthand methods.
+
+- class: [`RectorLaravel\Rector\MethodCall\DateWhereClauseToShorthandRector`](../src/Rector/MethodCall/DateWhereClauseToShorthandRector.php)
+
+```diff
+ use Carbon\Carbon;
+
+-$query->where('published_at', '<', Carbon::now());
+-$query->whereDate('published_at', '=', Carbon::today());
+-$query->where('published_at', '<=', now());
+-$query->whereDate('published_at', '>=', today());
++$query->wherePast('published_at');
++$query->whereToday('published_at');
++$query->whereNowOrPast('published_at');
++$query->whereTodayOrAfter('published_at');
+```
+
+<br>
+
+## DelayPropertyToDelayAttributeRector
+
+Changes the delay property to use the Delay attribute
+
+- class: [`RectorLaravel\Rector\Class_\DelayPropertyToDelayAttributeRector`](../src/Rector/Class_/DelayPropertyToDelayAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\Delay;
+
++#[Delay(10)]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $delay = 10;
+ }
+```
+
+<br>
+
+## DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector
+
+Changes the deleteWhenMissingModels property to use the DeleteWhenMissingModels attribute
+
+- class: [`RectorLaravel\Rector\Class_\DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector`](../src/Rector/Class_/DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
+
++#[DeleteWhenMissingModels]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $deleteWhenMissingModels = true;
+ }
+```
+
+<br>
+
+## DescriptionPropertyToDescriptionAttributeRector
+
+Changes the description property to use the Description attribute
+
+- class: [`RectorLaravel\Rector\Class_\DescriptionPropertyToDescriptionAttributeRector`](../src/Rector/Class_/DescriptionPropertyToDescriptionAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Description;
+
++#[Description('Send marketing emails to users')]
+ class SendEmails extends Command
+ {
+-    protected $description = 'Send marketing emails to users';
+ }
 ```
 
 <br>
@@ -877,6 +1060,25 @@ Change env variable to env static call
 
 <br>
 
+## ErrorBagPropertyToErrorBagAttributeRector
+
+Changes the errorBag property to use the ErrorBag attribute
+
+- class: [`RectorLaravel\Rector\Class_\ErrorBagPropertyToErrorBagAttributeRector`](../src/Rector/Class_/ErrorBagPropertyToErrorBagAttributeRector.php)
+
+```diff
+ use Illuminate\Foundation\Http\FormRequest;
++use Illuminate\Foundation\Http\Attributes\ErrorBag;
+
++#[ErrorBag('custom')]
+ class StorePostRequest extends FormRequest
+ {
+-    protected $errorBag = 'custom';
+ }
+```
+
+<br>
+
 ## FactoryApplyingStatesRector
 
 Call the state methods directly instead of specify the name of state.
@@ -939,6 +1141,19 @@ Use the static factory method instead of global factory function.
 
 <br>
 
+## FactoryHasForToMagicMethodRector
+
+Encapsulate simple factory `->has()/->for()` relationship calls into their magic method equivalents.
+
+- class: [`RectorLaravel\Rector\MethodCall\FactoryHasForToMagicMethodRector`](../src/Rector/MethodCall/FactoryHasForToMagicMethodRector.php)
+
+```diff
+-Product::factory()->has(Variation::factory()->times(3))->create();
++Product::factory()->hasVariations(3)->create();
+```
+
+<br>
+
 ## FailOnTimeoutPropertyToFailOnTimeoutAttributeRector
 
 Changes the failOnTimeout property to use the FailOnTimeout attribute
@@ -996,6 +1211,25 @@ Changes model guarded property to use the guarded attribute
 -    protected $guarded = [
 -        'is_admin',
 -    ];
+ }
+```
+
+<br>
+
+## HelpPropertyToHelpAttributeRector
+
+Changes the help property to use the Help attribute
+
+- class: [`RectorLaravel\Rector\Class_\HelpPropertyToHelpAttributeRector`](../src/Rector/Class_/HelpPropertyToHelpAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Help;
+
++#[Help('This command sends emails to all users')]
+ class SendEmails extends Command
+ {
+-    protected $help = 'This command sends emails to all users';
  }
 ```
 
@@ -1312,6 +1546,25 @@ Convert simple calls to optional helper to use the nullsafe operator
 +$user?->id;
  // macro methods
  optional($user)->present()->getKey();
+```
+
+<br>
+
+## PreserveKeysPropertyToPreserveKeysAttributeRector
+
+Changes the preserveKeys property to use the PreserveKeys attribute
+
+- class: [`RectorLaravel\Rector\Class_\PreserveKeysPropertyToPreserveKeysAttributeRector`](../src/Rector/Class_/PreserveKeysPropertyToPreserveKeysAttributeRector.php)
+
+```diff
++use Illuminate\Http\Resources\Attributes\PreserveKeys;
+ use Illuminate\Http\Resources\Json\JsonResource;
+
++#[PreserveKeys]
+ class UserResource extends JsonResource
+ {
+-    protected $preserveKeys = true;
+ }
 ```
 
 <br>
@@ -1833,6 +2086,25 @@ Change PHP session usage to Session Facade methods
 
 <br>
 
+## SignaturePropertyToSignatureAttributeRector
+
+Changes the signature property to use the Signature attribute
+
+- class: [`RectorLaravel\Rector\Class_\SignaturePropertyToSignatureAttributeRector`](../src/Rector/Class_/SignaturePropertyToSignatureAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Signature;
+
++#[Signature('mail:send {user}')]
+ class SendEmails extends Command
+ {
+-    protected $signature = 'mail:send {user}';
+ }
+```
+
+<br>
+
 ## SleepFuncToSleepStaticCallRector
 
 Use `Sleep::sleep()` and `Sleep::usleep()` instead of the `sleep()` and `usleep()` function.
@@ -1842,6 +2114,25 @@ Use `Sleep::sleep()` and `Sleep::usleep()` instead of the `sleep()` and `usleep(
 ```diff
 -sleep(5);
 +\Illuminate\Support\Sleep::sleep(5);
+```
+
+<br>
+
+## StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector
+
+Changes the stopOnFirstFailure property to use the StopOnFirstFailure attribute
+
+- class: [`RectorLaravel\Rector\Class_\StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector`](../src/Rector/Class_/StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector.php)
+
+```diff
+ use Illuminate\Foundation\Http\FormRequest;
++use Illuminate\Foundation\Http\Attributes\StopOnFirstFailure;
+
++#[StopOnFirstFailure]
+ class StorePostRequest extends FormRequest
+ {
+-    protected $stopOnFirstFailure = true;
+ }
 ```
 
 <br>
@@ -2119,6 +2410,28 @@ Convert string validation rules into arrays for Laravel's Validator.
 
 <br>
 
+## VisiblePropertyToVisibleAttributeRector
+
+Changes model visible property to use the Visible attribute
+
+- class: [`RectorLaravel\Rector\Class_\VisiblePropertyToVisibleAttributeRector`](../src/Rector/Class_/VisiblePropertyToVisibleAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Visible;
+
++#[Visible(['name', 'email'])]
+ class User extends Model
+ {
+-    protected $visible = [
+-        'name',
+-        'email',
+-    ];
+ }
+```
+
+<br>
+
 ## WhereNullComparisonToWhereNullRector
 
 Convert to where comparison to whereNull method call
@@ -2166,6 +2479,44 @@ Can be configured for the Postgres driver with `[WhereToWhereLikeRector::USING_P
 +$query->whereLike('name', 'Rector');
 +$query->orWhereLike('name', 'Rector');
 +$query->whereLike('name', 'Rector', true);
+```
+
+<br>
+
+## WithoutIncrementingPropertyToWithoutIncrementingAttributeRector
+
+Changes model incrementing = false property to use the WithoutIncrementing attribute
+
+- class: [`RectorLaravel\Rector\Class_\WithoutIncrementingPropertyToWithoutIncrementingAttributeRector`](../src/Rector/Class_/WithoutIncrementingPropertyToWithoutIncrementingAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
+
++#[WithoutIncrementing]
+ class User extends Model
+ {
+-    public $incrementing = false;
+ }
+```
+
+<br>
+
+## WithoutTimestampsPropertyToWithoutTimestampsAttributeRector
+
+Changes model timestamps = false property to use the WithoutTimestamps attribute
+
+- class: [`RectorLaravel\Rector\Class_\WithoutTimestampsPropertyToWithoutTimestampsAttributeRector`](../src/Rector/Class_/WithoutTimestampsPropertyToWithoutTimestampsAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
+
++#[WithoutTimestamps]
+ class EventLog extends Model
+ {
+-    public $timestamps = false;
+ }
 ```
 
 <br>
