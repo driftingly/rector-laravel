@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Post extends Model
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<\RectorLaravel\Tests\Rector\ClassMethod\AddGenericBuilderToScopesRector\Fixture\Post> $query
+     * @param \Illuminate\Database\Eloquent\Builder<static> $query
      */
     public function scopePopular(Builder $query): Builder
     {
@@ -28,8 +28,8 @@ use Illuminate\Database\Eloquent\Builder;
 class Post extends Model
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<\RectorLaravel\Tests\Rector\ClassMethod\AddGenericBuilderToScopesRector\Fixture\Post> $query
-     * @return \Illuminate\Database\Eloquent\Builder<\RectorLaravel\Tests\Rector\ClassMethod\AddGenericBuilderToScopesRector\Fixture\Post>
+     * @param \Illuminate\Database\Eloquent\Builder<static> $query
+     * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public function scopePopular(Builder $query): Builder
     {

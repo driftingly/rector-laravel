@@ -5,11 +5,11 @@ namespace RectorLaravel\Tests\Rector\ClassMethod\AddGenericBuilderToScopesRector
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
-class Comment extends Model
+final class Team extends Model
 {
-    public function scopeApproved(Builder $query)
+    public function scopeActive(Builder $query): Builder
     {
-        return $query->where('approved', true);
+        return $query->where('active', true);
     }
 }
 
@@ -22,14 +22,15 @@ namespace RectorLaravel\Tests\Rector\ClassMethod\AddGenericBuilderToScopesRector
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
-class Comment extends Model
+final class Team extends Model
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<static> $query
+     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @return \Illuminate\Database\Eloquent\Builder<self>
      */
-    public function scopeApproved(Builder $query)
+    public function scopeActive(Builder $query): Builder
     {
-        return $query->where('approved', true);
+        return $query->where('active', true);
     }
 }
 

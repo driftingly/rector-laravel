@@ -11,6 +11,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
@@ -71,8 +72,8 @@ use Illuminate\Database\Eloquent\Builder;
 class Post extends Model
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<\App\Post> $query
-     * @return \Illuminate\Database\Eloquent\Builder<\App\Post>
+     * @param \Illuminate\Database\Eloquent\Builder<static> $query
+     * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public function scopePopular(Builder $query): Builder
     {
@@ -125,8 +126,6 @@ CODE_SAMPLE
             return null;
         }
 
-        $modelClass = $classReflection->getName();
-
         $firstParam = $node->params[0];
         $paramName = $this->getName($firstParam->var);
 
@@ -136,8 +135,8 @@ CODE_SAMPLE
 
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
 
-        $hasChanged = $this->refactorParam($node, $phpDocInfo, $paramName, $modelClass);
-        $hasChanged = $this->refactorReturn($node, $phpDocInfo, $modelClass) || $hasChanged;
+        $hasChanged = $this->refactorParam($phpDocInfo, $paramName, $classReflection);
+        $hasChanged = $this->refactorReturn($node, $phpDocInfo, $classReflection) || $hasChanged;
 
         if (! $hasChanged) {
             return null;
@@ -149,17 +148,16 @@ CODE_SAMPLE
     }
 
     private function refactorParam(
-        ClassMethod $classMethod,
         PhpDocInfo $phpDocInfo,
         string $paramName,
-        string $modelClass
+        ClassReflection $classReflection
     ): bool {
-        $genericTypeNode = $this->createBuilderGenericTypeNode($modelClass);
+        $genericTypeNode = $this->createBuilderGenericTypeNode($classReflection);
 
         $existingParamTag = $phpDocInfo->getParamTagValueByName($paramName);
 
         if ($existingParamTag instanceof ParamTagValueNode) {
-            if ($this->isGenericTypeAlreadyCorrect($existingParamTag->type, $modelClass, $classMethod)) {
+            if ($this->isGenericTypeAlreadyCorrect($existingParamTag->type, $classReflection)) {
                 return false;
             }
 
@@ -182,7 +180,7 @@ CODE_SAMPLE
     private function refactorReturn(
         ClassMethod $classMethod,
         PhpDocInfo $phpDocInfo,
-        string $modelClass
+        ClassReflection $classReflection
     ): bool {
         $methodReturnType = $classMethod->getReturnType();
 
@@ -194,12 +192,12 @@ CODE_SAMPLE
             return false;
         }
 
-        $genericTypeNode = $this->createBuilderGenericTypeNode($modelClass);
+        $genericTypeNode = $this->createBuilderGenericTypeNode($classReflection);
 
         $existingReturnTag = $phpDocInfo->getReturnTagValue();
 
         if ($existingReturnTag instanceof ReturnTagValueNode) {
-            if ($this->isGenericTypeAlreadyCorrect($existingReturnTag->type, $modelClass, $classMethod)) {
+            if ($this->isGenericTypeAlreadyCorrect($existingReturnTag->type, $classReflection)) {
                 return false;
             }
 
@@ -236,36 +234,31 @@ CODE_SAMPLE
 
     private function isGenericTypeAlreadyCorrect(
         TypeNode $typeNode,
-        string $modelClass,
-        Node $node
+        ClassReflection $classReflection
     ): bool {
         if (! $typeNode instanceof GenericTypeNode) {
             return false;
         }
 
-        $phpStanType = $this->staticTypeMapper->mapPHPStanPhpDocTypeNodeToPHPStanType(
-            $typeNode,
-            $node
-        );
-
-        if (! $phpStanType instanceof GenericObjectType) {
+        if (count($typeNode->genericTypes) !== 1) {
             return false;
         }
 
-        $types = $phpStanType->getTypes();
+        $param = $typeNode->genericTypes[0];
+        $expectedName = $classReflection->isFinal() ? 'self' : 'static';
 
-        if ($types === []) {
-            return false;
-        }
-
-        return $this->typeComparator->areTypesEqual($types[0], new ObjectType($modelClass));
+        return $param instanceof IdentifierTypeNode && $param->name === $expectedName;
     }
 
-    private function createBuilderGenericTypeNode(string $modelClass): GenericTypeNode
+    private function createBuilderGenericTypeNode(ClassReflection $classReflection): GenericTypeNode
     {
+        $typeParam = $classReflection->isFinal()
+            ? new IdentifierTypeNode('self')
+            : new IdentifierTypeNode('static');
+
         return new GenericTypeNode(
             new FullyQualifiedIdentifierTypeNode('Illuminate\Database\Eloquent\Builder'),
-            [new FullyQualifiedIdentifierTypeNode($modelClass)]
+            [$typeParam]
         );
     }
 

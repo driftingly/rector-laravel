@@ -25,8 +25,8 @@ use Illuminate\Database\Eloquent\Builder;
 class Product extends Model
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<\RectorLaravel\Tests\Rector\ClassMethod\AddGenericBuilderToScopesRector\Fixture\Product> $builder
-     * @return \Illuminate\Database\Eloquent\Builder<\RectorLaravel\Tests\Rector\ClassMethod\AddGenericBuilderToScopesRector\Fixture\Product>
+     * @param \Illuminate\Database\Eloquent\Builder<static> $builder
+     * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public function scopeActive(Builder $builder): Builder
     {

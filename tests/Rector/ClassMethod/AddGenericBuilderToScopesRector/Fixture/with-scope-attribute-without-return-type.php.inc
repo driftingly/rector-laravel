@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 class User extends Model
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<\RectorLaravel\Tests\Rector\ClassMethod\AddGenericBuilderToScopesRector\Fixture\User> $query
+     * @param \Illuminate\Database\Eloquent\Builder<static> $query
      */
     #[Scope]
     public function popular(Builder $query)

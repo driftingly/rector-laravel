@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 
-class User extends Model
+final class Team extends Model
 {
     #[Scope]
-    public function popular(Builder $query): Builder
+    public function active(Builder $query): Builder
     {
-        return $query->where('votes', '>', 100);
+        return $query->where('active', true);
     }
 }
 
@@ -25,16 +25,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 
-class User extends Model
+final class Team extends Model
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<static> $query
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     #[Scope]
-    public function popular(Builder $query): Builder
+    public function active(Builder $query): Builder
     {
-        return $query->where('votes', '>', 100);
+        return $query->where('active', true);
     }
 }
 
