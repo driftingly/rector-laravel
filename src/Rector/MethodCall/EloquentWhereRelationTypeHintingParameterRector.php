@@ -93,8 +93,7 @@ CODE_SAMPLE
 
         $position = $this->getPosition($node);
 
-        return ! (! ($node->getArgs()[$position]->value ?? null) instanceof Closure &&
-        ! ($node->getArgs()[$position]->value ?? null) instanceof ArrowFunction);
+        return ($node->getArgs()[$position]->value ?? null) instanceof Closure || ($node->getArgs()[$position]->value ?? null) instanceof ArrowFunction;
     }
 
     private function changeClosureParamType(MethodCall|StaticCall $node): ?Node

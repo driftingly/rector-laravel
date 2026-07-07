@@ -9,7 +9,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
-use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
@@ -23,7 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CarbonSetTestNowToTravelToRector extends AbstractRector
 {
-    public function __construct(private readonly ReflectionProvider $reflectionProvider) {}
+    private const string TEST_CASE_CLASS = 'Illuminate\Foundation\Testing\TestCase';
 
     /**
      * @throws PoorDocumentationException
@@ -80,11 +80,7 @@ CODE_SAMPLE
 
         $scope = ScopeFetcher::fetch($node);
 
-        if (! $scope->isInClass()) {
-            return null;
-        }
-
-        if (! $scope->getClassReflection()->isSubclassOfClass($this->reflectionProvider->getClass('Illuminate\Foundation\Testing\TestCase'))) {
+        if (! $this->isInLaravelTestCaseScope($scope)) {
             return null;
         }
 
@@ -105,6 +101,19 @@ CODE_SAMPLE
             'travelTo',
             $args,
         );
+    }
+
+    private function isInLaravelTestCaseScope(Scope $scope): bool
+    {
+        if ($scope->isInClass()) {
+            return $scope->getClassReflection()->is(self::TEST_CASE_CLASS);
+        }
+
+        // Pest / other closures: `@param-closure-this` on the test runner makes `$this` a TestCase.
+        $thisType = $scope->getType(new Variable('this'));
+        $objectType = new ObjectType(self::TEST_CASE_CLASS);
+
+        return $objectType->isSuperTypeOf($thisType)->yes();
     }
 
     private function isCarbon(Node $node): bool

@@ -31,7 +31,7 @@ final readonly class ExpectedClassMethodMethodCalls
 
     public function isActionable(): bool
     {
-        return ! ($this->expectedMethodCalls === [] && $this->notExpectedMethodCalls === []);
+        return $this->expectedMethodCalls !== [] || $this->notExpectedMethodCalls !== [];
     }
 
     /**
