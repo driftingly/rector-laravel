@@ -25,7 +25,6 @@ class ApplicationAnalyzer
 
     /**
      * @param  class-string  $applicationClass
-     * @return $this
      */
     public function setApplicationClass(string $applicationClass): static
     {
