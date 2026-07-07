@@ -1,4 +1,4 @@
-# 106 Rules Overview
+# 122 Rules Overview
 
 ## AbortIfRector
 
@@ -54,6 +54,32 @@ Adds the `@extends` annotation to Factories.
  class UserFactory extends Factory
  {
      protected $model = \App\Models\User::class;
+ }
+```
+
+<br>
+
+## AddGenericBuilderToScopesRector
+
+Add generic Builder return type to scopes in child of `Illuminate\Database\Eloquent\Model`
+
+- class: [`RectorLaravel\Rector\ClassMethod\AddGenericBuilderToScopesRector`](../src/Rector/ClassMethod/AddGenericBuilderToScopesRector.php)
+
+```diff
+ use App\Post;
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Builder;
+ 
+ class Post extends Model
+ {
++    /**
++     * @param \Illuminate\Database\Eloquent\Builder<static> $query
++     * @return \Illuminate\Database\Eloquent\Builder<static>
++     */
+     public function scopePopular(Builder $query): Builder
+     {
+         return $query->where('votes', '>', 100);
+     }
  }
 ```
 
@@ -140,34 +166,6 @@ Adds the HasFactory trait to Models.
 
 <br>
 
-## AddMockConsoleOutputFalseToConsoleTestsRector
-
-Add "$this->mockConsoleOutput = false"; to console tests that work with output content
-
-- class: [`RectorLaravel\Rector\Class_\AddMockConsoleOutputFalseToConsoleTestsRector`](../src/Rector/Class_/AddMockConsoleOutputFalseToConsoleTestsRector.php)
-
-```diff
- use Illuminate\Support\Facades\Artisan;
- use Illuminate\Foundation\Testing\TestCase;
-
- final class SomeTest extends TestCase
- {
-+    protected function setUp(): void
-+    {
-+        parent::setUp();
-+
-+        $this->mockConsoleOutput = false;
-+    }
-+
-     public function test(): void
-     {
-         $this->assertEquals('content', \trim((new Artisan())::output()));
-     }
- }
-```
-
-<br>
-
 ## AddParentBootToModelClassMethodRector
 
 Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Database\Eloquent\Model`
@@ -203,6 +201,25 @@ Add `parent::register();` call to `register()` class method in child of `Illumin
      {
 +        parent::register();
      }
+ }
+```
+
+<br>
+
+## AliasesPropertyToAliasesAttributeRector
+
+Changes the aliases property to use the Aliases attribute
+
+- class: [`RectorLaravel\Rector\Class_\AliasesPropertyToAliasesAttributeRector`](../src/Rector/Class_/AliasesPropertyToAliasesAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Aliases;
+
++#[Aliases(['email:send'])]
+ class SendEmails extends Command
+ {
+-    protected $aliases = ['email:send'];
  }
 ```
 
@@ -612,6 +629,73 @@ Refactor `whereDate()` queries to include both date and time comparisons with Ca
 
 <br>
 
+## CollectedByPropertyToCollectedByAttributeRector
+
+Changes model newCollection method to use the CollectedBy attribute
+
+- class: [`RectorLaravel\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector`](../src/Rector/Class_/CollectedByPropertyToCollectedByAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+-use Illuminate\Database\Eloquent\Collection;
+ use App\Collections\UserCollection;
++use Illuminate\Database\Eloquent\Attributes\CollectedBy;
+
++#[CollectedBy(UserCollection::class)]
+ class User extends Model
+ {
+-    /**
+-     * @param  array<int, \Illuminate\Database\Eloquent\Model>  $models
+-     * @return \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model>
+-     */
+-    public function newCollection(array $models = []): Collection
+-    {
+-        return new UserCollection($models);
+-    }
+ }
+```
+
+<br>
+
+## CollectsPropertyToCollectsAttributeRector
+
+Changes the collects property to use the Collects attribute
+
+- class: [`RectorLaravel\Rector\Class_\CollectsPropertyToCollectsAttributeRector`](../src/Rector/Class_/CollectsPropertyToCollectsAttributeRector.php)
+
+```diff
+ use App\Http\Resources\UserResource;
++use Illuminate\Http\Resources\Attributes\Collects;
+ use Illuminate\Http\Resources\Json\JsonResource;
+
++#[Collects(UserResource::class)]
+ class UserCollection extends JsonResource
+ {
+-    protected $collects = UserResource::class;
+ }
+```
+
+<br>
+
+## CommandHiddenPropertyToHiddenAttributeRector
+
+Changes the hidden property to use the Hidden attribute on console commands
+
+- class: [`RectorLaravel\Rector\Class_\CommandHiddenPropertyToHiddenAttributeRector`](../src/Rector/Class_/CommandHiddenPropertyToHiddenAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Hidden;
+
++#[Hidden]
+ class SendEmails extends Command
+ {
+-    protected $hidden = true;
+ }
+```
+
+<br>
+
 ## ConfigToTypedConfigMethodCallRector
 
 Refactor `config()` calls to use type-specific methods when the expected type is known
@@ -708,6 +792,103 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
+```
+
+<br>
+
+## DateFormatPropertyToDateFormatAttributeRector
+
+Changes model dateFormat property to use the DateFormat attribute
+
+- class: [`RectorLaravel\Rector\Class_\DateFormatPropertyToDateFormatAttributeRector`](../src/Rector/Class_/DateFormatPropertyToDateFormatAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\DateFormat;
+
++#[DateFormat('U')]
+ class User extends Model
+ {
+-    protected $dateFormat = 'U';
+ }
+```
+
+<br>
+
+## DateWhereClauseToShorthandRector
+
+Replace date comparison where clauses with Laravel query builder shorthand methods.
+
+- class: [`RectorLaravel\Rector\MethodCall\DateWhereClauseToShorthandRector`](../src/Rector/MethodCall/DateWhereClauseToShorthandRector.php)
+
+```diff
+ use Carbon\Carbon;
+
+-$query->where('published_at', '<', Carbon::now());
+-$query->whereDate('published_at', '=', Carbon::today());
+-$query->where('published_at', '<=', now());
+-$query->whereDate('published_at', '>=', today());
++$query->wherePast('published_at');
++$query->whereToday('published_at');
++$query->whereNowOrPast('published_at');
++$query->whereTodayOrAfter('published_at');
+```
+
+<br>
+
+## DelayPropertyToDelayAttributeRector
+
+Changes the delay property to use the Delay attribute
+
+- class: [`RectorLaravel\Rector\Class_\DelayPropertyToDelayAttributeRector`](../src/Rector/Class_/DelayPropertyToDelayAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\Delay;
+
++#[Delay(10)]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $delay = 10;
+ }
+```
+
+<br>
+
+## DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector
+
+Changes the deleteWhenMissingModels property to use the DeleteWhenMissingModels attribute
+
+- class: [`RectorLaravel\Rector\Class_\DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector`](../src/Rector/Class_/DeleteWhenMissingModelsPropertyToDeleteWhenMissingModelsAttributeRector.php)
+
+```diff
+ use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
+
++#[DeleteWhenMissingModels]
+ final class ProcessPodcast implements ShouldQueue
+ {
+-    public $deleteWhenMissingModels = true;
+ }
+```
+
+<br>
+
+## DescriptionPropertyToDescriptionAttributeRector
+
+Changes the description property to use the Description attribute
+
+- class: [`RectorLaravel\Rector\Class_\DescriptionPropertyToDescriptionAttributeRector`](../src/Rector/Class_/DescriptionPropertyToDescriptionAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Description;
+
++#[Description('Send marketing emails to users')]
+ class SendEmails extends Command
+ {
+-    protected $description = 'Send marketing emails to users';
+ }
 ```
 
 <br>
@@ -814,7 +995,7 @@ Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `w
 +User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
  });
-
+ 
 -$query->whereHas('posts', function ($query) {
 +$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
@@ -873,6 +1054,25 @@ Change env variable to env static call
 ```diff
 -$_ENV['APP_NAME'];
 +\Illuminate\Support\Env::get('APP_NAME');
+```
+
+<br>
+
+## ErrorBagPropertyToErrorBagAttributeRector
+
+Changes the errorBag property to use the ErrorBag attribute
+
+- class: [`RectorLaravel\Rector\Class_\ErrorBagPropertyToErrorBagAttributeRector`](../src/Rector/Class_/ErrorBagPropertyToErrorBagAttributeRector.php)
+
+```diff
+ use Illuminate\Foundation\Http\FormRequest;
++use Illuminate\Foundation\Http\Attributes\ErrorBag;
+
++#[ErrorBag('custom')]
+ class StorePostRequest extends FormRequest
+ {
+-    protected $errorBag = 'custom';
+ }
 ```
 
 <br>
@@ -996,6 +1196,25 @@ Changes model guarded property to use the guarded attribute
 -    protected $guarded = [
 -        'is_admin',
 -    ];
+ }
+```
+
+<br>
+
+## HelpPropertyToHelpAttributeRector
+
+Changes the help property to use the Help attribute
+
+- class: [`RectorLaravel\Rector\Class_\HelpPropertyToHelpAttributeRector`](../src/Rector/Class_/HelpPropertyToHelpAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Help;
+
++#[Help('This command sends emails to all users')]
+ class SendEmails extends Command
+ {
+-    protected $help = 'This command sends emails to all users';
  }
 ```
 
@@ -1316,6 +1535,25 @@ Convert simple calls to optional helper to use the nullsafe operator
 
 <br>
 
+## PreserveKeysPropertyToPreserveKeysAttributeRector
+
+Changes the preserveKeys property to use the PreserveKeys attribute
+
+- class: [`RectorLaravel\Rector\Class_\PreserveKeysPropertyToPreserveKeysAttributeRector`](../src/Rector/Class_/PreserveKeysPropertyToPreserveKeysAttributeRector.php)
+
+```diff
++use Illuminate\Http\Resources\Attributes\PreserveKeys;
+ use Illuminate\Http\Resources\Json\JsonResource;
+
++#[PreserveKeys]
+ class UserResource extends JsonResource
+ {
+-    protected $preserveKeys = true;
+ }
+```
+
+<br>
+
 ## PropertyDeferToDeferrableProviderToRector
 
 Change deprecated `$defer` = true; to `Illuminate\Contracts\Support\DeferrableProvider` interface
@@ -1522,37 +1760,6 @@ Replace assertTimesSent with assertSentTimes
 ```diff
 -Notification::assertTimesSent(1, SomeNotification::class);
 +Notification::assertSentTimes(SomeNotification::class, 1);
-```
-
-<br>
-
-## ReplaceExpectsMethodsInTestsRector
-
-Replace expectJobs and expectEvents methods in tests
-
-- class: [`RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector`](../src/Rector/Class_/ReplaceExpectsMethodsInTestsRector.php)
-
-```diff
- use Illuminate\Foundation\Testing\TestCase;
-
- class SomethingTest extends TestCase
- {
-     public function testSomething()
-     {
--        $this->expectsJobs([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
--        $this->expectsEvents(\App\Events\SomeEvent::class);
--        $this->doesntExpectEvents(\App\Events\SomeOtherEvent::class);
-+        \Illuminate\Support\Facades\Bus::fake([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
-+        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class, \App\Events\SomeOtherEvent::class]);
-
-         $this->get('/');
-+
-+        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeJob::class);
-+        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeOtherJob::class);
-+        \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\SomeEvent::class);
-+        \Illuminate\Support\Facades\Event::assertNotDispatched(\App\Events\SomeOtherEvent::class);
-     }
- }
 ```
 
 <br>
@@ -1833,6 +2040,25 @@ Change PHP session usage to Session Facade methods
 
 <br>
 
+## SignaturePropertyToSignatureAttributeRector
+
+Changes the signature property to use the Signature attribute
+
+- class: [`RectorLaravel\Rector\Class_\SignaturePropertyToSignatureAttributeRector`](../src/Rector/Class_/SignaturePropertyToSignatureAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Illuminate\Console\Attributes\Signature;
+
++#[Signature('mail:send {user}')]
+ class SendEmails extends Command
+ {
+-    protected $signature = 'mail:send {user}';
+ }
+```
+
+<br>
+
 ## SleepFuncToSleepStaticCallRector
 
 Use `Sleep::sleep()` and `Sleep::usleep()` instead of the `sleep()` and `usleep()` function.
@@ -1842,6 +2068,25 @@ Use `Sleep::sleep()` and `Sleep::usleep()` instead of the `sleep()` and `usleep(
 ```diff
 -sleep(5);
 +\Illuminate\Support\Sleep::sleep(5);
+```
+
+<br>
+
+## StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector
+
+Changes the stopOnFirstFailure property to use the StopOnFirstFailure attribute
+
+- class: [`RectorLaravel\Rector\Class_\StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector`](../src/Rector/Class_/StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector.php)
+
+```diff
+ use Illuminate\Foundation\Http\FormRequest;
++use Illuminate\Foundation\Http\Attributes\StopOnFirstFailure;
+
++#[StopOnFirstFailure]
+ class StorePostRequest extends FormRequest
+ {
+-    protected $stopOnFirstFailure = true;
+ }
 ```
 
 <br>
@@ -2119,6 +2364,28 @@ Convert string validation rules into arrays for Laravel's Validator.
 
 <br>
 
+## VisiblePropertyToVisibleAttributeRector
+
+Changes model visible property to use the Visible attribute
+
+- class: [`RectorLaravel\Rector\Class_\VisiblePropertyToVisibleAttributeRector`](../src/Rector/Class_/VisiblePropertyToVisibleAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Visible;
+
++#[Visible(['name', 'email'])]
+ class User extends Model
+ {
+-    protected $visible = [
+-        'name',
+-        'email',
+-    ];
+ }
+```
+
+<br>
+
 ## WhereNullComparisonToWhereNullRector
 
 Convert to where comparison to whereNull method call
@@ -2166,6 +2433,44 @@ Can be configured for the Postgres driver with `[WhereToWhereLikeRector::USING_P
 +$query->whereLike('name', 'Rector');
 +$query->orWhereLike('name', 'Rector');
 +$query->whereLike('name', 'Rector', true);
+```
+
+<br>
+
+## WithoutIncrementingPropertyToWithoutIncrementingAttributeRector
+
+Changes model incrementing = false property to use the WithoutIncrementing attribute
+
+- class: [`RectorLaravel\Rector\Class_\WithoutIncrementingPropertyToWithoutIncrementingAttributeRector`](../src/Rector/Class_/WithoutIncrementingPropertyToWithoutIncrementingAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
+
++#[WithoutIncrementing]
+ class User extends Model
+ {
+-    public $incrementing = false;
+ }
+```
+
+<br>
+
+## WithoutTimestampsPropertyToWithoutTimestampsAttributeRector
+
+Changes model timestamps = false property to use the WithoutTimestamps attribute
+
+- class: [`RectorLaravel\Rector\Class_\WithoutTimestampsPropertyToWithoutTimestampsAttributeRector`](../src/Rector/Class_/WithoutTimestampsPropertyToWithoutTimestampsAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
+
++#[WithoutTimestamps]
+ class EventLog extends Model
+ {
+-    public $timestamps = false;
+ }
 ```
 
 <br>
