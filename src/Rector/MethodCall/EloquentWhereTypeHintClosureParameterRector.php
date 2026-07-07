@@ -89,8 +89,7 @@ CODE_SAMPLE
             return false;
         }
 
-        return ! (! ($node->getArgs()[0]->value ?? null) instanceof Closure &&
-        ! ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction);
+        return ($node->getArgs()[0]->value ?? null) instanceof Closure || ($node->getArgs()[0]->value ?? null) instanceof ArrowFunction;
     }
 
     private function changeClosureParamType(MethodCall|StaticCall $node): ?Node

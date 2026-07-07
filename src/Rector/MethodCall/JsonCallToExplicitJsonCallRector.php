@@ -140,7 +140,7 @@ final class JsonCallToExplicitJsonCallRector extends AbstractRector
 
         $secondArg = $methodCallArgs[1]->value;
 
-        if (! ($secondArg instanceof FuncCall && $this->isName($secondArg, 'route'))) {
+        if (! $secondArg instanceof FuncCall || ! $this->isName($secondArg, 'route')) {
             return false;
         }
 
