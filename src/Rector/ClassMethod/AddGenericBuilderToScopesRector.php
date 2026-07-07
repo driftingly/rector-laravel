@@ -136,9 +136,7 @@ CODE_SAMPLE
 
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
 
-        $hasChanged = false;
-
-        $hasChanged = $this->refactorParam($node, $phpDocInfo, $paramName, $modelClass) || $hasChanged;
+        $hasChanged = $this->refactorParam($node, $phpDocInfo, $paramName, $modelClass);
         $hasChanged = $this->refactorReturn($node, $phpDocInfo, $modelClass) || $hasChanged;
 
         if (! $hasChanged) {
@@ -156,7 +154,7 @@ CODE_SAMPLE
         string $paramName,
         string $modelClass
     ): bool {
-        $builderTypeNode = $this->createBuilderGenericTypeNode($modelClass);
+        $genericTypeNode = $this->createBuilderGenericTypeNode($modelClass);
 
         $existingParamTag = $phpDocInfo->getParamTagValueByName($paramName);
 
@@ -165,13 +163,13 @@ CODE_SAMPLE
                 return false;
             }
 
-            $existingParamTag->type = $builderTypeNode;
+            $existingParamTag->type = $genericTypeNode;
 
             return true;
         }
 
         $phpDocInfo->addTagValueNode(new ParamTagValueNode(
-            $builderTypeNode,
+            $genericTypeNode,
             false,
             '$' . $paramName,
             '',
@@ -196,7 +194,7 @@ CODE_SAMPLE
             return false;
         }
 
-        $builderTypeNode = $this->createBuilderGenericTypeNode($modelClass);
+        $genericTypeNode = $this->createBuilderGenericTypeNode($modelClass);
 
         $existingReturnTag = $phpDocInfo->getReturnTagValue();
 
@@ -205,7 +203,7 @@ CODE_SAMPLE
                 return false;
             }
 
-            $existingReturnTag->type = $builderTypeNode;
+            $existingReturnTag->type = $genericTypeNode;
 
             return true;
         }
@@ -214,7 +212,7 @@ CODE_SAMPLE
             return false;
         }
 
-        $phpDocInfo->addTagValueNode(new ReturnTagValueNode($builderTypeNode, ''));
+        $phpDocInfo->addTagValueNode(new ReturnTagValueNode($genericTypeNode, ''));
 
         return true;
     }
