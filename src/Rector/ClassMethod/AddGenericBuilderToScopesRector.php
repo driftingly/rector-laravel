@@ -21,6 +21,7 @@ use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
+use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use RectorLaravel\AbstractRector;
@@ -39,6 +40,7 @@ class AddGenericBuilderToScopesRector extends AbstractRector
         private readonly DocBlockUpdater $docBlockUpdater,
         private readonly StaticTypeMapper $staticTypeMapper,
         private readonly ReflectionProvider $reflectionProvider,
+        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -103,13 +105,17 @@ CODE_SAMPLE
             return null;
         }
 
-        $methodName = $this->getName($node);
-
-        if ($methodName === null || ! str_starts_with($methodName, 'scope')) {
+        if (count($node->params) < 1) {
             return null;
         }
 
-        if (count($node->params) < 1) {
+        $methodName = $this->getName($node);
+        $hasScopeAttribute = $this->phpAttributeAnalyzer->hasPhpAttribute(
+            $node,
+            'Illuminate\Database\Eloquent\Attributes\Scope',
+        );
+
+        if (! $hasScopeAttribute && ($methodName === null || ! str_starts_with($methodName, 'scope'))) {
             return null;
         }
 
