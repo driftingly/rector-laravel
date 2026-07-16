@@ -90,7 +90,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($type->isNull()->no()) {
+        if (! $type->isNull()->yes()) {
             return null;
         }
 
