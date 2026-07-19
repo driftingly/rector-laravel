@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see EmptyToBlankAndFilledFuncRectorTest
  */
-class EmptyToBlankAndFilledFuncRector extends AbstractRector
+final class EmptyToBlankAndFilledFuncRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

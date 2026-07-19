@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see RefactorBlueprintGeometryColumnsRectorTest
  */
-class RefactorBlueprintGeometryColumnsRector extends AbstractRector
+final class RefactorBlueprintGeometryColumnsRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

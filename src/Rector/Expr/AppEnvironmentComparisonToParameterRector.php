@@ -27,7 +27,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see AppEnvironmentComparisonToParameterRectorTest
  */
-class AppEnvironmentComparisonToParameterRector extends AbstractRector
+final class AppEnvironmentComparisonToParameterRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

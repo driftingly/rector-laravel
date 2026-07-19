@@ -22,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ModelCastsPropertyToCastsMethodRectorTest
  */
-class ModelCastsPropertyToCastsMethodRector extends AbstractRector
+final class ModelCastsPropertyToCastsMethodRector extends AbstractRector
 {
     public function __construct(
         protected BuilderFactory $builderFactory,

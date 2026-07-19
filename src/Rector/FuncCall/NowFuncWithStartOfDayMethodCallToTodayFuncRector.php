@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see NowFuncWithStartOfDayMethodCallToTodayFuncRectorTest
  */
-class NowFuncWithStartOfDayMethodCallToTodayFuncRector extends AbstractRector
+final class NowFuncWithStartOfDayMethodCallToTodayFuncRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

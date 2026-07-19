@@ -14,7 +14,7 @@ use Rector\NodeTypeResolver\Reflection\BetterReflection\SourceLocatorProvider\Dy
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
 use RectorLaravel\NodeAnalyzer\LaravelServiceAnalyzer;
 
-class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
+final class LaravelServiceAnalyzerTest extends AbstractLazyTestCase
 {
     protected function setUp(): void
     {

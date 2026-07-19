@@ -23,7 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see RequestVariablesToRequestFacadeRectorTest
  */
-class RequestVariablesToRequestFacadeRector extends AbstractRector
+final class RequestVariablesToRequestFacadeRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

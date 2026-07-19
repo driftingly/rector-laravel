@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ThrowIfAndThrowUnlessExceptionsToUseClassStringRectorTest
  */
-class ThrowIfAndThrowUnlessExceptionsToUseClassStringRector extends AbstractRector
+final class ThrowIfAndThrowUnlessExceptionsToUseClassStringRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

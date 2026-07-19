@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see EnvVariableToEnvHelperRectorTest
  */
-class EnvVariableToEnvHelperRector extends AbstractRector
+final class EnvVariableToEnvHelperRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

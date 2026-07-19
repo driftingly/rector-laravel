@@ -21,7 +21,7 @@ use Rector\PHPStan\ScopeFetcher;
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
 use RectorLaravel\NodeAnalyzer\QueryBuilderAnalyzer;
 
-class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
+final class QueryBuilderAnalyzerTest extends AbstractLazyTestCase
 {
     /**
      * @test

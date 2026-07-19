@@ -8,7 +8,7 @@ use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class DispatchToHelperFunctionsRectorTest extends AbstractRectorTestCase
+final class DispatchToHelperFunctionsRectorTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {

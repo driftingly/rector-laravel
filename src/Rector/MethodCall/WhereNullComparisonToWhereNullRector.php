@@ -11,7 +11,7 @@ use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class WhereNullComparisonToWhereNullRector extends AbstractRector
+final class WhereNullComparisonToWhereNullRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
