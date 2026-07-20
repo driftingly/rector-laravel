@@ -13,7 +13,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see AppToResolveRectorTest
  */
-class AppToResolveRector extends AbstractRector
+final class AppToResolveRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

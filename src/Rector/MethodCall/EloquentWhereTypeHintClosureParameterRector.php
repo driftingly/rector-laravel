@@ -21,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see EloquentWhereTypeHintClosureParameterRectorTest
  */
-class EloquentWhereTypeHintClosureParameterRector extends AbstractRector
+final class EloquentWhereTypeHintClosureParameterRector extends AbstractRector
 {
     public function __construct(private readonly QueryBuilderAnalyzer $queryBuilderAnalyzer) {}
 

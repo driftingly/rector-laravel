@@ -19,7 +19,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see TypeHintTappableCallRectorTest
  */
-class TypeHintTappableCallRector extends AbstractRector
+final class TypeHintTappableCallRector extends AbstractRector
 {
     private const string TAPPABLE_TRAIT = 'Illuminate\Support\Traits\Tappable';
 

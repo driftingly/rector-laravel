@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
-class RelationshipAnalyzer
+final class RelationshipAnalyzer
 {
     protected static function relationType(): ObjectType
     {

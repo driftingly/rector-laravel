@@ -24,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ValidationRuleArrayStringValueToArrayRectorTest
  */
-class ValidationRuleArrayStringValueToArrayRector extends AbstractRector
+final class ValidationRuleArrayStringValueToArrayRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

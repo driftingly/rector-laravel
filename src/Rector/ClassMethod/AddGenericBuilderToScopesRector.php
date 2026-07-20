@@ -33,7 +33,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see AddGenericBuilderToScopesRectorTest
  */
-class AddGenericBuilderToScopesRector extends AbstractRector
+final class AddGenericBuilderToScopesRector extends AbstractRector
 {
     public function __construct(
         private readonly TypeComparator $typeComparator,

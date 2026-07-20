@@ -13,7 +13,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see RemoveRedundantWithCallsRectorTest
  */
-class RemoveRedundantWithCallsRector extends AbstractRector
+final class RemoveRedundantWithCallsRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

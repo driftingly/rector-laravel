@@ -14,7 +14,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ReplaceAssertTimesSendWithAssertSentTimesRectorTest
  */
-class ReplaceAssertTimesSendWithAssertSentTimesRector extends AbstractRector
+final class ReplaceAssertTimesSendWithAssertSentTimesRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

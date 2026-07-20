@@ -7,7 +7,7 @@ use Rector\NodeTypeResolver\PHPStan\Scope\ScopeFactory;
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
 use RectorLaravel\NodeAnalyzer\ModelAnalyzer;
 
-class ModelAnalyzerTest extends AbstractLazyTestCase
+final class ModelAnalyzerTest extends AbstractLazyTestCase
 {
     /**
      * @test

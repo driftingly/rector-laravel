@@ -5,7 +5,7 @@ namespace RectorLaravel\NodeAnalyzer;
 use ReflectionClassConstant;
 use RuntimeException;
 
-class ApplicationAnalyzer
+final class ApplicationAnalyzer
 {
     private ?string $version = null;
 

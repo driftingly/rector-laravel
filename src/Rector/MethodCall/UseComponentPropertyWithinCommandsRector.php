@@ -21,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see UseComponentPropertyWithinCommandsRectorTest
  */
-class UseComponentPropertyWithinCommandsRector extends AbstractRector
+final class UseComponentPropertyWithinCommandsRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
