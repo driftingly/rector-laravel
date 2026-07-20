@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see SleepFuncToSleepStaticCallRectorTest
  */
-class SleepFuncToSleepStaticCallRector extends AbstractRector
+final class SleepFuncToSleepStaticCallRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

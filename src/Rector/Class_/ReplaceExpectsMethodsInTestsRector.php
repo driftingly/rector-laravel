@@ -24,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ReplaceExpectsMethodsInTestsRectorTest
  */
-class ReplaceExpectsMethodsInTestsRector extends AbstractRector
+final class ReplaceExpectsMethodsInTestsRector extends AbstractRector
 {
     public function __construct(
         private readonly ExpectedClassMethodAnalyzer $expectedClassMethodAnalyzer,

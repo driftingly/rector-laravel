@@ -20,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see EloquentWhereRelationTypeHintingParameterRectorTest
  */
-class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
+final class EloquentWhereRelationTypeHintingParameterRector extends AbstractRector
 {
     /**
      * @var string[]

@@ -32,7 +32,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ThrowIfRectorTest
  */
-class ThrowIfRector extends AbstractRector
+final class ThrowIfRector extends AbstractRector
 {
     public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {}
 

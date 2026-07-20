@@ -21,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see SessionVariableToSessionFacadeRectorTest
  */
-class SessionVariableToSessionFacadeRector extends AbstractRector
+final class SessionVariableToSessionFacadeRector extends AbstractRector
 {
     private const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR = 'is_inside_array_dim_fetch_with_dim_not_expr';
 

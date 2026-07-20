@@ -12,10 +12,10 @@ use PHPStan\Type\ObjectType;
 use ReflectionException;
 use Throwable;
 
-class ModelAnalyzer
+final readonly class ModelAnalyzer
 {
     public function __construct(
-        private readonly ReflectionProvider $reflectionProvider,
+        private ReflectionProvider $reflectionProvider,
     ) {}
 
     protected static function relationType(): ObjectType

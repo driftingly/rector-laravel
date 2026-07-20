@@ -24,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see DispatchNonShouldQueueToDispatchSyncRectorTest
  */
-class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
+final class DispatchNonShouldQueueToDispatchSyncRector extends AbstractRector
 {
     private const string SHOULD_QUEUE_INTERFACE = 'Illuminate\Contracts\Queue\ShouldQueue';
 

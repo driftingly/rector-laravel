@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see RemoveRedundantValueCallsRectorTest
  */
-class RemoveRedundantValueCallsRector extends AbstractRector
+final class RemoveRedundantValueCallsRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

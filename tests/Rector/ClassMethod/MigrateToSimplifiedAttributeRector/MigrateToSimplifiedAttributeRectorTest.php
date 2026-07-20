@@ -8,7 +8,7 @@ use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class MigrateToSimplifiedAttributeRectorTest extends AbstractRectorTestCase
+final class MigrateToSimplifiedAttributeRectorTest extends AbstractRectorTestCase
 {
     /**
      * @return Iterator<string>

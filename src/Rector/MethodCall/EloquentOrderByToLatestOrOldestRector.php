@@ -22,7 +22,7 @@ use Webmozart\Assert\Assert;
 /**
  * @see EloquentOrderByToLatestOrOldestRectorTest
  */
-class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements ConfigurableRectorInterface
+final class EloquentOrderByToLatestOrOldestRector extends AbstractRector implements ConfigurableRectorInterface
 {
     final public const string ALLOWED_PATTERNS = 'allowed_patterns';
 

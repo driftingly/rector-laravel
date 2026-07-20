@@ -13,7 +13,7 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 
-class DispatchableTestsMethodsFactory
+final class DispatchableTestsMethodsFactory
 {
     /**
      * @param  array<int<0, max>, ClassConstFetch|String_>  $items

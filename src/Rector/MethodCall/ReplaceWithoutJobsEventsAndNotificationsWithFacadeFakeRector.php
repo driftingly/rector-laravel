@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRectorTest
  */
-class ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector extends AbstractRector
+final class ReplaceWithoutJobsEventsAndNotificationsWithFacadeFakeRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

@@ -25,7 +25,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see AbortIfRectorTest
  */
-class AbortIfRector extends AbstractRector
+final class AbortIfRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

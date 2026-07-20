@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ServerVariableToRequestFacadeRectorTest
  */
-class ServerVariableToRequestFacadeRector extends AbstractRector
+final class ServerVariableToRequestFacadeRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

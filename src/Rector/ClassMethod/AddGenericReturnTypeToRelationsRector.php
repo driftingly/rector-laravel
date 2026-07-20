@@ -36,7 +36,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see AddGenericReturnTypeToRelationsRectorNewGenericsTest
  * @see AddGenericReturnTypeToRelationsRectorOldGenericsTest
  */
-class AddGenericReturnTypeToRelationsRector extends AbstractRector
+final class AddGenericReturnTypeToRelationsRector extends AbstractRector
 {
     // Relation methods which are supported by this Rector.
     private const array RELATION_METHODS = [

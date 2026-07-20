@@ -20,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see MakeModelAttributesAndScopesProtectedRectorTest
  */
-class MakeModelAttributesAndScopesProtectedRector extends AbstractRector
+final class MakeModelAttributesAndScopesProtectedRector extends AbstractRector
 {
     public function __construct(
         private readonly VisibilityManipulator $visibilityManipulator,

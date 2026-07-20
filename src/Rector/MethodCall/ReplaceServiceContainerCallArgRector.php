@@ -24,7 +24,7 @@ use Webmozart\Assert\Assert;
 /**
  * @see ReplaceServiceContainerCallArgRectorTest
  */
-class ReplaceServiceContainerCallArgRector extends AbstractRector implements ConfigurableRectorInterface
+final class ReplaceServiceContainerCallArgRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
      * @var ReplaceServiceContainerCallArg[]

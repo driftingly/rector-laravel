@@ -16,7 +16,7 @@ use Rector\PHPStan\ScopeFetcher;
 use Rector\Testing\PHPUnit\AbstractLazyTestCase;
 use RectorLaravel\NodeAnalyzer\RelationshipAnalyzer;
 
-class RelationshipAnalyzerTest extends AbstractLazyTestCase
+final class RelationshipAnalyzerTest extends AbstractLazyTestCase
 {
     /**
      * @test

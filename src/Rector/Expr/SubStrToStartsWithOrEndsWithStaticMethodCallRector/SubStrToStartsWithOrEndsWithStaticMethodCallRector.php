@@ -19,7 +19,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see SubStrToStartsWithOrEndsWithStaticMethodCallRectorTest
  */
-class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
+final class SubStrToStartsWithOrEndsWithStaticMethodCallRector extends AbstractRector
 {
     public function __construct(
         private readonly ValueResolver $valueResolver,
