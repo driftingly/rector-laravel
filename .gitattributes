@@ -1,8 +1,15 @@
 .editorconfig export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
+banner.png export-ignore
+build export-ignore
+commands export-ignore
+docs export-ignore
 duster.json export-ignore
 phpstan.neon export-ignore
 phpunit.xml export-ignore
+rector.php export-ignore
 stubs export-ignore
+structarmed.php export-ignore
+templates export-ignore
 tests export-ignore
