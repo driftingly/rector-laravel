@@ -2,7 +2,6 @@
 .gitattributes export-ignore
 .gitignore export-ignore
 banner.png export-ignore
-build export-ignore
 commands export-ignore
 docs export-ignore
 duster.json export-ignore
