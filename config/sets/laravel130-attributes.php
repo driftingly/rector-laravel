@@ -24,6 +24,7 @@ use RectorLaravel\Rector\Class_\JobConnectionPropertyToJobConnectionAttributeRec
 use RectorLaravel\Rector\Class_\MaxExceptionsPropertyToMaxExceptionsAttributeRector;
 use RectorLaravel\Rector\Class_\PreserveKeysPropertyToPreserveKeysAttributeRector;
 use RectorLaravel\Rector\Class_\QueuePropertyToQueueAttributeRector;
+use RectorLaravel\Rector\Class_\RouteKeyMethodToRouteKeyAttributeRector;
 use RectorLaravel\Rector\Class_\SignaturePropertyToSignatureAttributeRector;
 use RectorLaravel\Rector\Class_\StopOnFirstFailurePropertyToStopOnFirstFailureAttributeRector;
 use RectorLaravel\Rector\Class_\TablePropertyToTableAttributeRector;
@@ -53,6 +54,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
     $rectorConfig->rule(HiddenPropertyToHiddenAttributeRector::class);
+    $rectorConfig->rule(RouteKeyMethodToRouteKeyAttributeRector::class);
     $rectorConfig->rule(TablePropertyToTableAttributeRector::class);
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
     $rectorConfig->rule(VisiblePropertyToVisibleAttributeRector::class);
