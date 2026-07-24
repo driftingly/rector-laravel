@@ -1,4 +1,4 @@
-# 122 Rules Overview
+# 123 Rules Overview
 
 ## AbortIfRector
 
@@ -69,7 +69,7 @@ Add generic Builder return type to scopes in child of `Illuminate\Database\Eloqu
  use App\Post;
  use Illuminate\Database\Eloquent\Model;
  use Illuminate\Database\Eloquent\Builder;
- 
+
  class Post extends Model
  {
 +    /**
@@ -995,7 +995,7 @@ Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `w
 +User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
  });
- 
+
 -$query->whereHas('posts', function ($query) {
 +$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
@@ -1974,6 +1974,27 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 -    Route::get('/users', 'UserController@index');
 +    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index']);
  })
+```
+
+<br>
+
+## RouteKeyMethodToRouteKeyAttributeRector
+
+Changes model `getRouteKeyName()` method to use the RouteKey attribute
+
+- class: [`RectorLaravel\Rector\Class_\RouteKeyMethodToRouteKeyAttributeRector`](../src/Rector/Class_/RouteKeyMethodToRouteKeyAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
+
++#[\Illuminate\Database\Eloquent\Attributes\RouteKey('slug')]
+ class Post extends Model
+ {
+-    public function getRouteKeyName(): string
+-    {
+-        return 'slug';
+-    }
+ }
 ```
 
 <br>
