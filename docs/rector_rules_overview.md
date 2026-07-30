@@ -1,4 +1,4 @@
-# 122 Rules Overview
+# 125 Rules Overview
 
 ## AbortIfRector
 
@@ -69,7 +69,7 @@ Add generic Builder return type to scopes in child of `Illuminate\Database\Eloqu
  use App\Post;
  use Illuminate\Database\Eloquent\Model;
  use Illuminate\Database\Eloquent\Builder;
- 
+
  class Post extends Model
  {
 +    /**
@@ -161,6 +161,34 @@ Adds the HasFactory trait to Models.
  class User extends Model
  {
 +    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+ }
+```
+
+<br>
+
+## AddMockConsoleOutputFalseToConsoleTestsRector
+
+Add "$this->mockConsoleOutput = false"; to console tests that work with output content
+
+- class: [`RectorLaravel\Rector\Class_\AddMockConsoleOutputFalseToConsoleTestsRector`](../src/Rector/Class_/AddMockConsoleOutputFalseToConsoleTestsRector.php)
+
+```diff
+ use Illuminate\Support\Facades\Artisan;
+ use Illuminate\Foundation\Testing\TestCase;
+
+ final class SomeTest extends TestCase
+ {
++    protected function setUp(): void
++    {
++        parent::setUp();
++
++        $this->mockConsoleOutput = false;
++    }
++
+     public function test(): void
+     {
+         $this->assertEquals('content', \trim((new Artisan())::output()));
+     }
  }
 ```
 
@@ -995,7 +1023,7 @@ Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `w
 +User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
  });
- 
+
 -$query->whereHas('posts', function ($query) {
 +$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
@@ -1135,6 +1163,19 @@ Use the static factory method instead of global factory function.
 ```diff
 -factory(User::class);
 +User::factory();
+```
+
+<br>
+
+## FactoryHasForToMagicMethodRector
+
+Encapsulate simple factory `->has()/->for()` relationship calls into their magic method equivalents.
+
+- class: [`RectorLaravel\Rector\MethodCall\FactoryHasForToMagicMethodRector`](../src/Rector/MethodCall/FactoryHasForToMagicMethodRector.php)
+
+```diff
+-Product::factory()->has(Variation::factory()->times(3))->create();
++Product::factory()->hasVariations(3)->create();
 ```
 
 <br>
@@ -1760,6 +1801,37 @@ Replace assertTimesSent with assertSentTimes
 ```diff
 -Notification::assertTimesSent(1, SomeNotification::class);
 +Notification::assertSentTimes(SomeNotification::class, 1);
+```
+
+<br>
+
+## ReplaceExpectsMethodsInTestsRector
+
+Replace expectJobs and expectEvents methods in tests
+
+- class: [`RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector`](../src/Rector/Class_/ReplaceExpectsMethodsInTestsRector.php)
+
+```diff
+ use Illuminate\Foundation\Testing\TestCase;
+
+ class SomethingTest extends TestCase
+ {
+     public function testSomething()
+     {
+-        $this->expectsJobs([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
+-        $this->expectsEvents(\App\Events\SomeEvent::class);
+-        $this->doesntExpectEvents(\App\Events\SomeOtherEvent::class);
++        \Illuminate\Support\Facades\Bus::fake([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
++        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class, \App\Events\SomeOtherEvent::class]);
+
+         $this->get('/');
++
++        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeJob::class);
++        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeOtherJob::class);
++        \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\SomeEvent::class);
++        \Illuminate\Support\Facades\Event::assertNotDispatched(\App\Events\SomeOtherEvent::class);
+     }
+ }
 ```
 
 <br>
