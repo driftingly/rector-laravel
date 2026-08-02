@@ -12,9 +12,9 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\TypeDeclarationDocblocks\NodeFinder\ReturnNodeFinder;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\RouteKeyMethodToRouteKeyAttributeRector\RouteKeyMethodToRouteKeyAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -25,7 +25,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RouteKeyMethodToRouteKeyAttributeRector extends AbstractRector
 {
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+    public function __construct(
+        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
+        private readonly ReturnNodeFinder $returnNodeFinder,
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -81,13 +84,13 @@ CODE_SAMPLE
             return null;
         }
 
-        $returnExpr = $this->resolveReturnString($routeKeyMethod);
-        if (! $returnExpr instanceof String_) {
+        $returnExpr = $this->returnNodeFinder->findOnlyReturnWithExpr($routeKeyMethod);
+        if (! $returnExpr?->expr instanceof String_) {
             return null;
         }
 
         $node->attrGroups[] = new AttributeGroup([
-            new Attribute(new FullyQualified('Illuminate\Database\Eloquent\Attributes\RouteKey'), [new Arg($returnExpr)]),
+            new Attribute(new FullyQualified('Illuminate\Database\Eloquent\Attributes\RouteKey'), [new Arg($returnExpr->expr)]),
         ]);
 
         foreach ($node->stmts as $key => $stmt) {
@@ -98,19 +101,5 @@ CODE_SAMPLE
         }
 
         return $node;
-    }
-
-    private function resolveReturnString(ClassMethod $classMethod): ?String_
-    {
-        if ($classMethod->stmts === null || count($classMethod->stmts) !== 1) {
-            return null;
-        }
-
-        $onlyStmt = $classMethod->stmts[0];
-        if (! $onlyStmt instanceof Return_ || ! $onlyStmt->expr instanceof String_) {
-            return null;
-        }
-
-        return $onlyStmt->expr;
     }
 }
