@@ -33,7 +33,7 @@ final class RequestStaticValidateToInjectRector extends AbstractRector
     /**
      * @var ObjectType[]
      */
-    private array $requestObjectTypes = [];
+    private readonly array $requestObjectTypes;
 
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver

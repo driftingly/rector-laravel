@@ -15,6 +15,8 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\TypeDeclarationDocblocks\NodeFinder\ReturnNodeFinder;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\RouteKeyMethodToRouteKeyAttributeRector\RouteKeyMethodToRouteKeyAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -23,12 +25,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see RouteKeyMethodToRouteKeyAttributeRectorTest
  */
-final class RouteKeyMethodToRouteKeyAttributeRector extends AbstractRector
+final class RouteKeyMethodToRouteKeyAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
         private readonly ReturnNodeFinder $returnNodeFinder,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=13.21');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

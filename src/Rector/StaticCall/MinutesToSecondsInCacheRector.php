@@ -34,7 +34,7 @@ final class MinutesToSecondsInCacheRector extends AbstractRector
     /**
      * @var TypeToTimeMethodAndPosition[]
      */
-    private array $typeToTimeMethodsAndPositions = [];
+    private readonly array $typeToTimeMethodsAndPositions;
 
     public function __construct()
     {

@@ -68,7 +68,7 @@ CODE_SAMPLE
             [$methodCall, $otherNode] = $this->handleBinaryOp($node);
         }
 
-        if ($methodCall === null || $otherNode === null) {
+        if ($methodCall === null || ! $otherNode instanceof Expr) {
             return null;
         }
 
