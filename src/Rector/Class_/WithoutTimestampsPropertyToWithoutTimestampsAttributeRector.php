@@ -12,6 +12,8 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\WithoutTimestampsPropertyToWithoutTimestampsAttributeRector\WithoutTimestampsPropertyToWithoutTimestampsAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -20,9 +22,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see WithoutTimestampsPropertyToWithoutTimestampsAttributeRectorTest
  */
-final class WithoutTimestampsPropertyToWithoutTimestampsAttributeRector extends AbstractRector
+final class WithoutTimestampsPropertyToWithoutTimestampsAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=13.2');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

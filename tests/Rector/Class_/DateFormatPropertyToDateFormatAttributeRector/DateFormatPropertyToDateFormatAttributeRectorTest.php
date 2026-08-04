@@ -28,4 +28,9 @@ final class DateFormatPropertyToDateFormatAttributeRectorTest extends AbstractRe
     {
         return __DIR__ . '/config/configured_rule.php';
     }
+
+    protected function provideComposerJsonFilePath(): string
+    {
+        return __DIR__ . '/composer.json';
+    }
 }

@@ -11,6 +11,8 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\TableAttributeFactory;
 use RectorLaravel\Tests\Rector\Class_\TablePropertyToTableAttributeRector\TablePropertyToTableAttributeRectorTest;
@@ -20,12 +22,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see TablePropertyToTableAttributeRectorTest
  */
-final class TablePropertyToTableAttributeRector extends AbstractRector
+final class TablePropertyToTableAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         private readonly TableAttributeFactory $tableAttributeFactory,
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=13.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
