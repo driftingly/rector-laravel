@@ -35,7 +35,7 @@ use Webmozart\Assert\Assert;
  */
 final class OptionalToNullsafeOperatorRector extends AbstractRector implements ConfigurableRectorInterface, MinPhpVersionInterface
 {
-    final public const string EXCLUDE_METHODS = 'exclude_methods';
+    public const string EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var array<class-string<Expr>>

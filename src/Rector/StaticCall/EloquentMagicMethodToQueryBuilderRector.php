@@ -26,7 +26,7 @@ use Webmozart\Assert\Assert;
  */
 final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    final public const string EXCLUDE_METHODS = 'exclude_methods';
+    public const string EXCLUDE_METHODS = 'exclude_methods';
 
     /**
      * @var string[]
