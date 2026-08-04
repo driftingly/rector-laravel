@@ -28,4 +28,9 @@ final class JobConnectionPropertyToJobConnectionAttributeRectorTest extends Abst
     {
         return __DIR__ . '/config/configured_rule.php';
     }
+
+    protected function provideComposerJsonFilePath(): string
+    {
+        return __DIR__ . '/composer.json';
+    }
 }

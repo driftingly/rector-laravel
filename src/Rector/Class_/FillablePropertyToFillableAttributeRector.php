@@ -14,6 +14,8 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\FillablePropertyToFillableAttributeRector\FillablePropertyToFillableAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -22,9 +24,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see FillablePropertyToFillableAttributeRectorTest
  */
-final class FillablePropertyToFillableAttributeRector extends AbstractRector
+final class FillablePropertyToFillableAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=13.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

@@ -14,6 +14,8 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\ScopeAnalyzer;
 use RectorLaravel\Tests\Rector\ClassMethod\ScopeNamedClassMethodToScopeAttributedClassMethodRector\ScopeNamedClassMethodToScopeAttributedClassMethodRectorTest;
@@ -23,7 +25,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ScopeNamedClassMethodToScopeAttributedClassMethodRectorTest
  */
-final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends AbstractRector
+final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     private const string SCOPE_ATTRIBUTE = 'Illuminate\Database\Eloquent\Attributes\Scope';
 
@@ -32,6 +34,11 @@ final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends Abst
         private readonly ReflectionProvider $reflectionProvider,
         private readonly ScopeAnalyzer $scopeAnalyzer,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=12.4');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

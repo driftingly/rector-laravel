@@ -17,6 +17,8 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector\CollectedByPropertyToCollectedByAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -25,9 +27,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see CollectedByPropertyToCollectedByAttributeRectorTest
  */
-final class CollectedByPropertyToCollectedByAttributeRector extends AbstractRector
+final class CollectedByPropertyToCollectedByAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=11.28');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

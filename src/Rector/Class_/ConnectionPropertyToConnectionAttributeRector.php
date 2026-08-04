@@ -12,6 +12,8 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\ConnectionPropertyToConnectionAttributeRector\ConnectionPropertyToConnectionAttributeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -20,8 +22,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ConnectionPropertyToConnectionAttributeRectorTest
  */
-final class ConnectionPropertyToConnectionAttributeRector extends AbstractRector
+final class ConnectionPropertyToConnectionAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=13.0');
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
