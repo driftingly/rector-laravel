@@ -22,7 +22,7 @@ use Webmozart\Assert\Assert;
  */
 final class AddArgumentDefaultValueRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    final public const string ADDED_ARGUMENTS = 'added_arguments';
+    public const string ADDED_ARGUMENTS = 'added_arguments';
 
     /**
      * @var AddArgumentDefaultValue[]
