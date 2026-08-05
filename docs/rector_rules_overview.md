@@ -1,4 +1,4 @@
-# 123 Rules Overview
+# 124 Rules Overview
 
 ## AbortIfRector
 
@@ -1026,6 +1026,25 @@ Change typehint of closure parameter in where method of Eloquent or Query Builde
 +$query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
      $query->where('id', 1);
  });
+```
+
+<br>
+
+## EmptyGuardedPropertyToUnguardedAttributeRector
+
+Changes model empty guarded property to use the Unguarded attribute
+
+- class: [`RectorLaravel\Rector\Class_\EmptyGuardedPropertyToUnguardedAttributeRector`](../src/Rector/Class_/EmptyGuardedPropertyToUnguardedAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Unguarded;
+
++#[Unguarded]
+ class User extends Model
+ {
+-    protected $guarded = [];
+ }
 ```
 
 <br>
