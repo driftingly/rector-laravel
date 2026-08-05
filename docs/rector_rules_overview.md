@@ -1,4 +1,4 @@
-# 123 Rules Overview
+# 124 Rules Overview
 
 ## AbortIfRector
 
@@ -47,7 +47,7 @@ Adds the `@extends` annotation to Factories.
 
 ```diff
  use Illuminate\Database\Eloquent\Factories\Factory;
-
+ 
 +/**
 + * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
 + */
@@ -69,7 +69,7 @@ Add generic Builder return type to scopes in child of `Illuminate\Database\Eloqu
  use App\Post;
  use Illuminate\Database\Eloquent\Model;
  use Illuminate\Database\Eloquent\Builder;
-
+ 
  class Post extends Model
  {
 +    /**
@@ -95,7 +95,7 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
  use App\Account;
  use Illuminate\Database\Eloquent\Model;
  use Illuminate\Database\Eloquent\Relations\HasMany;
-
+ 
  class User extends Model
  {
 +    /** @return HasMany<Account> */
@@ -112,7 +112,7 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
  use App\Account;
  use Illuminate\Database\Eloquent\Model;
  use Illuminate\Database\Eloquent\Relations\HasMany;
-
+ 
  class User extends Model
  {
 +    /** @return HasMany<Account, $this> */
@@ -133,7 +133,7 @@ Add new `$guard` argument to Illuminate\Auth\Events\Login
 
 ```diff
  use Illuminate\Auth\Events\Login;
-
+ 
  final class SomeClass
  {
      public function run(): void
@@ -157,7 +157,7 @@ Adds the HasFactory trait to Models.
 
 ```diff
  use Illuminate\Database\Eloquent\Model;
-
+ 
  class User extends Model
  {
 +    use \Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -174,7 +174,7 @@ Add `parent::boot();` call to `boot()` class method in child of `Illuminate\Data
 
 ```diff
  use Illuminate\Database\Eloquent\Model;
-
+ 
  class Product extends Model
  {
      public function boot()
@@ -194,7 +194,7 @@ Add `parent::register();` call to `register()` class method in child of `Illumin
 
 ```diff
  use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-
+ 
  class EventServiceProvider extends ServiceProvider
  {
      public function register()
@@ -215,7 +215,7 @@ Changes the aliases property to use the Aliases attribute
 ```diff
  use Illuminate\Console\Command;
 +use Illuminate\Console\Attributes\Aliases;
-
+ 
 +#[Aliases(['email:send'])]
  class SendEmails extends Command
  {
@@ -233,7 +233,7 @@ Convert migrations to anonymous classes.
 
 ```diff
  use Illuminate\Database\Migrations\Migration;
-
+ 
 -class CreateUsersTable extends Migration
 +return new class extends Migration
  {
@@ -285,7 +285,7 @@ Changes model appends property to use the appends attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Appends;
-
+ 
 +#[Appends(['full_name'])]
  class User extends Model
  {
@@ -456,7 +456,7 @@ Convert negated calls to `contains` to `doesntContain`, or vice versa.
 
 ```diff
  use Illuminate\Support\Collection;
-
+ 
  $collection = new Collection([0, 1, null, -1]);
 -! $collection->contains(fn (?int $number): bool => is_null($number));
 -! $collection->doesntContain(fn (?int $number) => $number > 0);
@@ -474,7 +474,7 @@ Avoid negated conditionals in `filter()` by using `reject()`, or vice versa.
 
 ```diff
  use Illuminate\Support\Collection;
-
+ 
  $collection = new Collection([0, 1, null, -1]);
 -$collection->filter(fn (?int $number): bool => ! is_null($number));
 -$collection->filter(fn (?int $number): bool => ! $number);
@@ -495,7 +495,7 @@ Changes the backoff property to use the Backoff attribute
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\Backoff;
-
+ 
 +#[Backoff(3)]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -518,7 +518,7 @@ Replace magical call on `$this->app["something"]` to standalone type assign vari
       * @var \Illuminate\Contracts\Foundation\Application
       */
      private $app;
-
+ 
      public function run()
      {
 -        $validator = $this->app['validator']->make('...');
@@ -540,7 +540,7 @@ Use the `$this->travelTo()` method in Laravel's `TestCase` class instead of the 
 ```diff
  use Illuminate\Support\Carbon;
  use Illuminate\Foundation\Testing\TestCase;
-
+ 
  class SomeTest extends TestCase
  {
      public function test()
@@ -562,7 +562,7 @@ Refactor Carbon static method calls to use the Date facade instead.
 ```diff
 -use Carbon\Carbon;
 +use Illuminate\Support\Facades\Date;
-
+ 
 -Carbon::now();
 -Carbon::parse('2024-01-01');
 +Date::now();
@@ -574,7 +574,7 @@ Refactor Carbon static method calls to use the Date facade instead.
 ```diff
 -use Illuminate\Support\Carbon;
 +use Illuminate\Support\Facades\Date;
-
+ 
 -Carbon::now();
 -Carbon::today();
 +Date::now();
@@ -592,11 +592,11 @@ Renames the Billable `stripeOptions()` to `stripe().`
 ```diff
  use Illuminate\Database\Eloquent\Model;
  use Laravel\Cashier\Billable;
-
+ 
  class User extends Model
  {
      use Billable;
-
+ 
 -    public function stripeOptions(array $options = []) {
 +    public function stripe(array $options = []) {
          return [];
@@ -614,7 +614,7 @@ Refactor `whereDate()` queries to include both date and time comparisons with Ca
 
 ```diff
  use Illuminate\Database\Query\Builder;
-
+ 
  final class SomeClass
  {
      public function run(Builder $query)
@@ -640,7 +640,7 @@ Changes model newCollection method to use the CollectedBy attribute
 -use Illuminate\Database\Eloquent\Collection;
  use App\Collections\UserCollection;
 +use Illuminate\Database\Eloquent\Attributes\CollectedBy;
-
+ 
 +#[CollectedBy(UserCollection::class)]
  class User extends Model
  {
@@ -667,7 +667,7 @@ Changes the collects property to use the Collects attribute
  use App\Http\Resources\UserResource;
 +use Illuminate\Http\Resources\Attributes\Collects;
  use Illuminate\Http\Resources\Json\JsonResource;
-
+ 
 +#[Collects(UserResource::class)]
  class UserCollection extends JsonResource
  {
@@ -686,7 +686,7 @@ Changes the hidden property to use the Hidden attribute on console commands
 ```diff
  use Illuminate\Console\Command;
 +use Illuminate\Console\Attributes\Hidden;
-
+ 
 +#[Hidden]
  class SendEmails extends Command
  {
@@ -726,7 +726,7 @@ Changes model connection property to use the Connection attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Connection;
-
+ 
 +#[Connection('sqlite')]
  class User extends Model
  {
@@ -759,7 +759,7 @@ Convert `toArray()` to `all()` when the collection does not contain any Arrayabl
 
 ```diff
  use Illuminate\Support\Collection;
-
+ 
 -new Collection([0, 1, -1])->toArray();
 +new Collection([0, 1, -1])->all();
 ```
@@ -774,7 +774,7 @@ Convert DB Expression string casts to `getValue()` method calls.
 
 ```diff
  use Illuminate\Support\Facades\DB;
-
+ 
 -$string = (string) DB::raw('select 1');
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
 ```
@@ -789,7 +789,7 @@ Convert DB Expression `__toString()` calls to `getValue()` method calls.
 
 ```diff
  use Illuminate\Support\Facades\DB;
-
+ 
 -$string = DB::raw('select 1')->__toString();
 +$string = DB::raw('select 1')->getValue(DB::connection()->getQueryGrammar());
 ```
@@ -805,7 +805,7 @@ Changes model dateFormat property to use the DateFormat attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\DateFormat;
-
+ 
 +#[DateFormat('U')]
  class User extends Model
  {
@@ -823,7 +823,7 @@ Replace date comparison where clauses with Laravel query builder shorthand metho
 
 ```diff
  use Carbon\Carbon;
-
+ 
 -$query->where('published_at', '<', Carbon::now());
 -$query->whereDate('published_at', '=', Carbon::today());
 -$query->where('published_at', '<=', now());
@@ -845,7 +845,7 @@ Changes the delay property to use the Delay attribute
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\Delay;
-
+ 
 +#[Delay(10)]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -864,7 +864,7 @@ Changes the deleteWhenMissingModels property to use the DeleteWhenMissingModels 
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
-
+ 
 +#[DeleteWhenMissingModels]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -883,7 +883,7 @@ Changes the description property to use the Description attribute
 ```diff
  use Illuminate\Console\Command;
 +use Illuminate\Console\Attributes\Description;
-
+ 
 +#[Description('Send marketing emails to users')]
  class SendEmails extends Command
  {
@@ -947,7 +947,7 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 
 ```diff
  use App\Models\User;
-
+ 
 -$user = User::first();
 +$user = User::query()->first();
  $user = User::find(1);
@@ -965,9 +965,9 @@ Changes `orderBy()` to `latest()` or `oldest()`
 
 ```diff
  use Illuminate\Database\Eloquent\Builder;
-
+ 
  $column = 'tested_at';
-
+ 
 -$builder->orderBy('created_at');
 -$builder->orderBy('created_at', 'desc');
 -$builder->orderBy('submitted_at');
@@ -995,7 +995,7 @@ Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `w
 +User::whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
  });
-
+ 
 -$query->whereHas('posts', function ($query) {
 +$query->whereHas('posts', function (\Illuminate\Contracts\Database\Query\Builder $query) {
      $query->where('is_published', true);
@@ -1026,6 +1026,25 @@ Change typehint of closure parameter in where method of Eloquent or Query Builde
 +$query->where(function (\Illuminate\Contracts\Database\Eloquent\Builder $query) {
      $query->where('id', 1);
  });
+```
+
+<br>
+
+## EmptyGuardedPropertyToUnguardedAttributeRector
+
+Changes model empty guarded property to use the Unguarded attribute
+
+- class: [`RectorLaravel\Rector\Class_\EmptyGuardedPropertyToUnguardedAttributeRector`](../src/Rector/Class_/EmptyGuardedPropertyToUnguardedAttributeRector.php)
+
+```diff
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Attributes\Unguarded;
+ 
++#[Unguarded]
+ class User extends Model
+ {
+-    protected $guarded = [];
+ }
 ```
 
 <br>
@@ -1067,7 +1086,7 @@ Changes the errorBag property to use the ErrorBag attribute
 ```diff
  use Illuminate\Foundation\Http\FormRequest;
 +use Illuminate\Foundation\Http\Attributes\ErrorBag;
-
+ 
 +#[ErrorBag('custom')]
  class StorePostRequest extends FormRequest
  {
@@ -1102,7 +1121,7 @@ Upgrade legacy factories to support classes.
 
 ```diff
  use Faker\Generator as Faker;
-
+ 
 -$factory->define(App\User::class, function (Faker $faker) {
 -    return [
 -        'name' => $faker->name,
@@ -1148,7 +1167,7 @@ Changes the failOnTimeout property to use the FailOnTimeout attribute
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\FailOnTimeout;
-
+ 
 +#[FailOnTimeout(true)]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -1167,7 +1186,7 @@ Changes model fillable property to use the fillable attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Fillable;
-
+ 
 +#[Fillable(['name', 'email'])]
  class User extends Model
  {
@@ -1189,7 +1208,7 @@ Changes model guarded property to use the guarded attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Guarded;
-
+ 
 +#[Guarded(['is_admin'])]
  class User extends Model
  {
@@ -1210,7 +1229,7 @@ Changes the help property to use the Help attribute
 ```diff
  use Illuminate\Console\Command;
 +use Illuminate\Console\Attributes\Help;
-
+ 
 +#[Help('This command sends emails to all users')]
  class SendEmails extends Command
  {
@@ -1248,7 +1267,7 @@ Changes model hidden property to use the hidden attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Hidden;
-
+ 
 +#[Hidden(['password'])]
  class User extends Model
  {
@@ -1269,7 +1288,7 @@ Changes the connection property to use the Connection attribute on queue jobs
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\Connection;
-
+ 
 +#[Connection('redis')]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -1300,7 +1319,7 @@ Converts the computed methods of a Livewire component to use the Computed Attrib
 
 ```diff
  use Livewire\Component;
-
+ 
  class MyComponent extends Component
  {
 -    public function getFooBarProperty()
@@ -1321,12 +1340,12 @@ Converts the `$queryString` property of a Livewire component to use the Url Attr
 
 ```diff
  use Livewire\Component;
-
+ 
  class MyComponent extends Component
  {
 +    #[\Livewire\Attributes\Url]
      public string $something = '';
-
+ 
 +    #[\Livewire\Attributes\Url]
      public string $another = '';
 -
@@ -1381,7 +1400,7 @@ Makes Model attributes and scopes protected
      {
          return Attribute::get(fn () => $this->bar);
      }
-
+ 
      #[Scope]
 -    public function active(Builder $query): Builder
 +    protected function active(Builder $query): Builder
@@ -1402,7 +1421,7 @@ Changes the maxExceptions property to use the MaxExceptions attribute
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\MaxExceptions;
-
+ 
 +#[MaxExceptions(3)]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -1420,7 +1439,7 @@ Migrate to the new Model attributes syntax
 
 ```diff
  use Illuminate\Database\Eloquent\Model;
-
+ 
  class User extends Model
  {
 -    public function getFirstNameAttribute($value)
@@ -1471,7 +1490,7 @@ Refactor Model `$casts` property with `casts()` method
 
 ```diff
  use Illuminate\Database\Eloquent\Model;
-
+ 
  class Person extends Model
  {
 -    protected $casts = [
@@ -1544,7 +1563,7 @@ Changes the preserveKeys property to use the PreserveKeys attribute
 ```diff
 +use Illuminate\Http\Resources\Attributes\PreserveKeys;
  use Illuminate\Http\Resources\Json\JsonResource;
-
+ 
 +#[PreserveKeys]
  class UserResource extends JsonResource
  {
@@ -1563,7 +1582,7 @@ Change deprecated `$defer` = true; to `Illuminate\Contracts\Support\DeferrablePr
 ```diff
  use Illuminate\Support\ServiceProvider;
 +use Illuminate\Contracts\Support\DeferrableProvider;
-
+ 
 -final class SomeServiceProvider extends ServiceProvider
 +final class SomeServiceProvider extends ServiceProvider implements DeferrableProvider
  {
@@ -1585,7 +1604,7 @@ Changes the queue property to use the Queue attribute
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\Queue;
-
+ 
 +#[Queue('podcasts')]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -1622,7 +1641,7 @@ Replace `redirect()->back()` and `Redirect::back()` with `back()`
 
 ```diff
  use Illuminate\Support\Facades\Redirect;
-
+ 
  class MyController
  {
      public function store()
@@ -1630,7 +1649,7 @@ Replace `redirect()->back()` and `Redirect::back()` with `back()`
 -        return redirect()->back()->with('error', 'Incorrect Details.')
 +        return back()->with('error', 'Incorrect Details.')
      }
-
+ 
      public function update()
      {
 -        return Redirect::back()->with('error', 'Incorrect Details.')
@@ -1649,7 +1668,7 @@ Replace `redirect()->route("home")` and `Redirect::route("home")` with `to_route
 
 ```diff
  use Illuminate\Support\Facades\Redirect;
-
+ 
  class MyController
  {
      public function store()
@@ -1657,7 +1676,7 @@ Replace `redirect()->route("home")` and `Redirect::route("home")` with `to_route
 -        return redirect()->route('home')->with('error', 'Incorrect Details.')
 +        return to_route('home')->with('error', 'Incorrect Details.')
      }
-
+ 
      public function update()
      {
 -        return Redirect::route('home')->with('error', 'Incorrect Details.')
@@ -1697,7 +1716,7 @@ It will removes the dump data just like dd or dump functions from the code.`
 -        dd('test');
          return true;
      }
-
+ 
      public function update()
      {
 -        dump('test');
@@ -1716,7 +1735,7 @@ Removes the `$model` property from Factories.
 
 ```diff
  use Illuminate\Database\Eloquent\Factories\Factory;
-
+ 
  class UserFactory extends Factory
  {
 -    protected $model = \App\Models\User::class;
@@ -1811,7 +1830,7 @@ Replace Dispatchable, InteractsWithQueue, Queueable, and SerializesModels traits
  use Illuminate\Foundation\Bus\Dispatchable;
  use Illuminate\Queue\InteractsWithQueue;
  use Illuminate\Queue\SerializesModels;
-
+ 
  class SomeJob
  {
 -    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -1882,7 +1901,7 @@ Change static `validate()` method to `$request->validate()`
 
 ```diff
  use Illuminate\Http\Request;
-
+ 
  class SomeClass
  {
 -    public function store()
@@ -1969,7 +1988,7 @@ Use PHP callable syntax instead of string syntax for controller route declaratio
 ```diff
 -Route::get('/users', 'UserController@index');
 +Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
-
+ 
  Route::group(['namespace' => 'Admin'], function () {
 -    Route::get('/users', 'UserController@index');
 +    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index']);
@@ -1986,7 +2005,7 @@ Changes model `getRouteKeyName()` method to use the RouteKey attribute
 
 ```diff
  use Illuminate\Database\Eloquent\Model;
-
+ 
 +#[\Illuminate\Database\Eloquent\Attributes\RouteKey('slug')]
  class Post extends Model
  {
@@ -2070,7 +2089,7 @@ Changes the signature property to use the Signature attribute
 ```diff
  use Illuminate\Console\Command;
 +use Illuminate\Console\Attributes\Signature;
-
+ 
 +#[Signature('mail:send {user}')]
  class SendEmails extends Command
  {
@@ -2102,7 +2121,7 @@ Changes the stopOnFirstFailure property to use the StopOnFirstFailure attribute
 ```diff
  use Illuminate\Foundation\Http\FormRequest;
 +use Illuminate\Foundation\Http\Attributes\StopOnFirstFailure;
-
+ 
 +#[StopOnFirstFailure]
  class StorePostRequest extends FormRequest
  {
@@ -2136,7 +2155,7 @@ Changes model table-related properties to use the Table attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Table;
-
+ 
 +#[Table(name: 'users', key: 'user_id', keyType: 'string', incrementing: false)]
  class User extends Model
  {
@@ -2193,7 +2212,7 @@ Changes the timeout property to use the Timeout attribute
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\Timeout;
-
+ 
 +#[Timeout(120)]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -2212,7 +2231,7 @@ Changes model touches property to use the touches attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Touches;
-
+ 
 +#[Touches(['posts'])]
  class User extends Model
  {
@@ -2233,7 +2252,7 @@ Changes the tries property to use the Tries attribute
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\Tries;
-
+ 
 +#[Tries(3)]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -2271,7 +2290,7 @@ Use the base collection methods instead of their aliases.
 
 ```diff
  use Illuminate\Support\Collection;
-
+ 
  $collection = new Collection([0, 1, null, -1]);
 -$collection->average();
 -$collection->some(fn (?int $number): bool => is_null($number));
@@ -2289,7 +2308,7 @@ Unify Model `$dates` property with `$casts`
 
 ```diff
  use Illuminate\Database\Eloquent\Model;
-
+ 
  class Person extends Model
  {
      protected $casts = [
@@ -2312,7 +2331,7 @@ Changes the uniqueFor property to use the UniqueFor attribute
 ```diff
  use Illuminate\Contracts\Queue\ShouldQueue;
 +use Illuminate\Queue\Attributes\UniqueFor;
-
+ 
 +#[UniqueFor(1800)]
  final class ProcessPodcast implements ShouldQueue
  {
@@ -2330,7 +2349,7 @@ Use `$this->components` property within commands
 
 ```diff
  use Illuminate\Console\Command;
-
+ 
  class CommandWithComponents extends Command
  {
      public function handle()
@@ -2394,7 +2413,7 @@ Changes model visible property to use the Visible attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\Visible;
-
+ 
 +#[Visible(['name', 'email'])]
  class User extends Model
  {
@@ -2467,7 +2486,7 @@ Changes model incrementing = false property to use the WithoutIncrementing attri
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
-
+ 
 +#[WithoutIncrementing]
  class User extends Model
  {
@@ -2486,7 +2505,7 @@ Changes model timestamps = false property to use the WithoutTimestamps attribute
 ```diff
  use Illuminate\Database\Eloquent\Model;
 +use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
-
+ 
 +#[WithoutTimestamps]
  class EventLog extends Model
  {

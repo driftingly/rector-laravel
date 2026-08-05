@@ -38,6 +38,11 @@ class User extends Model
     protected $connection = 'sqlite';
 }
 
+final class Settings extends Model
+{
+    protected $guarded = [];
+}
+
 final class ProcessPodcast implements \Illuminate\Contracts\Queue\ShouldQueue
 {
     public $tries = 3;
@@ -77,6 +82,11 @@ use Illuminate\Database\Eloquent\Model;
     'posts',
 ])]
 class User extends Model
+{
+}
+
+#[\Illuminate\Database\Eloquent\Attributes\Unguarded]
+final class Settings extends Model
 {
 }
 
