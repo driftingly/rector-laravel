@@ -96,6 +96,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if ($this->hasNonEmptyFillableProperty($node)) {
+            return null;
+        }
+
         $node->attrGroups[] = new AttributeGroup([
             new Attribute(new FullyQualified('Illuminate\Database\Eloquent\Attributes\Unguarded')),
         ]);
@@ -108,5 +112,24 @@ CODE_SAMPLE
         }
 
         return $node;
+    }
+
+    private function hasNonEmptyFillableProperty(Class_ $class): bool
+    {
+        $fillableProperty = $class->getProperty('fillable');
+        if ($fillableProperty === null) {
+            return false;
+        }
+
+        if (! $fillableProperty->isProtected()) {
+            return false;
+        }
+
+        $propertyProperty = $fillableProperty->props[0];
+        if ($propertyProperty->default === null || ! $propertyProperty->default instanceof Array_) {
+            return false;
+        }
+
+        return $propertyProperty->default->items !== [];
     }
 }
