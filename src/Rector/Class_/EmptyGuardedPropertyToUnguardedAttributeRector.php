@@ -74,6 +74,10 @@ CODE_SAMPLE
             return null;
         }
 
+        if ($this->phpAttributeAnalyzer->hasPhpAttribute($node, 'Illuminate\Database\Eloquent\Attributes\Unguarded')) {
+            return null;
+        }
+
         $guardedProperty = $node->getProperty('guarded');
         if ($guardedProperty === null) {
             return null;
@@ -89,10 +93,6 @@ CODE_SAMPLE
         }
 
         if ($propertyProperty->default->items !== []) {
-            return null;
-        }
-
-        if ($this->phpAttributeAnalyzer->hasPhpAttribute($node, 'Illuminate\Database\Eloquent\Attributes\Unguarded')) {
             return null;
         }
 
