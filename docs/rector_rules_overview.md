@@ -1,4 +1,4 @@
-# 124 Rules Overview
+# 125 Rules Overview
 
 ## AbortIfRector
 
@@ -1696,6 +1696,23 @@ refactors calls with the pre Laravel 11 methods for blueprint geometry columns
 ```diff
 -$blueprint->point('coordinates')->spatialIndex();
 +$blueprint->geometry('coordinates', 'point')->spatialIndex();
+```
+
+<br>
+
+## RelationTableStringToPivotClassRector
+
+Changes the pivot table name of a many to many relation to the pivot model class.
+
+The namespaces searched for the pivot model can be configured with `[RelationTableStringToPivotClassRector::MODEL_NAMESPACES => ['App\Models']]`.
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\MethodCall\RelationTableStringToPivotClassRector`](../src/Rector/MethodCall/RelationTableStringToPivotClassRector.php)
+
+```diff
+-$this->belongsToMany(Tag::class, 'post_tag');
++$this->belongsToMany(Tag::class, \App\Models\PostTag::class);
 ```
 
 <br>
