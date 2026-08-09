@@ -9,6 +9,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ExtendedMethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use ReflectionException;
 use Throwable;
 
@@ -32,6 +33,17 @@ final readonly class ModelAnalyzer
      */
     public function getTable(string|ObjectType $model): ?string
     {
+        if (! is_string($model)) {
+            /** @var class-string<Model> $model */
+            $model = $model->getClassName();
+        }
+
+        $table = $this->resolveTableFromAttribute($this->getClass($model));
+
+        if ($table !== null) {
+            return $table;
+        }
+
         $model = $this->resolveModelClassToInstance($model);
 
         if (! $model instanceof Model) {
@@ -127,6 +139,31 @@ final readonly class ModelAnalyzer
         }
 
         return false;
+    }
+
+    private function resolveTableFromAttribute(ClassReflection $classReflection): ?string
+    {
+        foreach ($classReflection->getAttributes() as $attributeReflection) {
+            if ($attributeReflection->getName() !== 'Illuminate\Database\Eloquent\Attributes\Table') {
+                continue;
+            }
+
+            $nameType = $attributeReflection->getArgumentTypes()['name'] ?? null;
+
+            if (! $nameType instanceof Type) {
+                continue;
+            }
+
+            $constantStrings = $nameType->getConstantStrings();
+
+            if (count($constantStrings) !== 1) {
+                continue;
+            }
+
+            return $constantStrings[0]->getValue();
+        }
+
+        return null;
     }
 
     private function usesScopeAttribute(ExtendedMethodReflection $extendedMethodReflection): bool
