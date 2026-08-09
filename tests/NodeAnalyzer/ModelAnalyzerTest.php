@@ -19,7 +19,7 @@ final class ModelAnalyzerTest extends AbstractLazyTestCase
 
         $result = $modelAnalyzer->getTable('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel');
 
-        Assert::assertSame('<default_table_mechanism>', $result);
+        Assert::assertSame('some_models', $result);
     }
 
     /**

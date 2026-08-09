@@ -3,6 +3,7 @@
 namespace Illuminate\Database\Eloquent;
 
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
+use Illuminate\Support\Str;
 
 if (class_exists('Illuminate\Database\Eloquent\Model')) {
     return;
@@ -48,7 +49,7 @@ abstract class Model
 
     public function getTable()
     {
-        return $this->table ?? '<default_table_mechanism>';
+        return $this->table ?? Str::snake(Str::pluralStudly(Str::afterLast(static::class, '\\')));
     }
 
     /**
