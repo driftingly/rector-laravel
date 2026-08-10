@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\MethodCall\RelationTableStringToPivotClassRector;
+namespace RectorLaravel\Tests\Rector\ClassMethod\RelationTableStringToPivotClassRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -27,5 +27,10 @@ final class RelationTableStringToPivotClassRectorTest extends AbstractRectorTest
     public function provideConfigFilePath(): string
     {
         return __DIR__ . '/config/configured_rule.php';
+    }
+
+    protected function provideComposerJsonFilePath(): string
+    {
+        return __DIR__ . '/composer.json';
     }
 }

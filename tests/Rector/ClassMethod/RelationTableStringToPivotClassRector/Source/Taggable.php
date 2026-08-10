@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\MethodCall\RelationTableStringToPivotClassRector\Source;
+namespace RectorLaravel\Tests\Rector\ClassMethod\RelationTableStringToPivotClassRector\Source;
 
 use Illuminate\Database\Eloquent\Model;
 
