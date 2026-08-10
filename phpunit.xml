@@ -8,9 +8,6 @@
     cacheDirectory=".phpunit.cache"
     displayDetailsOnTestsThatTriggerWarnings="true"
 >
-    <php>
-        <ini name="memory_limit" value="512M"/>
-    </php>
     <testsuites>
         <testsuite name="commands">
             <directory>tests/Commands</directory>
