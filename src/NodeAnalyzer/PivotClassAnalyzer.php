@@ -9,6 +9,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\Php\PhpFunctionFromParserNodeReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -45,16 +46,16 @@ final readonly class PivotClassAnalyzer
         return $methodCall->getArg('table', $tablePosition);
     }
 
-    public function resolvePivotClass(ClassMethod $classMethod, MethodCall $relationCall, string $table): ?string
+    public function resolvePivotClass(ClassMethod $classMethod, MethodCall $methodCall, string $table): ?string
     {
-        $usedPivotClass = $this->resolvePivotClassFromUsing($classMethod, $relationCall);
+        $usedPivotClass = $this->resolvePivotClassFromUsing($classMethod, $methodCall);
 
         // a pivot model the relation already declares is never second guessed by the models found by name
         if ($usedPivotClass !== null) {
             return $this->isPivotForTable($usedPivotClass, $table) ? $usedPivotClass : null;
         }
 
-        foreach ($this->resolvePivotClassCandidates($relationCall, $table) as $pivotClass) {
+        foreach ($this->resolvePivotClassCandidates($methodCall, $table) as $pivotClass) {
             if ($this->isPivotForTable($pivotClass, $table)) {
                 return $pivotClass;
             }
@@ -100,9 +101,9 @@ final readonly class PivotClassAnalyzer
      *
      * @return iterable<string>
      */
-    private function resolvePivotClassCandidates(MethodCall $relationCall, string $table): iterable
+    private function resolvePivotClassCandidates(MethodCall $methodCall, string $table): iterable
     {
-        $declaredPivotClass = $this->resolvePivotClassFromGenerics($relationCall);
+        $declaredPivotClass = $this->resolvePivotClassFromGenerics($methodCall);
 
         if ($declaredPivotClass !== null) {
             yield $declaredPivotClass;
@@ -110,7 +111,7 @@ final readonly class PivotClassAnalyzer
 
         $classNames = array_unique([Str::studly($table), Str::studly(Str::singular($table))]);
 
-        foreach ($this->resolveModelNamespaces($relationCall) as $modelNamespace) {
+        foreach ($this->resolveModelNamespaces($methodCall) as $modelNamespace) {
             foreach ($classNames as $className) {
                 yield $modelNamespace . '\\' . $className;
             }
@@ -120,11 +121,11 @@ final readonly class PivotClassAnalyzer
     /**
      * Read the pivot model from the third template type of the relation, e.g. BelongsToMany<Tag, $this, PostTag>.
      */
-    private function resolvePivotClassFromGenerics(MethodCall $relationCall): ?string
+    private function resolvePivotClassFromGenerics(MethodCall $methodCall): ?string
     {
-        $function = ScopeFetcher::fetch($relationCall)->getFunction();
+        $function = ScopeFetcher::fetch($methodCall)->getFunction();
 
-        if ($function === null) {
+        if (! $function instanceof PhpFunctionFromParserNodeReflection) {
             return null;
         }
 
@@ -145,13 +146,13 @@ final readonly class PivotClassAnalyzer
      *
      * @return list<string>
      */
-    private function resolveModelNamespaces(MethodCall $relationCall): array
+    private function resolveModelNamespaces(MethodCall $methodCall): array
     {
-        $classReflection = ScopeFetcher::fetch($relationCall)->getClassReflection();
+        $classReflection = ScopeFetcher::fetch($methodCall)->getClassReflection();
 
         $classNames = [
             $classReflection instanceof ClassReflection ? $classReflection->getName() : null,
-            $this->resolveClassName($relationCall->getArgs()[0] ?? null),
+            $this->resolveClassName($methodCall->getArgs()[0] ?? null),
         ];
 
         $modelNamespaces = [];
