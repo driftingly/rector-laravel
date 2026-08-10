@@ -112,7 +112,6 @@ return RectorConfig::configure()
 
 | Rule | Description |
 |------|-------------|
-| [RelationTableStringToPivotClassRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/RelationTableStringToPivotClassRector.php) | Converts the pivot table name of `belongsToMany()`, `morphToMany()` and `morphedByMany()` relations to the pivot model class, for example `belongsToMany(Tag::class, 'post_tag')` to `belongsToMany(Tag::class, PostTag::class)`. Configure with `MODEL_NAMESPACES` for the namespaces the pivot models are searched in (default: `['App\Models']`). |
 | [RemoveDumpDataDeadCodeRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/FuncCall/RemoveDumpDataDeadCodeRector.php) | Removes debug function calls like `dd()`, `dump()`, etc. from code. Configure with an array of function names to remove (default: `['dd', 'dump']`). |
 | [RouteActionCallableRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/StaticCall/RouteActionCallableRector.php) | Converts route action strings like `'UserController@index'` to callable arrays `[UserController::class, 'index']`. Configure with `NAMESPACE` for controller namespace and `ROUTES` for file-specific namespaces. |
 | [WhereToWhereLikeRector](https://github.com/driftingly/rector-laravel/blob/main/src/Rector/MethodCall/WhereToWhereLikeRector.php) | Converts `where('column', 'like', 'value')` to `whereLike('column', 'value')` calls. Configure with `USING_POSTGRES_DRIVER` boolean to handle PostgreSQL vs MySQL differences. |
