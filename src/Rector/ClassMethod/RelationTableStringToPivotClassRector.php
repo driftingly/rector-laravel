@@ -11,7 +11,11 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\PHPStan\ScopeFetcher;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
@@ -28,6 +32,7 @@ final class RelationTableStringToPivotClassRector extends AbstractRector impleme
     public function __construct(
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly PivotClassAnalyzer $pivotClassAnalyzer,
+        private readonly ReflectionProvider $reflectionProvider,
     ) {}
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
@@ -66,6 +71,10 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?ClassMethod
     {
+        if ($this->shouldSkip($node)) {
+            return null;
+        }
+
         $hasChanged = false;
 
         foreach ($this->betterNodeFinder->findInstancesOfInFunctionLikeScoped($node, MethodCall::class) as $methodCall) {
@@ -86,5 +95,39 @@ CODE_SAMPLE
         }
 
         return $hasChanged ? $node : null;
+    }
+
+    private function shouldSkip(ClassMethod $classMethod): bool
+    {
+        if ($classMethod->stmts === null || $classMethod->isStatic()) {
+            return true;
+        }
+
+        $classReflection = ScopeFetcher::fetch($classMethod)->getClassReflection();
+
+        if (! $classReflection instanceof ClassReflection || $classReflection->isAnonymous()) {
+            return true;
+        }
+
+        if (
+            ! $classReflection->isTrait()
+            && ! $classReflection->isSubclassOfClass($this->reflectionProvider->getClass('Illuminate\Database\Eloquent\Model'))
+        ) {
+            return true;
+        }
+
+        $returnType = $classMethod->getReturnType();
+
+        if ($returnType === null) {
+            return false;
+        }
+
+        $declaredType = $this->nodeTypeResolver->getType($returnType);
+
+        $objectType = new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany');
+
+        // a wider type such as Relation is kept as well, only types which cannot be a many to many relation are skipped
+        return $declaredType->isSuperTypeOf($objectType)->no()
+            && $objectType->isSuperTypeOf($declaredType)->no();
     }
 }
