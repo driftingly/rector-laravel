@@ -20,8 +20,12 @@ class BelongsToMany extends Relation
     /**
      * Specify the custom pivot model to use for the relationship.
      *
-     * @param  class-string  $class
+     * @template TNewPivotModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param  class-string<TNewPivotModel>  $class
      * @return $this
+     *
+     * @phpstan-this-out static<TRelatedModel, TDeclaringModel, TNewPivotModel>
      */
     public function using($class) {}
 }
