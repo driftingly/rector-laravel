@@ -61,6 +61,30 @@ final class ModelAnalyzerTest extends AbstractLazyTestCase
     /**
      * @test
      */
+    public function it_prefers_the_table_property_over_the_table_attribute(): void
+    {
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
+
+        $result = $modelAnalyzer->getTable('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModelWithTableAttributeAndTableProperty');
+
+        Assert::assertSame('property_table', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_retrieve_the_table_name_from_the_table_attribute_of_a_parent(): void
+    {
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
+
+        $result = $modelAnalyzer->getTable('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModelInheritingATableAttribute');
+
+        Assert::assertSame('inherited_attribute_table', $result);
+    }
+
+    /**
+     * @test
+     */
     public function it_can_retrieve_the_table_name_from_the_attribute_of_an_unconstructable_model(): void
     {
         $modelAnalyzer = $this->make(ModelAnalyzer::class);
@@ -94,6 +118,30 @@ final class ModelAnalyzerTest extends AbstractLazyTestCase
         $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModel');
 
         Assert::assertSame('id', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_retrieve_the_key_name_from_the_table_attribute(): void
+    {
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
+
+        $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\NodeAnalyzer\Source\SomeModelWithTableAttributeKey');
+
+        Assert::assertSame('uuid', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_retrieve_the_key_name_from_the_table_attribute_of_an_unconstructable_model(): void
+    {
+        $modelAnalyzer = $this->make(ModelAnalyzer::class);
+
+        $result = $modelAnalyzer->getPrimaryKey('RectorLaravel\Tests\NodeAnalyzer\Source\SomeUnconstructableModelWithTableAttributeKey');
+
+        Assert::assertSame('uuid', $result);
     }
 
     /**
