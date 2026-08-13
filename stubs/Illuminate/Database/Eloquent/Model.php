@@ -32,7 +32,7 @@ abstract class Model
      */
     protected $primaryKey = 'id';
 
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
         $this->initializeModelAttributes();
     }
