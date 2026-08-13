@@ -5,7 +5,7 @@ namespace RectorLaravel\Tests\Rector\ClassMethod\RelationTableStringToPivotClass
 use Illuminate\Database\Eloquent\Model;
 use RectorLaravel\Tests\Rector\ClassMethod\RelationTableStringToPivotClassRector\Source\File;
 
-class SkipClassWhichIsNotAModel extends Model
+class SkipPivotCandidateWhichIsNotAModel extends Model
 {
     public function files()
     {
