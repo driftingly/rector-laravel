@@ -42,10 +42,6 @@ final readonly class PivotClassAnalyzer
             return null;
         }
 
-        if (! $this->nodeTypeResolver->isObjectType($methodCall->var, new ObjectType('Illuminate\Database\Eloquent\Model'))) {
-            return null;
-        }
-
         return $methodCall->getArg('table', $tablePosition);
     }
 

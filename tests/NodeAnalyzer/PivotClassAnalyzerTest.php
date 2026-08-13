@@ -6,7 +6,7 @@ use Exception;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Return_;
@@ -26,6 +26,22 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
         $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
 
         $classMethod = $this->parseClassMethod('inferredPivot', 'SomeModelWithPivotRelations.php');
+
+        $arg = $pivotClassAnalyzer->matchRelationTableArg($this->resolveRelationCall($classMethod));
+
+        Assert::assertInstanceOf(Arg::class, $arg);
+        Assert::assertInstanceOf(String_::class, $arg->value);
+        Assert::assertSame('foo_bar', $arg->value->value);
+    }
+
+    /**
+     * @test
+     */
+    public function it_matches_the_table_argument_of_a_relation_declared_in_a_trait(): void
+    {
+        $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
+
+        $classMethod = $this->parseClassMethod('inferredPivot', 'HasPivotRelations.php');
 
         $arg = $pivotClassAnalyzer->matchRelationTableArg($this->resolveRelationCall($classMethod));
 
@@ -211,7 +227,7 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
         }
 
         foreach ($statements[0]->stmts as $statement) {
-            if (! $statement instanceof Class_) {
+            if (! $statement instanceof ClassLike) {
                 continue;
             }
 

@@ -112,7 +112,7 @@ CODE_SAMPLE
         // an anonymous class has no name to look for a pivot alongside, nor one to build a joining table from
         return ! $classReflection instanceof ClassReflection
             || $classReflection->isAnonymous()
-            || ! $classReflection->is('Illuminate\Database\Eloquent\Model');
+            || (! $classReflection->isTrait() && ! $classReflection->is('Illuminate\Database\Eloquent\Model'));
     }
 
     private function shouldSkipReturnType(Node $returnType): bool
