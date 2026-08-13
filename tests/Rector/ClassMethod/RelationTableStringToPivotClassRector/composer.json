@@ -1,5 +1,5 @@
 {
     "require": {
-        "laravel/framework": "^6.0"
+        "laravel/framework": "^8.0"
     }
 }

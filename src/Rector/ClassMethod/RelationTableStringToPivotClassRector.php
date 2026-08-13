@@ -37,13 +37,13 @@ final class RelationTableStringToPivotClassRector extends AbstractRector impleme
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('laravel/framework', '>=6.0');
+        return new ComposerPackageConstraint('laravel/framework', '>=8.0');
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Changes the pivot table name of a many to many relation to the pivot model class. The pivot model is taken from a using() call or the relation generics when present, otherwise it is looked for alongside the related and declaring models, and is only taken for a pivot when it is one or the table is the one the framework would have built.',
+            'Changes the pivot table name of a many to many relation to the pivot model class. The pivot model is taken from a using() call or the relation generics when present, otherwise it is looked for alongside the related and declaring models, and is only taken for a pivot when it is one or the table is the one the framework would have built. Be aware this is not purely a naming change: the framework applies a pivot class given as the table to the relation as if using() had been called, so a relation which had no using() call has its pivot instances change from Pivot to the named class, bringing its casts, accessors, $timestamps and $incrementing with them. The framework does this for any model using the AsPivot trait, which is why the rule is limited to Laravel 8 and above.',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
