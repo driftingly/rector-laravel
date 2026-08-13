@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace RectorLaravel\NodeAnalyzer;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use Illuminate\Support\Str;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
@@ -144,7 +147,7 @@ final readonly class PivotClassAnalyzer
         }
 
         $pivotType = $function->getPhpDocReturnType()
-            ->getTemplateType('Illuminate\Database\Eloquent\Relations\BelongsToMany', 'TPivotModel');
+            ->getTemplateType(BelongsToMany::class, 'TPivotModel');
 
         $classNames = $pivotType->getObjectClassNames();
 
@@ -227,7 +230,7 @@ final readonly class PivotClassAnalyzer
         }
 
         return $this->reflectionProvider->getClass($pivotClass)
-            ->hasTraitUse('Illuminate\Database\Eloquent\Relations\Concerns\AsPivot');
+            ->hasTraitUse(AsPivot::class);
     }
 
     /**
@@ -273,10 +276,11 @@ final readonly class PivotClassAnalyzer
             return false;
         }
 
-        if (! $classReflection->isSubclassOfClass($this->reflectionProvider->getClass('Illuminate\Database\Eloquent\Model'))) {
+        if (! $classReflection->is(Model::class)) {
             return false;
         }
 
-        return $this->modelAnalyzer->getTable(new ObjectType($pivotClass)) === $table;
+        /** @var class-string<Model> $pivotClass */
+        return $this->modelAnalyzer->getTable($pivotClass) === $table;
     }
 }
