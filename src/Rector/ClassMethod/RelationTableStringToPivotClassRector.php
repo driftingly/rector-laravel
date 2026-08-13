@@ -12,7 +12,6 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\PHPStan\ScopeFetcher;
@@ -32,7 +31,6 @@ final class RelationTableStringToPivotClassRector extends AbstractRector impleme
     public function __construct(
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly PivotClassAnalyzer $pivotClassAnalyzer,
-        private readonly ReflectionProvider $reflectionProvider,
     ) {}
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
@@ -99,29 +97,26 @@ CODE_SAMPLE
 
     private function shouldSkip(ClassMethod $classMethod): bool
     {
-        if ($classMethod->stmts === null || $classMethod->isStatic()) {
-            return true;
-        }
-
-        $classReflection = ScopeFetcher::fetch($classMethod)->getClassReflection();
-
-        if (! $classReflection instanceof ClassReflection || $classReflection->isAnonymous()) {
-            return true;
-        }
-
-        if (
-            ! $classReflection->isTrait()
-            && ! $classReflection->isSubclassOfClass($this->reflectionProvider->getClass('Illuminate\Database\Eloquent\Model'))
-        ) {
+        if ($classMethod->stmts === null) {
             return true;
         }
 
         $returnType = $classMethod->getReturnType();
 
-        if ($returnType === null) {
-            return false;
+        if ($returnType !== null && $this->shouldSkipReturnType($returnType)) {
+            return true;
         }
 
+        $classReflection = ScopeFetcher::fetch($classMethod)->getClassReflection();
+
+        // an anonymous class has no name to look for a pivot alongside, nor one to build a joining table from
+        return ! $classReflection instanceof ClassReflection
+            || $classReflection->isAnonymous()
+            || ! $classReflection->is('Illuminate\Database\Eloquent\Model');
+    }
+
+    private function shouldSkipReturnType(Node $returnType): bool
+    {
         $declaredType = $this->nodeTypeResolver->getType($returnType);
 
         $objectType = new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany');
