@@ -7,7 +7,7 @@ if (class_exists('Illuminate\Database\Eloquent\Relations\BelongsToMany')) {
 }
 
 /**
- * The pivot model is bound to Model rather than Pivot, as the stubs have no Pivot class.
+ * The pivot model is bound to Model rather than Pivot, as a relation is allowed to declare a plain model as its pivot.
  *
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model

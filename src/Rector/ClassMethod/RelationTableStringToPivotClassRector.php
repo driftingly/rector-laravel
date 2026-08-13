@@ -43,7 +43,7 @@ final class RelationTableStringToPivotClassRector extends AbstractRector impleme
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Changes the pivot table name of a many to many relation to the pivot model class. The pivot model is taken from a using() call or the relation generics when present, otherwise it is looked for alongside the related and declaring models.',
+            'Changes the pivot table name of a many to many relation to the pivot model class. The pivot model is taken from a using() call or the relation generics when present, otherwise it is looked for alongside the related and declaring models, and is only taken for a pivot when it is one or the table is the one the framework would have built.',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'

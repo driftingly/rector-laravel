@@ -2,9 +2,9 @@
 
 namespace RectorLaravel\Tests\NodeAnalyzer\Source;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class FooBar extends Model
+class FooBar extends Pivot
 {
     protected $table = 'foo_bar';
 }

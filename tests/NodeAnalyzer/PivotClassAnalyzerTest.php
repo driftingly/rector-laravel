@@ -25,7 +25,7 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
     {
         $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
 
-        $classMethod = $this->parseClassMethod('inferredPivot');
+        $classMethod = $this->parseClassMethod('inferredPivot', 'SomeModelWithPivotRelations.php');
 
         $arg = $pivotClassAnalyzer->matchRelationTableArg($this->resolveRelationCall($classMethod));
 
@@ -41,7 +41,7 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
     {
         $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
 
-        $classMethod = $this->parseClassMethod('usingPivot');
+        $classMethod = $this->parseClassMethod('usingPivot', 'SomeModelWithPivotRelations.php');
 
         Assert::assertNull($pivotClassAnalyzer->matchRelationTableArg($this->resolveReturnedCall($classMethod)));
     }
@@ -49,11 +49,11 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
     /**
      * @test
      */
-    public function it_resolves_the_pivot_class_from_the_related_model_namespace(): void
+    public function it_resolves_a_pivot_model_from_the_related_model_namespace(): void
     {
         $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
 
-        $classMethod = $this->parseClassMethod('inferredPivot');
+        $classMethod = $this->parseClassMethod('inferredPivot', 'SomeModelWithPivotRelations.php');
 
         $result = $pivotClassAnalyzer->resolvePivotClass(
             $classMethod,
@@ -67,11 +67,65 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
     /**
      * @test
      */
+    public function it_resolves_a_model_named_after_the_table_the_framework_would_join_through(): void
+    {
+        $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
+
+        $classMethod = $this->parseClassMethod('conventionalPivot', 'Post.php');
+
+        $result = $pivotClassAnalyzer->resolvePivotClass(
+            $classMethod,
+            $this->resolveRelationCall($classMethod),
+            'post_tag'
+        );
+
+        Assert::assertSame('RectorLaravel\Tests\NodeAnalyzer\Source\Pivots\PostTag', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_resolve_a_model_the_relation_joins(): void
+    {
+        $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
+
+        $classMethod = $this->parseClassMethod('tags', 'Taggable.php');
+
+        $result = $pivotClassAnalyzer->resolvePivotClass(
+            $classMethod,
+            $this->resolveRelationCall($classMethod),
+            'taggables'
+        );
+
+        Assert::assertNull($result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_resolve_a_model_which_is_not_a_pivot_of_the_relation(): void
+    {
+        $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
+
+        $classMethod = $this->parseClassMethod('unrelatedModelAsTable', 'Post.php');
+
+        $result = $pivotClassAnalyzer->resolvePivotClass(
+            $classMethod,
+            $this->resolveRelationCall($classMethod),
+            'users'
+        );
+
+        Assert::assertNull($result);
+    }
+
+    /**
+     * @test
+     */
     public function it_does_not_resolve_a_pivot_class_for_an_unknown_table(): void
     {
         $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
 
-        $classMethod = $this->parseClassMethod('unknownTable');
+        $classMethod = $this->parseClassMethod('unknownTable', 'SomeModelWithPivotRelations.php');
 
         $result = $pivotClassAnalyzer->resolvePivotClass(
             $classMethod,
@@ -89,7 +143,7 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
     {
         $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
 
-        $classMethod = $this->parseClassMethod('usingPivot');
+        $classMethod = $this->parseClassMethod('usingPivot', 'SomeModelWithPivotRelations.php');
 
         $result = $pivotClassAnalyzer->resolvePivotClass(
             $classMethod,
@@ -110,7 +164,7 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
     {
         $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
 
-        $classMethod = $this->parseClassMethod('conflictingUsingPivot');
+        $classMethod = $this->parseClassMethod('conflictingUsingPivot', 'SomeModelWithPivotRelations.php');
 
         $result = $pivotClassAnalyzer->resolvePivotClass(
             $classMethod,
@@ -128,7 +182,7 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
     {
         $pivotClassAnalyzer = $this->make(PivotClassAnalyzer::class);
 
-        $classMethod = $this->parseClassMethod('genericsPivot');
+        $classMethod = $this->parseClassMethod('genericsPivot', 'SomeModelWithPivotRelations.php');
 
         $result = $pivotClassAnalyzer->resolvePivotClass(
             $classMethod,
@@ -142,16 +196,15 @@ final class PivotClassAnalyzerTest extends AbstractLazyTestCase
         );
     }
 
-    private function parseClassMethod(string $methodName): ClassMethod
+    private function parseClassMethod(string $methodName, string $file): ClassMethod
     {
         $rectorParser = $this->make(RectorParser::class);
         $nodeScopeAndMetadataDecorator = $this->make(NodeScopeAndMetadataDecorator::class);
 
-        $statements = $rectorParser->parseFile(__DIR__ . '/Source/Pivots/SomeModelWithPivotRelations.php');
-        $statements = $nodeScopeAndMetadataDecorator->decorateNodesFromFile(
-            __DIR__ . '/Source/Pivots/SomeModelWithPivotRelations.php',
-            $statements
-        );
+        $filePath = __DIR__ . '/Source/Pivots/' . $file;
+
+        $statements = $rectorParser->parseFile($filePath);
+        $statements = $nodeScopeAndMetadataDecorator->decorateNodesFromFile($filePath, $statements);
 
         if (! $statements[0] instanceof Namespace_) {
             throw new Exception('Fixture nodes are incorrect');

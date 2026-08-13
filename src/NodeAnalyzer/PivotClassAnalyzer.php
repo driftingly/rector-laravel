@@ -7,8 +7,8 @@ namespace RectorLaravel\NodeAnalyzer;
 use Illuminate\Support\Str;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Php\PhpFunctionFromParserNodeReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
@@ -31,7 +31,7 @@ final readonly class PivotClassAnalyzer
     {
         $tablePosition = match (true) {
             $this->nodeNameResolver->isName($methodCall->name, 'belongsToMany') => 1,
-            $this->nodeNameResolver->isNames($methodCall->name, ['morphToMany', 'morphedByMany']) => 2,
+            $this->isMorphRelation($methodCall) => 2,
             default => null,
         };
 
@@ -50,13 +50,24 @@ final readonly class PivotClassAnalyzer
     {
         $usedPivotClass = $this->resolvePivotClassFromUsing($classMethod, $methodCall);
 
-        // a pivot model the relation already declares is never second guessed by the models found by name
+        // a pivot the relation declares itself is never second guessed by the models found by name
         if ($usedPivotClass !== null) {
-            return $this->isPivotForTable($usedPivotClass, $table) ? $usedPivotClass : null;
+            return $this->isModelForTable($usedPivotClass, $table) ? $usedPivotClass : null;
+        }
+
+        // a relation declaring no pivot gets the default one from its generics, which never matches the table
+        $declaredPivotClass = $this->resolvePivotClassFromGenerics($methodCall);
+
+        if ($declaredPivotClass !== null && $this->isModelForTable($declaredPivotClass, $table)) {
+            return $declaredPivotClass;
         }
 
         foreach ($this->resolvePivotClassCandidates($methodCall, $table) as $pivotClass) {
-            if ($this->isPivotForTable($pivotClass, $table)) {
+            if (! $this->isModelForTable($pivotClass, $table)) {
+                continue;
+            }
+
+            if ($this->isPivotModel($pivotClass) || $this->tableFollowsRelationConvention($methodCall, $table)) {
                 return $pivotClass;
             }
         }
@@ -97,23 +108,26 @@ final readonly class PivotClassAnalyzer
     }
 
     /**
-     * The pivot model declared in the relation generics is preferred over the models found by name.
+     * Pivot models are named after the table they hold, so post_tag gives PostTag.
      *
      * @return iterable<string>
      */
     private function resolvePivotClassCandidates(MethodCall $methodCall, string $table): iterable
     {
-        $declaredPivotClass = $this->resolvePivotClassFromGenerics($methodCall);
-
-        if ($declaredPivotClass !== null) {
-            yield $declaredPivotClass;
-        }
+        $joinedModels = [$this->resolveDeclaringModel($methodCall), $this->resolveRelatedModel($methodCall)];
 
         $classNames = array_unique([Str::studly($table), Str::studly(Str::singular($table))]);
 
         foreach ($this->resolveModelNamespaces($methodCall) as $modelNamespace) {
             foreach ($classNames as $className) {
-                yield $modelNamespace . '\\' . $className;
+                $pivotClass = $modelNamespace . '\\' . $className;
+
+                // a pivot is a model of its own, never one of the two models the relation joins
+                if (in_array($pivotClass, $joinedModels, true)) {
+                    continue;
+                }
+
+                yield $pivotClass;
             }
         }
     }
@@ -148,11 +162,9 @@ final readonly class PivotClassAnalyzer
      */
     private function resolveModelNamespaces(MethodCall $methodCall): array
     {
-        $classReflection = ScopeFetcher::fetch($methodCall)->getClassReflection();
-
         $classNames = [
-            $classReflection instanceof ClassReflection ? $classReflection->getName() : null,
-            $this->resolveClassName($methodCall->getArgs()[0] ?? null),
+            $this->resolveDeclaringModel($methodCall),
+            $this->resolveRelatedModel($methodCall),
         ];
 
         $modelNamespaces = [];
@@ -172,6 +184,22 @@ final readonly class PivotClassAnalyzer
         return array_values(array_unique($modelNamespaces));
     }
 
+    private function resolveDeclaringModel(MethodCall $methodCall): ?string
+    {
+        $classNames = $this->nodeTypeResolver->getType($methodCall->var)->getObjectClassNames();
+
+        if (count($classNames) !== 1) {
+            return null;
+        }
+
+        return $classNames[0];
+    }
+
+    private function resolveRelatedModel(MethodCall $methodCall): ?string
+    {
+        return $this->resolveClassName($methodCall->getArgs()[0] ?? null);
+    }
+
     private function resolveClassName(?Arg $arg): ?string
     {
         if (! $arg instanceof Arg) {
@@ -189,7 +217,51 @@ final readonly class PivotClassAnalyzer
         return $classNames[0];
     }
 
-    private function isPivotForTable(string $pivotClass, string $table): bool
+    /**
+     * The framework treats a model using the trait as a pivot, which covers the Pivot and MorphPivot classes as well.
+     */
+    private function isPivotModel(string $pivotClass): bool
+    {
+        if (! $this->reflectionProvider->hasClass($pivotClass)) {
+            return false;
+        }
+
+        return $this->reflectionProvider->getClass($pivotClass)
+            ->hasTraitUse('Illuminate\Database\Eloquent\Relations\Concerns\AsPivot');
+    }
+
+    /**
+     * A relation without a table of its own is given one built from the models it joins, so a model matched by the
+     * table name is only taken for a pivot when the table is the one the framework would have built.
+     */
+    private function tableFollowsRelationConvention(MethodCall $methodCall, string $table): bool
+    {
+        if ($this->isMorphRelation($methodCall)) {
+            $morphName = $methodCall->getArg('name', 1)?->value;
+
+            // the framework pluralises the last word of the relationship name, which is what Str::plural does
+            return $morphName instanceof String_ && Str::plural($morphName->value) === $table;
+        }
+
+        $declaringModel = $this->resolveDeclaringModel($methodCall);
+        $relatedModel = $this->resolveRelatedModel($methodCall);
+
+        if ($declaringModel === null || $relatedModel === null) {
+            return false;
+        }
+
+        return $this->modelAnalyzer->getJoiningTable(
+            new ObjectType($declaringModel),
+            new ObjectType($relatedModel)
+        ) === $table;
+    }
+
+    private function isMorphRelation(MethodCall $methodCall): bool
+    {
+        return $this->nodeNameResolver->isNames($methodCall->name, ['morphToMany', 'morphedByMany']);
+    }
+
+    private function isModelForTable(string $pivotClass, string $table): bool
     {
         if (! $this->reflectionProvider->hasClass($pivotClass)) {
             return false;

@@ -2,9 +2,11 @@
 
 namespace Illuminate\Database\Eloquent\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Str;
 
 if (trait_exists('Illuminate\Database\Eloquent\Concerns\HasRelationships')) {
     return null;
@@ -101,4 +103,33 @@ trait HasRelationships
         $relatedKey = null,
         $relation = null
     ) {}
+
+    /**
+     * Get the joining table name for a many-to-many relation.
+     *
+     * @param  class-string<Model>  $related
+     * @param  Model|null  $instance
+     * @return string
+     */
+    public function joiningTable($related, $instance = null)
+    {
+        $segments = [
+            $instance instanceof Model ? $instance->joiningTableSegment() : Str::snake(Str::afterLast($related, '\\')),
+            $this->joiningTableSegment(),
+        ];
+
+        sort($segments);
+
+        return strtolower(implode('_', $segments));
+    }
+
+    /**
+     * Get this model's half of the intermediate table name for belongsToMany relationships.
+     *
+     * @return string
+     */
+    public function joiningTableSegment()
+    {
+        return Str::snake(Str::afterLast(static::class, '\\'));
+    }
 }
