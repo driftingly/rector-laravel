@@ -85,7 +85,9 @@ final class LaravelServiceAnalyzer
             }
 
             return $objectType->isSuperTypeOf($facadeOriginObjectType)->yes();
-        } elseif ($node instanceof StaticCall) {
+        }
+
+        if ($node instanceof StaticCall) {
             return false;
         }
 

@@ -12,7 +12,7 @@ function requestGetToInput(Request $request)
 }
 
 ?>
-----
+-----
 <?php
 
 namespace RectorLaravel\Tests\Sets\Laravel120;

@@ -6,6 +6,12 @@ namespace RectorLaravel\Set;
 
 final class LaravelSetList
 {
+    /**
+     * Version sets bound to the installed package versions, picked up by
+     * RectorConfig::configure()->withComposerBased(laravel: true)
+     */
+    public const string COMPOSER_BASED = __DIR__ . '/../../config/sets/composer-based.php';
+
     public const string ARRAY_STR_FUNCTIONS_TO_STATIC_CALL = __DIR__ . '/../../config/sets/laravel-array-str-functions-to-static-call.php';
 
     public const string LARAVEL_50 = __DIR__ . '/../../config/sets/laravel50.php';
