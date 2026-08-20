@@ -76,8 +76,10 @@ final class LaravelServiceAnalyzer
         if (! $this->nodeNameResolver->isName($node->name, $method)) {
             return false;
         }
+
         if ($node instanceof StaticCall && $this->isFacadeCall($node)) {
             $facadeOriginObjectType = $this->getFacadeOrigin($node);
+
             if (! $facadeOriginObjectType instanceof Type || $facadeOriginObjectType->isObject()->no()) {
                 return false;
             }
