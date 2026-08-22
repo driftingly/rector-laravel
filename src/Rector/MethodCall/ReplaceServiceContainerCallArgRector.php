@@ -102,7 +102,8 @@ CODE_SAMPLE,
             }
 
             return $arg->value->class->toString() === $oldService->class->toString();
-        } elseif ($arg->value instanceof String_) {
+        }
+        if ($arg->value instanceof String_) {
             return $arg->value->value === $oldService;
         }
 

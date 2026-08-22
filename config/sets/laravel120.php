@@ -18,7 +18,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ScopeNamedClassMethodToScopeAttributedClassMethodRector::class);
 
     // https://github.com/laravel/framework/pull/58635
-    RectorConfig::configure()->withConfiguredRule(RenameMethodRector::class, [
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Http\Request', 'get', 'input'),
         new MethodCallRename('Illuminate\Support\Facades\Request', 'get', 'input'),
     ]);

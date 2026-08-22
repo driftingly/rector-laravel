@@ -33,12 +33,12 @@ To automatically apply the correct rules depending on the version of Laravel (or
 <?php declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use RectorLaravel\Set\LaravelSetProvider;
 
 return RectorConfig::configure()
-    ->withSetProviders(LaravelSetProvider::class)
     ->withComposerBased(laravel: true, /** other options */);
 ```
+
+This registers `RectorLaravel\Set\LaravelSetList::COMPOSER_BASED`, which applies the version sets of Laravel (and of Faker and Livewire, when installed) up to the installed version.
 
 ### Manual Configuration
 
