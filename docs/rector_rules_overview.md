@@ -1,4 +1,4 @@
-# 124 Rules Overview
+# 127 Rules Overview
 
 ## AbortIfRector
 
@@ -161,6 +161,34 @@ Adds the HasFactory trait to Models.
  class User extends Model
  {
 +    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+ }
+```
+
+<br>
+
+## AddMockConsoleOutputFalseToConsoleTestsRector
+
+Add "$this->mockConsoleOutput = false"; to console tests that work with output content
+
+- class: [`RectorLaravel\Rector\Class_\AddMockConsoleOutputFalseToConsoleTestsRector`](../src/Rector/Class_/AddMockConsoleOutputFalseToConsoleTestsRector.php)
+
+```diff
+ use Illuminate\Support\Facades\Artisan;
+ use Illuminate\Foundation\Testing\TestCase;
+
+ final class SomeTest extends TestCase
+ {
++    protected function setUp(): void
++    {
++        parent::setUp();
++
++        $this->mockConsoleOutput = false;
++    }
++
+     public function test(): void
+     {
+         $this->assertEquals('content', \trim((new Artisan())::output()));
+     }
  }
 ```
 
@@ -1465,7 +1493,7 @@ Migrate to the new Model attributes syntax
 
 ## MinutesToSecondsInCacheRector
 
-Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Illuminate\Support\Facades\Cache
+Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and `Illuminate\Support\Facades\Cache`
 
 - class: [`RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector`](../src/Rector/StaticCall/MinutesToSecondsInCacheRector.php)
 
@@ -1700,6 +1728,21 @@ refactors calls with the pre Laravel 11 methods for blueprint geometry columns
 
 <br>
 
+## RelationTableStringToPivotClassRector
+
+Changes the pivot table name of a many to many relation to the pivot model class.
+
+This is not purely a naming change: the framework applies a pivot class given as the table as if `using()` had been called, so the relation's pivot instances gain the class's casts, accessors, `$timestamps` and `$incrementing`.
+
+- class: [`RectorLaravel\Rector\ClassMethod\RelationTableStringToPivotClassRector`](../src/Rector/ClassMethod/RelationTableStringToPivotClassRector.php)
+
+```diff
+-$this->belongsToMany(Tag::class, 'post_tag');
++$this->belongsToMany(Tag::class, \App\Models\PostTag::class);
+```
+
+<br>
+
 ## RemoveDumpDataDeadCodeRector
 
 It will removes the dump data just like dd or dump functions from the code.`
@@ -1779,6 +1822,37 @@ Replace assertTimesSent with assertSentTimes
 ```diff
 -Notification::assertTimesSent(1, SomeNotification::class);
 +Notification::assertSentTimes(SomeNotification::class, 1);
+```
+
+<br>
+
+## ReplaceExpectsMethodsInTestsRector
+
+Replace expectJobs and expectEvents methods in tests
+
+- class: [`RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector`](../src/Rector/Class_/ReplaceExpectsMethodsInTestsRector.php)
+
+```diff
+ use Illuminate\Foundation\Testing\TestCase;
+
+ class SomethingTest extends TestCase
+ {
+     public function testSomething()
+     {
+-        $this->expectsJobs([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
+-        $this->expectsEvents(\App\Events\SomeEvent::class);
+-        $this->doesntExpectEvents(\App\Events\SomeOtherEvent::class);
++        \Illuminate\Support\Facades\Bus::fake([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
++        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class, \App\Events\SomeOtherEvent::class]);
+
+         $this->get('/');
++
++        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeJob::class);
++        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeOtherJob::class);
++        \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\SomeEvent::class);
++        \Illuminate\Support\Facades\Event::assertNotDispatched(\App\Events\SomeOtherEvent::class);
+     }
+ }
 ```
 
 <br>

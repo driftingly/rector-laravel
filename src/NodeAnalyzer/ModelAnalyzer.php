@@ -32,6 +32,11 @@ final readonly class ModelAnalyzer
      */
     public function getTable(string|ObjectType $model): ?string
     {
+        if (! is_string($model)) {
+            /** @var class-string<Model> $model */
+            $model = $model->getClassName();
+        }
+
         $model = $this->resolveModelClassToInstance($model);
 
         if (! $model instanceof Model) {
@@ -39,6 +44,31 @@ final readonly class ModelAnalyzer
         }
 
         $table = $model->getTable();
+
+        if (! is_string($table)) {
+            return null;
+        }
+
+        return $table;
+    }
+
+    /**
+     * The framework sorts the segments the table is made of, so it is resolved from whichever of the two models can
+     * be instantiated, as one of them can be a class which is only being analysed rather than autoloaded.
+     *
+     * @param  class-string<Model>|ObjectType  $model
+     * @param  class-string<Model>|ObjectType  $related
+     */
+    public function getJoiningTable(string|ObjectType $model, string|ObjectType $related): ?string
+    {
+        $modelInstance = $this->tryResolveModelClassToInstance($model);
+        $relatedInstance = $this->tryResolveModelClassToInstance($related);
+
+        $table = match (true) {
+            $modelInstance instanceof Model => $modelInstance->joiningTable($this->resolveClassName($related), $relatedInstance),
+            $relatedInstance instanceof Model => $relatedInstance->joiningTable($this->resolveClassName($model), $modelInstance),
+            default => null,
+        };
 
         if (! is_string($table)) {
             return null;
@@ -167,6 +197,36 @@ final readonly class ModelAnalyzer
     }
 
     /**
+     * The model is resolved from the analysed code, so it can be a class which is unknown or not a model at all.
+     *
+     * @param  class-string<Model>|ObjectType  $model
+     */
+    private function tryResolveModelClassToInstance(string|ObjectType $model): ?Model
+    {
+        try {
+            return $this->resolveModelClassToInstance($model);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * @param  class-string<Model>|ObjectType  $model
+     * @return class-string<Model>
+     */
+    private function resolveClassName(string|ObjectType $model): string
+    {
+        if (is_string($model)) {
+            return $model;
+        }
+
+        /** @var class-string<Model> $className */
+        $className = $model->getClassName();
+
+        return $className;
+    }
+
+    /**
      * Create an instance of the Model to interact with
      *
      * @param  class-string<Model>|ObjectType  $model
@@ -177,18 +237,34 @@ final readonly class ModelAnalyzer
     {
         $classReflection = is_string($model)
             ? $this->getClass($model)
-            : $model->getObjectClassReflections()[0];
+            : ($model->getObjectClassReflections()[0] ?? null);
 
-        if ($classReflection->isAbstract()) {
+        if (! $classReflection instanceof ClassReflection || $classReflection->isAbstract()) {
             return null;
         }
 
         try {
             /** @var Model $instance */
             $instance = $classReflection->getNativeReflection()->newInstance();
+
+            return $instance;
         } catch (Throwable) {
+        }
+
+        try {
             /** @var Model $instance */
             $instance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        } catch (Throwable) {
+            // a class which is only being analysed cannot be loaded, so no instance can be made of it
+            return null;
+        }
+
+        // the class attributes are applied by the constructor, so they are applied manually when it cannot run
+        if (method_exists($instance, 'initializeModelAttributes')) {
+            try {
+                $instance->initializeModelAttributes();
+            } catch (Throwable) {
+            }
         }
 
         return $instance;
