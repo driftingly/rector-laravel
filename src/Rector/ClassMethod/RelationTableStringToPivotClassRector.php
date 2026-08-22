@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\ClassMethod;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -112,14 +114,14 @@ CODE_SAMPLE
         // an anonymous class has no name to look for a pivot alongside, nor one to build a joining table from
         return ! $classReflection instanceof ClassReflection
             || $classReflection->isAnonymous()
-            || (! $classReflection->isTrait() && ! $classReflection->is('Illuminate\Database\Eloquent\Model'));
+            || (! $classReflection->isTrait() && ! $classReflection->is(Model::class));
     }
 
     private function shouldSkipReturnType(Node $returnType): bool
     {
         $declaredType = $this->nodeTypeResolver->getType($returnType);
 
-        $objectType = new ObjectType('Illuminate\Database\Eloquent\Relations\BelongsToMany');
+        $objectType = new ObjectType(BelongsToMany::class);
 
         // a wider type such as Relation is kept as well, only types which cannot be a many to many relation are skipped
         return $declaredType->isSuperTypeOf($objectType)->no()
