@@ -32,9 +32,11 @@ parameters:
             identifier: classConstant.deprecated
             paths:
                 - config/sets/level/*
+                - config/sets/packages/*/level/*
                 - tests/Sets/*/config/configured_rule.php
 
         -
             identifier: classConstant.deprecatedClass
             paths:
                 - config/sets/level/*
+                - config/sets/packages/*/level/*
