@@ -44,6 +44,7 @@ use RectorLaravel\Rector\Class_\AddMockConsoleOutputFalseToConsoleTestsRector;
 use RectorLaravel\Rector\Class_\AliasesPropertyToAliasesAttributeRector;
 use RectorLaravel\Rector\Class_\AppendsPropertyToAppendsAttributeRector;
 use RectorLaravel\Rector\Class_\BackoffPropertyToBackoffAttributeRector;
+use RectorLaravel\Rector\Class_\CashierStripeOptionsToStripeRector;
 use RectorLaravel\Rector\Class_\CollectedByPropertyToCollectedByAttributeRector;
 use RectorLaravel\Rector\Class_\CollectsPropertyToCollectsAttributeRector;
 use RectorLaravel\Rector\Class_\CommandHiddenPropertyToHiddenAttributeRector;
@@ -587,4 +588,35 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Livewire\Volt\Component' => 'Livewire\Component',
     ], 'livewire/livewire', '>=4.0');
+
+    // ---------------------------------------------------------------------------------------------
+    // laravel/cashier 13.0
+    // @see https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md#upgrading-to-130-from-12x
+    // ---------------------------------------------------------------------------------------------
+    $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
+        new MethodCallRename('Laravel\Cashier\Billable', 'subscribedToPlan', 'subscribedToPrice'),
+        new MethodCallRename('Laravel\Cashier\Billable', 'onPlan', 'onPrice'),
+        new MethodCallRename('Laravel\Cashier\Billable', 'planTaxRates', 'priceTaxRates'),
+        new MethodCallRename('Laravel\Cashier\SubscriptionBuilder', 'plan', 'price'),
+        new MethodCallRename('Laravel\Cashier\SubscriptionBuilder', 'meteredPlan', 'meteredPrice'),
+        new MethodCallRename('Laravel\Cashier\Subscription', 'hasMultiplePlans', 'hasMultiplePrices'),
+        new MethodCallRename('Laravel\Cashier\Subscription', 'hasSinglePlan', 'hasSinglePrice'),
+        new MethodCallRename('Laravel\Cashier\Subscription', 'hasPlan', 'hasPrice'),
+        new MethodCallRename('Laravel\Cashier\Subscription', 'addPlan', 'addPrice'),
+        new MethodCallRename('Laravel\Cashier\Subscription', 'addPlanAndInvoice', 'addPriceAndInvoice'),
+        new MethodCallRename('Laravel\Cashier\Subscription', 'removePlan', 'removePrice'),
+    ], 'laravel/cashier', '>=13.0');
+
+    $rectorConfig->rule(CashierStripeOptionsToStripeRector::class);
+
+    // ---------------------------------------------------------------------------------------------
+    // laravel/cashier 14.0
+    // @see https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md#upgrading-to-140-from-13x
+    // ---------------------------------------------------------------------------------------------
+    $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
+        new MethodCallRename('Laravel\Cashier\Billable', 'removePaymentMethod', 'deletePaymentMethod'),
+        new MethodCallRename('Laravel\Cashier\Payment', 'isCancelled', 'isCanceled'),
+        new MethodCallRename('Laravel\Cashier\Subscription', 'cancelled', 'canceled'),
+        new MethodCallRename('Laravel\Cashier\Subscription', 'markAsCancelled', 'markAsCanceled'),
+    ], 'laravel/cashier', '>=14.0');
 };

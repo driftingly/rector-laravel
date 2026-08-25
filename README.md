@@ -38,9 +38,11 @@ return RectorConfig::configure()
     ->withComposerBased(laravel: true, /** other options */);
 ```
 
-This registers `RectorLaravel\Set\LaravelSetList::COMPOSER_BASED`, which applies the version sets of Laravel (and of Faker and Livewire, when installed) up to the installed version.
+This registers `RectorLaravel\Set\LaravelSetList::COMPOSER_BASED`, which applies the version sets of Laravel (and of Faker, Livewire, and Cashier, when installed) up to the installed version.
 
-### Manual Configuration
+### Manual Configuration (deprecated)
+
+> **Deprecated:** the version set lists below are deprecated in favor of `withComposerBased(laravel: true)` above, which detects the installed version for you. They will be removed in a future major version.
 
 To manually add a version set to your config, use `RectorLaravel\Set\LaravelLevelSetList` and pick the constant that matches your target version.
 Sets for higher versions include sets for lower versions.
@@ -57,7 +59,7 @@ return RectorConfig::configure()
     ]);
 ```
 
-The sets in `RectorLaravel\Set\LaravelSetList` only contain changes related to a specific version upgrade.
+The version sets in `RectorLaravel\Set\LaravelSetList` only contain changes related to a specific version upgrade.
 For example, the rules in `LaravelSetList::LARAVEL_130` apply when upgrading from Laravel 12 to Laravel 13.
 
 ## Additional Sets
