@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\ClassMethod;
 
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
-use RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorTest;
+use RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddNewGenericReturnTypeToRelationsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * Adds generics in the Laravel 12.3+ format, using `$this` as the child generic and the Pivot generic for
- * BelongsToMany relations.
+ * Adds generics in the Laravel 11.15+ format, using `$this` as the child generic, but without the Pivot generic
+ * that BelongsToMany relations gained in 12.3.
  *
- * @see AddGenericReturnTypeToRelationsRectorTest
+ * @see AddNewGenericReturnTypeToRelationsRectorTest
  */
-final class AddGenericReturnTypeToRelationsRector extends AbstractAddGenericReturnTypeToRelationsRector
+final class AddNewGenericReturnTypeToRelationsRector extends AbstractAddGenericReturnTypeToRelationsRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
@@ -62,7 +62,7 @@ CODE_SAMPLE
      */
     public function provideComposerPackageConstraint()
     {
-        return new ComposerPackageConstraint('laravel/framework', '>=12.3');
+        return new ComposerPackageConstraint('laravel/framework', '>=11.15 <12.3');
     }
 
     protected function shouldUseNewGenerics(): bool
@@ -72,6 +72,6 @@ CODE_SAMPLE
 
     protected function shouldUsePivotGeneric(): bool
     {
-        return true;
+        return false;
     }
 }

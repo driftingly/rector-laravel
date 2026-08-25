@@ -1,4 +1,4 @@
-# 124 Rules Overview
+# 128 Rules Overview
 
 ## AbortIfRector
 
@@ -98,23 +98,6 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
 
  class User extends Model
  {
-+    /** @return HasMany<Account> */
-     public function accounts(): HasMany
-     {
-         return $this->hasMany(Account::class);
-     }
- }
-```
-
-<br>
-
-```diff
- use App\Account;
- use Illuminate\Database\Eloquent\Model;
- use Illuminate\Database\Eloquent\Relations\HasMany;
-
- class User extends Model
- {
 +    /** @return HasMany<Account, $this> */
      public function accounts(): HasMany
      {
@@ -161,6 +144,80 @@ Adds the HasFactory trait to Models.
  class User extends Model
  {
 +    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+ }
+```
+
+<br>
+
+## AddLegacyGenericReturnTypeToRelationsRector
+
+Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
+
+- class: [`RectorLaravel\Rector\ClassMethod\AddLegacyGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddLegacyGenericReturnTypeToRelationsRector.php)
+
+```diff
+ use App\Account;
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Relations\HasMany;
+
+ class User extends Model
+ {
++    /** @return HasMany<Account> */
+     public function accounts(): HasMany
+     {
+         return $this->hasMany(Account::class);
+     }
+ }
+```
+
+<br>
+
+## AddMockConsoleOutputFalseToConsoleTestsRector
+
+Add "$this->mockConsoleOutput = false"; to console tests that work with output content
+
+- class: [`RectorLaravel\Rector\Class_\AddMockConsoleOutputFalseToConsoleTestsRector`](../src/Rector/Class_/AddMockConsoleOutputFalseToConsoleTestsRector.php)
+
+```diff
+ use Illuminate\Support\Facades\Artisan;
+ use Illuminate\Foundation\Testing\TestCase;
+
+ final class SomeTest extends TestCase
+ {
++    protected function setUp(): void
++    {
++        parent::setUp();
++
++        $this->mockConsoleOutput = false;
++    }
++
+     public function test(): void
+     {
+         $this->assertEquals('content', \trim((new Artisan())::output()));
+     }
+ }
+```
+
+<br>
+
+## AddNewGenericReturnTypeToRelationsRector
+
+Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
+
+- class: [`RectorLaravel\Rector\ClassMethod\AddNewGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddNewGenericReturnTypeToRelationsRector.php)
+
+```diff
+ use App\Account;
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Relations\HasMany;
+
+ class User extends Model
+ {
++    /** @return HasMany<Account, $this> */
+     public function accounts(): HasMany
+     {
+         return $this->hasMany(Account::class);
+     }
  }
 ```
 
@@ -1779,6 +1836,37 @@ Replace assertTimesSent with assertSentTimes
 ```diff
 -Notification::assertTimesSent(1, SomeNotification::class);
 +Notification::assertSentTimes(SomeNotification::class, 1);
+```
+
+<br>
+
+## ReplaceExpectsMethodsInTestsRector
+
+Replace expectJobs and expectEvents methods in tests
+
+- class: [`RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector`](../src/Rector/Class_/ReplaceExpectsMethodsInTestsRector.php)
+
+```diff
+ use Illuminate\Foundation\Testing\TestCase;
+
+ class SomethingTest extends TestCase
+ {
+     public function testSomething()
+     {
+-        $this->expectsJobs([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
+-        $this->expectsEvents(\App\Events\SomeEvent::class);
+-        $this->doesntExpectEvents(\App\Events\SomeOtherEvent::class);
++        \Illuminate\Support\Facades\Bus::fake([\App\Jobs\SomeJob::class, \App\Jobs\SomeOtherJob::class]);
++        \Illuminate\Support\Facades\Event::fake([\App\Events\SomeEvent::class, \App\Events\SomeOtherEvent::class]);
+
+         $this->get('/');
++
++        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeJob::class);
++        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\SomeOtherJob::class);
++        \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\SomeEvent::class);
++        \Illuminate\Support\Facades\Event::assertNotDispatched(\App\Events\SomeOtherEvent::class);
+     }
+ }
 ```
 
 <br>

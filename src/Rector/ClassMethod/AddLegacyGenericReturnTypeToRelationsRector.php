@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\ClassMethod;
 
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
-use RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddGenericReturnTypeToRelationsRectorTest;
+use RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddLegacyGenericReturnTypeToRelationsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * Adds generics in the Laravel 12.3+ format, using `$this` as the child generic and the Pivot generic for
- * BelongsToMany relations.
+ * Adds generics in the pre-11.15 format, using the child model class as the second generic instead of `$this`.
  *
- * @see AddGenericReturnTypeToRelationsRectorTest
+ * @see AddLegacyGenericReturnTypeToRelationsRectorTest
  */
-final class AddGenericReturnTypeToRelationsRector extends AbstractAddGenericReturnTypeToRelationsRector
+final class AddLegacyGenericReturnTypeToRelationsRector extends AbstractAddGenericReturnTypeToRelationsRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
@@ -45,7 +44,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Model
 {
-    /** @return HasMany<Account, $this> */
+    /** @return HasMany<Account> */
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
@@ -62,16 +61,16 @@ CODE_SAMPLE
      */
     public function provideComposerPackageConstraint()
     {
-        return new ComposerPackageConstraint('laravel/framework', '>=12.3');
+        return new ComposerPackageConstraint('laravel/framework', '<11.15');
     }
 
     protected function shouldUseNewGenerics(): bool
     {
-        return true;
+        return false;
     }
 
     protected function shouldUsePivotGeneric(): bool
     {
-        return true;
+        return false;
     }
 }

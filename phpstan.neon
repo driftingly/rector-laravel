@@ -26,3 +26,15 @@ parameters:
 
         # No easy replacement for this check, it's also ignored in core Rector
         - '#Doing instanceof PHPStan\\Type\\Generic\\GenericObjectType is error\-prone and deprecated#'
+
+        # internal set configs still reference deprecated set list constants on purpose
+        -
+            identifier: classConstant.deprecated
+            paths:
+                - config/sets/level/*
+                - tests/Sets/*/config/configured_rule.php
+
+        -
+            identifier: classConstant.deprecatedClass
+            paths:
+                - config/sets/level/*
