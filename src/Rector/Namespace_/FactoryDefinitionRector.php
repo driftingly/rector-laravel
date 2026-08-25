@@ -133,9 +133,7 @@ CODE_SAMPLE
                 return null;
             }
 
-            if (! isset($factories[$name->toString()])) {
-                $factories[$name->toString()] = $this->createFactory($name->getLast(), $firstArg->value);
-            }
+            $factories[$name->toString()] ??= $this->createFactory($name->getLast(), $firstArg->value);
 
             $this->processFactoryConfiguration($factories[$name->toString()], $stmt->expr);
 

@@ -8,6 +8,8 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector\AssertSeeToAssertSeeHtmlRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -16,7 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see AssertSeeToAssertSeeHtmlRectorTest
  */
-final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
+final class AssertSeeToAssertSeeHtmlRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     /**
      * @var string[]
@@ -30,6 +32,11 @@ final class AssertSeeToAssertSeeHtmlRector extends AbstractRector
     public function __construct(
         private readonly ValueResolver $valueResolver
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=11.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

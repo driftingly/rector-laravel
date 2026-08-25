@@ -6,6 +6,8 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\StaticCall\ReplaceAssertTimesSendWithAssertSentTimesRector\ReplaceAssertTimesSendWithAssertSentTimesRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -14,8 +16,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ReplaceAssertTimesSendWithAssertSentTimesRectorTest
  */
-final class ReplaceAssertTimesSendWithAssertSentTimesRector extends AbstractRector
+final class ReplaceAssertTimesSendWithAssertSentTimesRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=10.0');
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Replace assertTimesSent with assertSentTimes', [

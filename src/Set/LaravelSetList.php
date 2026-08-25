@@ -14,40 +14,94 @@ final class LaravelSetList
 
     public const string ARRAY_STR_FUNCTIONS_TO_STATIC_CALL = __DIR__ . '/../../config/sets/laravel-array-str-functions-to-static-call.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_50 = __DIR__ . '/../../config/sets/laravel50.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_51 = __DIR__ . '/../../config/sets/laravel51.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_52 = __DIR__ . '/../../config/sets/laravel52.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_53 = __DIR__ . '/../../config/sets/laravel53.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_54 = __DIR__ . '/../../config/sets/laravel54.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_55 = __DIR__ . '/../../config/sets/laravel55.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_56 = __DIR__ . '/../../config/sets/laravel56.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_57 = __DIR__ . '/../../config/sets/laravel57.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_58 = __DIR__ . '/../../config/sets/laravel58.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_60 = __DIR__ . '/../../config/sets/laravel60.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_70 = __DIR__ . '/../../config/sets/laravel70.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_80 = __DIR__ . '/../../config/sets/laravel80.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_90 = __DIR__ . '/../../config/sets/laravel90.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_100 = __DIR__ . '/../../config/sets/laravel100.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_110 = __DIR__ . '/../../config/sets/laravel110.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_120 = __DIR__ . '/../../config/sets/laravel120.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_130 = __DIR__ . '/../../config/sets/laravel130.php';
 
+    /**
+     * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead.
+     */
     public const string LARAVEL_130_WITHOUT_ATTRIBUTES = __DIR__ . '/../../config/sets/laravel130-without-attributes.php';
 
     public const string LARAVEL_ARRAYACCESS_TO_METHOD_CALL = __DIR__ . '/../../config/sets/laravel-arrayaccess-to-method-call.php';

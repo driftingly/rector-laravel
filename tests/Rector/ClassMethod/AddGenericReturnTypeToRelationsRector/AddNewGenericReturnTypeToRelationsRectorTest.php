@@ -7,15 +7,12 @@ namespace RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelations
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
-use RectorLaravel\Tests\Support\InteractsWithLaravelVersion;
 
-final class AddGenericReturnTypeToRelationsRectorOldGenericsTest extends AbstractRectorTestCase
+final class AddNewGenericReturnTypeToRelationsRectorTest extends AbstractRectorTestCase
 {
-    use InteractsWithLaravelVersion;
-
     public static function provideData(): Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/OldGenerics');
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/NewGenericsNoPivot');
     }
 
     /**
@@ -29,11 +26,11 @@ final class AddGenericReturnTypeToRelationsRectorOldGenericsTest extends Abstrac
 
     public function provideConfigFilePath(): string
     {
-        return __DIR__ . '/config/configured_rule.php';
+        return __DIR__ . '/config/new_rule.php';
     }
 
-    public function version(): string
+    protected function provideComposerJsonFilePath(): string
     {
-        return '11.14.0';
+        return __DIR__ . '/composer/new.json';
     }
 }
