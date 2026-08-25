@@ -8,6 +8,8 @@ use PhpParser\BuilderFactory;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PHPStan\Type\ObjectType;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector\ReplaceFakerInstanceWithHelperRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -16,11 +18,16 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ReplaceFakerInstanceWithHelperRectorTest
  */
-final class ReplaceFakerPropertyFetchWithMethodCallRector extends AbstractRector
+final class ReplaceFakerPropertyFetchWithMethodCallRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         private readonly BuilderFactory $builderFactory,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('fakerphp/faker', '>=1.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

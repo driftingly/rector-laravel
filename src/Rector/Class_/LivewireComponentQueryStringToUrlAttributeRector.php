@@ -16,6 +16,8 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -23,7 +25,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see RectorLaravel\Tests\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector\LivewireComponentQueryStringToUrlAttributeRectorTest
  */
-final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector
+final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     private const string URL_ATTRIBUTE = 'Livewire\Attributes\Url';
 
@@ -32,6 +34,11 @@ final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRec
     private const string QUERY_STRING_PROPERTY_NAME = 'queryString';
 
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('livewire/livewire', '>=3.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

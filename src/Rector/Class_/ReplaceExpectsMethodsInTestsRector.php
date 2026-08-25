@@ -13,6 +13,8 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\ExpectedClassMethodAnalyzer;
 use RectorLaravel\NodeFactory\DispatchableTestsMethodsFactory;
@@ -24,12 +26,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ReplaceExpectsMethodsInTestsRectorTest
  */
-final class ReplaceExpectsMethodsInTestsRector extends AbstractRector
+final class ReplaceExpectsMethodsInTestsRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         private readonly ExpectedClassMethodAnalyzer $expectedClassMethodAnalyzer,
         private readonly DispatchableTestsMethodsFactory $dispatchableTestsMethodsFactory,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=10.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

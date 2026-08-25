@@ -10,6 +10,8 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\StaticCall\Redirect301ToPermanentRedirectRector\Redirect301ToPermanentRedirectRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -20,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see Redirect301ToPermanentRedirectRectorTest
  */
-final class Redirect301ToPermanentRedirectRector extends AbstractRector
+final class Redirect301ToPermanentRedirectRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     /**
      * @var ObjectType[]
@@ -34,6 +36,11 @@ final class Redirect301ToPermanentRedirectRector extends AbstractRector
             new ObjectType('Illuminate\Support\Facades\Route'),
             new ObjectType('Illuminate\Routing\Route'),
         ];
+    }
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=5.7');
     }
 
     public function getRuleDefinition(): RuleDefinition

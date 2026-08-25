@@ -14,6 +14,8 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\ModelCastsPropertyToCastsMethodRector\ModelCastsPropertyToCastsMethodRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -22,13 +24,18 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ModelCastsPropertyToCastsMethodRectorTest
  */
-final class ModelCastsPropertyToCastsMethodRector extends AbstractRector
+final class ModelCastsPropertyToCastsMethodRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         protected BuilderFactory $builderFactory,
         protected PhpDocInfoFactory $phpDocInfoFactory,
         protected DocBlockUpdater $docBlockUpdater,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=11.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

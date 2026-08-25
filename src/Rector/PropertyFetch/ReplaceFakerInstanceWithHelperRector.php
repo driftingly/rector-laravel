@@ -14,6 +14,8 @@ use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Reflection\ReflectionResolver;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeVisitor\RandomEnumContextNodeVisitor;
 use RectorLaravel\Tests\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector\ReplaceFakerInstanceWithHelperRectorTest;
@@ -23,12 +25,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ReplaceFakerInstanceWithHelperRectorTest
  */
-final class ReplaceFakerInstanceWithHelperRector extends AbstractRector
+final class ReplaceFakerInstanceWithHelperRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver,
         private readonly ReflectionProvider $reflectionProvider,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=9.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
