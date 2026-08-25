@@ -27,13 +27,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    private const string SCOPE_ATTRIBUTE = 'Illuminate\Database\Eloquent\Attributes\Scope';
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    /**
+     * @readonly
+     */
+    private ScopeAnalyzer $scopeAnalyzer;
+    /**
+     * @var string
+     */
+    private const SCOPE_ATTRIBUTE = 'Illuminate\Database\Eloquent\Attributes\Scope';
 
-    public function __construct(
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-        private readonly ReflectionProvider $reflectionProvider,
-        private readonly ScopeAnalyzer $scopeAnalyzer,
-    ) {}
+    public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer, ReflectionProvider $reflectionProvider, ScopeAnalyzer $scopeAnalyzer)
+    {
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+        $this->reflectionProvider = $reflectionProvider;
+        $this->scopeAnalyzer = $scopeAnalyzer;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
@@ -102,7 +118,7 @@ CODE_SAMPLE
             }
 
             $name = $this->getName($classMethod);
-            $newName = lcfirst(substr($name, 5));
+            $newName = lcfirst((string) substr($name, 5));
 
             if ($classReflection->hasMethod($newName)) {
                 continue;

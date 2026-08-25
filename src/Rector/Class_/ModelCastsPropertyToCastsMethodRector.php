@@ -26,11 +26,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ModelCastsPropertyToCastsMethodRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    public function __construct(
-        protected BuilderFactory $builderFactory,
-        protected PhpDocInfoFactory $phpDocInfoFactory,
-        protected DocBlockUpdater $docBlockUpdater,
-    ) {}
+    protected BuilderFactory $builderFactory;
+    protected PhpDocInfoFactory $phpDocInfoFactory;
+    protected DocBlockUpdater $docBlockUpdater;
+    public function __construct(BuilderFactory $builderFactory, PhpDocInfoFactory $phpDocInfoFactory, DocBlockUpdater $docBlockUpdater)
+    {
+        $this->builderFactory = $builderFactory;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->docBlockUpdater = $docBlockUpdater;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
@@ -119,7 +123,10 @@ CODE_SAMPLE,
         return null;
     }
 
-    private function restorePhpDoc(ClassMethod|Node $methodNode): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node $methodNode
+     */
+    private function restorePhpDoc($methodNode): void
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($methodNode);
 

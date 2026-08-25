@@ -20,20 +20,37 @@ use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 
 final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implements DecoratingNodeVisitorInterface
 {
-    public const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR = 'is_inside_array_dim_fetch_with_dim_not_scalar';
-    public const string IS_IN_SUPERGLOBAL_ASSIGN = 'is_in_superglobal_assign';
-    public const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR = 'is_inside_array_dim_fetch_with_dim_not_expr';
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @var string
+     */
+    public const IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR = 'is_inside_array_dim_fetch_with_dim_not_scalar';
+    /**
+     * @var string
+     */
+    public const IS_IN_SUPERGLOBAL_ASSIGN = 'is_in_superglobal_assign';
+    /**
+     * @var string
+     */
+    public const IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR = 'is_inside_array_dim_fetch_with_dim_not_expr';
 
-    private const array SUPERGLOBAL_NAMES = ['_SERVER', '_GET', '_POST', '_REQUEST', '_ENV'];
+    /**
+     * @var mixed[]
+     */
+    private const SUPERGLOBAL_NAMES = ['_SERVER', '_GET', '_POST', '_REQUEST', '_ENV'];
 
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver
-    ) {}
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+    }
 
     public function enterNode(Node $node)
     {
         if (! $node instanceof ArrayDimFetch) {
-            if (in_array($node::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
+            if (in_array(get_class($node), [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
                 && (! $node instanceof Assign || $this->isSuperglobalAssign($node))) {
                 SimpleCallableNodeTraverser::traverseNodesWithCallable($node, function (Node $subNode) {
                     if ($subNode instanceof ArrayDimFetch || $subNode instanceof Variable) {

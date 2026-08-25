@@ -30,9 +30,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
