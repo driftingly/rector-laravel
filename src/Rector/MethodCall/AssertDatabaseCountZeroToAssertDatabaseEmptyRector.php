@@ -9,6 +9,8 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector\AssertDatabaseCountZeroToAssertDatabaseEmptyRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -17,8 +19,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see AssertDatabaseCountZeroToAssertDatabaseEmptyRectorTest
  */
-final class AssertDatabaseCountZeroToAssertDatabaseEmptyRector extends AbstractRector
+final class AssertDatabaseCountZeroToAssertDatabaseEmptyRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=9.39');
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
