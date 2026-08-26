@@ -75,7 +75,8 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $this->isObjectType($node->var, new ObjectType('Illuminate\Foundation\Testing\TestCase'))) {
+        // the concern, not the TestCase, so tests that only pull the trait in are covered too
+        if (! $this->isObjectType($node->var, new ObjectType('Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase'))) {
             return null;
         }
 
