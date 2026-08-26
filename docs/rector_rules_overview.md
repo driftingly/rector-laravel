@@ -438,8 +438,10 @@ Replace `assertDatabaseCount($table, 0)` with `assertDatabaseEmpty($table)`
      public function testFoo()
      {
 -        $this->assertDatabaseCount('users', 0);
+-        $this->assertDatabaseCount(User::class, 0);
 -        $this->assertDatabaseCount('users', 0, 'other');
 +        $this->assertDatabaseEmpty('users');
++        $this->assertDatabaseEmpty(User::class);
 +        $this->assertDatabaseEmpty('users', 'other');
      }
  }
