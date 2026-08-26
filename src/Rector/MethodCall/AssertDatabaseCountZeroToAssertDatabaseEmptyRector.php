@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
@@ -71,25 +72,28 @@ CODE_SAMPLE
             return null;
         }
 
-        $args = $node->getArgs();
-
-        if (count($args) < 2 || count($args) > 3) {
+        if (count($node->getRawArgs()) > 3) {
             return null;
         }
 
-        foreach ($args as $arg) {
-            if ($arg->name !== null) {
-                return null;
-            }
+        // getArg() resolves named or positional args, and returns null for first class callables
+        $tableArg = $node->getArg('table', 0);
+        $countArg = $node->getArg('count', 1);
+
+        if (! $tableArg instanceof Arg || ! $countArg instanceof Arg) {
+            return null;
         }
 
         // a union such as 0|1 resolves 0 as its first value, so the whole set must be exactly zero
-        if ($this->getType($args[1]->value)->getConstantScalarValues() !== [0]) {
+        if ($this->getType($countArg->value)->getConstantScalarValues() !== [0]) {
             return null;
         }
 
+        $connectionArg = $node->getArg('connection', 2);
+
+        // both signatures name these params the same way, so named args carry over untouched
         $node->name = new Identifier('assertDatabaseEmpty');
-        $node->args = isset($args[2]) ? [$args[0], $args[2]] : [$args[0]];
+        $node->args = $connectionArg instanceof Arg ? [$tableArg, $connectionArg] : [$tableArg];
 
         return $node;
     }
