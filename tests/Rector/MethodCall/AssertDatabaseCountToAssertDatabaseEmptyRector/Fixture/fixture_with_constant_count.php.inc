@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector\Fixture;
 
 class FixtureWithConstantCountTest extends \Illuminate\Foundation\Testing\TestCase
 {
@@ -16,7 +16,7 @@ class FixtureWithConstantCountTest extends \Illuminate\Foundation\Testing\TestCa
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector\Fixture;
 
 class FixtureWithConstantCountTest extends \Illuminate\Foundation\Testing\TestCase
 {

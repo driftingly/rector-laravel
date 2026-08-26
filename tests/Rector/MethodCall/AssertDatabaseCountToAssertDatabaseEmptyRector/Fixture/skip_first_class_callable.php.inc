@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector\Fixture;
 
 class SkipFirstClassCallableTest extends \Illuminate\Foundation\Testing\TestCase
 {

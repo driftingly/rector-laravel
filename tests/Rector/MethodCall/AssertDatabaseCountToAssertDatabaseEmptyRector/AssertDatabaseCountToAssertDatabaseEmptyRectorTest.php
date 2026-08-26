@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector;
+namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class AssertDatabaseCountZeroToAssertDatabaseEmptyRectorTest extends AbstractRectorTestCase
+final class AssertDatabaseCountToAssertDatabaseEmptyRectorTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {

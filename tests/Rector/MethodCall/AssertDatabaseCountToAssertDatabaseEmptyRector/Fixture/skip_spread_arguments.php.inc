@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector\Fixture;
+namespace RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector\Fixture;
 
 class SkipSpreadArgumentsTest extends \Illuminate\Foundation\Testing\TestCase
 {
@@ -12,6 +12,11 @@ class SkipSpreadArgumentsTest extends \Illuminate\Foundation\Testing\TestCase
     public function testSpreadAfterTable(array $arguments)
     {
         $this->assertDatabaseCount('users', ...$arguments);
+    }
+
+    public function testSpreadInConnectionSlot(array $arguments)
+    {
+        $this->assertDatabaseCount('users', 0, ...$arguments);
     }
 }
 

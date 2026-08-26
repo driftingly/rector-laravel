@@ -12,14 +12,14 @@ use PHPStan\Type\ObjectType;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
-use RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector\AssertDatabaseCountZeroToAssertDatabaseEmptyRectorTest;
+use RectorLaravel\Tests\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector\AssertDatabaseCountToAssertDatabaseEmptyRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see AssertDatabaseCountZeroToAssertDatabaseEmptyRectorTest
+ * @see AssertDatabaseCountToAssertDatabaseEmptyRectorTest
  */
-final class AssertDatabaseCountZeroToAssertDatabaseEmptyRector extends AbstractRector implements ComposerPackageConstraintInterface
+final class AssertDatabaseCountToAssertDatabaseEmptyRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
@@ -82,6 +82,13 @@ CODE_SAMPLE
 
         if (count($node->getRawArgs()) > 3) {
             return null;
+        }
+
+        // getArg() skips unpacked args, so a spread would resolve to null and be dropped silently
+        foreach ($node->getRawArgs() as $rawArg) {
+            if ($rawArg instanceof Arg && $rawArg->unpack) {
+                return null;
+            }
         }
 
         // getArg() resolves named or positional args, and returns null for first class callables

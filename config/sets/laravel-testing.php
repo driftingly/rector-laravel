@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use RectorLaravel\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector;
+use RectorLaravel\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector;
 use RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector;
 use RectorLaravel\Rector\MethodCall\JsonCallToExplicitJsonCallRector;
 use RectorLaravel\Rector\StaticCall\AssertWithClassStringToTypeHintedClosureRector;
@@ -13,7 +13,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
     $rectorConfig->rule(JsonCallToExplicitJsonCallRector::class);
     $rectorConfig->rule(AssertStatusToAssertMethodRector::class);
-    $rectorConfig->rule(AssertDatabaseCountZeroToAssertDatabaseEmptyRector::class);
+    $rectorConfig->rule(AssertDatabaseCountToAssertDatabaseEmptyRector::class);
     $rectorConfig->rule(AssertWithClassStringToTypeHintedClosureRector::class);
     $rectorConfig->rule(CarbonSetTestNowToTravelToRector::class);
 };

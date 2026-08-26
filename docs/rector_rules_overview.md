@@ -426,11 +426,11 @@ Convert array access to `Arr::get()` method call, skips isset/empty checks, assi
 
 <br>
 
-## AssertDatabaseCountZeroToAssertDatabaseEmptyRector
+## AssertDatabaseCountToAssertDatabaseEmptyRector
 
 Replace `assertDatabaseCount($table, 0)` with `assertDatabaseEmpty($table)`
 
-- class: [`RectorLaravel\Rector\MethodCall\AssertDatabaseCountZeroToAssertDatabaseEmptyRector`](../src/Rector/MethodCall/AssertDatabaseCountZeroToAssertDatabaseEmptyRector.php)
+- class: [`RectorLaravel\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector`](../src/Rector/MethodCall/AssertDatabaseCountToAssertDatabaseEmptyRector.php)
 
 ```diff
  class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
