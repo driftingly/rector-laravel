@@ -12,11 +12,16 @@ use PHPStan\Type\ObjectType;
 use ReflectionException;
 use Throwable;
 
-final readonly class ModelAnalyzer
+final class ModelAnalyzer
 {
-    public function __construct(
-        private ReflectionProvider $reflectionProvider,
-    ) {}
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     protected static function relationType(): ObjectType
     {
@@ -30,7 +35,7 @@ final readonly class ModelAnalyzer
      *
      * @throws InvalidArgumentException|ReflectionException
      */
-    public function getTable(string|ObjectType $model): ?string
+    public function getTable($model): ?string
     {
         $model = $this->resolveModelClassToInstance($model);
 
@@ -54,7 +59,7 @@ final readonly class ModelAnalyzer
      *
      * @throws ReflectionException
      */
-    public function getPrimaryKey(string|ObjectType $model): ?string
+    public function getPrimaryKey($model): ?string
     {
         $model = $this->resolveModelClassToInstance($model);
 
@@ -74,7 +79,7 @@ final readonly class ModelAnalyzer
     /**
      * @param  class-string<Model>|ObjectType  $model
      */
-    public function isQueryScopeOnModel(string|ObjectType $model, string $scopeName, Scope $scope): bool
+    public function isQueryScopeOnModel($model, string $scopeName, Scope $scope): bool
     {
         if (! is_string($model)) {
             /** @var class-string<Model> $model */
@@ -99,7 +104,7 @@ final readonly class ModelAnalyzer
     /**
      * @param  class-string<Model>|ObjectType  $model
      */
-    public function isRelationshipOnModel(string|ObjectType $model, string $relationName, Scope $scope): bool
+    public function isRelationshipOnModel($model, string $relationName, Scope $scope): bool
     {
         if (! is_string($model)) {
             /** @var class-string<Model> $model */
@@ -173,7 +178,7 @@ final readonly class ModelAnalyzer
      *
      * @throws ReflectionException
      */
-    private function resolveModelClassToInstance(string|ObjectType $model): ?Model
+    private function resolveModelClassToInstance($model): ?Model
     {
         $classReflection = is_string($model)
             ? $this->getClass($model)
@@ -186,7 +191,7 @@ final readonly class ModelAnalyzer
         try {
             /** @var Model $instance */
             $instance = $classReflection->getNativeReflection()->newInstance();
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             /** @var Model $instance */
             $instance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
         }

@@ -25,13 +25,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddParentBootToModelClassMethodRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    private const string BOOT = 'boot';
+    /**
+     * @readonly
+     */
+    private StaticCallAnalyzer $staticCallAnalyzer;
+    /**
+     * @readonly
+     */
+    private ReflectionResolver $reflectionResolver;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    /**
+     * @var string
+     */
+    private const BOOT = 'boot';
 
-    public function __construct(
-        private readonly StaticCallAnalyzer $staticCallAnalyzer,
-        private readonly ReflectionResolver $reflectionResolver,
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
+    public function __construct(StaticCallAnalyzer $staticCallAnalyzer, ReflectionResolver $reflectionResolver, ReflectionProvider $reflectionProvider)
+    {
+        $this->staticCallAnalyzer = $staticCallAnalyzer;
+        $this->reflectionResolver = $reflectionResolver;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
