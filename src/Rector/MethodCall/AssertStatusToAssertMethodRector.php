@@ -18,6 +18,40 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AssertStatusToAssertMethodRector extends AbstractRector
 {
+    /**
+     * Status codes that have a dedicated assertion method on
+     * Illuminate\Testing\Concerns\AssertsStatusCodes.
+     *
+     * @var array<int, non-empty-string>
+     */
+    private const array STATUS_CODE_TO_METHOD = [
+        200 => 'assertOk',
+        201 => 'assertCreated',
+        202 => 'assertAccepted',
+        204 => 'assertNoContent',
+        301 => 'assertMovedPermanently',
+        302 => 'assertFound',
+        304 => 'assertNotModified',
+        307 => 'assertTemporaryRedirect',
+        308 => 'assertPermanentRedirect',
+        400 => 'assertBadRequest',
+        401 => 'assertUnauthorized',
+        402 => 'assertPaymentRequired',
+        403 => 'assertForbidden',
+        404 => 'assertNotFound',
+        405 => 'assertMethodNotAllowed',
+        406 => 'assertNotAcceptable',
+        408 => 'assertRequestTimeout',
+        409 => 'assertConflict',
+        410 => 'assertGone',
+        415 => 'assertUnsupportedMediaType',
+        422 => 'assertUnprocessable',
+        424 => 'assertFailedDependency',
+        429 => 'assertTooManyRequests',
+        500 => 'assertInternalServerError',
+        503 => 'assertServiceUnavailable',
+    ];
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -30,13 +64,28 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
     public function testFoo()
     {
         $this->get('/')->assertStatus(200);
+        $this->get('/')->assertStatus(201);
+        $this->get('/')->assertStatus(202);
         $this->get('/')->assertStatus(204);
+        $this->get('/')->assertStatus(301);
+        $this->get('/')->assertStatus(302);
+        $this->get('/')->assertStatus(304);
+        $this->get('/')->assertStatus(307);
+        $this->get('/')->assertStatus(308);
+        $this->get('/')->assertStatus(400);
         $this->get('/')->assertStatus(401);
+        $this->get('/')->assertStatus(402);
         $this->get('/')->assertStatus(403);
         $this->get('/')->assertStatus(404);
         $this->get('/')->assertStatus(405);
-        $this->get('/')->assertStatus(422);
+        $this->get('/')->assertStatus(406);
+        $this->get('/')->assertStatus(408);
+        $this->get('/')->assertStatus(409);
         $this->get('/')->assertStatus(410);
+        $this->get('/')->assertStatus(415);
+        $this->get('/')->assertStatus(422);
+        $this->get('/')->assertStatus(424);
+        $this->get('/')->assertStatus(429);
         $this->get('/')->assertStatus(500);
         $this->get('/')->assertStatus(503);
     }
@@ -49,13 +98,28 @@ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
     public function testFoo()
     {
         $this->get('/')->assertOk();
+        $this->get('/')->assertCreated();
+        $this->get('/')->assertAccepted();
         $this->get('/')->assertNoContent();
+        $this->get('/')->assertMovedPermanently();
+        $this->get('/')->assertFound();
+        $this->get('/')->assertNotModified();
+        $this->get('/')->assertTemporaryRedirect();
+        $this->get('/')->assertPermanentRedirect();
+        $this->get('/')->assertBadRequest();
         $this->get('/')->assertUnauthorized();
+        $this->get('/')->assertPaymentRequired();
         $this->get('/')->assertForbidden();
         $this->get('/')->assertNotFound();
         $this->get('/')->assertMethodNotAllowed();
-        $this->get('/')->assertUnprocessable();
+        $this->get('/')->assertNotAcceptable();
+        $this->get('/')->assertRequestTimeout();
+        $this->get('/')->assertConflict();
         $this->get('/')->assertGone();
+        $this->get('/')->assertUnsupportedMediaType();
+        $this->get('/')->assertUnprocessable();
+        $this->get('/')->assertFailedDependency();
+        $this->get('/')->assertTooManyRequests();
         $this->get('/')->assertInternalServerError();
         $this->get('/')->assertServiceUnavailable();
     }
@@ -109,23 +173,11 @@ CODE_SAMPLE
         // we want the value of the integer if it's known
         $value = ($type->getConstantScalarValues()[0] ?? null);
 
-        if ($value === null) {
+        if (! is_int($value)) {
             return null;
         }
 
-        $replacementMethod = match ($value) {
-            200 => 'assertOk',
-            204 => 'assertNoContent',
-            401 => 'assertUnauthorized',
-            403 => 'assertForbidden',
-            404 => 'assertNotFound',
-            405 => 'assertMethodNotAllowed',
-            410 => 'assertGone',
-            422 => 'assertUnprocessable',
-            500 => 'assertInternalServerError',
-            503 => 'assertServiceUnavailable',
-            default => null
-        };
+        $replacementMethod = self::STATUS_CODE_TO_METHOD[$value] ?? null;
 
         if ($replacementMethod === null) {
             return null;
