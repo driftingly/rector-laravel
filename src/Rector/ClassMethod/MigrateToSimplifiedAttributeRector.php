@@ -35,9 +35,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /** @see MigrateToSimplifiedAttributeRectorTest */
 final class MigrateToSimplifiedAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    public function __construct(
-        private readonly BetterNodeFinder $betterNodeFinder
-    ) {}
+    /**
+     * @readonly
+     */
+    private BetterNodeFinder $betterNodeFinder;
+    public function __construct(BetterNodeFinder $betterNodeFinder)
+    {
+        $this->betterNodeFinder = $betterNodeFinder;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
@@ -137,8 +142,9 @@ CODE_SAMPLE
 
     /**
      * @param  ClassMethod[]  $allClassMethods
+     * @return \PhpParser\Node\Stmt\ClassMethod|int|null
      */
-    private function refactorClassMethod(ClassMethod $classMethod, array $allClassMethods): ClassMethod|int|null
+    private function refactorClassMethod(ClassMethod $classMethod, array $allClassMethods)
     {
         $nodeName = $classMethod->name->name;
 
@@ -287,12 +293,12 @@ CODE_SAMPLE
 
     private function isAccessor(string $nodeName): bool
     {
-        return str_starts_with($nodeName, 'get') && str_ends_with($nodeName, 'Attribute');
+        return strncmp($nodeName, 'get', strlen('get')) === 0 && substr_compare($nodeName, 'Attribute', -strlen('Attribute')) === 0;
     }
 
     private function isMutator(string $nodeName): bool
     {
-        return str_starts_with($nodeName, 'set') && str_ends_with($nodeName, 'Attribute');
+        return strncmp($nodeName, 'set', strlen('set')) === 0 && substr_compare($nodeName, 'Attribute', -strlen('Attribute')) === 0;
     }
 
     /**
@@ -390,8 +396,8 @@ CODE_SAMPLE
 
     private function parseAttributeName(string $nodeName): string
     {
-        $attributeName = substr($nodeName, 3);
-        $attributeName = substr($attributeName, 0, -strlen('Attribute'));
+        $attributeName = (string) substr($nodeName, 3);
+        $attributeName = (string) substr($attributeName, 0, -strlen('Attribute'));
 
         return lcfirst($attributeName);
     }

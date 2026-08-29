@@ -11,7 +11,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 
-final readonly class TableAttributeFactory
+final class TableAttributeFactory
 {
     /**
      * @param  array<string, Expr>  $options

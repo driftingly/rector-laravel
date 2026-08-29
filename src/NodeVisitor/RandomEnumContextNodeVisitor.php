@@ -15,11 +15,19 @@ use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 
 final class RandomEnumContextNodeVisitor extends NodeVisitorAbstract implements DecoratingNodeVisitorInterface
 {
-    public const string IS_IN_RANDOM_ENUM = 'is_in_random_enum';
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @var string
+     */
+    public const IS_IN_RANDOM_ENUM = 'is_in_random_enum';
 
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver
-    ) {}
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+    }
 
     public function enterNode(Node $node)
     {

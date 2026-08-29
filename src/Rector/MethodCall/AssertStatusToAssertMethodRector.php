@@ -24,7 +24,7 @@ final class AssertStatusToAssertMethodRector extends AbstractRector
      *
      * @var array<int, non-empty-string>
      */
-    private const array STATUS_CODE_TO_METHOD = [
+    private const STATUS_CODE_TO_METHOD = [
         200 => 'assertOk',
         201 => 'assertCreated',
         202 => 'assertAccepted',
