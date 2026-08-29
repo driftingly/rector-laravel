@@ -121,7 +121,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Illuminate\Cache\CacheManager' => 'Illuminate\Contracts\Cache\Repository',
         'Illuminate\Database\Eloquent\SoftDeletingTrait' => 'Illuminate\Database\Eloquent\SoftDeletes',
-    ], 'laravel/framework', '>=5.0');
+    ], 'laravel/framework', '>=5.0 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Contracts\Pagination\Paginator', 'links', 'render'),
@@ -131,14 +131,14 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodCallRename('Illuminate\Contracts\Pagination\Paginator', 'getCurrentPage', 'currentPage'),
         new MethodCallRename('Illuminate\Contracts\Pagination\Paginator', 'getLastPage', 'lastPage'),
         new MethodCallRename('Illuminate\Contracts\Pagination\Paginator', 'getTotal', 'total'),
-    ], 'laravel/framework', '>=5.0');
+    ], 'laravel/framework', '>=5.0 <6.0');
 
     // ---------------------------------------------------------------------------------------------
     // Laravel 5.1 — see https://laravel.com/docs/5.1/upgrade
     // ---------------------------------------------------------------------------------------------
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Illuminate\Validation\Validator' => 'Illuminate\Contracts\Validation\Validator',
-    ], 'laravel/framework', '>=5.1');
+    ], 'laravel/framework', '>=5.1 <6.0');
 
     // ---------------------------------------------------------------------------------------------
     // Laravel 5.2 — see https://laravel.com/docs/5.2/upgrade
@@ -147,7 +147,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Illuminate\Auth\Access\UnauthorizedException' => 'Illuminate\Auth\Access\AuthorizationException',
         'Illuminate\Http\Exception\HttpResponseException' => 'Illuminate\Foundation\Validation\ValidationException',
         'Illuminate\Foundation\Composer' => 'Illuminate\Support\Composer',
-    ], 'laravel/framework', '>=5.2');
+    ], 'laravel/framework', '>=5.2 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(StringToClassConstantRector::class, [
         new StringToClassConstant('artisan.start', 'Illuminate\Console\Events\ArtisanStarting', 'class'),
@@ -165,35 +165,35 @@ return static function (RectorConfig $rectorConfig): void {
         new StringToClassConstant('illuminate.queue.stopping', 'Illuminate\Queue\Events\WorkerStopping', 'class'),
         new StringToClassConstant('mailer.sending', 'Illuminate\Mail\Events\MessageSending', 'class'),
         new StringToClassConstant('router.matched', 'Illuminate\Routing\Events\RouteMatched', 'class'),
-    ], 'laravel/framework', '>=5.2');
+    ], 'laravel/framework', '>=5.2 <6.0');
 
     // ---------------------------------------------------------------------------------------------
     // Laravel 5.3 — see https://laravel.com/docs/5.3/upgrade
     // ---------------------------------------------------------------------------------------------
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RemoveTraitUseRector::class, [
         'Illuminate\Foundation\Auth\Access\AuthorizesResources',
-    ], 'laravel/framework', '>=5.3');
+    ], 'laravel/framework', '>=5.3 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Support\Collection', 'lists', 'pluck'),
         new MethodCallRename('Illuminate\Database\Query\Builder', 'lists', 'pluck'),
         new MethodCallRename('Illuminate\Database\Eloquent\Collection', 'withHidden', 'makeVisible'),
         new MethodCallRename('Illuminate\Database\Eloquent\Model', 'withHidden', 'makeVisible'),
-    ], 'laravel/framework', '>=5.3');
+    ], 'laravel/framework', '>=5.3 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RemoveInterfacesRector::class, [
         'Illuminate\Contracts\Bus\SelfHandling',
-    ], 'laravel/framework', '>=5.3');
+    ], 'laravel/framework', '>=5.3 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Illuminate\Database\Eloquent\ScopeInterface' => 'Illuminate\Database\Eloquent\Scope',
         'Illuminate\View\Expression' => 'Illuminate\Support\HtmlString',
-    ], 'laravel/framework', '>=5.3');
+    ], 'laravel/framework', '>=5.3 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(StaticCallToFuncCallRector::class, [
         new StaticCallToFuncCall('Illuminate\Support\Str', 'randomBytes', 'random_bytes'),
         new StaticCallToFuncCall('Illuminate\Support\Str', 'equals', 'hash_equals'),
-    ], 'laravel/framework', '>=5.3');
+    ], 'laravel/framework', '>=5.3 <6.0');
 
     // ---------------------------------------------------------------------------------------------
     // Laravel 5.4 — see https://laravel.com/docs/5.4/upgrade
@@ -202,7 +202,7 @@ return static function (RectorConfig $rectorConfig): void {
         new StringToClassConstant('kernel.handled', 'Illuminate\Foundation\Http\Events\RequestHandled', 'class'),
         new StringToClassConstant('locale.changed', 'Illuminate\Foundation\Events\LocaleUpdated', 'class'),
         new StringToClassConstant('illuminate.log', 'Illuminate\Log\Events\MessageLogged', 'class'),
-    ], 'laravel/framework', '>=5.4');
+    ], 'laravel/framework', '>=5.4 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Illuminate\Console\AppNamespaceDetectorTrait' => 'Illuminate\Console\DetectsApplicationNamespace',
@@ -210,7 +210,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Illuminate\Http\Exception\PostTooLargeException' => 'Illuminate\Http\Exceptions\PostTooLargeException',
         'Illuminate\Foundation\Http\Middleware\VerifyPostSize' => 'Illuminate\Foundation\Http\Middleware\ValidatePostSize',
         'Symfony\Component\HttpFoundation\Session\SessionInterface' => 'Illuminate\Contracts\Session\Session',
-    ], 'laravel/framework', '>=5.4');
+    ], 'laravel/framework', '>=5.4 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Database\Eloquent\Relations\BelongsToMany', 'setJoin', 'performJoin'),
@@ -231,23 +231,23 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodCallRename('Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase', 'missingFromDatabase', 'assertDatabaseMissing'),
         new MethodCallRename('Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase', 'dontSeeInDatabase', 'assertDatabaseMissing'),
         new MethodCallRename('Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase', 'notSeeInDatabase', 'assertDatabaseMissing'),
-    ], 'laravel/framework', '>=5.4');
+    ], 'laravel/framework', '>=5.4 <6.0');
 
     // ---------------------------------------------------------------------------------------------
     // Laravel 5.5 — see https://laravel.com/docs/5.5/upgrade
     // ---------------------------------------------------------------------------------------------
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Console\Command', 'fire', 'handle'),
-    ], 'laravel/framework', '>=5.5');
+    ], 'laravel/framework', '>=5.5 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenamePropertyRector::class, [
         new RenameProperty('Illuminate\Database\Eloquent\Concerns\HasEvents', 'events', 'dispatchesEvents'),
         new RenameProperty('Illuminate\Database\Eloquent\Relations\Pivot', 'parent', 'pivotParent'),
-    ], 'laravel/framework', '>=5.5');
+    ], 'laravel/framework', '>=5.5 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Illuminate\Translation\LoaderInterface' => 'Illuminate\Contracts\Translation\Loader',
-    ], 'laravel/framework', '>=5.5');
+    ], 'laravel/framework', '>=5.5 <6.0');
 
     // ---------------------------------------------------------------------------------------------
     // Laravel 5.6 — see https://laravel.com/docs/5.6/upgrade
@@ -255,13 +255,13 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Validation\ValidatesWhenResolvedTrait', 'validate', 'validateResolved'),
         new MethodCallRename('Illuminate\Contracts\Validation\ValidatesWhenResolved', 'validate', 'validateResolved'),
-    ], 'laravel/framework', '>=5.6');
+    ], 'laravel/framework', '>=5.6 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ChangeMethodVisibilityRector::class, [
         new ChangeMethodVisibility('Illuminate\Routing\Router', 'addRoute', Visibility::PUBLIC),
         new ChangeMethodVisibility('Illuminate\Contracts\Auth\Access\Gate', 'raw', Visibility::PUBLIC),
         new ChangeMethodVisibility('Illuminate\Database\Grammar', 'getDateFormat', Visibility::PUBLIC),
-    ], 'laravel/framework', '>=5.6');
+    ], 'laravel/framework', '>=5.6 <6.0');
 
     // ---------------------------------------------------------------------------------------------
     // Laravel 5.7 — see https://laravel.com/docs/5.7/upgrade
@@ -269,7 +269,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ChangeMethodVisibilityRector::class, [
         new ChangeMethodVisibility('Illuminate\Routing\Router', 'addRoute', Visibility::PUBLIC),
         new ChangeMethodVisibility('Illuminate\Contracts\Auth\Access\Gate', 'raw', Visibility::PUBLIC),
-    ], 'laravel/framework', '>=5.7');
+    ], 'laravel/framework', '>=5.7 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ArgumentAdderRector::class, [
         new ArgumentAdder('Illuminate\Auth\Middleware\Authenticate', 'authenticate', 0, 'request'),
@@ -277,13 +277,13 @@ return static function (RectorConfig $rectorConfig): void {
         new ArgumentAdder('Illuminate\Foundation\Auth\SendsPasswordResetEmails', 'sendResetLinkResponse', 0, 'request', null, new ObjectType('Illuminate\Http\Illuminate\Http')),
         new ArgumentAdder('Illuminate\Database\ConnectionInterface', 'select', 2, 'useReadPdo', true),
         new ArgumentAdder('Illuminate\Database\ConnectionInterface', 'selectOne', 2, 'useReadPdo', true),
-    ], 'laravel/framework', '>=5.7');
+    ], 'laravel/framework', '>=5.7 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ArgumentRemoverRector::class, [
         new ArgumentRemover('Illuminate\Foundation\Application', 'register', 1, [
             'name' => 'options',
         ]),
-    ], 'laravel/framework', '>=5.7');
+    ], 'laravel/framework', '>=5.7 <6.0');
 
     $rectorConfig->rule(Redirect301ToPermanentRedirectRector::class);
     $rectorConfig->rule(AddParentBootToModelClassMethodRector::class);
@@ -339,7 +339,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FuncCallToStaticCall('str_start', 'Illuminate\Support\Str', 'start'),
         new FuncCallToStaticCall('studly_case', 'Illuminate\Support\Str', 'studly'),
         new FuncCallToStaticCall('title_case', 'Illuminate\Support\Str', 'title'),
-    ], fn ($function) => ! in_array($function->getOldFuncName(), $internalFunctions, true)), 'laravel/framework', '>=5.8');
+    ], fn ($function) => ! in_array($function->getOldFuncName(), $internalFunctions, true)), 'laravel/framework', '>=5.8 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(AddReturnTypeDeclarationRector::class, [
         new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Repository', 'put', new BooleanType),
@@ -347,11 +347,11 @@ return static function (RectorConfig $rectorConfig): void {
         new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'put', new BooleanType),
         new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'putMany', new BooleanType),
         new AddReturnTypeDeclaration('Illuminate\Contracts\Cache\Store', 'forever', new BooleanType),
-    ], 'laravel/framework', '>=5.8');
+    ], 'laravel/framework', '>=5.8 <6.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenamePropertyRector::class, [
         new RenameProperty('Illuminate\Routing\UrlGenerator', 'cachedSchema', 'cachedScheme'),
-    ], 'laravel/framework', '>=5.8');
+    ], 'laravel/framework', '>=5.8 <6.0');
 
     $rectorConfig->rule(PropertyDeferToDeferrableProviderToRector::class);
 
