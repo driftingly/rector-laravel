@@ -137,8 +137,11 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
             return null;
         }
 
+        // self:: and parent:: are forwarding calls, so the trait's `new static()` resolves to the
+        // called class rather than the lexical one. Keeping `static` preserves that behaviour and
+        // avoids instantiating an abstract class.
         $className = $class->isSpecialClassName()
-            ? $class
+            ? new Name('static')
             : new FullyQualified($class);
 
         return $this->nodeFactory->createFuncCall(
