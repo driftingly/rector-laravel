@@ -20,7 +20,7 @@ class ErrorSuppressed
 {
     public function run(string $path)
     {
-        @\Illuminate\Support\Facades\File::delete($path);
+        \Illuminate\Support\Facades\File::delete($path);
     }
 }
 
