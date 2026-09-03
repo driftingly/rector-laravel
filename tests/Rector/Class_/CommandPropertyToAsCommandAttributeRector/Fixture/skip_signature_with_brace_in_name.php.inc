@@ -4,11 +4,9 @@ namespace RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeR
 
 use Illuminate\Console\Command;
 
-class SkipSignatureWithWhitespace extends Command
+class SkipSignatureWithBraceInName extends Command
 {
-    protected $signature = '
-        mail:send
-    ';
+    protected $signature = 'mail:send{user}';
 }
 
 ?>
