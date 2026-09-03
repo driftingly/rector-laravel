@@ -15,6 +15,7 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\PhpParser\Node\BetterNodeFinder;
@@ -33,15 +34,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CommandPropertyToAsCommandAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface, MinPhpVersionInterface
 {
-    /**
-     * @var string
-     */
-    private const AS_COMMAND_ATTRIBUTE = 'Symfony\Component\Console\Attribute\AsCommand';
+    private const string AS_COMMAND_ATTRIBUTE = 'Symfony\Component\Console\Attribute\AsCommand';
 
-    /**
-     * @var string
-     */
-    private const COMMAND_CLASS = 'Illuminate\Console\Command';
+    private const string COMMAND_CLASS = 'Illuminate\Console\Command';
 
     /**
      * Laravel only falls back to the attribute when the signature does not
@@ -49,15 +44,13 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
      *
      * @var string[]
      */
-    private const PARAMETER_METHODS = ['getArguments', 'getOptions'];
+    private const array PARAMETER_METHODS = ['getArguments', 'getOptions'];
 
     /**
      * A bare command name, e.g. "mail:send". Anything else - arguments, options
      * or alias pipes - cannot be expressed by the attribute name on its own.
-     *
-     * @var string
      */
-    private const COMMAND_NAME_REGEX = '#^[^\s:|{}]++(?::[^\s:|{}]++)*+$#';
+    private const string COMMAND_NAME_REGEX = '#^[^\s:|{}]++(?::[^\s:|{}]++)*+$#';
 
     public function __construct(
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
@@ -226,7 +219,7 @@ CODE_SAMPLE
                 return true;
             }
 
-            if ($classReflection === null || ! $classReflection->hasNativeMethod($methodName)) {
+            if (! $classReflection instanceof ClassReflection || ! $classReflection->hasNativeMethod($methodName)) {
                 continue;
             }
 
