@@ -6,9 +6,11 @@ namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ErrorSuppress;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Identifier;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\VariadicPlaceholder;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\FuncCall\UnlinkFuncCallToFileFacadeDeleteRector\UnlinkFuncCallToFileFacadeDeleteRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -45,29 +47,49 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [FuncCall::class];
+        return [ErrorSuppress::class, FuncCall::class];
     }
 
     /**
-     * @param  FuncCall  $node
+     * @param  ErrorSuppress|FuncCall  $node
      */
     public function refactor(Node $node): ?StaticCall
     {
-        if (! $this->isName($node->name, 'unlink')) {
+        // File::delete() suppresses the failure itself, so the suppressor is dropped
+        $funcCall = $node instanceof ErrorSuppress ? $node->expr : $node;
+
+        if (! $funcCall instanceof FuncCall) {
             return null;
+        }
+
+        if (! $this->isName($funcCall->name, 'unlink')) {
+            return null;
+        }
+
+        if ($funcCall->isFirstClassCallable()) {
+            return $this->createFileDeleteCall([new VariadicPlaceholder]);
         }
 
         // the stream context argument has no equivalent on the facade
-        if (count($node->args) !== 1) {
+        if (count($funcCall->args) !== 1) {
             return null;
         }
 
-        $arg = $node->getArg('filename', 0);
+        $arg = $funcCall->getArg('filename', 0);
 
         if (! $arg instanceof Arg) {
             return null;
         }
 
-        return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\File', 'delete', [$arg->value]);
+        // the facade parameter is named $paths, so a filename: argument is passed positionally
+        return $this->createFileDeleteCall([new Arg($arg->value)]);
+    }
+
+    /**
+     * @param  array<Arg|VariadicPlaceholder>  $args
+     */
+    private function createFileDeleteCall(array $args): StaticCall
+    {
+        return new StaticCall(new FullyQualified('Illuminate\Support\Facades\File'), 'delete', $args);
     }
 }

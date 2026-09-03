@@ -2,13 +2,11 @@
 
 namespace RectorLaravel\Tests\Rector\FuncCall\UnlinkFuncCallToFileFacadeDeleteRector\Fixture;
 
-class SkipUnpackedAndFirstClassCallable
+class SkipUnpackedArgument
 {
-    public function run(array $arguments, array $paths)
+    public function run(array $arguments)
     {
         unlink(...$arguments);
-
-        array_map(unlink(...), $paths);
     }
 }
 
