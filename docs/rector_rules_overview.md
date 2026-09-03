@@ -1,4 +1,4 @@
-# 128 Rules Overview
+# 129 Rules Overview
 
 ## AbortIfRector
 
@@ -2455,6 +2455,19 @@ Changes the uniqueFor property to use the UniqueFor attribute
  {
 -    public $uniqueFor = 1800;
  }
+```
+
+<br>
+
+## UnlinkFuncCallToFileFacadeDeleteRector
+
+Use the File facade instead of the `unlink()` function.
+
+- class: [`RectorLaravel\Rector\FuncCall\UnlinkFuncCallToFileFacadeDeleteRector`](../src/Rector/FuncCall/UnlinkFuncCallToFileFacadeDeleteRector.php)
+
+```diff
+-unlink($path);
++\Illuminate\Support\Facades\File::delete($path);
 ```
 
 <br>
