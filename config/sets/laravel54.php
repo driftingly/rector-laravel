@@ -6,15 +6,15 @@ use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
-use Rector\Transform\Rector\String_\StringToClassConstantRector;
 use Rector\Transform\ValueObject\StringToClassConstant;
+use RectorLaravel\Rector\StaticCall\EventStringToClassConstantRector;
 
 // see: https://laravel.com/docs/5.4/upgrade
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
     $rectorConfig
-        ->ruleWithConfiguration(StringToClassConstantRector::class, [new StringToClassConstant(
+        ->ruleWithConfiguration(EventStringToClassConstantRector::class, [new StringToClassConstant(
             'kernel.handled',
             'Illuminate\Foundation\Http\Events\RequestHandled',
             'class'
