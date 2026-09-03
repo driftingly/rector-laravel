@@ -1,4 +1,4 @@
-# 129 Rules Overview
+# 130 Rules Overview
 
 ## AbortIfRector
 
@@ -778,6 +778,27 @@ Changes the hidden property to use the Hidden attribute on console commands
  class SendEmails extends Command
  {
 -    protected $hidden = true;
+ }
+```
+
+<br>
+
+## CommandPropertyToAsCommandAttributeRector
+
+Changes the name/signature and description properties of a console command to the AsCommand attribute
+
+- class: [`RectorLaravel\Rector\Class_\CommandPropertyToAsCommandAttributeRector`](../src/Rector/Class_/CommandPropertyToAsCommandAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Symfony\Component\Console\Attribute\AsCommand;
+
++#[AsCommand(name: 'mail:send', description: 'Send the queued emails')]
+ class SendEmails extends Command
+ {
+-    protected $signature = 'mail:send';
+-
+-    protected $description = 'Send the queued emails';
  }
 ```
 
