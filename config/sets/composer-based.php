@@ -27,7 +27,6 @@ use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\Transform\Rector\FuncCall\FuncCallToStaticCallRector;
 use Rector\Transform\Rector\StaticCall\StaticCallToFuncCallRector;
-use Rector\Transform\Rector\String_\StringToClassConstantRector;
 use Rector\Transform\ValueObject\FuncCallToStaticCall;
 use Rector\Transform\ValueObject\StaticCallToFuncCall;
 use Rector\Transform\ValueObject\StringToClassConstant;
@@ -97,6 +96,7 @@ use RectorLaravel\Rector\MethodCall\ReplaceWithoutJobsEventsAndNotificationsWith
 use RectorLaravel\Rector\New_\AddGuardToLoginEventRector;
 use RectorLaravel\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector;
 use RectorLaravel\Rector\PropertyFetch\ReplaceFakerPropertyFetchWithMethodCallRector;
+use RectorLaravel\Rector\StaticCall\EventStringToClassConstantRector;
 use RectorLaravel\Rector\StaticCall\Redirect301ToPermanentRedirectRector;
 use RectorLaravel\Rector\StaticCall\ReplaceAssertTimesSendWithAssertSentTimesRector;
 use RectorLaravel\ValueObject\AddArgumentDefaultValue;
@@ -149,7 +149,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Illuminate\Foundation\Composer' => 'Illuminate\Support\Composer',
     ], 'laravel/framework', '>=5.2 <6.0');
 
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(StringToClassConstantRector::class, [
+    $rectorConfig->ruleWithConfigurationComposerVersionBound(EventStringToClassConstantRector::class, [
         new StringToClassConstant('artisan.start', 'Illuminate\Console\Events\ArtisanStarting', 'class'),
         new StringToClassConstant('auth.attempting', 'Illuminate\Auth\Events\Attempting', 'class'),
         new StringToClassConstant('auth.login', 'Illuminate\Auth\Events\Login', 'class'),
@@ -198,7 +198,7 @@ return static function (RectorConfig $rectorConfig): void {
     // ---------------------------------------------------------------------------------------------
     // Laravel 5.4 — see https://laravel.com/docs/5.4/upgrade
     // ---------------------------------------------------------------------------------------------
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(StringToClassConstantRector::class, [
+    $rectorConfig->ruleWithConfigurationComposerVersionBound(EventStringToClassConstantRector::class, [
         new StringToClassConstant('kernel.handled', 'Illuminate\Foundation\Http\Events\RequestHandled', 'class'),
         new StringToClassConstant('locale.changed', 'Illuminate\Foundation\Events\LocaleUpdated', 'class'),
         new StringToClassConstant('illuminate.log', 'Illuminate\Log\Events\MessageLogged', 'class'),
