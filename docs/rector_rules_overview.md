@@ -2495,6 +2495,19 @@ Changes the uniqueFor property to use the UniqueFor attribute
 
 <br>
 
+## UnlinkFuncCallToFileFacadeDeleteRector
+
+Use the File facade instead of the `unlink()` function.
+
+- class: [`RectorLaravel\Rector\FuncCall\UnlinkFuncCallToFileFacadeDeleteRector`](../src/Rector/FuncCall/UnlinkFuncCallToFileFacadeDeleteRector.php)
+
+```diff
+-unlink($path);
++\Illuminate\Support\Facades\File::delete($path);
+```
+
+<br>
+
 ## UseComponentPropertyWithinCommandsRector
 
 Use `$this->components` property within commands
