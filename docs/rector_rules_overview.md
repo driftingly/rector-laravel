@@ -1183,6 +1183,21 @@ Changes the errorBag property to use the ErrorBag attribute
 
 <br>
 
+## EventStringToClassConstantRector
+
+Turns a string event name into a class constant, but only where the event dispatcher is used
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\StaticCall\EventStringToClassConstantRector`](../src/Rector/StaticCall/EventStringToClassConstantRector.php)
+
+```diff
+-\Illuminate\Support\Facades\Event::listen('auth.login', function () {});
++\Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Login::class, function () {});
+```
+
+<br>
+
 ## FactoryApplyingStatesRector
 
 Call the state methods directly instead of specify the name of state.
