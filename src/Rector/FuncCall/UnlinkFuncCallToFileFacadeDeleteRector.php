@@ -62,21 +62,12 @@ CODE_SAMPLE
             return null;
         }
 
-        $arg = $node->args[0];
+        $arg = $node->getArg('filename', 0);
 
-        // skips first class callables and unpacked arguments
-        if (! $arg instanceof Arg || $arg->unpack) {
+        if (! $arg instanceof Arg) {
             return null;
         }
 
-        if ($arg->name instanceof Identifier && ! $this->isName($arg->name, 'filename')) {
-            return null;
-        }
-
-        return $this->nodeFactory->createStaticCall(
-            'Illuminate\Support\Facades\File',
-            'delete',
-            [$arg->value],
-        );
+        return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\File', 'delete', [$arg->value]);
     }
 }
