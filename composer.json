@@ -3,6 +3,13 @@
     "type": "rector-extension",
     "license": "MIT",
     "description": "Rector upgrades rules for Laravel Framework",
+    "keywords": [
+        "rector",
+        "laravel",
+        "refactoring",
+        "upgrade",
+        "dev"
+    ],
     "require": {
         "php": ">=8.3",
         "rector/rector": "^2.6.4",
