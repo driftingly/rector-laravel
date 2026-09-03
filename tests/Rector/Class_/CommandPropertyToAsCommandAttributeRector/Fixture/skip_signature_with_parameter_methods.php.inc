@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 class SkipSignatureWithParameterMethods extends Command
 {
-    protected $signature = 'mail:send';
+    protected $signature = 'mail:send {user}';
 
     protected function getOptions(): array
     {

@@ -4,9 +4,9 @@ namespace RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeR
 
 use Illuminate\Console\Command;
 
-class SkipSignatureWithOptions extends Command
+class SkipSignatureWithStrayText extends Command
 {
-    protected $signature = 'mail:send {--queue}';
+    protected $signature = 'mail:send {user} unparsed';
 }
 
 ?>
