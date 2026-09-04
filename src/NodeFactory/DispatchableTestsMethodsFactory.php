@@ -23,7 +23,7 @@ final class DispatchableTestsMethodsFactory
         return new StaticCall(
             new FullyQualified($facade),
             'fake',
-            [new Arg(new Array_(array_map(fn (String_|ClassConstFetch $item): ArrayItem => new ArrayItem($item), $items)))]
+            [new Arg(new Array_(array_map(static fn (String_|ClassConstFetch $item): ArrayItem => new ArrayItem($item), $items)))]
         );
     }
 
@@ -33,7 +33,7 @@ final class DispatchableTestsMethodsFactory
      */
     public function assertStatements(array $items, string $facade): array
     {
-        return array_map(fn (String_|ClassConstFetch $item): Expression => new Expression(new StaticCall(
+        return array_map(static fn (String_|ClassConstFetch $item): Expression => new Expression(new StaticCall(
             new FullyQualified($facade),
             'assertDispatched',
             [new Arg($item)],
@@ -46,7 +46,7 @@ final class DispatchableTestsMethodsFactory
      */
     public function assertNotStatements(array $items, string $facade): array
     {
-        return array_map(fn (String_|ClassConstFetch $item): Expression => new Expression(new StaticCall(
+        return array_map(static fn (String_|ClassConstFetch $item): Expression => new Expression(new StaticCall(
             new FullyQualified($facade),
             'assertNotDispatched',
             [new Arg($item)],

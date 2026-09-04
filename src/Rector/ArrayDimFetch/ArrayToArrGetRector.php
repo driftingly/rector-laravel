@@ -236,7 +236,7 @@ CODE_SAMPLE
 
     private function markArrayDimFetchNodes(Node $node): void
     {
-        $this->traverseNodesWithCallable($node, function (Node $subNode) use ($node): ?int {
+        $this->traverseNodesWithCallable($node, static function (Node $subNode) use ($node): ?int {
             // first visit is current node itself
             if ($node === $subNode) {
                 return null;
@@ -255,7 +255,7 @@ CODE_SAMPLE
         $found = false;
 
         $originalNode = $node;
-        $this->traverseNodesWithCallable($node, function (Node $subNode) use (&$found, $originalNode): ?int {
+        $this->traverseNodesWithCallable($node, static function (Node $subNode) use (&$found, $originalNode): ?int {
             // first visit is current node itself
             if ($originalNode === $subNode) {
                 return null;

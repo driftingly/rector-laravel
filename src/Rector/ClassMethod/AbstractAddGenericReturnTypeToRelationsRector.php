@@ -187,7 +187,7 @@ abstract class AbstractAddGenericReturnTypeToRelationsRector extends AbstractRec
     {
         $node = $this->betterNodeFinder->findFirstInFunctionLikeScoped(
             $classMethod,
-            fn (Node $subNode): bool => $subNode instanceof Return_
+            static fn (Node $subNode): bool => $subNode instanceof Return_
         );
 
         if (! $node instanceof Return_) {
