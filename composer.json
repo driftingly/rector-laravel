@@ -28,7 +28,7 @@
         "tightenco/duster": "^3.1",
         "nette/utils": "^4.0",
         "tracy/tracy": "^2.10",
-        "boundwize/structarmed": "^0.16"
+        "boundwize/structarmed": "^0.17"
     },
     "autoload": {
         "psr-4": {
