@@ -31,7 +31,7 @@ final class RandomEnumContextNodeVisitor extends NodeVisitorAbstract implements 
         // see https://github.com/spatie/laravel-enum#faker-provider
         if ($this->nodeNameResolver->isName($node->name, 'randomEnum')) {
             $node->setAttribute(self::IS_IN_RANDOM_ENUM, true);
-            SimpleCallableNodeTraverser::traverseNodesWithCallable($node, function (Node $subNode) {
+            SimpleCallableNodeTraverser::traverseNodesWithCallable($node, static function (Node $subNode) {
                 if (! $subNode instanceof PropertyFetch && ! $subNode instanceof InterpolatedString) {
                     return null;
                 }

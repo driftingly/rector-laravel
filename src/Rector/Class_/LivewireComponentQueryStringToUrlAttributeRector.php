@@ -178,7 +178,7 @@ CODE_SAMPLE
         // we remove the array properties which will be converted
         $array->items = array_filter(
             $array->items,
-            fn (?ArrayItem $arrayItem): bool => ! in_array($arrayItem, $toFilter, true),
+            static fn (?ArrayItem $arrayItem): bool => ! in_array($arrayItem, $toFilter, true),
         );
 
         return $properties;
@@ -228,7 +228,7 @@ CODE_SAMPLE
         $array = $property->props[0]->default;
 
         if ($array instanceof Array_ && $array->items === []) {
-            $class->stmts = array_filter($class->stmts, fn (Node $node) => $node !== $property);
+            $class->stmts = array_filter($class->stmts, static fn (Node $node) => $node !== $property);
         }
     }
 }

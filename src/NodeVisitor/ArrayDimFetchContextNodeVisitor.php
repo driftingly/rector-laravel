@@ -35,7 +35,7 @@ final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implemen
         if (! $node instanceof ArrayDimFetch) {
             if (in_array($node::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
                 && (! $node instanceof Assign || $this->isSuperglobalAssign($node))) {
-                SimpleCallableNodeTraverser::traverseNodesWithCallable($node, function (Node $subNode) {
+                SimpleCallableNodeTraverser::traverseNodesWithCallable($node, static function (Node $subNode) {
                     if ($subNode instanceof ArrayDimFetch || $subNode instanceof Variable) {
                         $subNode->setAttribute(self::IS_IN_SUPERGLOBAL_ASSIGN, true);
                     }
@@ -48,7 +48,7 @@ final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implemen
         }
 
         if (! $node->dim instanceof Expr) {
-            SimpleCallableNodeTraverser::traverseNodesWithCallable($node, function (Node $subNode) {
+            SimpleCallableNodeTraverser::traverseNodesWithCallable($node, static function (Node $subNode) {
                 if (! $subNode instanceof Variable) {
                     return null;
                 }
@@ -63,7 +63,7 @@ final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implemen
             return null;
         }
 
-        SimpleCallableNodeTraverser::traverseNodesWithCallable($node, function (Node $subSubNode) {
+        SimpleCallableNodeTraverser::traverseNodesWithCallable($node, static function (Node $subSubNode) {
             if ($subSubNode instanceof Variable) {
                 $subSubNode->setAttribute(self::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR, true);
 

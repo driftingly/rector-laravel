@@ -95,7 +95,7 @@ final readonly class CallUserFuncAnalyzer
     private function argsToArray(array $args): Array_
     {
         return new Array_(
-            array_map(fn (Arg $arg) => new ArrayItem($arg->value), $args)
+            array_map(static fn (Arg $arg) => new ArrayItem($arg->value), $args)
         );
     }
 }

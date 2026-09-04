@@ -134,7 +134,7 @@ CODE_SAMPLE
     {
         $firstShortCircuitOperator = $this->betterNodeFinder->findFirst(
             $expr,
-            fn (Node $node): bool => $node instanceof BooleanAnd || $node instanceof BooleanOr
+            static fn (Node $node): bool => $node instanceof BooleanAnd || $node instanceof BooleanOr
         );
         if (! $firstShortCircuitOperator instanceof Node) {
             return true;
