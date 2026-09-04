@@ -128,7 +128,8 @@ CODE_SAMPLE
         }
 
         if ($node instanceof StaticCall) {
-            return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes);
+            return ! $this->nodeTypeResolver->isObjectTypes($node->class, $this->requestObjectTypes)
+                || ! $this->isName($node->name, 'validate');
         }
 
         $classMethodReflection = $this->reflectionResolver->resolveMethodReflectionFromClassMethod(
