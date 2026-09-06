@@ -4,13 +4,15 @@ namespace RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\
 
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class BusDispatchableWithinSelf
+abstract class AbstractBusDispatchableJob
 {
     use Dispatchable;
 
-    public function handle()
+    public function retryLater()
     {
         self::dispatch();
+        static::dispatch();
+        self::dispatchSync();
     }
 }
 -----
@@ -20,12 +22,14 @@ namespace RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\
 
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class BusDispatchableWithinSelf
+abstract class AbstractBusDispatchableJob
 {
     use Dispatchable;
 
-    public function handle()
+    public function retryLater()
     {
         dispatch(new static());
+        dispatch(new static());
+        dispatch_sync(new static());
     }
 }
