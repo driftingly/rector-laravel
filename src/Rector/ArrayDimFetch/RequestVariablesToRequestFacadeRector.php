@@ -79,6 +79,11 @@ CODE_SAMPLE
             return null;
         }
 
+        // skip contexts that require a variable, e.g. $_GET['key'] .= 'x' or sort($_GET['key'])
+        if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_WRITE_CONTEXT) === true) {
+            return null;
+        }
+
         if ($node instanceof Variable) {
             if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR) === true) {
                 return null;

@@ -55,6 +55,11 @@ CODE_SAMPLE
             return null;
         }
 
+        // skip contexts that require a variable, e.g. $_SERVER['KEY'] .= 'x' or sort($_SERVER['KEY'])
+        if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_WRITE_CONTEXT) === true) {
+            return null;
+        }
+
         return $this->nodeFactory->createStaticCall('Illuminate\Support\Facades\Request', 'server', [
             new Arg($node->dim),
         ]);
