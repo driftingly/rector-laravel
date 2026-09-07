@@ -14,6 +14,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Unset_;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeVisitor\ArrayDimFetchContextNodeVisitor;
 use RectorLaravel\Tests\Rector\ArrayDimFetch\SessionVariableToSessionFacadeRector\SessionVariableToSessionFacadeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -103,6 +104,16 @@ CODE_SAMPLE
 
     public function processDimFetch(ArrayDimFetch $arrayDimFetch): ?StaticCall
     {
+        // skip contexts that require a variable, e.g. $_SESSION['key'] .= 'x'; plain assignments
+        // are handled on the Assign node itself
+        if ($arrayDimFetch->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_WRITE_CONTEXT) === true) {
+            return null;
+        }
+
+        if ($arrayDimFetch->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_INTERPOLATED_STRING) === true) {
+            return null;
+        }
+
         if (! $this->isName($arrayDimFetch->var, '_SESSION')) {
             return null;
         }
@@ -214,6 +225,14 @@ CODE_SAMPLE
     private function processVariable(Variable $variable): ?StaticCall
     {
         if ($variable->getAttribute(self::IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR) === true) {
+            return null;
+        }
+
+        if ($variable->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_WRITE_CONTEXT) === true) {
+            return null;
+        }
+
+        if ($variable->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_INTERPOLATED_STRING) === true) {
             return null;
         }
 

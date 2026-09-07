@@ -8,6 +8,7 @@ use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeVisitor\ArrayDimFetchContextNodeVisitor;
 use RectorLaravel\Tests\Rector\ArrayDimFetch\EnvVariableToEnvHelperRector\EnvVariableToEnvHelperRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -43,6 +44,15 @@ CODE_SAMPLE
     public function refactor(Node $node): ?StaticCall
     {
         if ($node->getAttribute(AttributeKey::IS_BEING_ASSIGNED) === true) {
+            return null;
+        }
+
+        // skip contexts that require a variable, e.g. unset($_ENV['KEY']) or $_ENV['KEY'] .= 'x'
+        if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_WRITE_CONTEXT) === true) {
+            return null;
+        }
+
+        if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_INTERPOLATED_STRING) === true) {
             return null;
         }
 

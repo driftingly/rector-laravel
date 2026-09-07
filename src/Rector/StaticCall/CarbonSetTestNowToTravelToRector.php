@@ -105,6 +105,12 @@ CODE_SAMPLE
 
     private function isInLaravelTestCaseScope(Scope $scope): bool
     {
+        // Static methods (e.g. data providers) and static closures have no `$this` to call
+        // `travelTo()` on, so rewriting there would produce a fatal error.
+        if (! $scope->hasVariableType('this')->yes()) {
+            return false;
+        }
+
         if ($scope->isInClass()) {
             return $scope->getClassReflection()->is(self::TEST_CASE_CLASS);
         }
