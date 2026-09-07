@@ -77,13 +77,6 @@ CODE_SAMPLE
             return null;
         }
 
-        foreach ($node->getArgs() as $arg) {
-            // an unpacked argument hides which parameter each value lands in
-            if ($arg->unpack) {
-                return null;
-            }
-        }
-
         $abstractArg = $node->getArg('abstract', 0);
         $concreteArg = $node->getArg('concrete', 1);
         // singleton() has no $shared parameter, and passing one would be fatal
@@ -92,6 +85,12 @@ CODE_SAMPLE
             : null;
 
         if (! $abstractArg instanceof Arg || ! $concreteArg instanceof Arg) {
+            return null;
+        }
+
+        // getArg() cannot match a spread, and refuses a name that is not a parameter;
+        // rebuilding the call below would drop whatever it left behind
+        if (count(array_filter([$abstractArg, $concreteArg, $sharedArg])) !== count($node->getArgs())) {
             return null;
         }
 
