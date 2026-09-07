@@ -129,7 +129,7 @@ CODE_SAMPLE
 
         if ($sharedArg instanceof Arg) {
             // shared is no longer the third argument, so it has to be passed by name
-            $sharedArg->name = new Identifier('shared');
+            $sharedArg->name ??= new Identifier('shared');
             $args[] = $sharedArg;
         }
 
