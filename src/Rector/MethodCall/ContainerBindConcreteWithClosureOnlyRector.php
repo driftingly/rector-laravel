@@ -3,10 +3,11 @@
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Const_;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\StaticTypeMapper\StaticTypeMapper;
@@ -19,6 +20,18 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class ContainerBindConcreteWithClosureOnlyRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
+    /**
+     * bindIf() and singletonIf() are left out on purpose: they pass the abstract
+     * straight to bound(), which uses it as an array offset, so a closure abstract
+     * fatals there.
+     *
+     * @var array<string, list<string>>
+     */
+    private const array PARAMETER_NAMES_BY_METHOD = [
+        'bind' => ['abstract', 'concrete', 'shared'],
+        'singleton' => ['abstract', 'concrete'],
+    ];
+
     public function __construct(
         private readonly ReturnTypeInferer $returnTypeInferer,
         private readonly StaticTypeMapper $staticTypeMapper,
@@ -61,7 +74,7 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?MethodCall
     {
-        if (! $this->isNames($node->name, ['bind', 'singleton', 'bindIf', 'singletonIf'])) {
+        if (! $this->isNames($node->name, array_keys(self::PARAMETER_NAMES_BY_METHOD))) {
             return null;
         }
 
@@ -73,13 +86,18 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($node->getArgs()) < 2) {
+        $arguments = $this->matchArgumentsToParameters($node);
+
+        if ($arguments === null) {
             return null;
         }
 
-        $type = $this->getType($node->getArgs()[0]->value);
-        $classString = $node->getArgs()[0]->value;
-        $concreteNode = $node->getArgs()[1]->value;
+        [$abstractArg, $concreteArg, $sharedArg] = $arguments;
+
+        $classString = $abstractArg->value;
+        $concreteNode = $concreteArg->value;
+
+        $type = $this->getType($classString);
 
         if ($classString instanceof Variable) {
             return null;
@@ -89,11 +107,6 @@ CODE_SAMPLE
             return null;
         }
         $abstractFromConcrete = $this->returnTypeInferer->inferFunctionLike($concreteNode);
-
-        if ($classString instanceof Const_
-        && $this->isName($classString, 'class')) {
-            return null;
-        }
 
         $abstractObjectType = $type->getClassStringObjectType();
 
@@ -109,10 +122,66 @@ CODE_SAMPLE
 
         $concreteNode->returnType = $returnTypeNode;
 
-        $args = $node->getArgs();
+        // the closure takes over the abstract position, so it must not stay named
+        $concreteArg->name = null;
 
-        $node->args = array_splice($args, 1);
+        $args = [$concreteArg];
+
+        if ($sharedArg instanceof Arg) {
+            // shared is no longer the third argument, so it has to be passed by name
+            $sharedArg->name = new Identifier('shared');
+            $args[] = $sharedArg;
+        }
+
+        $node->args = $args;
 
         return $node;
+    }
+
+    /**
+     * Resolves the abstract, concrete and shared arguments, whether they are passed
+     * positionally or by name, in any order.
+     *
+     * @return array{Arg, Arg, Arg|null}|null
+     */
+    private function matchArgumentsToParameters(MethodCall $methodCall): ?array
+    {
+        $parameterNames = null;
+
+        foreach (self::PARAMETER_NAMES_BY_METHOD as $methodName => $names) {
+            if ($this->isName($methodCall->name, $methodName)) {
+                $parameterNames = $names;
+                break;
+            }
+        }
+
+        if ($parameterNames === null) {
+            return null;
+        }
+
+        $matched = array_fill_keys($parameterNames, null);
+
+        foreach ($methodCall->getArgs() as $position => $arg) {
+            if ($arg->unpack) {
+                return null;
+            }
+
+            $name = $arg->name instanceof Identifier
+                ? $arg->name->toString()
+                : ($parameterNames[$position] ?? null);
+
+            // an unknown or duplicated parameter means we cannot reason about the call
+            if ($name === null || ! array_key_exists($name, $matched) || $matched[$name] instanceof Arg) {
+                return null;
+            }
+
+            $matched[$name] = $arg;
+        }
+
+        if (! $matched['abstract'] instanceof Arg || ! $matched['concrete'] instanceof Arg) {
+            return null;
+        }
+
+        return [$matched['abstract'], $matched['concrete'], $matched['shared'] ?? null];
     }
 }
