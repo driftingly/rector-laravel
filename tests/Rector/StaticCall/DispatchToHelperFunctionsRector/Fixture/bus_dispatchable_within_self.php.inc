@@ -26,6 +26,6 @@ class BusDispatchableWithinSelf
 
     public function handle()
     {
-        dispatch(new self());
+        dispatch(new static());
     }
 }

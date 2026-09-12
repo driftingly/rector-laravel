@@ -22,6 +22,7 @@ use PhpParser\NodeVisitor;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PHPStan\ScopeFetcher;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeVisitor\ArrayDimFetchContextNodeVisitor;
 use RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayToArrGetRector\ArrayToArrGetRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -101,6 +102,11 @@ CODE_SAMPLE
         }
 
         if ($node->getAttribute(AttributeKey::IS_BEING_ASSIGNED) === true) {
+            return null;
+        }
+
+        // skip contexts that require a variable, e.g. $array['key']++ or sort($array['key'])
+        if ($node->getAttribute(ArrayDimFetchContextNodeVisitor::IS_IN_WRITE_CONTEXT) === true) {
             return null;
         }
 
@@ -236,7 +242,7 @@ CODE_SAMPLE
 
     private function markArrayDimFetchNodes(Node $node): void
     {
-        $this->traverseNodesWithCallable($node, function (Node $subNode) use ($node): ?int {
+        $this->traverseNodesWithCallable($node, static function (Node $subNode) use ($node): ?int {
             // first visit is current node itself
             if ($node === $subNode) {
                 return null;
@@ -255,7 +261,7 @@ CODE_SAMPLE
         $found = false;
 
         $originalNode = $node;
-        $this->traverseNodesWithCallable($node, function (Node $subNode) use (&$found, $originalNode): ?int {
+        $this->traverseNodesWithCallable($node, static function (Node $subNode) use (&$found, $originalNode): ?int {
             // first visit is current node itself
             if ($originalNode === $subNode) {
                 return null;

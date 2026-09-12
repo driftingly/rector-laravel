@@ -20,6 +20,7 @@ use RectorLaravel\Rector\FuncCall\RemoveRedundantValueCallsRector;
 use RectorLaravel\Rector\FuncCall\RemoveRedundantWithCallsRector;
 use RectorLaravel\Rector\FuncCall\SleepFuncToSleepStaticCallRector;
 use RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector;
+use RectorLaravel\Rector\FuncCall\UnlinkFuncCallToFileFacadeDeleteRector;
 use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
 use RectorLaravel\Rector\MethodCall\RedirectBackToBackHelperRector;
 use RectorLaravel\Rector\MethodCall\RedirectRouteToToRouteHelperRector;
@@ -56,4 +57,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NotFilledBlankFuncCallToBlankFilledFuncCallRector::class);
     $rectorConfig->rule(EloquentOrderByToLatestOrOldestRector::class);
     $rectorConfig->rule(AppToResolveRector::class);
+    $rectorConfig->rule(UnlinkFuncCallToFileFacadeDeleteRector::class);
 };

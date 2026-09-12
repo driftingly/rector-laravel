@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
-use Rector\Transform\Rector\String_\StringToClassConstantRector;
 use Rector\Transform\ValueObject\StringToClassConstant;
+use RectorLaravel\Rector\StaticCall\EventStringToClassConstantRector;
 
 // see: https://laravel.com/docs/5.2/upgrade
 return static function (RectorConfig $rectorConfig): void {
@@ -19,7 +19,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig
         ->ruleWithConfiguration(
-            StringToClassConstantRector::class,
+            EventStringToClassConstantRector::class,
             [new StringToClassConstant('artisan.start', 'Illuminate\Console\Events\ArtisanStarting', 'class'),
                 new StringToClassConstant('auth.attempting', 'Illuminate\Auth\Events\Attempting', 'class'),
                 new StringToClassConstant('auth.login', 'Illuminate\Auth\Events\Login', 'class'),
