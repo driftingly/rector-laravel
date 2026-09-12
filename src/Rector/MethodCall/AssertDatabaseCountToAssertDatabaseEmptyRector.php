@@ -82,22 +82,22 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($node->getRawArgs()) > 3) {
+        if ($node->isFirstClassCallable()) {
             return null;
         }
 
-        // getArg() skips unpacked args, so a spread would resolve to null and be dropped silently
-        foreach ($node->getRawArgs() as $rawArg) {
-            if ($rawArg instanceof Arg && $rawArg->unpack) {
-                return null;
-            }
-        }
-
-        // getArg() resolves named or positional args, and returns null for first class callables
+        // getArg() resolves named or positional args alike
         $tableArg = $node->getArg('table', 0);
         $countArg = $node->getArg('count', 1);
+        $connectionArg = $node->getArg('connection', 2);
 
         if (! $tableArg instanceof Arg || ! $countArg instanceof Arg) {
+            return null;
+        }
+
+        // getArg() cannot match a spread, so a spread in the connection slot resolves to
+        // null; rebuilding the call below would drop whatever it left behind
+        if (count(array_filter([$tableArg, $countArg, $connectionArg])) !== count($node->getArgs())) {
             return null;
         }
 
@@ -105,8 +105,6 @@ CODE_SAMPLE
         if ($this->getType($countArg->value)->getConstantScalarValues() !== [0]) {
             return null;
         }
-
-        $connectionArg = $node->getArg('connection', 2);
 
         // both signatures name these params the same way, so named args carry over untouched
         $node->name = new Identifier('assertDatabaseEmpty');
