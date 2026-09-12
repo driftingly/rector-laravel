@@ -16,6 +16,8 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -23,7 +25,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see RectorLaravel\Tests\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector\LivewireComponentQueryStringToUrlAttributeRectorTest
  */
-final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector
+final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     private const string URL_ATTRIBUTE = 'Livewire\Attributes\Url';
 
@@ -32,6 +34,11 @@ final class LivewireComponentQueryStringToUrlAttributeRector extends AbstractRec
     private const string QUERY_STRING_PROPERTY_NAME = 'queryString';
 
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('livewire/livewire', '>=3.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -171,7 +178,7 @@ CODE_SAMPLE
         // we remove the array properties which will be converted
         $array->items = array_filter(
             $array->items,
-            fn (?ArrayItem $arrayItem): bool => ! in_array($arrayItem, $toFilter, true),
+            static fn (?ArrayItem $arrayItem): bool => ! in_array($arrayItem, $toFilter, true),
         );
 
         return $properties;
@@ -221,7 +228,7 @@ CODE_SAMPLE
         $array = $property->props[0]->default;
 
         if ($array instanceof Array_ && $array->items === []) {
-            $class->stmts = array_filter($class->stmts, fn (Node $node) => $node !== $property);
+            $class->stmts = array_filter($class->stmts, static fn (Node $node) => $node !== $property);
         }
     }
 }

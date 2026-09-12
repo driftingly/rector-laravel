@@ -2,20 +2,17 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector;
+namespace RectorLaravel\Tests\Rector\FuncCall\UnlinkFuncCallToFileFacadeDeleteRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
-use RectorLaravel\Tests\Support\InteractsWithLaravelVersion;
 
-final class AddGenericReturnTypeToRelationsRectorOldGenericsTest extends AbstractRectorTestCase
+final class UnlinkFuncCallToFileFacadeDeleteRectorTest extends AbstractRectorTestCase
 {
-    use InteractsWithLaravelVersion;
-
     public static function provideData(): Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/OldGenerics');
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
     /**
@@ -30,10 +27,5 @@ final class AddGenericReturnTypeToRelationsRectorOldGenericsTest extends Abstrac
     public function provideConfigFilePath(): string
     {
         return __DIR__ . '/config/configured_rule.php';
-    }
-
-    public function version(): string
-    {
-        return '11.14.0';
     }
 }

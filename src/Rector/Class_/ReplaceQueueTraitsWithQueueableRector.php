@@ -10,6 +10,8 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
 use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\ReplaceQueueTraitsWithQueueableRector\ReplaceQueueTraitsWithQueueableRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -18,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see ReplaceQueueTraitsWithQueueableRectorTest
  */
-final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
+final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     private const string DISPATCHABLE_TRAIT = 'Illuminate\Foundation\Bus\Dispatchable';
 
@@ -38,6 +40,11 @@ final class ReplaceQueueTraitsWithQueueableRector extends AbstractRector
     ];
 
     public function __construct(private readonly BetterNodeFinder $betterNodeFinder) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=11.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

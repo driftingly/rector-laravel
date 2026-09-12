@@ -3,24 +3,32 @@
 namespace RectorLaravel\Rector\MethodCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Const_;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use Rector\TypeDeclaration\TypeInferer\ReturnTypeInferer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class ContainerBindConcreteWithClosureOnlyRector extends AbstractRector
+final class ContainerBindConcreteWithClosureOnlyRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         private readonly ReturnTypeInferer $returnTypeInferer,
         private readonly StaticTypeMapper $staticTypeMapper,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=12.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -54,7 +62,10 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?MethodCall
     {
-        if (! $this->isNames($node->name, ['bind', 'singleton', 'bindIf', 'singletonIf'])) {
+        // bindIf() and singletonIf() are left out on purpose: they pass the abstract
+        // straight to bound(), which uses it as an array offset, so a closure
+        // abstract fatals there
+        if (! $this->isNames($node->name, ['bind', 'singleton'])) {
             return null;
         }
 
@@ -66,13 +77,27 @@ CODE_SAMPLE
             return null;
         }
 
-        if (count($node->getArgs()) < 2) {
+        $abstractArg = $node->getArg('abstract', 0);
+        $concreteArg = $node->getArg('concrete', 1);
+        // singleton() has no $shared parameter, and passing one would be fatal
+        $sharedArg = $this->isName($node->name, 'bind')
+            ? $node->getArg('shared', 2)
+            : null;
+
+        if (! $abstractArg instanceof Arg || ! $concreteArg instanceof Arg) {
             return null;
         }
 
-        $type = $this->getType($node->getArgs()[0]->value);
-        $classString = $node->getArgs()[0]->value;
-        $concreteNode = $node->getArgs()[1]->value;
+        // getArg() cannot match a spread, and refuses a name that is not a parameter;
+        // rebuilding the call below would drop whatever it left behind
+        if (count(array_filter([$abstractArg, $concreteArg, $sharedArg])) !== count($node->getArgs())) {
+            return null;
+        }
+
+        $classString = $abstractArg->value;
+        $concreteNode = $concreteArg->value;
+
+        $type = $this->getType($classString);
 
         if ($classString instanceof Variable) {
             return null;
@@ -82,11 +107,6 @@ CODE_SAMPLE
             return null;
         }
         $abstractFromConcrete = $this->returnTypeInferer->inferFunctionLike($concreteNode);
-
-        if ($classString instanceof Const_
-        && $this->isName($classString, 'class')) {
-            return null;
-        }
 
         $abstractObjectType = $type->getClassStringObjectType();
 
@@ -102,9 +122,18 @@ CODE_SAMPLE
 
         $concreteNode->returnType = $returnTypeNode;
 
-        $args = $node->getArgs();
+        // the closure takes over the abstract position, so it must not stay named
+        $concreteArg->name = null;
 
-        $node->args = array_splice($args, 1);
+        $args = [$concreteArg];
+
+        if ($sharedArg instanceof Arg) {
+            // shared is no longer the third argument, so it has to be passed by name
+            $sharedArg->name ??= new Identifier('shared');
+            $args[] = $sharedArg;
+        }
+
+        $node->args = $args;
 
         return $node;
     }

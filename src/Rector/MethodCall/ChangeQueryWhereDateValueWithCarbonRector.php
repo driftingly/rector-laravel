@@ -15,6 +15,8 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector\ChangeQueryWhereDateValueWithCarbonRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -26,11 +28,16 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see ChangeQueryWhereDateValueWithCarbonRectorTest
  */
-final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector
+final class ChangeQueryWhereDateValueWithCarbonRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         private readonly ValueResolver $valueResolver,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=5.7');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

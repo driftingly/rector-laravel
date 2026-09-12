@@ -1,4 +1,4 @@
-# 127 Rules Overview
+# 131 Rules Overview
 
 ## AbortIfRector
 
@@ -98,23 +98,6 @@ Add generic return type to relations in child of `Illuminate\Database\Eloquent\M
 
  class User extends Model
  {
-+    /** @return HasMany<Account> */
-     public function accounts(): HasMany
-     {
-         return $this->hasMany(Account::class);
-     }
- }
-```
-
-<br>
-
-```diff
- use App\Account;
- use Illuminate\Database\Eloquent\Model;
- use Illuminate\Database\Eloquent\Relations\HasMany;
-
- class User extends Model
- {
 +    /** @return HasMany<Account, $this> */
      public function accounts(): HasMany
      {
@@ -166,6 +149,29 @@ Adds the HasFactory trait to Models.
 
 <br>
 
+## AddLegacyGenericReturnTypeToRelationsRector
+
+Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
+
+- class: [`RectorLaravel\Rector\ClassMethod\AddLegacyGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddLegacyGenericReturnTypeToRelationsRector.php)
+
+```diff
+ use App\Account;
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Relations\HasMany;
+
+ class User extends Model
+ {
++    /** @return HasMany<Account> */
+     public function accounts(): HasMany
+     {
+         return $this->hasMany(Account::class);
+     }
+ }
+```
+
+<br>
+
 ## AddMockConsoleOutputFalseToConsoleTestsRector
 
 Add "$this->mockConsoleOutput = false"; to console tests that work with output content
@@ -188,6 +194,29 @@ Add "$this->mockConsoleOutput = false"; to console tests that work with output c
      public function test(): void
      {
          $this->assertEquals('content', \trim((new Artisan())::output()));
+     }
+ }
+```
+
+<br>
+
+## AddNewGenericReturnTypeToRelationsRector
+
+Add generic return type to relations in child of `Illuminate\Database\Eloquent\Model`
+
+- class: [`RectorLaravel\Rector\ClassMethod\AddNewGenericReturnTypeToRelationsRector`](../src/Rector/ClassMethod/AddNewGenericReturnTypeToRelationsRector.php)
+
+```diff
+ use App\Account;
+ use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Relations\HasMany;
+
+ class User extends Model
+ {
++    /** @return HasMany<Account, $this> */
+     public function accounts(): HasMany
+     {
+         return $this->hasMany(Account::class);
      }
  }
 ```
@@ -436,23 +465,53 @@ Replace `(new \Illuminate\Testing\TestResponse)->assertStatus(200)` with `(new \
      public function testFoo()
      {
 -        $this->get('/')->assertStatus(200);
+-        $this->get('/')->assertStatus(201);
+-        $this->get('/')->assertStatus(202);
 -        $this->get('/')->assertStatus(204);
+-        $this->get('/')->assertStatus(301);
+-        $this->get('/')->assertStatus(302);
+-        $this->get('/')->assertStatus(304);
+-        $this->get('/')->assertStatus(307);
+-        $this->get('/')->assertStatus(308);
+-        $this->get('/')->assertStatus(400);
 -        $this->get('/')->assertStatus(401);
+-        $this->get('/')->assertStatus(402);
 -        $this->get('/')->assertStatus(403);
 -        $this->get('/')->assertStatus(404);
 -        $this->get('/')->assertStatus(405);
--        $this->get('/')->assertStatus(422);
+-        $this->get('/')->assertStatus(406);
+-        $this->get('/')->assertStatus(408);
+-        $this->get('/')->assertStatus(409);
 -        $this->get('/')->assertStatus(410);
+-        $this->get('/')->assertStatus(415);
+-        $this->get('/')->assertStatus(422);
+-        $this->get('/')->assertStatus(424);
+-        $this->get('/')->assertStatus(429);
 -        $this->get('/')->assertStatus(500);
 -        $this->get('/')->assertStatus(503);
 +        $this->get('/')->assertOk();
++        $this->get('/')->assertCreated();
++        $this->get('/')->assertAccepted();
 +        $this->get('/')->assertNoContent();
++        $this->get('/')->assertMovedPermanently();
++        $this->get('/')->assertFound();
++        $this->get('/')->assertNotModified();
++        $this->get('/')->assertTemporaryRedirect();
++        $this->get('/')->assertPermanentRedirect();
++        $this->get('/')->assertBadRequest();
 +        $this->get('/')->assertUnauthorized();
++        $this->get('/')->assertPaymentRequired();
 +        $this->get('/')->assertForbidden();
 +        $this->get('/')->assertNotFound();
 +        $this->get('/')->assertMethodNotAllowed();
-+        $this->get('/')->assertUnprocessable();
++        $this->get('/')->assertNotAcceptable();
++        $this->get('/')->assertRequestTimeout();
++        $this->get('/')->assertConflict();
 +        $this->get('/')->assertGone();
++        $this->get('/')->assertUnsupportedMediaType();
++        $this->get('/')->assertUnprocessable();
++        $this->get('/')->assertFailedDependency();
++        $this->get('/')->assertTooManyRequests();
 +        $this->get('/')->assertInternalServerError();
 +        $this->get('/')->assertServiceUnavailable();
      }
@@ -1120,6 +1179,21 @@ Changes the errorBag property to use the ErrorBag attribute
  {
 -    protected $errorBag = 'custom';
  }
+```
+
+<br>
+
+## EventStringToClassConstantRector
+
+Turns a string event name into a class constant, but only where the event dispatcher is used
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\StaticCall\EventStringToClassConstantRector`](../src/Rector/StaticCall/EventStringToClassConstantRector.php)
+
+```diff
+-\Illuminate\Support\Facades\Event::listen('auth.login', function () {});
++\Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Login::class, function () {});
 ```
 
 <br>
@@ -2411,6 +2485,19 @@ Changes the uniqueFor property to use the UniqueFor attribute
  {
 -    public $uniqueFor = 1800;
  }
+```
+
+<br>
+
+## UnlinkFuncCallToFileFacadeDeleteRector
+
+Use the File facade instead of the `unlink()` function.
+
+- class: [`RectorLaravel\Rector\FuncCall\UnlinkFuncCallToFileFacadeDeleteRector`](../src/Rector/FuncCall/UnlinkFuncCallToFileFacadeDeleteRector.php)
+
+```diff
+-unlink($path);
++\Illuminate\Support\Facades\File::delete($path);
 ```
 
 <br>

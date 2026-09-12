@@ -10,6 +10,8 @@ use PhpParser\Node\Stmt\Expression;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Reflection\ReflectionResolver;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\StaticCallAnalyzer;
 use RectorLaravel\Tests\Rector\ClassMethod\AddParentBootToModelClassMethodRector\AddParentBootToModelClassMethodRectorTest;
@@ -21,7 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see AddParentBootToModelClassMethodRectorTest
  */
-final class AddParentBootToModelClassMethodRector extends AbstractRector
+final class AddParentBootToModelClassMethodRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     private const string BOOT = 'boot';
 
@@ -30,6 +32,11 @@ final class AddParentBootToModelClassMethodRector extends AbstractRector
         private readonly ReflectionResolver $reflectionResolver,
         private readonly ReflectionProvider $reflectionProvider,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=5.7');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

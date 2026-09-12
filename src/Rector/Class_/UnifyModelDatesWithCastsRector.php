@@ -15,6 +15,8 @@ use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\NodeManipulator\ClassInsertManipulator;
 use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\UnifyModelDatesWithCastsRector\UnifyModelDatesWithCastsRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -27,13 +29,18 @@ use Webmozart\Assert\InvalidArgumentException;
  *
  * @see UnifyModelDatesWithCastsRectorTest
  */
-final class UnifyModelDatesWithCastsRector extends AbstractRector
+final class UnifyModelDatesWithCastsRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function __construct(
         private readonly ClassInsertManipulator $classInsertManipulator,
         private readonly ValueResolver $valueResolver,
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=10.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

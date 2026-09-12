@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Set;
 
+/**
+ * @deprecated Use RectorConfig::configure()->withComposerBased(laravel: true) instead, which registers the
+ *             upgrade rules for the installed Laravel version automatically.
+ */
 final class LaravelLevelSetList
 {
     public const string UP_TO_LARAVEL_51 = __DIR__ . '/../../config/sets/level/up-to-laravel-51.php';

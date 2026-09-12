@@ -11,6 +11,8 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -18,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see RectorLaravel\Tests\Rector\Class_\LivewireComponentComputedMethodToComputedAttributeRector\LivewireComponentComputedMethodToComputedAttributeRectorTest
  */
-final class LivewireComponentComputedMethodToComputedAttributeRector extends AbstractRector
+final class LivewireComponentComputedMethodToComputedAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     private const string COMPUTED_ATTRIBUTE = 'Livewire\Attributes\Computed';
 
@@ -27,6 +29,11 @@ final class LivewireComponentComputedMethodToComputedAttributeRector extends Abs
     private const string METHOD_PATTERN = '/^get(?\'methodName\'[\w]*)Property$/';
 
     public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('livewire/livewire', '>=3.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

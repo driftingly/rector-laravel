@@ -11,6 +11,8 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\New_\AddGuardToLoginEventRector\AddGuardToLoginEventRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -22,8 +24,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see AddGuardToLoginEventRectorTest
  */
-final class AddGuardToLoginEventRector extends AbstractRector
+final class AddGuardToLoginEventRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=5.7');
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(

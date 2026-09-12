@@ -17,6 +17,8 @@ use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector\AddExtendsAnnotationToModelFactoriesRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -27,7 +29,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see AddExtendsAnnotationToModelFactoriesRectorTest
  */
-final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
+final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     private const string EXTENDS_TAG_NAME = '@extends';
 
@@ -37,6 +39,11 @@ final class AddExtendsAnnotationToModelFactoriesRector extends AbstractRector
         private readonly DocBlockUpdater $docBlockUpdater,
         private readonly PhpDocInfoFactory $phpDocInfoFactory,
     ) {}
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=9.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

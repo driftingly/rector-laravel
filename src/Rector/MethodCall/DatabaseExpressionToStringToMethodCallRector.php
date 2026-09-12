@@ -7,6 +7,8 @@ namespace RectorLaravel\Rector\MethodCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\MethodCall\DatabaseExpressionToStringToMethodCallRector\DatabaseExpressionToStringToMethodCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -15,8 +17,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see DatabaseExpressionToStringToMethodCallRectorTest
  */
-final class DatabaseExpressionToStringToMethodCallRector extends AbstractRector
+final class DatabaseExpressionToStringToMethodCallRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('laravel/framework', '>=10.0');
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Convert DB Expression __toString() calls to getValue() method calls.', [

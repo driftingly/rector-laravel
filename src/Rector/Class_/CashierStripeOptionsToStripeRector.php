@@ -12,6 +12,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\CashierStripeOptionsToStripeRector\CashierStripeOptionsToStripeRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -22,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see CashierStripeOptionsToStripeRectorTest
  */
-final class CashierStripeOptionsToStripeRector extends AbstractRector
+final class CashierStripeOptionsToStripeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     public function getRuleDefinition(): RuleDefinition
     {
@@ -66,6 +68,14 @@ CODE_SAMPLE
     public function getNodeTypes(): array
     {
         return [Class_::class];
+    }
+
+    /**
+     * @return ComposerPackageConstraint
+     */
+    public function provideComposerPackageConstraint()
+    {
+        return new ComposerPackageConstraint('laravel/cashier', '>=13.0');
     }
 
     public function refactor(Node $node): ?Node
