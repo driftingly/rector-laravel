@@ -114,7 +114,7 @@ CODE_SAMPLE
         // Seed options from existing attribute args (properties take precedence below)
         $options = [];
         if ($hasExistingAttribute) {
-            foreach (['key', 'keyType', 'incrementing'] as $argName) {
+            foreach (['key', 'keyType', 'incrementing', 'timestamps', 'dateFormat'] as $argName) {
                 $existingArg = $this->getExistingAttributeArg($node, $tableAttributeClass, $argName);
                 if ($existingArg instanceof Expr) {
                     $options[$argName] = $existingArg;
