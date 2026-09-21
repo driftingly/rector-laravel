@@ -276,13 +276,6 @@ CODE_SAMPLE
             return null;
         }
 
-        // the name is all that may sit outside the braces, otherwise the parser
-        // and this rule are reading the signature differently
-        $withoutTokens = preg_replace('/\{\s*.*?\s*\}/', '', $signature);
-        if ($withoutTokens === null || trim($withoutTokens) !== $name) {
-            return null;
-        }
-
         $arguments = [];
         $options = [];
 
