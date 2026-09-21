@@ -141,7 +141,7 @@ CODE_SAMPLE
 
         return array_reduce(
             $parts,
-            fn (?Expr $carry, Expr $part) => $carry instanceof Expr ? new Concat($carry, $part) : $part,
+            static fn (?Expr $carry, Expr $part) => $carry instanceof Expr ? new Concat($carry, $part) : $part,
         );
     }
 

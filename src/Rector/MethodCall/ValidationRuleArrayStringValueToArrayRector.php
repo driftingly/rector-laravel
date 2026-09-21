@@ -127,7 +127,7 @@ CODE_SAMPLE
             $allRuleParts[] = $currentParts;
         }
 
-        return new Array_(array_map(fn ($parts) => new ArrayItem(new InterpolatedString($parts)), $allRuleParts));
+        return new Array_(array_map(static fn ($parts) => new ArrayItem(new InterpolatedString($parts)), $allRuleParts));
     }
 
     private function refactorCall(StaticCall|MethodCall $node): StaticCall|MethodCall|null

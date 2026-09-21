@@ -16,4 +16,4 @@ return Architecture::define()
             '*/Source/*',
         ],
     ])
-    ->withPreset(Preset::PSR4());
+    ->withPresets(Preset::PSR4(), Preset::CODEQUALITY());
