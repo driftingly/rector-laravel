@@ -54,8 +54,8 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
     private const string INPUT_OPTION_CLASS = 'Symfony\Component\Console\Input\InputOption';
 
     /**
-     * Once the signature is gone Laravel builds the definition from these
-     * instead, so an existing implementation would start taking effect.
+     * Once the signature is gone Laravel calls specifyParameters(), which builds
+     * the definition from these instead.
      *
      * @var string[]
      */
@@ -175,8 +175,9 @@ CODE_SAMPLE
 
             [$commandName, $arguments, $options] = $parsedSignature;
 
-            // whatever the signature defined would now come from these instead
-            if ($this->hasParameterMethod($node)) {
+            // an own implementation would have to absorb the signature's
+            // parameters, which is a merge this rule does not attempt
+            if ($this->hasOwnParameterMethod($node)) {
                 return null;
             }
         } else {
@@ -224,12 +225,16 @@ CODE_SAMPLE
             }
         }
 
-        if ($arguments !== []) {
-            $node->stmts[] = $this->createParametersMethod('getArguments', $arguments);
-        }
+        // only the signature suppressed specifyParameters(); on the name path it
+        // already runs, so the inherited methods must be left exactly as they are
+        if ($signatureProperty instanceof Property) {
+            if ($arguments !== [] || $this->inheritsParameterMethod($node, 'getArguments')) {
+                $node->stmts[] = $this->createParametersMethod('getArguments', $arguments);
+            }
 
-        if ($options !== []) {
-            $node->stmts[] = $this->createParametersMethod('getOptions', $options);
+            if ($options !== [] || $this->inheritsParameterMethod($node, 'getOptions')) {
+                $node->stmts[] = $this->createParametersMethod('getOptions', $options);
+            }
         }
 
         return $node;
@@ -464,7 +469,9 @@ CODE_SAMPLE
         );
 
         // one parameter per line, these get long quickly
-        $array->setAttribute(AttributeKey::NEWLINED_ARRAY_PRINT, true);
+        if ($parameters !== []) {
+            $array->setAttribute(AttributeKey::NEWLINED_ARRAY_PRINT, true);
+        }
 
         return new ClassMethod($methodName, [
             'flags' => Modifiers::PROTECTED,
@@ -473,26 +480,30 @@ CODE_SAMPLE
         ]);
     }
 
-    private function hasParameterMethod(Class_ $class): bool
+    private function hasOwnParameterMethod(Class_ $class): bool
     {
-        $classReflection = $this->reflectionResolver->resolveClassReflection($class);
-
         foreach (self::PARAMETER_METHODS as $methodName) {
             if ($class->getMethod($methodName) instanceof ClassMethod) {
-                return true;
-            }
-
-            if (! $classReflection instanceof ClassReflection || ! $classReflection->hasNativeMethod($methodName)) {
-                continue;
-            }
-
-            // the framework's own no-op implementations are not an override
-            if ($classReflection->getNativeMethod($methodName)->getDeclaringClass()->getName() !== self::COMMAND_CLASS) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Inherited from somewhere other than the framework's own no-op, so once
+     * specifyParameters() runs it would start taking effect. Declaring the
+     * method here shadows it and keeps the definition as the signature had it.
+     */
+    private function inheritsParameterMethod(Class_ $class, string $methodName): bool
+    {
+        $classReflection = $this->reflectionResolver->resolveClassReflection($class);
+        if (! $classReflection instanceof ClassReflection || ! $classReflection->hasNativeMethod($methodName)) {
+            return false;
+        }
+
+        return $classReflection->getNativeMethod($methodName)->getDeclaringClass()->getName() !== self::COMMAND_CLASS;
     }
 
     /**
