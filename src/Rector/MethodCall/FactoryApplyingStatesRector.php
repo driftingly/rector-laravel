@@ -8,7 +8,6 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\VariadicPlaceholder;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use RectorLaravel\AbstractRector;
@@ -68,11 +67,14 @@ CODE_SAMPLE
             return null;
         }
 
-        $var = $node->var;
         $states = $this->getStatesFromArgs($node->args);
+        if ($states === null) {
+            return null;
+        }
 
         Assert::allString($states);
 
+        $var = $node->var;
         foreach ($states as $state) {
             $var = $this->nodeFactory->createMethodCall($var, $state);
         }
@@ -81,15 +83,24 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  array<Arg|VariadicPlaceholder>  $args
-     * @return mixed[]
+     * @param  Node[]  $rawArgs
+     * @return mixed[]|null
      */
-    private function getStatesFromArgs(array $args): array
+    private function getStatesFromArgs(array $rawArgs): ?array
     {
-        if (count($args) === 1 && isset($args[0]) && $args[0] instanceof Arg) {
+        $args = [];
+        foreach ($rawArgs as $rawArg) {
+            if (! $rawArg instanceof Arg) {
+                return null;
+            }
+
+            $args[] = $rawArg;
+        }
+
+        if (count($args) === 1) {
             return (array) $this->valueResolver->getValue($args[0]->value);
         }
 
-        return array_map(fn ($arg) => $arg instanceof Arg ? $this->valueResolver->getValue($arg->value) : null, $args);
+        return array_map(fn (Arg $arg) => $this->valueResolver->getValue($arg->value), $args);
     }
 }
