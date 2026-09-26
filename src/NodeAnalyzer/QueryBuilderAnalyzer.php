@@ -8,7 +8,6 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use Rector\Exception\ShouldNotHappenException;
@@ -24,17 +23,17 @@ final readonly class QueryBuilderAnalyzer
 
     protected static function modelType(): ObjectType
     {
-        return new ObjectType('Illuminate\Database\Eloquent\Model');
+        return new ObjectType('Illuminate\\Database\\Eloquent\\Model');
     }
 
     protected static function queryBuilderType(): ObjectType
     {
-        return new ObjectType('Illuminate\Contracts\Database\Query\Builder');
+        return new ObjectType('Illuminate\\Contracts\\Database\\Query\\Builder');
     }
 
     protected static function eloquentQueryBuilderType(): ObjectType
     {
-        return new ObjectType('Illuminate\Database\Eloquent\Builder');
+        return new ObjectType('Illuminate\\Database\\Eloquent\\Builder');
     }
 
     /**
@@ -77,15 +76,12 @@ final readonly class QueryBuilderAnalyzer
             return false;
         }
 
-        /** @phpstan-ignore method.notFound */
-        $reflectionClass = $classType->getClassReflection();
-
-        /** @phpstan-ignore phpstanApi.instanceofAssumption */
-        if (! $reflectionClass instanceof ClassReflection) {
+        $classReflections = $classType->getObjectClassReflections();
+        if (count($classReflections) !== 1) {
             return false;
         }
 
-        return ! $reflectionClass->hasNativeMethod($methodName);
+        return ! $classReflections[0]->hasNativeMethod($methodName);
     }
 
     /**
