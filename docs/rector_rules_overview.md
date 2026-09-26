@@ -1,4 +1,4 @@
-# 130 Rules Overview
+# 131 Rules Overview
 
 ## AbortIfRector
 
@@ -422,6 +422,29 @@ Convert array access to `Arr::get()` method call, skips isset/empty checks, assi
  empty($array['key']);
  $array['key'] = 'value';
  unset($array['key']);
+```
+
+<br>
+
+## AssertDatabaseCountToAssertDatabaseEmptyRector
+
+Replace `assertDatabaseCount($table, 0)` with `assertDatabaseEmpty($table)`
+
+- class: [`RectorLaravel\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector`](../src/Rector/MethodCall/AssertDatabaseCountToAssertDatabaseEmptyRector.php)
+
+```diff
+ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
+ {
+     public function testFoo()
+     {
+-        $this->assertDatabaseCount('users', 0);
+-        $this->assertDatabaseCount(User::class, 0);
+-        $this->assertDatabaseCount('users', 0, 'other');
++        $this->assertDatabaseEmpty('users');
++        $this->assertDatabaseEmpty(User::class);
++        $this->assertDatabaseEmpty('users', 'other');
+     }
+ }
 ```
 
 <br>
@@ -1567,7 +1590,7 @@ Migrate to the new Model attributes syntax
 
 ## MinutesToSecondsInCacheRector
 
-Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Illuminate\Support\Facades\Cache
+Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and `Illuminate\Support\Facades\Cache`
 
 - class: [`RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector`](../src/Rector/StaticCall/MinutesToSecondsInCacheRector.php)
 
