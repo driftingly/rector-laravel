@@ -20,6 +20,7 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\PropertyItem;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -149,23 +150,13 @@ CODE_SAMPLE
         $signatureProperty = $node->getProperty('signature');
         $nameProperty = $node->getProperty('name');
 
-        // Laravel overwrites the name with the one parsed from the signature, so a
-        // name next to a signature is dead and goes away with it
-        $deadNameProperty = null;
-        if ($signatureProperty instanceof Property && $nameProperty instanceof Property) {
-            if (count($nameProperty->props) !== 1) {
-                return null;
-            }
-
-            $deadNameProperty = $nameProperty;
-        }
-
         $commandNameProperty = $signatureProperty ?? $nameProperty;
         if (! $commandNameProperty instanceof Property) {
             return null;
         }
 
-        $propertyValue = $this->matchStringDefault($commandNameProperty);
+        $commandNamePropertyName = $signatureProperty instanceof Property ? 'signature' : 'name';
+        $propertyValue = $this->matchStringDefault($commandNameProperty, $commandNamePropertyName);
         if (! $propertyValue instanceof String_) {
             return null;
         }
@@ -198,7 +189,7 @@ CODE_SAMPLE
         $description = null;
 
         if ($descriptionProperty instanceof Property) {
-            $description = $this->matchStringDefault($descriptionProperty);
+            $description = $this->matchStringDefault($descriptionProperty, 'description');
 
             if (! $description instanceof String_) {
                 // a description that cannot be moved is simply left where it is
@@ -209,14 +200,18 @@ CODE_SAMPLE
             }
         }
 
-        $removedProperties = $descriptionProperty instanceof Property
-            ? [$commandNameProperty, $descriptionProperty]
-            : [$commandNameProperty];
-        if ($deadNameProperty instanceof Property) {
-            $removedProperties[] = $deadNameProperty;
+        $removedPropertyNames = [$commandNamePropertyName];
+        if ($descriptionProperty instanceof Property) {
+            $removedPropertyNames[] = 'description';
         }
 
-        if ($this->isPropertyUsedInClass($node, $removedProperties)) {
+        // Laravel overwrites the name with the one parsed from the signature, so a
+        // name next to a signature is dead and goes away with it
+        if ($signatureProperty instanceof Property && $nameProperty instanceof Property) {
+            $removedPropertyNames[] = 'name';
+        }
+
+        if ($this->isPropertyUsedInClass($node, $removedPropertyNames)) {
             return null;
         }
 
@@ -229,11 +224,7 @@ CODE_SAMPLE
             new Attribute(new FullyQualified(self::AS_COMMAND_ATTRIBUTE), $args),
         ]);
 
-        foreach ($node->stmts as $key => $stmt) {
-            if (in_array($stmt, $removedProperties, true)) {
-                unset($node->stmts[$key]);
-            }
-        }
+        $this->removeProperties($node, $removedPropertyNames);
 
         // only the signature suppressed specifyParameters(); on the name path it
         // already runs, so the inherited methods must be left exactly as they are
@@ -255,17 +246,19 @@ CODE_SAMPLE
         return PhpVersionFeature::ATTRIBUTES;
     }
 
-    private function matchStringDefault(Property $property): ?String_
+    private function matchStringDefault(Property $property, string $propertyName): ?String_
     {
         if (! $property->isProtected() || $property->isStatic() || $property->isReadonly()) {
             return null;
         }
 
-        if (count($property->props) !== 1) {
-            return null;
+        $default = null;
+        foreach ($property->props as $propertyItem) {
+            if ($this->isName($propertyItem, $propertyName)) {
+                $default = $propertyItem->default;
+            }
         }
 
-        $default = $property->props[0]->default;
         if (! $default instanceof String_) {
             return null;
         }
@@ -517,22 +510,37 @@ CODE_SAMPLE
     }
 
     /**
-     * @param  Property[]  $properties
+     * @param  string[]  $propertyNames
      */
-    private function isPropertyUsedInClass(Class_ $class, array $properties): bool
+    private function isPropertyUsedInClass(Class_ $class, array $propertyNames): bool
     {
-        $propertyNames = [];
-        foreach ($properties as $property) {
-            $propertyName = $this->getName($property->props[0]);
-            if ($propertyName !== null) {
-                $propertyNames[] = $propertyName;
-            }
-        }
-
         return (bool) $this->betterNodeFinder->findFirst(
             $class->stmts,
             fn (Node $node): bool => $node instanceof PropertyFetch
                 && $this->isNames($node->name, $propertyNames)
         );
+    }
+
+    /**
+     * Removes the items one by one, so the rest of a grouped declaration stays.
+     *
+     * @param  string[]  $propertyNames
+     */
+    private function removeProperties(Class_ $class, array $propertyNames): void
+    {
+        foreach ($class->stmts as $key => $stmt) {
+            if (! $stmt instanceof Property) {
+                continue;
+            }
+
+            $stmt->props = array_values(array_filter(
+                $stmt->props,
+                fn (PropertyItem $propertyItem): bool => ! $this->isNames($propertyItem, $propertyNames)
+            ));
+
+            if ($stmt->props === []) {
+                unset($class->stmts[$key]);
+            }
+        }
     }
 }
