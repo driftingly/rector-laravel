@@ -12,11 +12,19 @@ use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\BinaryOp\BitwiseOr;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\NullsafePropertyFetch;
+use PhpParser\Node\Expr\PostDec;
+use PhpParser\Node\Expr\PostInc;
+use PhpParser\Node\Expr\PreDec;
+use PhpParser\Node\Expr\PreInc;
 use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
@@ -26,11 +34,11 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeVisitor;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
-use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Reflection\ReflectionResolver;
 use Rector\ValueObject\PhpVersionFeature;
@@ -64,6 +72,28 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
     private const array PARAMETER_METHODS = ['getArguments', 'getOptions'];
 
     /**
+     * Symfony keeps its own copy of these, which the attribute fills in, while
+     * Laravel's properties are left at their defaults.
+     *
+     * @var array<string, string>
+     */
+    private const array PROPERTY_GETTERS = ['name' => 'getName', 'description' => 'getDescription'];
+
+    /**
+     * Context flags of a property fetch that is written to rather than read.
+     *
+     * @var string[]
+     */
+    private const array WRITE_CONTEXT_ATTRIBUTES = [
+        AttributeKey::IS_BEING_ASSIGNED,
+        AttributeKey::IS_ASSIGN_OP_VAR,
+        AttributeKey::IS_ASSIGN_REF_EXPR,
+        AttributeKey::IS_BYREF_VAR,
+        AttributeKey::IS_ISSET_VAR,
+        AttributeKey::IS_UNSET_VAR,
+    ];
+
+    /**
      * A bare command name, e.g. "mail:send". Anything else - leftover braces or
      * alias pipes - cannot be expressed by the attribute name on its own.
      */
@@ -71,7 +101,6 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
 
     public function __construct(
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-        private readonly BetterNodeFinder $betterNodeFinder,
         private readonly ReflectionResolver $reflectionResolver,
         private readonly ValueResolver $valueResolver,
     ) {}
@@ -195,6 +224,7 @@ CODE_SAMPLE
 
         $descriptionProperty = $node->getProperty('description');
         $description = null;
+        $hasNullDescription = false;
 
         if ($descriptionProperty instanceof Property) {
             $description = $this->matchDefault($descriptionProperty, 'description');
@@ -203,6 +233,7 @@ CODE_SAMPLE
                 // a description that cannot be moved is simply left where it is
                 $descriptionProperty = null;
             } elseif ($this->valueResolver->isNull($description) || $this->valueResolver->isValue($description, '')) {
+                $hasNullDescription = $this->valueResolver->isNull($description);
                 // Laravel ignores an empty description, so keep it out of the attribute
                 $description = null;
             }
@@ -219,7 +250,17 @@ CODE_SAMPLE
             $removedPropertyNames[] = 'name';
         }
 
-        if ($this->isPropertyUsedInClass($node, $removedPropertyNames)) {
+        // the getter would hand back '' where the property held null
+        $readablePropertyNames = $hasNullDescription ? ['name'] : array_keys(self::PROPERTY_GETTERS);
+
+        // Laravel fills in the name from the signature even when it is not
+        // declared, so its reads depend on the signature as well
+        $fetchedPropertyNames = $signatureProperty instanceof Property
+            ? array_unique([...$removedPropertyNames, 'name'])
+            : $removedPropertyNames;
+
+        $propertyFetches = $this->matchGetterReplaceablePropertyFetches($node, $fetchedPropertyNames, $readablePropertyNames);
+        if ($propertyFetches === null) {
             return null;
         }
 
@@ -235,6 +276,7 @@ CODE_SAMPLE
         ]);
 
         $this->removeProperties($node, $removedPropertyNames);
+        $this->replacePropertyFetchesWithGetters($node, $propertyFetches);
 
         // only the signature suppressed specifyParameters(); on the name path it
         // already runs, so the inherited methods must be left exactly as they are
@@ -516,15 +558,96 @@ CODE_SAMPLE
     }
 
     /**
+     * Collects the reads of the removed properties, which keep working through
+     * the getters, or returns null when any other use is found.
+     *
+     * @param  string[]  $propertyNames
+     * @param  string[]  $readablePropertyNames
+     * @return PropertyFetch[]|null
+     */
+    private function matchGetterReplaceablePropertyFetches(Class_ $class, array $propertyNames, array $readablePropertyNames): ?array
+    {
+        $propertyFetches = [];
+        $isReplaceable = true;
+
+        $this->traverseNodesWithCallable($class->stmts, function (Node $node) use ($propertyNames, $readablePropertyNames, &$propertyFetches, &$isReplaceable): ?int {
+            // $this inside a nested class refers to that class
+            if ($node instanceof Class_) {
+                return NodeVisitor::DONT_TRAVERSE_CHILDREN;
+            }
+
+            if ($node instanceof PreInc || $node instanceof PreDec || $node instanceof PostInc || $node instanceof PostDec
+                || ($node instanceof ArrayDimFetch && $this->isWriteContext($node))) {
+                if ($this->isPropertyFetchOf($node->var, $propertyNames)) {
+                    $isReplaceable = false;
+                }
+
+                return null;
+            }
+
+            if ($node instanceof NullsafePropertyFetch && $this->isNames($node->name, $propertyNames)) {
+                $isReplaceable = false;
+
+                return null;
+            }
+
+            if (! $node instanceof PropertyFetch || ! $this->isNames($node->name, $propertyNames)) {
+                return null;
+            }
+
+            if (! $this->isNames($node->name, $readablePropertyNames)
+                || ! $node->var instanceof Variable
+                || ! $this->isName($node->var, 'this')
+                || $this->isWriteContext($node)) {
+                $isReplaceable = false;
+
+                return null;
+            }
+
+            $propertyFetches[] = $node;
+
+            return null;
+        });
+
+        return $isReplaceable ? $propertyFetches : null;
+    }
+
+    /**
+     * @param  PropertyFetch[]  $propertyFetches
+     */
+    private function replacePropertyFetchesWithGetters(Class_ $class, array $propertyFetches): void
+    {
+        $this->traverseNodesWithCallable($class->stmts, function (Node $node) use ($propertyFetches): ?MethodCall {
+            if (! $node instanceof PropertyFetch || ! in_array($node, $propertyFetches, true)) {
+                return null;
+            }
+
+            $propertyName = $this->getName($node->name);
+            if ($propertyName === null) {
+                return null;
+            }
+
+            return new MethodCall($node->var, self::PROPERTY_GETTERS[$propertyName]);
+        });
+    }
+
+    /**
      * @param  string[]  $propertyNames
      */
-    private function isPropertyUsedInClass(Class_ $class, array $propertyNames): bool
+    private function isPropertyFetchOf(Expr $expr, array $propertyNames): bool
     {
-        return (bool) $this->betterNodeFinder->findFirst(
-            $class->stmts,
-            fn (Node $node): bool => $node instanceof PropertyFetch
-                && $this->isNames($node->name, $propertyNames)
-        );
+        return $expr instanceof PropertyFetch && $this->isNames($expr->name, $propertyNames);
+    }
+
+    private function isWriteContext(Node $node): bool
+    {
+        foreach (self::WRITE_CONTEXT_ATTRIBUTES as $attribute) {
+            if ($node->getAttribute($attribute) === true) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

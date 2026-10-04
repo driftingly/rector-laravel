@@ -4,15 +4,17 @@ namespace RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeR
 
 use Illuminate\Console\Command;
 
-class SkipSignatureAndNameUsedInClass extends Command
+class SkipPropertyIssetInClass extends Command
 {
     protected $signature = 'mail:send';
 
-    protected $name = 'mail:dispatch';
+    protected $description = 'Send the queued emails';
 
     public function handle(): void
     {
-        echo $this->name;
+        if (isset($this->description)) {
+            echo 'described';
+        }
     }
 }
 

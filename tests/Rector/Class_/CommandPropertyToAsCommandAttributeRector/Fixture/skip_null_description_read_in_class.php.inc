@@ -4,15 +4,15 @@ namespace RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeR
 
 use Illuminate\Console\Command;
 
-class SkipPropertyUsedInClass extends Command
+class SkipNullDescriptionReadInClass extends Command
 {
     protected $signature = 'mail:send';
 
-    protected $description = 'Send the queued emails';
+    protected $description = null;
 
     public function handle(): void
     {
-        echo $this->description;
+        var_dump($this->description === null);
     }
 }
 
