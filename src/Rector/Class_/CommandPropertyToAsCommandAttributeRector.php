@@ -149,9 +149,15 @@ CODE_SAMPLE
         $signatureProperty = $node->getProperty('signature');
         $nameProperty = $node->getProperty('name');
 
-        // the signature silently wins over the name, so leave that call to a human
+        // Laravel overwrites the name with the one parsed from the signature, so a
+        // name next to a signature is dead and goes away with it
+        $deadNameProperty = null;
         if ($signatureProperty instanceof Property && $nameProperty instanceof Property) {
-            return null;
+            if (count($nameProperty->props) !== 1) {
+                return null;
+            }
+
+            $deadNameProperty = $nameProperty;
         }
 
         $commandNameProperty = $signatureProperty ?? $nameProperty;
@@ -206,6 +212,10 @@ CODE_SAMPLE
         $removedProperties = $descriptionProperty instanceof Property
             ? [$commandNameProperty, $descriptionProperty]
             : [$commandNameProperty];
+        if ($deadNameProperty instanceof Property) {
+            $removedProperties[] = $deadNameProperty;
+        }
+
         if ($this->isPropertyUsedInClass($node, $removedProperties)) {
             return null;
         }

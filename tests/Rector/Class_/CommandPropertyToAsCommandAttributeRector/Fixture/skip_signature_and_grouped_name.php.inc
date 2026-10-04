@@ -4,11 +4,11 @@ namespace RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeR
 
 use Illuminate\Console\Command;
 
-class SkipSignatureAndName extends Command
+class SkipSignatureAndGroupedName extends Command
 {
     protected $signature = 'mail:send';
 
-    protected $name = 'mail:dispatch';
+    protected $name = 'mail:dispatch', $queue = 'emails';
 }
 
 ?>
