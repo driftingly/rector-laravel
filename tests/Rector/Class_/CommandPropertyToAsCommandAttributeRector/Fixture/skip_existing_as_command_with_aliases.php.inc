@@ -5,12 +5,10 @@ namespace RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeR
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'mail:send')]
-class SkipExistingAsCommand extends Command
+#[AsCommand(name: 'mail:send', aliases: ['email:send'])]
+class SkipExistingAsCommandWithAliases extends Command
 {
     protected $signature = 'mail:send';
-
-    protected $description = 'Send the queued emails';
 }
 
 ?>

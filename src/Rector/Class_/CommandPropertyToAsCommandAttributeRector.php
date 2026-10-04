@@ -38,7 +38,6 @@ use PhpParser\NodeVisitor;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Reflection\ReflectionResolver;
 use Rector\ValueObject\PhpVersionFeature;
@@ -100,7 +99,6 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
     private const string COMMAND_NAME_REGEX = '#^[^\s:|]++(?::[^\s:|]++)*+$#';
 
     public function __construct(
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
         private readonly ReflectionResolver $reflectionResolver,
         private readonly ValueResolver $valueResolver,
     ) {}
@@ -174,7 +172,8 @@ CODE_SAMPLE
             return null;
         }
 
-        if ($this->phpAttributeAnalyzer->hasPhpAttribute($node, self::AS_COMMAND_ATTRIBUTE)) {
+        $asCommandAttribute = $this->findAsCommandAttribute($node);
+        if ($asCommandAttribute instanceof Attribute && ! $this->isMergeableAttribute($asCommandAttribute)) {
             return null;
         }
 
@@ -264,16 +263,25 @@ CODE_SAMPLE
             return null;
         }
 
-        $args = [new Arg(new String_($commandName), name: new Identifier('name'))];
-        if ($description instanceof Expr) {
-            // a property default is a constant expression, which an attribute
-            // argument accepts just the same
-            $args[] = new Arg($description, name: new Identifier('description'));
-        }
+        if ($asCommandAttribute instanceof Attribute) {
+            // the properties win over the attribute at runtime, though an empty
+            // description leaves the attribute's one in place
+            $this->setAttributeArg($asCommandAttribute, 'name', 0, new String_($commandName));
+            if ($description instanceof Expr) {
+                $this->setAttributeArg($asCommandAttribute, 'description', 1, $description);
+            }
+        } else {
+            $args = [new Arg(new String_($commandName), name: new Identifier('name'))];
+            if ($description instanceof Expr) {
+                // a property default is a constant expression, which an attribute
+                // argument accepts just the same
+                $args[] = new Arg($description, name: new Identifier('description'));
+            }
 
-        $node->attrGroups[] = new AttributeGroup([
-            new Attribute(new FullyQualified(self::AS_COMMAND_ATTRIBUTE), $args),
-        ]);
+            $node->attrGroups[] = new AttributeGroup([
+                new Attribute(new FullyQualified(self::AS_COMMAND_ATTRIBUTE), $args),
+            ]);
+        }
 
         $this->removeProperties($node, $removedPropertyNames);
         $this->replacePropertyFetchesWithGetters($node, $propertyFetches);
@@ -671,5 +679,68 @@ CODE_SAMPLE
                 unset($class->stmts[$key]);
             }
         }
+    }
+
+    private function findAsCommandAttribute(Class_ $class): ?Attribute
+    {
+        foreach ($class->attrGroups as $attrGroup) {
+            foreach ($attrGroup->attrs as $attribute) {
+                if ($this->isName($attribute->name, self::AS_COMMAND_ATTRIBUTE)) {
+                    return $attribute;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The name Laravel passes on makes Symfony ignore the attribute's aliases
+     * and hidden flag, which would start to apply once the properties are gone.
+     */
+    private function isMergeableAttribute(Attribute $attribute): bool
+    {
+        foreach ($attribute->args as $position => $arg) {
+            if ($arg->name instanceof Identifier
+                ? $this->isNames($arg->name, ['aliases', 'hidden'])
+                : $position >= 2) {
+                return false;
+            }
+        }
+
+        $nameArg = $this->findAttributeArg($attribute, 'name', 0);
+        if (! $nameArg instanceof Arg) {
+            return true;
+        }
+
+        $name = $this->valueResolver->getValue($nameArg->value);
+
+        return is_string($name) && ! str_contains($name, '|');
+    }
+
+    private function setAttributeArg(Attribute $attribute, string $name, int $position, Expr $expr): void
+    {
+        $arg = $this->findAttributeArg($attribute, $name, $position);
+        if (! $arg instanceof Arg) {
+            $attribute->args[] = new Arg($expr, name: new Identifier($name));
+
+            return;
+        }
+
+        $value = $this->valueResolver->getValue($arg->value);
+        if ($value === null || $value !== $this->valueResolver->getValue($expr)) {
+            $arg->value = $expr;
+        }
+    }
+
+    private function findAttributeArg(Attribute $attribute, string $name, int $position): ?Arg
+    {
+        foreach ($attribute->args as $argPosition => $arg) {
+            if ($arg->name instanceof Identifier ? $this->isName($arg->name, $name) : $argPosition === $position) {
+                return $arg;
+            }
+        }
+
+        return null;
     }
 }
