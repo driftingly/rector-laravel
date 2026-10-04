@@ -258,7 +258,7 @@ CODE_SAMPLE
 
     private function matchDefault(Property $property, string $propertyName): ?Expr
     {
-        if (! $property->isProtected() || $property->isStatic() || $property->isReadonly()) {
+        if (! $property->isProtected()) {
             return null;
         }
 
