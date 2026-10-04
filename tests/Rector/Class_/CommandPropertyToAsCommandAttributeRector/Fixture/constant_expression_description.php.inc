@@ -4,7 +4,7 @@ namespace RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeR
 
 use Illuminate\Console\Command;
 
-class NonStringDescriptionIsKept extends Command
+class ConstantExpressionDescription extends Command
 {
     protected $signature = 'mail:send';
 
@@ -21,11 +21,9 @@ namespace RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeR
 
 use Illuminate\Console\Command;
 
-#[\Symfony\Component\Console\Attribute\AsCommand(name: 'mail:send')]
-class NonStringDescriptionIsKept extends Command
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'mail:send', description: self::DEFAULT_DESCRIPTION)]
+class ConstantExpressionDescription extends Command
 {
-    protected $description = self::DEFAULT_DESCRIPTION;
-
     private const DEFAULT_DESCRIPTION = 'Send the queued emails';
 }
 

@@ -31,6 +31,7 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Reflection\ReflectionResolver;
 use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
@@ -72,6 +73,7 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly ReflectionResolver $reflectionResolver,
+        private readonly ValueResolver $valueResolver,
     ) {}
 
     /**
@@ -156,8 +158,14 @@ CODE_SAMPLE
         }
 
         $commandNamePropertyName = $signatureProperty instanceof Property ? 'signature' : 'name';
-        $propertyValue = $this->matchStringDefault($commandNameProperty, $commandNamePropertyName);
-        if (! $propertyValue instanceof String_) {
+        $propertyDefault = $this->matchDefault($commandNameProperty, $commandNamePropertyName);
+        if (! $propertyDefault instanceof Expr) {
+            return null;
+        }
+
+        // the value has to be known here, as the signature is parsed at this point
+        $propertyValue = $this->valueResolver->getValue($propertyDefault);
+        if (! is_string($propertyValue)) {
             return null;
         }
 
@@ -165,7 +173,7 @@ CODE_SAMPLE
         $options = [];
 
         if ($signatureProperty instanceof Property) {
-            $parsedSignature = $this->parseSignature($propertyValue->value);
+            $parsedSignature = $this->parseSignature($propertyValue);
             if ($parsedSignature === null) {
                 return null;
             }
@@ -178,7 +186,7 @@ CODE_SAMPLE
                 return null;
             }
         } else {
-            $commandName = $propertyValue->value;
+            $commandName = $propertyValue;
         }
 
         if (preg_match(self::COMMAND_NAME_REGEX, $commandName) !== 1) {
@@ -189,13 +197,13 @@ CODE_SAMPLE
         $description = null;
 
         if ($descriptionProperty instanceof Property) {
-            $description = $this->matchStringDefault($descriptionProperty, 'description');
+            $description = $this->matchDefault($descriptionProperty, 'description');
 
-            if (! $description instanceof String_) {
+            if (! $description instanceof Expr) {
                 // a description that cannot be moved is simply left where it is
                 $descriptionProperty = null;
-            } elseif ($description->value === '') {
-                // an empty description is the default, so keep it out of the attribute
+            } elseif ($this->valueResolver->isNull($description) || $this->valueResolver->isValue($description, '')) {
+                // Laravel ignores an empty description, so keep it out of the attribute
                 $description = null;
             }
         }
@@ -216,7 +224,9 @@ CODE_SAMPLE
         }
 
         $args = [new Arg(new String_($commandName), name: new Identifier('name'))];
-        if ($description instanceof String_) {
+        if ($description instanceof Expr) {
+            // a property default is a constant expression, which an attribute
+            // argument accepts just the same
             $args[] = new Arg($description, name: new Identifier('description'));
         }
 
@@ -246,7 +256,7 @@ CODE_SAMPLE
         return PhpVersionFeature::ATTRIBUTES;
     }
 
-    private function matchStringDefault(Property $property, string $propertyName): ?String_
+    private function matchDefault(Property $property, string $propertyName): ?Expr
     {
         if (! $property->isProtected() || $property->isStatic() || $property->isReadonly()) {
             return null;
@@ -259,11 +269,7 @@ CODE_SAMPLE
             }
         }
 
-        if (! $default instanceof String_) {
-            return null;
-        }
-
-        return new String_($default->value);
+        return $default;
     }
 
     /**
