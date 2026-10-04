@@ -65,7 +65,7 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
      * A bare command name, e.g. "mail:send". Anything else - leftover braces or
      * alias pipes - cannot be expressed by the attribute name on its own.
      */
-    private const string COMMAND_NAME_REGEX = '#^[^\s:|{}]++(?::[^\s:|{}]++)*+$#';
+    private const string COMMAND_NAME_REGEX = '#^[^\s:|]++(?::[^\s:|]++)*+$#';
 
     public function __construct(
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
