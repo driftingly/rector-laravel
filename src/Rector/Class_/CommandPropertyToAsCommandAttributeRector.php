@@ -63,14 +63,6 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
     private const string INPUT_OPTION_CLASS = 'Symfony\Component\Console\Input\InputOption';
 
     /**
-     * Once the signature is gone Laravel calls specifyParameters(), which builds
-     * the definition from these instead.
-     *
-     * @var string[]
-     */
-    private const array PARAMETER_METHODS = ['getArguments', 'getOptions'];
-
-    /**
      * Symfony keeps its own copy of these, which the attribute fills in, while
      * Laravel's properties are left at their defaults.
      *
@@ -208,9 +200,10 @@ CODE_SAMPLE
 
             [$commandName, $arguments, $options] = $parsedSignature;
 
-            // an own implementation would have to absorb the signature's
-            // parameters, which is a merge this rule does not attempt
-            if ($this->hasOwnParameterMethod($node)) {
+            // an own implementation is ignored while the signature is set and
+            // comes alive afterwards, so the signature's parameters are merged in
+            if (! $this->canMergeParameters($node, 'getArguments', $arguments)
+                || ! $this->canMergeParameters($node, 'getOptions', $options)) {
                 return null;
             }
         } else {
@@ -289,13 +282,8 @@ CODE_SAMPLE
         // only the signature suppressed specifyParameters(); on the name path it
         // already runs, so the inherited methods must be left exactly as they are
         if ($signatureProperty instanceof Property) {
-            if ($arguments !== [] || $this->inheritsParameterMethod($node, 'getArguments')) {
-                $node->stmts[] = $this->createParametersMethod('getArguments', $arguments);
-            }
-
-            if ($options !== [] || $this->inheritsParameterMethod($node, 'getOptions')) {
-                $node->stmts[] = $this->createParametersMethod('getOptions', $options);
-            }
+            $this->addParameters($node, 'getArguments', $arguments);
+            $this->addParameters($node, 'getOptions', $options);
         }
 
         return $node;
@@ -539,22 +527,162 @@ CODE_SAMPLE
         ]);
     }
 
-    private function hasOwnParameterMethod(Class_ $class): bool
+    /**
+     * @param  New_[]  $parameters
+     */
+    private function addParameters(Class_ $class, string $methodName, array $parameters): void
     {
-        foreach (self::PARAMETER_METHODS as $methodName) {
-            if ($class->getMethod($methodName) instanceof ClassMethod) {
-                return true;
+        $classMethod = $class->getMethod($methodName);
+        if (! $classMethod instanceof ClassMethod) {
+            if ($parameters !== [] || $this->inheritsParameterMethod($class, $methodName)) {
+                $class->stmts[] = $this->createParametersMethod($methodName, $parameters);
             }
+
+            return;
         }
 
-        return false;
+        $return = $this->matchArrayReturn($classMethod);
+        if ($parameters === [] || ! $return instanceof Return_ || ! $return->expr instanceof Array_) {
+            return;
+        }
+
+        // the signature's arguments keep their positions in front; a new array
+        // is printed from scratch, one parameter per line
+        $mergedArray = new Array_([
+            ...array_map(static fn (New_ $new): ArrayItem => new ArrayItem($new), $parameters),
+            ...$return->expr->items,
+        ], ['kind' => Array_::KIND_SHORT]);
+        $mergedArray->setAttribute(AttributeKey::NEWLINED_ARRAY_PRINT, true);
+
+        $return->expr = $mergedArray;
     }
 
     /**
-     * Inherited from somewhere other than the framework's own no-op, so once
-     * specifyParameters() runs it would start taking effect. Declaring the
-     * method here shadows it and keeps the definition as the signature had it.
+     * @param  New_[]  $parameters
      */
+    private function canMergeParameters(Class_ $class, string $methodName, array $parameters): bool
+    {
+        $classMethod = $class->getMethod($methodName);
+        if (! $classMethod instanceof ClassMethod || $parameters === []) {
+            return true;
+        }
+
+        $return = $this->matchArrayReturn($classMethod);
+        if (! $return instanceof Return_ || ! $return->expr instanceof Array_) {
+            return false;
+        }
+
+        $array = $return->expr;
+
+        if ($array->items === []) {
+            return true;
+        }
+
+        $isOption = $methodName === 'getOptions';
+
+        // Symfony refuses a required argument after an optional one and anything
+        // after an array one, so only required arguments can go in front
+        if (! $isOption) {
+            foreach ($parameters as $parameter) {
+                $mode = $parameter->args[1] ?? null;
+                if (! $mode instanceof Arg
+                    || ! $mode->value instanceof ClassConstFetch
+                    || ! $this->isName($mode->value->name, 'REQUIRED')) {
+                    return false;
+                }
+            }
+        }
+
+        $existingKeys = $this->resolveParameterKeys($array, $isOption);
+        if ($existingKeys === null) {
+            return false;
+        }
+
+        foreach ($parameters as $parameter) {
+            $keys = $this->resolveParameterKeys(new Array_([new ArrayItem($parameter)]), $isOption);
+            // Symfony refuses a name or shortcut that is already taken
+            if ($keys === null || array_intersect($keys, $existingKeys) !== []) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Matches a body that is nothing but a returned array literal.
+     */
+    private function matchArrayReturn(ClassMethod $classMethod): ?Return_
+    {
+        if ($classMethod->stmts === null || count($classMethod->stmts) !== 1) {
+            return null;
+        }
+
+        $return = $classMethod->stmts[0];
+        if (! $return instanceof Return_ || ! $return->expr instanceof Array_) {
+            return null;
+        }
+
+        return $return;
+    }
+
+    /**
+     * Resolves the names, and for options the shortcuts, that the returned
+     * definitions take, in the array form Laravel accepts or as objects.
+     *
+     * @return string[]|null
+     */
+    private function resolveParameterKeys(Array_ $array, bool $isOption): ?array
+    {
+        $keys = [];
+
+        foreach ($array->items as $item) {
+            if ($item->key instanceof Expr || $item->unpack || $item->byRef) {
+                return null;
+            }
+
+            if ($item->value instanceof Array_) {
+                $args = [];
+                foreach ($item->value->items as $definitionItem) {
+                    if ($definitionItem->key instanceof Expr || $definitionItem->unpack) {
+                        return null;
+                    }
+
+                    $args[] = new Arg($definitionItem->value);
+                }
+            } elseif ($item->value instanceof New_
+                && $this->isName($item->value->class, $isOption ? self::INPUT_OPTION_CLASS : self::INPUT_ARGUMENT_CLASS)) {
+                $args = $item->value->getArgs();
+            } else {
+                return null;
+            }
+
+            $nameArg = $this->findArg($args, 'name', 0);
+            $name = $nameArg instanceof Arg ? $this->valueResolver->getValue($nameArg->value) : null;
+            if (! is_string($name)) {
+                return null;
+            }
+
+            $keys[] = 'name:' . $name;
+
+            if (! $isOption) {
+                continue;
+            }
+
+            $shortcutArg = $this->findArg($args, 'shortcut', 1);
+            $shortcut = $shortcutArg instanceof Arg ? $this->valueResolver->getValue($shortcutArg->value) : null;
+            if ($shortcutArg instanceof Arg && ! $this->valueResolver->isNull($shortcutArg->value) && ! is_string($shortcut)) {
+                return null;
+            }
+
+            foreach (is_string($shortcut) ? explode('|', $shortcut) : [] as $shortcutPart) {
+                $keys[] = 'shortcut:' . ltrim($shortcutPart, '-');
+            }
+        }
+
+        return $keys;
+    }
+
     private function inheritsParameterMethod(Class_ $class, string $methodName): bool
     {
         $classReflection = $this->reflectionResolver->resolveClassReflection($class);
@@ -708,7 +836,7 @@ CODE_SAMPLE
             }
         }
 
-        $nameArg = $this->findAttributeArg($attribute, 'name', 0);
+        $nameArg = $this->findArg($attribute->args, 'name', 0);
         if (! $nameArg instanceof Arg) {
             return true;
         }
@@ -720,7 +848,7 @@ CODE_SAMPLE
 
     private function setAttributeArg(Attribute $attribute, string $name, int $position, Expr $expr): void
     {
-        $arg = $this->findAttributeArg($attribute, $name, $position);
+        $arg = $this->findArg($attribute->args, $name, $position);
         if (! $arg instanceof Arg) {
             $attribute->args[] = new Arg($expr, name: new Identifier($name));
 
@@ -733,9 +861,12 @@ CODE_SAMPLE
         }
     }
 
-    private function findAttributeArg(Attribute $attribute, string $name, int $position): ?Arg
+    /**
+     * @param  Arg[]  $args
+     */
+    private function findArg(array $args, string $name, int $position): ?Arg
     {
-        foreach ($attribute->args as $argPosition => $arg) {
+        foreach (array_values($args) as $argPosition => $arg) {
             if ($arg->name instanceof Identifier ? $this->isName($arg->name, $name) : $argPosition === $position) {
                 return $arg;
             }
