@@ -14,6 +14,7 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\VendorLocker\ParentClassMethodTypeOverrideGuard;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
@@ -33,6 +34,7 @@ final class ScopeNamedClassMethodToScopeAttributedClassMethodRector extends Abst
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
         private readonly ReflectionProvider $reflectionProvider,
         private readonly ScopeAnalyzer $scopeAnalyzer,
+        private readonly ParentClassMethodTypeOverrideGuard $parentClassMethodTypeOverrideGuard,
     ) {}
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
@@ -105,6 +107,10 @@ CODE_SAMPLE
             $newName = lcfirst(substr($name, 5));
 
             if ($classReflection->hasMethod($newName)) {
+                continue;
+            }
+
+            if ($this->parentClassMethodTypeOverrideGuard->hasParentClassMethod($classMethod)) {
                 continue;
             }
 
