@@ -1,4 +1,4 @@
-# 130 Rules Overview
+# 131 Rules Overview
 
 ## AbortIfRector
 
@@ -1993,6 +1993,35 @@ Changes the string or class const used for a service container make call
 -\Illuminate\Support\Facades\Application::make('encrypter')->encrypt('...');
 +app(Illuminate\Contracts\Encryption\Encrypter::class)->encrypt('...');
 +\Illuminate\Support\Facades\Application::make(Illuminate\Contracts\Encryption\Encrypter::class)->encrypt('...');
+```
+
+<br>
+
+## ReplaceTestAttributeWithPrefixedFunctionRector
+
+Replace the PHPUnit #[Test] attribute with a test prefixed method name
+
+- class: [`RectorLaravel\Rector\ClassMethod\ReplaceTestAttributeWithPrefixedFunctionRector`](../src/Rector/ClassMethod/ReplaceTestAttributeWithPrefixedFunctionRector.php)
+
+```diff
+ use PHPUnit\Framework\Attributes\Test;
+
+ class SomeTest extends \PHPUnit\Framework\TestCase
+ {
+-    #[Test]
+-    public function it_adds_numbers(): void
++    public function test_it_adds_numbers(): void
+     {
+         $this->assertSame(2, 1 + 1);
+     }
+
+-    #[Test]
+-    public function onePlusOneShouldBeTwo(): void
++    public function testOnePlusOneShouldBeTwo(): void
+     {
+         $this->assertSame(2, 1 + 1);
+     }
+ }
 ```
 
 <br>
