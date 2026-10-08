@@ -1,4 +1,4 @@
-# 130 Rules Overview
+# 131 Rules Overview
 
 ## AbortIfRector
 
@@ -1805,6 +1805,31 @@ refactors calls with the pre Laravel 11 methods for blueprint geometry columns
 ```diff
 -$blueprint->point('coordinates')->spatialIndex();
 +$blueprint->geometry('coordinates', 'point')->spatialIndex();
+```
+
+<br>
+
+## RemoveDefaultAuthorizeTrueFromFormRequestRector
+
+Remove the `authorize()` method from FormRequest classes when it only returns true, as `passesAuthorization()` defaults to true when the method does not exist
+
+- class: [`RectorLaravel\Rector\Class_\RemoveDefaultAuthorizeTrueFromFormRequestRector`](../src/Rector/Class_/RemoveDefaultAuthorizeTrueFromFormRequestRector.php)
+
+```diff
+ use Illuminate\Foundation\Http\FormRequest;
+
+ class StorePostRequest extends FormRequest
+ {
+-    public function authorize(): bool
+-    {
+-        return true;
+-    }
+-
+     public function rules(): array
+     {
+         return [];
+     }
+ }
 ```
 
 <br>

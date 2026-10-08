@@ -9,6 +9,7 @@ use RectorLaravel\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector;
 use RectorLaravel\Rector\ArrayDimFetch\SessionVariableToSessionFacadeRector;
 use RectorLaravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
 use RectorLaravel\Rector\Class_\AnonymousMigrationsRector;
+use RectorLaravel\Rector\Class_\RemoveDefaultAuthorizeTrueFromFormRequestRector;
 use RectorLaravel\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector;
 use RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector;
 use RectorLaravel\Rector\Expr\AppEnvironmentComparisonToParameterRector;
@@ -58,4 +59,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(EloquentOrderByToLatestOrOldestRector::class);
     $rectorConfig->rule(AppToResolveRector::class);
     $rectorConfig->rule(UnlinkFuncCallToFileFacadeDeleteRector::class);
+    $rectorConfig->rule(RemoveDefaultAuthorizeTrueFromFormRequestRector::class);
 };
