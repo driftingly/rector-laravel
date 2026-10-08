@@ -999,7 +999,7 @@ Dispatch non ShouldQueue jobs to dispatchSync
 
 ## DispatchToHelperFunctionsRector
 
-Use the event or dispatch helpers instead of the static dispatch method.
+Use the event, dispatch, or broadcast helpers instead of static dispatch or broadcast methods.
 
 - class: [`RectorLaravel\Rector\StaticCall\DispatchToHelperFunctionsRector`](../src/Rector/StaticCall/DispatchToHelperFunctionsRector.php)
 
@@ -1020,6 +1020,13 @@ Use the event or dispatch helpers instead of the static dispatch method.
 ```diff
 -ExampleJob::dispatchSync($email);
 +dispatch_sync(new ExampleJob($email));
+```
+
+<br>
+
+```diff
+-ExampleEvent::broadcast($email);
++broadcast(new ExampleEvent($email));
 ```
 
 <br>
