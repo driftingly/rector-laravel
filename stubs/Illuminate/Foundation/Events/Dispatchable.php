@@ -13,5 +13,5 @@ trait Dispatchable
 
     public static function dispatchUnless($boolean, ...$arguments) {}
 
-    public static function broadcast() {}
+    public static function broadcast(...$arguments) {}
 }
