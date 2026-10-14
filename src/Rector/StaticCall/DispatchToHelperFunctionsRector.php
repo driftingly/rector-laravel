@@ -32,7 +32,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Use the event or dispatch helpers instead of the static dispatch method.',
+            'Use the event, dispatch, or broadcast helpers instead of static dispatch or broadcast methods.',
             [
                 new CodeSample(
                     'ExampleEvent::dispatch($email);',
@@ -45,6 +45,10 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
                 new CodeSample(
                     'ExampleJob::dispatchSync($email);',
                     'dispatch_sync(new ExampleJob($email));'
+                ),
+                new CodeSample(
+                    'ExampleEvent::broadcast($email);',
+                    'broadcast(new ExampleEvent($email));'
                 ),
             ],
         );
@@ -65,7 +69,7 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
             return null;
         }
 
-        if (! $this->isName($node->name, 'dispatch') && ! $this->isName($node->name, 'dispatchSync')) {
+        if (! $this->isNames($node->name, ['dispatch', 'dispatchSync', 'broadcast'])) {
             return null;
         }
 
@@ -78,6 +82,14 @@ final class DispatchToHelperFunctionsRector extends AbstractRector
         $classReflection = $this->getClassReflection($node);
         if (! $classReflection instanceof ClassReflection) {
             return null;
+        }
+
+        if ($this->isName($node->name, 'broadcast')) {
+            if (! $this->usesEventDispatchable($classReflection)) {
+                return null;
+            }
+
+            return $this->createDispatchableCall($node, 'broadcast');
         }
 
         if ($this->usesBusDispatchable($classReflection)) {
