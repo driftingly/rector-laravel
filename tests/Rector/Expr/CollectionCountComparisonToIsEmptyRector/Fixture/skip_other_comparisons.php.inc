@@ -10,6 +10,7 @@ $collection->count() > 1;
 $collection->count() === 1;
 $collection->count() >= 0;
 $collection->count() > $threshold;
+$collection->sum() > 0;
 count($collection) > 0;
 (new ArrayObject([1]))->count() > 0;
 
