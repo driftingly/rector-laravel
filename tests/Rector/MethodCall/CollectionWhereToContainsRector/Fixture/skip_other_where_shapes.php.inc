@@ -10,6 +10,7 @@ $collection->where(...$arguments)->isNotEmpty();
 $collection->whereStrict('active', true)->isNotEmpty();
 $collection->whereIn('active', [true])->isEmpty();
 $collection->where('status', ...$rest)->isEmpty();
+$collection->isEmpty();
 $collection->where('active', true)->count();
 
 ?>
