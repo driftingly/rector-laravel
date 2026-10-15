@@ -1,4 +1,4 @@
-# 130 Rules Overview
+# 131 Rules Overview
 
 ## AbortIfRector
 
@@ -740,6 +740,24 @@ Changes model newCollection method to use the CollectedBy attribute
 -        return new UserCollection($models);
 -    }
  }
+```
+
+<br>
+
+## CollectionCountComparisonToIsEmptyRector
+
+Convert collection `count()` comparisons against 0 or 1 to `isEmpty()` or `isNotEmpty()`
+
+- class: [`RectorLaravel\Rector\Expr\CollectionCountComparisonToIsEmptyRector`](../src/Rector/Expr/CollectionCountComparisonToIsEmptyRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+ $collection = new Collection([1, 2, 3]);
+-$collection->count() > 0;
+-$collection->count() === 0;
++$collection->isNotEmpty();
++$collection->isEmpty();
 ```
 
 <br>
