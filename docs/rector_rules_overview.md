@@ -1,4 +1,4 @@
-# 130 Rules Overview
+# 131 Rules Overview
 
 ## AbortIfRector
 
@@ -740,6 +740,24 @@ Changes model newCollection method to use the CollectedBy attribute
 -        return new UserCollection($models);
 -    }
  }
+```
+
+<br>
+
+## CollectionWhereToContainsRector
+
+Convert `where()->isNotEmpty()` to `contains()` and `where()->isEmpty()` to `doesntContain()` on collections
+
+- class: [`RectorLaravel\Rector\MethodCall\CollectionWhereToContainsRector`](../src/Rector/MethodCall/CollectionWhereToContainsRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+ $collection = new Collection([['status' => 'open']]);
+-$collection->where('status', 'open')->isNotEmpty();
+-$collection->where('priority', '>', 3)->isEmpty();
++$collection->contains('status', 'open');
++$collection->doesntContain('priority', '>', 3);
 ```
 
 <br>
