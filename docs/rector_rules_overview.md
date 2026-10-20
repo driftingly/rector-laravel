@@ -744,6 +744,24 @@ Changes model newCollection method to use the CollectedBy attribute
 
 <br>
 
+## CollectionCountComparisonToIsEmptyRector
+
+Convert collection `count()` comparisons against 0 or 1 to `isEmpty()` or `isNotEmpty()`
+
+- class: [`RectorLaravel\Rector\Expr\CollectionCountComparisonToIsEmptyRector`](../src/Rector/Expr/CollectionCountComparisonToIsEmptyRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+ $collection = new Collection([1, 2, 3]);
+-$collection->count() > 0;
+-$collection->count() === 0;
++$collection->isNotEmpty();
++$collection->isEmpty();
+```
+
+<br>
+
 ## CollectsPropertyToCollectsAttributeRector
 
 Changes the collects property to use the Collects attribute
@@ -1030,7 +1048,7 @@ Dispatch non ShouldQueue jobs to dispatchSync
 
 ## DispatchToHelperFunctionsRector
 
-Use the event or dispatch helpers instead of the static dispatch method.
+Use the event, dispatch, or broadcast helpers instead of static dispatch or broadcast methods.
 
 - class: [`RectorLaravel\Rector\StaticCall\DispatchToHelperFunctionsRector`](../src/Rector/StaticCall/DispatchToHelperFunctionsRector.php)
 
@@ -1051,6 +1069,13 @@ Use the event or dispatch helpers instead of the static dispatch method.
 ```diff
 -ExampleJob::dispatchSync($email);
 +dispatch_sync(new ExampleJob($email));
+```
+
+<br>
+
+```diff
+-ExampleEvent::broadcast($email);
++broadcast(new ExampleEvent($email));
 ```
 
 <br>
