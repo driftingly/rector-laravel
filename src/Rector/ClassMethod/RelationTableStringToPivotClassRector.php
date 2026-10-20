@@ -30,10 +30,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RelationTableStringToPivotClassRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    public function __construct(
-        private readonly BetterNodeFinder $betterNodeFinder,
-        private readonly PivotClassAnalyzer $pivotClassAnalyzer,
-    ) {}
+    /**
+     * @readonly
+     */
+    private BetterNodeFinder $betterNodeFinder;
+    /**
+     * @readonly
+     */
+    private PivotClassAnalyzer $pivotClassAnalyzer;
+    public function __construct(BetterNodeFinder $betterNodeFinder, PivotClassAnalyzer $pivotClassAnalyzer)
+    {
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->pivotClassAnalyzer = $pivotClassAnalyzer;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {

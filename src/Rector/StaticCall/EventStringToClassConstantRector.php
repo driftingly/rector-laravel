@@ -34,7 +34,7 @@ final class EventStringToClassConstantRector extends AbstractRector implements C
      *
      * @var string[]
      */
-    private const array EVENT_NAME_METHODS = [
+    private const EVENT_NAME_METHODS = [
         'dispatch',
         'fire',
         'flush',
@@ -83,8 +83,9 @@ CODE_SAMPLE,
 
     /**
      * @param  StaticCall|MethodCall|FuncCall  $node
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\FuncCall|null
      */
-    public function refactor(Node $node): StaticCall|MethodCall|FuncCall|null
+    public function refactor(Node $node)
     {
         if (! $this->isEventDispatchingCall($node)) {
             return null;
@@ -111,7 +112,11 @@ CODE_SAMPLE,
         return $node;
     }
 
-    private function refactorArray(StaticCall|MethodCall|FuncCall $node, Array_ $array): StaticCall|MethodCall|FuncCall|null
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\FuncCall $node
+     * @return \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\FuncCall|null
+     */
+    private function refactorArray($node, Array_ $array)
     {
         $hasChanged = false;
 
@@ -153,7 +158,10 @@ CODE_SAMPLE,
         return null;
     }
 
-    private function isEventDispatchingCall(StaticCall|MethodCall|FuncCall $node): bool
+    /**
+     * @param \PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\FuncCall $node
+     */
+    private function isEventDispatchingCall($node): bool
     {
         if ($node instanceof FuncCall) {
             return $node->name instanceof Name && $this->isName($node->name, 'event');
@@ -167,10 +175,14 @@ CODE_SAMPLE,
             return false;
         }
 
-        [$callerNode, $className] = match (true) {
-            $node instanceof StaticCall => [$node->class, 'Illuminate\Support\Facades\Event'],
-            $node instanceof MethodCall => [$node->var, 'Illuminate\Contracts\Events\Dispatcher'],
-        };
+        switch (true) {
+            case $node instanceof StaticCall:
+                [$callerNode, $className] = [$node->class, 'Illuminate\Support\Facades\Event'];
+                break;
+            case $node instanceof MethodCall:
+                [$callerNode, $className] = [$node->var, 'Illuminate\Contracts\Events\Dispatcher'];
+                break;
+        }
 
         return $this->isObjectType($callerNode, new ObjectType($className));
     }
