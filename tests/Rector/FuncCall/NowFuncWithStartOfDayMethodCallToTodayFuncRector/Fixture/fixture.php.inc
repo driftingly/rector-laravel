@@ -8,6 +8,8 @@ class Fixture
     {
         $today = now()->startOfDay();
         $tomorrow = now()->startOfDay()->addDay();
+        $utcToday = now('UTC')->startOfDay();
+        $utcTomorrow = now(tz: 'UTC')->startOfDay()->addDay();
     }
 }
 
@@ -23,6 +25,8 @@ class Fixture
     {
         $today = today();
         $tomorrow = today()->addDay();
+        $utcToday = today('UTC');
+        $utcTomorrow = today(tz: 'UTC')->addDay();
     }
 }
 
