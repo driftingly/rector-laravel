@@ -11,6 +11,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
@@ -27,6 +28,7 @@ final class TablePropertyToTableAttributeRector extends AbstractRector implement
     public function __construct(
         private readonly TableAttributeFactory $tableAttributeFactory,
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
+        private readonly ValueResolver $valueResolver,
     ) {}
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
@@ -114,7 +116,7 @@ CODE_SAMPLE
         // Seed options from existing attribute args (properties take precedence below)
         $options = [];
         if ($hasExistingAttribute) {
-            foreach (['key', 'keyType', 'incrementing'] as $argName) {
+            foreach (['key', 'keyType', 'incrementing', 'timestamps', 'dateFormat'] as $argName) {
                 $existingArg = $this->getExistingAttributeArg($node, $tableAttributeClass, $argName);
                 if ($existingArg instanceof Expr) {
                     $options[$argName] = $existingArg;
@@ -125,7 +127,7 @@ CODE_SAMPLE
         $primaryKeyProperty = $node->getProperty('primaryKey');
         if ($primaryKeyProperty !== null && $primaryKeyProperty->isProtected()) {
             $primaryKeyValue = $this->getPropertyDefaultValue($primaryKeyProperty);
-            if ($primaryKeyValue instanceof Expr) {
+            if ($primaryKeyValue instanceof Expr && ! $this->valueResolver->isNull($primaryKeyValue)) {
                 $options['key'] = $primaryKeyValue;
             } else {
                 $primaryKeyProperty = null;
