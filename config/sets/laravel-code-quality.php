@@ -9,6 +9,7 @@ use RectorLaravel\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector;
 use RectorLaravel\Rector\ArrayDimFetch\SessionVariableToSessionFacadeRector;
 use RectorLaravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
 use RectorLaravel\Rector\Class_\AnonymousMigrationsRector;
+use RectorLaravel\Rector\Class_\RemoveDefaultAuthorizeTrueFromFormRequestRector;
 use RectorLaravel\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector;
 use RectorLaravel\Rector\ClassMethod\RelationTableStringToPivotClassRector;
 use RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector;
@@ -60,4 +61,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AppToResolveRector::class);
     $rectorConfig->rule(RelationTableStringToPivotClassRector::class);
     $rectorConfig->rule(UnlinkFuncCallToFileFacadeDeleteRector::class);
+    $rectorConfig->rule(RemoveDefaultAuthorizeTrueFromFormRequestRector::class);
 };

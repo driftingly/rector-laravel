@@ -40,6 +40,7 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Reflection\ReflectionResolver;
+use Rector\TypeDeclarationDocblocks\NodeFinder\ReturnNodeFinder;
 use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
@@ -93,6 +94,7 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver,
         private readonly ValueResolver $valueResolver,
+        private readonly ReturnNodeFinder $returnNodeFinder,
     ) {}
 
     /**
@@ -618,8 +620,8 @@ CODE_SAMPLE
             return null;
         }
 
-        $return = $classMethod->stmts[0];
-        if (! $return instanceof Return_ || ! $return->expr instanceof Array_) {
+        $return = $this->returnNodeFinder->findOnlyReturnWithExpr($classMethod);
+        if (! $return?->expr instanceof Array_) {
             return null;
         }
 
