@@ -8,13 +8,11 @@ class SkipWithLogicRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $this->prepare();
+        if ($this->user() === null) {
+            return false;
+        }
 
         return true;
-    }
-
-    private function prepare(): void
-    {
     }
 }
 

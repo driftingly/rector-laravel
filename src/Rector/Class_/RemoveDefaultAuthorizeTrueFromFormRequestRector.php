@@ -114,8 +114,7 @@ CODE_SAMPLE
 
     private function isReturningOnlyTrue(ClassMethod $classMethod): bool
     {
-        // any other statement could be a side effect that removing the method would drop
-        if ($classMethod->params !== [] || $classMethod->stmts === null || count($classMethod->stmts) !== 1) {
+        if ($classMethod->params !== []) {
             return false;
         }
 
