@@ -54,6 +54,6 @@ CODE_SAMPLE
             return null;
         }
 
-        return $this->nodeFactory->createFuncCall('today');
+        return $this->nodeFactory->createFuncCall('today', $node->var->args);
     }
 }
