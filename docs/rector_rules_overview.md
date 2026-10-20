@@ -1623,7 +1623,7 @@ Migrate to the new Model attributes syntax
 
 ## MinutesToSecondsInCacheRector
 
-Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Illuminate\Support\Facades\Cache
+Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and `Illuminate\Support\Facades\Cache`
 
 - class: [`RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector`](../src/Rector/StaticCall/MinutesToSecondsInCacheRector.php)
 
@@ -1854,6 +1854,21 @@ refactors calls with the pre Laravel 11 methods for blueprint geometry columns
 ```diff
 -$blueprint->point('coordinates')->spatialIndex();
 +$blueprint->geometry('coordinates', 'point')->spatialIndex();
+```
+
+<br>
+
+## RelationTableStringToPivotClassRector
+
+Changes the pivot table name of a many to many relation to the pivot model class.
+
+This is not purely a naming change: the framework applies a pivot class given as the table as if `using()` had been called, so the relation's pivot instances gain the class's casts, accessors, `$timestamps` and `$incrementing`.
+
+- class: [`RectorLaravel\Rector\ClassMethod\RelationTableStringToPivotClassRector`](../src/Rector/ClassMethod/RelationTableStringToPivotClassRector.php)
+
+```diff
+-$this->belongsToMany(Tag::class, 'post_tag');
++$this->belongsToMany(Tag::class, \App\Models\PostTag::class);
 ```
 
 <br>
