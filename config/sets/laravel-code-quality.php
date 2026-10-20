@@ -10,6 +10,7 @@ use RectorLaravel\Rector\ArrayDimFetch\SessionVariableToSessionFacadeRector;
 use RectorLaravel\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector;
 use RectorLaravel\Rector\Class_\AnonymousMigrationsRector;
 use RectorLaravel\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector;
+use RectorLaravel\Rector\ClassMethod\RelationTableStringToPivotClassRector;
 use RectorLaravel\Rector\Coalesce\ApplyDefaultInsteadOfNullCoalesceRector;
 use RectorLaravel\Rector\Expr\AppEnvironmentComparisonToParameterRector;
 use RectorLaravel\Rector\Expr\SubStrToStartsWithOrEndsWithStaticMethodCallRector\SubStrToStartsWithOrEndsWithStaticMethodCallRector;
@@ -57,5 +58,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NotFilledBlankFuncCallToBlankFilledFuncCallRector::class);
     $rectorConfig->rule(EloquentOrderByToLatestOrOldestRector::class);
     $rectorConfig->rule(AppToResolveRector::class);
+    $rectorConfig->rule(RelationTableStringToPivotClassRector::class);
     $rectorConfig->rule(UnlinkFuncCallToFileFacadeDeleteRector::class);
 };
