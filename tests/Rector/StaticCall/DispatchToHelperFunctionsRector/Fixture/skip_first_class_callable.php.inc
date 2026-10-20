@@ -8,3 +8,4 @@ use RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\Source
 TestJob::dispatch(...);
 TestJob::dispatchSync(...);
 TestEvent::dispatch(...);
+TestEvent::broadcast(...);
