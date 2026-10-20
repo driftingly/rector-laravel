@@ -135,19 +135,17 @@ CODE_SAMPLE
             return true;
         }
 
-        $parentClassReflection = $classReflection->getParentClass();
-        if ($parentClassReflection instanceof ClassReflection && $parentClassReflection->hasNativeMethod(self::AUTHORIZE)) {
+        $prototypeClassReflection = $classReflection->getNativeMethod(self::AUTHORIZE)
+            ->getPrototype()
+            ->getDeclaringClass();
+
+        if ($prototypeClassReflection->getName() !== $classReflection->getName()) {
             return true;
         }
 
+        // trait methods are copied into the class, so they are not part of the prototype chain
         foreach ($classReflection->getTraits(true) as $traitReflection) {
             if ($traitReflection->hasNativeMethod(self::AUTHORIZE)) {
-                return true;
-            }
-        }
-
-        foreach ($classReflection->getInterfaces() as $interfaceReflection) {
-            if ($interfaceReflection->hasNativeMethod(self::AUTHORIZE)) {
                 return true;
             }
         }
