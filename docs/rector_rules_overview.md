@@ -1,4 +1,4 @@
-# 135 Rules Overview
+# 136 Rules Overview
 
 ## AbortIfRector
 
@@ -868,6 +868,23 @@ Changes model connection property to use the Connection attribute
  {
 -    protected $connection = 'sqlite';
  }
+```
+
+<br>
+
+## ContainerArrayAccessToMethodCallRector
+
+Change array access on the container to the matching method call, as the contract does not extend ArrayAccess
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\ContainerArrayAccessToMethodCallRector`](../src/Rector/ArrayDimFetch/ContainerArrayAccessToMethodCallRector.php)
+
+```diff
+-$container['foo'];
+-$container['foo'] = 'Foo';
+-isset($container['foo']);
++$container->make('foo');
++$container->bind('foo', 'Foo');
++$container->bound('foo');
 ```
 
 <br>

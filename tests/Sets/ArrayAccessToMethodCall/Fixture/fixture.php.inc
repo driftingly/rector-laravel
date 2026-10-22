@@ -2,6 +2,12 @@
 
 namespace RectorLaravel\Tests\Sets\ArrayAccessToMethodCall;
 
+$app = new \Illuminate\Foundation\Application();
+$app['foo'];
+$app['foo'] = 'Foo';
+isset($app['foo']);
+unset($app['foo']); // skipped
+
 $config = new \Illuminate\Config\Repository();
 $config['app.name'];
 $config['app.name'] = 'Foo';
@@ -19,6 +25,12 @@ unset($cache['app.name']);
 <?php
 
 namespace RectorLaravel\Tests\Sets\ArrayAccessToMethodCall;
+
+$app = new \Illuminate\Foundation\Application();
+$app->make('foo');
+$app->bind('foo', 'Foo');
+$app->bound('foo');
+unset($app['foo']); // skipped
 
 $config = new \Illuminate\Config\Repository();
 $config->get('app.name');
