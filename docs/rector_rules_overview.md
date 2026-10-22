@@ -1,4 +1,4 @@
-# 134 Rules Overview
+# 136 Rules Overview
 
 ## AbortIfRector
 
@@ -868,6 +868,23 @@ Changes model connection property to use the Connection attribute
  {
 -    protected $connection = 'sqlite';
  }
+```
+
+<br>
+
+## ContainerArrayAccessToMethodCallRector
+
+Change array access on the container to the matching method call, as the contract does not extend ArrayAccess
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\ContainerArrayAccessToMethodCallRector`](../src/Rector/ArrayDimFetch/ContainerArrayAccessToMethodCallRector.php)
+
+```diff
+-$container['foo'];
+-$container['foo'] = 'Foo';
+-isset($container['foo']);
++$container->make('foo');
++$container->bind('foo', 'Foo');
++$container->bound('foo');
 ```
 
 <br>
@@ -2118,6 +2135,25 @@ Change if report to report_if
 -}
 +report_if($condition, new Exception());
 +report_unless($condition, new Exception());
+```
+
+<br>
+
+## RepositoryArrayAccessToMethodCallRector
+
+Change array access on a config or cache repository to the matching method call, as the contracts do not extend ArrayAccess
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector`](../src/Rector/ArrayDimFetch/RepositoryArrayAccessToMethodCallRector.php)
+
+```diff
+-$config['app.name'];
+-$config['app.name'] = 'Foo';
+-isset($config['app.name']);
+-unset($config['app.name']);
++$config->get('app.name');
++$config->set('app.name', 'Foo');
++$config->has('app.name');
++$config->set('app.name');
 ```
 
 <br>
