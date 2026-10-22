@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace RectorLaravel\Rector\FuncCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -14,8 +13,10 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Exception\ShouldNotHappenException;
+use Rector\Naming\Naming\PropertyNaming;
+use Rector\NodeManipulator\ClassDependencyManipulator;
 use Rector\NodeTypeResolver\TypeAnalyzer\ArrayTypeAnalyzer;
-use Rector\Transform\NodeAnalyzer\FuncCallStaticCallToMethodCallAnalyzer;
+use Rector\PostRector\ValueObject\PropertyMetadata;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface;
 use RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector\ArgumentFuncCallToMethodCallRectorTest;
@@ -37,7 +38,8 @@ final class ArgumentFuncCallToMethodCallRector extends AbstractRector implements
 
     public function __construct(
         private readonly ArrayTypeAnalyzer $arrayTypeAnalyzer,
-        private readonly FuncCallStaticCallToMethodCallAnalyzer $funcCallStaticCallToMethodCallAnalyzer
+        private readonly ClassDependencyManipulator $classDependencyManipulator,
+        private readonly PropertyNaming $propertyNaming
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -108,7 +110,6 @@ CODE_SAMPLE
 
             $this->traverseNodesWithCallable($classMethod, function (Node $node) use (
                 $class,
-                $classMethod,
                 &$hasChanged
             ): ?Node {
                 if (! $node instanceof FuncCall) {
@@ -121,29 +122,21 @@ CODE_SAMPLE
                     }
 
                     if ($argumentFuncCallToMethodCall instanceof ArgumentFuncCallToMethodCall) {
-                        $expr = $this->funcCallStaticCallToMethodCallAnalyzer->matchTypeProvidingExpr(
-                            $class,
-                            $classMethod,
-                            new ObjectType($argumentFuncCallToMethodCall->getClass()),
-                        );
+                        $propertyFetch = $this->resolvePropertyFetch($class, $argumentFuncCallToMethodCall->getClass());
 
-                        if (! $expr instanceof Expr) {
+                        if (! $propertyFetch instanceof PropertyFetch) {
                             return null;
                         }
 
                         $hasChanged = true;
 
-                        return $this->refactorFuncCallToMethodCall($node, $argumentFuncCallToMethodCall, $expr);
+                        return $this->refactorFuncCallToMethodCall($node, $argumentFuncCallToMethodCall, $propertyFetch);
                     }
 
                     if ($argumentFuncCallToMethodCall instanceof ArrayFuncCallToMethodCall) {
-                        $expr = $this->funcCallStaticCallToMethodCallAnalyzer->matchTypeProvidingExpr(
-                            $class,
-                            $classMethod,
-                            new ObjectType($argumentFuncCallToMethodCall->getClass()),
-                        );
+                        $propertyFetch = $this->resolvePropertyFetch($class, $argumentFuncCallToMethodCall->getClass());
 
-                        if (! $expr instanceof Expr) {
+                        if (! $propertyFetch instanceof PropertyFetch) {
                             return null;
                         }
 
@@ -152,7 +145,7 @@ CODE_SAMPLE
                         return $this->refactorArrayFunctionToMethodCall(
                             $node,
                             $argumentFuncCallToMethodCall,
-                            $expr
+                            $propertyFetch
                         );
                     }
                 }
@@ -181,8 +174,8 @@ CODE_SAMPLE
     public function refactorFuncCallToMethodCall(
         FuncCall $funcCall,
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        MethodCall|PropertyFetch|Variable $expr
-    ): MethodCall|PropertyFetch|Variable {
+        PropertyFetch $expr
+    ): MethodCall|PropertyFetch {
         if ($funcCall->args === []) {
             return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $expr);
         }
@@ -199,7 +192,7 @@ CODE_SAMPLE
     private function refactorArrayFunctionToMethodCall(
         FuncCall $funcCall,
         ArrayFuncCallToMethodCall $arrayFuncCallToMethodCall,
-        MethodCall|PropertyFetch|Variable $expr
+        PropertyFetch $expr
     ): ?Node {
         if ($funcCall->getArgs() === []) {
             return $expr;
@@ -218,12 +211,26 @@ CODE_SAMPLE
 
     private function refactorEmptyFuncCallArgs(
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        MethodCall|PropertyFetch|Variable $expr
-    ): MethodCall|PropertyFetch|Variable {
+        PropertyFetch $expr
+    ): MethodCall|PropertyFetch {
         if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
             return $this->nodeFactory->createMethodCall($expr, $argumentFuncCallToMethodCall->getMethodIfNoArgs());
         }
 
         return $expr;
+    }
+
+    private function resolvePropertyFetch(Class_ $class, string $className): ?PropertyFetch
+    {
+        // cannot add constructor dependency when nearest parent constructor is final
+        if ($this->classDependencyManipulator->hasFinalParentConstructor($class)) {
+            return null;
+        }
+
+        $objectType = new ObjectType($className);
+        $propertyName = $this->propertyNaming->fqnToVariableName($objectType);
+        $this->classDependencyManipulator->addConstructorDependency($class, new PropertyMetadata($propertyName, $objectType));
+
+        return new PropertyFetch(new Variable('this'), $propertyName);
     }
 }
