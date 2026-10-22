@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayAccessToMethodCallRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector\Fixture;
 
 use Illuminate\Contracts\Config\Repository;
 
@@ -13,7 +13,7 @@ function readConfig(Repository $config): void
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayAccessToMethodCallRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector\Fixture;
 
 use Illuminate\Contracts\Config\Repository;
 

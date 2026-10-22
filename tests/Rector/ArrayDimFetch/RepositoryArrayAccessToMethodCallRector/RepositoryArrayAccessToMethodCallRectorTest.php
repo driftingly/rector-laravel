@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayAccessToMethodCallRector;
+namespace RectorLaravel\Tests\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class ArrayAccessToMethodCallRectorTest extends AbstractRectorTestCase
+final class RepositoryArrayAccessToMethodCallRectorTest extends AbstractRectorTestCase
 {
     public static function provideData(): Iterator
     {

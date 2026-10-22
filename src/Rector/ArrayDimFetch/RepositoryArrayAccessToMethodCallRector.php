@@ -15,31 +15,30 @@ use PhpParser\Node\Stmt\Unset_;
 use PHPStan\Type\ObjectType;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeVisitor\ArrayDimFetchContextNodeVisitor;
-use RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayAccessToMethodCallRector\ArrayAccessToMethodCallRectorTest;
+use RectorLaravel\Tests\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector\RepositoryArrayAccessToMethodCallRectorTest;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see ArrayAccessToMethodCallRectorTest
+ * @see RepositoryArrayAccessToMethodCallRectorTest
  */
-final class ArrayAccessToMethodCallRector extends AbstractRector
+final class RepositoryArrayAccessToMethodCallRector extends AbstractRector
 {
     /**
-     * Laravel contracts that drop the magic array access of their concrete classes,
-     * mapped to the methods that replace read / assign / isset / unset.
+     * Config and cache repository contracts do not expose array access, only their concrete
+     * classes do. Mapped to the methods that replace read / assign / isset / unset.
      *
-     * @var array<string, array{0: string, 1: string, 2: string, 3: string|null}>
+     * @var array<string, array{0: string, 1: string, 2: string, 3: string}>
      */
     private const array TYPE_TO_METHODS = [
         'Illuminate\Contracts\Config\Repository' => ['get', 'set', 'has', 'set'],
         'Illuminate\Contracts\Cache\Repository' => ['get', 'set', 'has', 'forget'],
-        'Illuminate\Contracts\Container\Container' => ['make', 'bind', 'bound', null],
     ];
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Change array access on config, cache and container to the matching method call, as the contracts no longer extend ArrayAccess',
+            'Change array access on a config or cache repository to the matching method call, as the contracts do not extend ArrayAccess',
             [new CodeSample(
                 <<<'CODE_SAMPLE'
 $config['app.name'];
@@ -159,7 +158,7 @@ CODE_SAMPLE
         }
 
         $methods = $this->matchMethods($var->var);
-        if ($methods === null || $methods[3] === null) {
+        if ($methods === null) {
             return null;
         }
 
@@ -167,7 +166,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return array{0: string, 1: string, 2: string, 3: string|null}|null
+     * @return array{0: string, 1: string, 2: string, 3: string}|null
      */
     private function matchMethods(Expr $expr): ?array
     {

@@ -402,25 +402,6 @@ Move help facade-like function calls to constructor injection
 
 <br>
 
-## ArrayAccessToMethodCallRector
-
-Change array access on config, cache and container to the matching method call, as the contracts no longer extend ArrayAccess
-
-- class: [`RectorLaravel\Rector\ArrayDimFetch\ArrayAccessToMethodCallRector`](../src/Rector/ArrayDimFetch/ArrayAccessToMethodCallRector.php)
-
-```diff
--$config['app.name'];
--$config['app.name'] = 'Foo';
--isset($config['app.name']);
--unset($config['app.name']);
-+$config->get('app.name');
-+$config->set('app.name', 'Foo');
-+$config->has('app.name');
-+$config->set('app.name');
-```
-
-<br>
-
 ## ArrayToArrGetRector
 
 Convert array access to `Arr::get()` method call, skips isset/empty checks, assignments, unset, and null coalesce with throw expressions
@@ -2137,6 +2118,25 @@ Change if report to report_if
 -}
 +report_if($condition, new Exception());
 +report_unless($condition, new Exception());
+```
+
+<br>
+
+## RepositoryArrayAccessToMethodCallRector
+
+Change array access on a config or cache repository to the matching method call, as the contracts do not extend ArrayAccess
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector`](../src/Rector/ArrayDimFetch/RepositoryArrayAccessToMethodCallRector.php)
+
+```diff
+-$config['app.name'];
+-$config['app.name'] = 'Foo';
+-isset($config['app.name']);
+-unset($config['app.name']);
++$config->get('app.name');
++$config->set('app.name', 'Foo');
++$config->has('app.name');
++$config->set('app.name');
 ```
 
 <br>

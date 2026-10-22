@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayAccessToMethodCallRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector\Fixture;
 
 $config = new \Illuminate\Config\Repository();
 $config['app.name'];
@@ -14,17 +14,11 @@ $cache['app.name'] = 'Foo';
 isset($cache['app.name']);
 unset($cache['app.name']);
 
-$container = new \Illuminate\Container\Container();
-$container['foo'];
-$container['foo'] = 'Foo';
-isset($container['foo']);
-unset($container['foo']); // skipped, no unset method
-
 ?>
 -----
 <?php
 
-namespace RectorLaravel\Tests\Rector\ArrayDimFetch\ArrayAccessToMethodCallRector\Fixture;
+namespace RectorLaravel\Tests\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector\Fixture;
 
 $config = new \Illuminate\Config\Repository();
 $config->get('app.name');
@@ -37,11 +31,5 @@ $cache->get('app.name');
 $cache->set('app.name', 'Foo');
 $cache->has('app.name');
 $cache->forget('app.name');
-
-$container = new \Illuminate\Container\Container();
-$container->make('foo');
-$container->bind('foo', 'Foo');
-$container->bound('foo');
-unset($container['foo']); // skipped, no unset method
 
 ?>
