@@ -1,4 +1,4 @@
-# 136 Rules Overview
+# 137 Rules Overview
 
 ## AbortIfRector
 
@@ -2373,6 +2373,30 @@ Use `Sleep::sleep()` and `Sleep::usleep()` instead of the `sleep()` and `usleep(
 ```diff
 -sleep(5);
 +\Illuminate\Support\Sleep::sleep(5);
+```
+
+<br>
+
+## StaticFacadeToServiceMethodCallRector
+
+Change static facade call to service method via constructor injection
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\StaticCall\StaticFacadeToServiceMethodCallRector`](../src/Rector/StaticCall/StaticFacadeToServiceMethodCallRector.php)
+
+```diff
+ class SomeController
+ {
++    public function __construct(private readonly \Illuminate\Auth\AuthManager $authManager)
++    {
++    }
+     public function store()
+     {
+-        return \Illuminate\Support\Facades\Auth::user();
++        return $this->authManager->user();
+     }
+ }
 ```
 
 <br>
