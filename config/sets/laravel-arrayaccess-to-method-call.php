@@ -3,8 +3,8 @@
 declare(strict_types=1);
 use PHPStan\Type\ObjectType;
 use Rector\Config\RectorConfig;
-use Rector\Transform\Rector\ArrayDimFetch\ArrayDimFetchToMethodCallRector;
-use Rector\Transform\ValueObject\ArrayDimFetchToMethodCall;
+use RectorLaravel\Rector\ArrayDimFetch\ArrayDimFetchToMethodCallRector;
+use RectorLaravel\ValueObject\ArrayDimFetchToMethodCall;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/../config.php');
