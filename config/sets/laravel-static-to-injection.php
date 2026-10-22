@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\Transform\Rector\FuncCall\FuncCallToNewRector;
-use Rector\Transform\Rector\StaticCall\StaticCallToMethodCallRector;
-use Rector\Transform\ValueObject\StaticCallToMethodCall;
 use RectorLaravel\Rector\FuncCall\ArgumentFuncCallToMethodCallRector;
 use RectorLaravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
 use RectorLaravel\Rector\StaticCall\RequestStaticValidateToInjectRector;
+use RectorLaravel\Rector\StaticCall\StaticFacadeToServiceMethodCallRector;
 use RectorLaravel\ValueObject\ArgumentFuncCallToMethodCall;
 use RectorLaravel\ValueObject\ArrayFuncCallToMethodCall;
+use RectorLaravel\ValueObject\StaticCallToMethodCall;
 
 /**
  * @see https://www.freecodecamp.org/news/moving-away-from-magic-or-why-i-dont-want-to-use-laravel-anymore-2ce098c979bd/
@@ -20,7 +20,7 @@ use RectorLaravel\ValueObject\ArrayFuncCallToMethodCall;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/laravel-array-str-functions-to-static-call.php');
     $rectorConfig
-        ->ruleWithConfiguration(StaticCallToMethodCallRector::class, [new StaticCallToMethodCall(
+        ->ruleWithConfiguration(StaticFacadeToServiceMethodCallRector::class, [new StaticCallToMethodCall(
             'Illuminate\Support\Facades\App',
             '*',
             'Illuminate\Foundation\Application',
