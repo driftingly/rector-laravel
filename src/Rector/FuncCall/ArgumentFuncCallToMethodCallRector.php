@@ -124,10 +124,6 @@ CODE_SAMPLE
                     if ($argumentFuncCallToMethodCall instanceof ArgumentFuncCallToMethodCall) {
                         $propertyFetch = $this->resolvePropertyFetch($class, $argumentFuncCallToMethodCall->getClass());
 
-                        if (! $propertyFetch instanceof PropertyFetch) {
-                            return null;
-                        }
-
                         $hasChanged = true;
 
                         return $this->refactorFuncCallToMethodCall($node, $argumentFuncCallToMethodCall, $propertyFetch);
@@ -135,10 +131,6 @@ CODE_SAMPLE
 
                     if ($argumentFuncCallToMethodCall instanceof ArrayFuncCallToMethodCall) {
                         $propertyFetch = $this->resolvePropertyFetch($class, $argumentFuncCallToMethodCall->getClass());
-
-                        if (! $propertyFetch instanceof PropertyFetch) {
-                            return null;
-                        }
 
                         $hasChanged = true;
 
@@ -220,13 +212,8 @@ CODE_SAMPLE
         return $propertyFetch;
     }
 
-    private function resolvePropertyFetch(Class_ $class, string $className): ?PropertyFetch
+    private function resolvePropertyFetch(Class_ $class, string $className): PropertyFetch
     {
-        // cannot add constructor dependency when nearest parent constructor is final
-        if ($this->classDependencyManipulator->hasFinalParentConstructor($class)) {
-            return null;
-        }
-
         $objectType = new ObjectType($className);
         $propertyName = $this->propertyNaming->fqnToVariableName($objectType);
         $this->classDependencyManipulator->addConstructorDependency($class, new PropertyMetadata($propertyName, $objectType));
