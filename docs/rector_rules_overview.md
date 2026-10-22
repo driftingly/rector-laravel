@@ -1,4 +1,4 @@
-# 134 Rules Overview
+# 135 Rules Overview
 
 ## AbortIfRector
 
@@ -398,6 +398,25 @@ Move help facade-like function calls to constructor injection
 +        $viewFactory = $this->viewFactory;
      }
  }
+```
+
+<br>
+
+## ArrayAccessToMethodCallRector
+
+Change array access on config, cache and container to the matching method call, as the contracts no longer extend ArrayAccess
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\ArrayAccessToMethodCallRector`](../src/Rector/ArrayDimFetch/ArrayAccessToMethodCallRector.php)
+
+```diff
+-$config['app.name'];
+-$config['app.name'] = 'Foo';
+-isset($config['app.name']);
+-unset($config['app.name']);
++$config->get('app.name');
++$config->set('app.name', 'Foo');
++$config->has('app.name');
++$config->set('app.name');
 ```
 
 <br>
