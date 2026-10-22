@@ -174,10 +174,10 @@ CODE_SAMPLE
     public function refactorFuncCallToMethodCall(
         FuncCall $funcCall,
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        PropertyFetch $expr
+        PropertyFetch $propertyFetch
     ): MethodCall|PropertyFetch {
         if ($funcCall->args === []) {
-            return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $expr);
+            return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $propertyFetch);
         }
 
         $methodIfArgs = $argumentFuncCallToMethodCall->getMethodIfArgs();
@@ -186,38 +186,38 @@ CODE_SAMPLE
             throw new ShouldNotHappenException;
         }
 
-        return $this->nodeFactory->createMethodCall($expr, $methodIfArgs, $funcCall->args);
+        return $this->nodeFactory->createMethodCall($propertyFetch, $methodIfArgs, $funcCall->args);
     }
 
     private function refactorArrayFunctionToMethodCall(
         FuncCall $funcCall,
         ArrayFuncCallToMethodCall $arrayFuncCallToMethodCall,
-        PropertyFetch $expr
+        PropertyFetch $propertyFetch
     ): ?Node {
         if ($funcCall->getArgs() === []) {
-            return $expr;
+            return $propertyFetch;
         }
 
         if ($this->arrayTypeAnalyzer->isArrayType($funcCall->getArgs()[0]->value)) {
-            return new MethodCall($expr, $arrayFuncCallToMethodCall->getArrayMethod(), $funcCall->getArgs());
+            return new MethodCall($propertyFetch, $arrayFuncCallToMethodCall->getArrayMethod(), $funcCall->getArgs());
         }
 
         if ($arrayFuncCallToMethodCall->getNonArrayMethod() === '') {
             return null;
         }
 
-        return new MethodCall($expr, $arrayFuncCallToMethodCall->getNonArrayMethod(), $funcCall->getArgs());
+        return new MethodCall($propertyFetch, $arrayFuncCallToMethodCall->getNonArrayMethod(), $funcCall->getArgs());
     }
 
     private function refactorEmptyFuncCallArgs(
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
-        PropertyFetch $expr
+        PropertyFetch $propertyFetch
     ): MethodCall|PropertyFetch {
         if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
-            return $this->nodeFactory->createMethodCall($expr, $argumentFuncCallToMethodCall->getMethodIfNoArgs());
+            return $this->nodeFactory->createMethodCall($propertyFetch, $argumentFuncCallToMethodCall->getMethodIfNoArgs());
         }
 
-        return $expr;
+        return $propertyFetch;
     }
 
     private function resolvePropertyFetch(Class_ $class, string $className): ?PropertyFetch
