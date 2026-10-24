@@ -26,7 +26,7 @@ class CastToFloat
     public function store(Request $request)
     {
         $price = $request->float('price');
-        $amount = $request->float('amount');
+        $amount = (double) $request->get('amount');
     }
 }
 

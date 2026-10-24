@@ -14,20 +14,3 @@ class CastToBoolean
 }
 
 ?>
------
-<?php
-
-namespace RectorLaravel\Tests\Rector\MethodCall\RequestInputToTypedMethodRector\Fixture;
-
-use Illuminate\Http\Request;
-
-class CastToBoolean
-{
-    public function store(Request $request)
-    {
-        $isActive = $request->boolean('is_active');
-        $enabled = $request->boolean('enabled');
-    }
-}
-
-?>

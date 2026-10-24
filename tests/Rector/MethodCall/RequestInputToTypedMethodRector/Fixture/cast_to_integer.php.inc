@@ -27,8 +27,8 @@ class CastToInteger
     public function store(Request $request)
     {
         $age = $request->integer('age');
-        $count = $request->integer('count');
-        $quantity = $request->integer('quantity');
+        $count = (int) $request->get('count');
+        $quantity = (int) $request->data('quantity');
     }
 }
 
