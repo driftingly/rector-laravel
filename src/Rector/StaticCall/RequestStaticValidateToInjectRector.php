@@ -86,9 +86,10 @@ CODE_SAMPLE
     public function refactor(Node $node): ?Node
     {
         $scope = ScopeFetcher::fetch($node);
+        $hasChanged = false;
 
         /** @var ClassMethod $node */
-        $this->traverseNodesWithCallable((array) $node->stmts, function (Node $subNode) use ($node, $scope): ?Node {
+        $this->traverseNodesWithCallable((array) $node->stmts, function (Node $subNode) use ($node, $scope, &$hasChanged): ?Node {
             if (! $subNode instanceof StaticCall && ! $subNode instanceof FuncCall) {
                 return null;
             }
@@ -97,6 +98,7 @@ CODE_SAMPLE
                 return null;
             }
 
+            $hasChanged = true;
             $requestParam = $this->addRequestParameterIfMissing($node, new ObjectType('Illuminate\Http\Request'));
 
             $methodName = $this->getName($subNode->name);
@@ -115,6 +117,10 @@ CODE_SAMPLE
 
             return new MethodCall($requestParam->var, new Identifier($methodName), $subNode->args);
         });
+
+        if ($hasChanged) {
+            return $node;
+        }
 
         return null;
     }
