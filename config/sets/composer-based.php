@@ -426,8 +426,12 @@ return static function (RectorConfig $rectorConfig): void {
         new RenameProperty('Illuminate\Contracts\Queue\ShouldQueue', 'timeoutAt', 'retryUntil'),
     ], 'laravel/framework', '>=8.0');
 
+    // Laravel 11 brought back PendingMail::sendNow() to send queueable mailables synchronously.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Mail\PendingMail', 'sendNow', 'send'),
+    ], 'laravel/framework', '>=8.0 <11.0');
+
+    $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Contracts\Queue\ShouldQueue', 'retryAfter', 'backoff'),
         new MethodCallRename('Illuminate\Contracts\Queue\ShouldQueue', 'timeoutAt', 'retryUntil'),
         new MethodCallRename('Illuminate\Testing\TestResponse', 'decodeResponseJson', 'json'),
