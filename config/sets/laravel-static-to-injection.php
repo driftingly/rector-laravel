@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\Transform\Rector\FuncCall\FuncCallToNewRector;
 use RectorLaravel\Rector\FuncCall\ArgumentFuncCallToMethodCallRector;
+use RectorLaravel\Rector\FuncCall\FuncCallToNewRector;
 use RectorLaravel\Rector\FuncCall\HelperFuncCallToFacadeClassRector;
 use RectorLaravel\Rector\StaticCall\RequestStaticValidateToInjectRector;
 use RectorLaravel\Rector\StaticCall\StaticFacadeToServiceMethodCallRector;
