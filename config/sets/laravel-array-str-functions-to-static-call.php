@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\Transform\Rector\FuncCall\FuncCallToStaticCallRector;
-use Rector\Transform\ValueObject\FuncCallToStaticCall;
+use RectorLaravel\Rector\FuncCall\FuncCallToStaticCallRector;
+use RectorLaravel\ValueObject\FuncCallToStaticCall;
 
 // @see https://medium.freecodecamp.org/moving-away-from-magic-or-why-i-dont-want-to-use-laravel-anymore-2ce098c979bd
 // @see https://laravel.com/docs/5.7/facades#facades-vs-dependency-injection
