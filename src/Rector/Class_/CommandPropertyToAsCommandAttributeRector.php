@@ -55,13 +55,37 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CommandPropertyToAsCommandAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface, MinPhpVersionInterface
 {
-    private const string AS_COMMAND_ATTRIBUTE = 'Symfony\Component\Console\Attribute\AsCommand';
+    /**
+     * @readonly
+     */
+    private ReflectionResolver $reflectionResolver;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
+     * @readonly
+     */
+    private ReturnNodeFinder $returnNodeFinder;
+    /**
+     * @var string
+     */
+    private const AS_COMMAND_ATTRIBUTE = 'Symfony\Component\Console\Attribute\AsCommand';
 
-    private const string COMMAND_CLASS = 'Illuminate\Console\Command';
+    /**
+     * @var string
+     */
+    private const COMMAND_CLASS = 'Illuminate\Console\Command';
 
-    private const string INPUT_ARGUMENT_CLASS = 'Symfony\Component\Console\Input\InputArgument';
+    /**
+     * @var string
+     */
+    private const INPUT_ARGUMENT_CLASS = 'Symfony\Component\Console\Input\InputArgument';
 
-    private const string INPUT_OPTION_CLASS = 'Symfony\Component\Console\Input\InputOption';
+    /**
+     * @var string
+     */
+    private const INPUT_OPTION_CLASS = 'Symfony\Component\Console\Input\InputOption';
 
     /**
      * Symfony keeps its own copy of these, which the attribute fills in, while
@@ -69,14 +93,14 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
      *
      * @var array<string, string>
      */
-    private const array PROPERTY_GETTERS = ['name' => 'getName', 'description' => 'getDescription'];
+    private const PROPERTY_GETTERS = ['name' => 'getName', 'description' => 'getDescription'];
 
     /**
      * Context flags of a property fetch that is written to rather than read.
      *
      * @var string[]
      */
-    private const array WRITE_CONTEXT_ATTRIBUTES = [
+    private const WRITE_CONTEXT_ATTRIBUTES = [
         AttributeKey::IS_BEING_ASSIGNED,
         AttributeKey::IS_ASSIGN_OP_VAR,
         AttributeKey::IS_ASSIGN_REF_EXPR,
@@ -88,14 +112,16 @@ final class CommandPropertyToAsCommandAttributeRector extends AbstractRector imp
     /**
      * A bare command name, e.g. "mail:send". Anything else - leftover braces or
      * alias pipes - cannot be expressed by the attribute name on its own.
+     * @var string
      */
-    private const string COMMAND_NAME_REGEX = '#^[^\s:|]++(?::[^\s:|]++)*+$#';
+    private const COMMAND_NAME_REGEX = '#^[^\s:|]++(?::[^\s:|]++)*+$#';
 
-    public function __construct(
-        private readonly ReflectionResolver $reflectionResolver,
-        private readonly ValueResolver $valueResolver,
-        private readonly ReturnNodeFinder $returnNodeFinder,
-    ) {}
+    public function __construct(ReflectionResolver $reflectionResolver, ValueResolver $valueResolver, ReturnNodeFinder $returnNodeFinder)
+    {
+        $this->reflectionResolver = $reflectionResolver;
+        $this->valueResolver = $valueResolver;
+        $this->returnNodeFinder = $returnNodeFinder;
+    }
 
     /**
      * The attribute is only picked up from Symfony Console 6, which ships with
@@ -250,7 +276,7 @@ CODE_SAMPLE
         // Laravel fills in the name from the signature even when it is not
         // declared, so its reads depend on the signature as well
         $fetchedPropertyNames = $signatureProperty instanceof Property
-            ? array_unique([...$removedPropertyNames, 'name'])
+            ? array_unique(array_merge($removedPropertyNames, ['name']))
             : $removedPropertyNames;
 
         $propertyFetches = $this->matchGetterReplaceablePropertyFetches($node, $fetchedPropertyNames, $readablePropertyNames);
@@ -266,11 +292,11 @@ CODE_SAMPLE
                 $this->setAttributeArg($asCommandAttribute, 'description', 1, $description);
             }
         } else {
-            $args = [new Arg(new String_($commandName), name: new Identifier('name'))];
+            $args = [new Arg(new String_($commandName), false, false, [], new Identifier('name'))];
             if ($description instanceof Expr) {
                 // a property default is a constant expression, which an attribute
                 // argument accepts just the same
-                $args[] = new Arg($description, name: new Identifier('description'));
+                $args[] = new Arg($description, false, false, [], new Identifier('description'));
             }
 
             $node->attrGroups[] = new AttributeGroup([
@@ -353,15 +379,15 @@ CODE_SAMPLE
     {
         [$token, $description] = $this->extractDescription($token);
 
-        if (str_ends_with($token, '?*')) {
+        if (substr_compare($token, '?*', -strlen('?*')) === 0) {
             return $this->createArgument(trim($token, '?*'), ['IS_ARRAY'], $description);
         }
 
-        if (str_ends_with($token, '*')) {
+        if (substr_compare($token, '*', -strlen('*')) === 0) {
             return $this->createArgument(trim($token, '*'), ['IS_ARRAY', 'REQUIRED'], $description);
         }
 
-        if (str_ends_with($token, '?')) {
+        if (substr_compare($token, '?', -strlen('?')) === 0) {
             return $this->createArgument(trim($token, '?'), ['OPTIONAL'], $description);
         }
 
@@ -391,11 +417,11 @@ CODE_SAMPLE
             $token = $shortcutParts[1];
         }
 
-        if (str_ends_with($token, '=')) {
+        if (substr_compare($token, '=', -strlen('=')) === 0) {
             return $this->createOption(trim($token, '='), $shortcut, ['VALUE_OPTIONAL'], $description);
         }
 
-        if (str_ends_with($token, '=*')) {
+        if (substr_compare($token, '=*', -strlen('=*')) === 0) {
             return $this->createOption(trim($token, '=*'), $shortcut, ['VALUE_OPTIONAL', 'VALUE_IS_ARRAY'], $description);
         }
 
@@ -550,10 +576,7 @@ CODE_SAMPLE
 
         // the signature's arguments keep their positions in front; a new array
         // is printed from scratch, one parameter per line
-        $mergedArray = new Array_([
-            ...array_map(static fn (New_ $new): ArrayItem => new ArrayItem($new), $parameters),
-            ...$return->expr->items,
-        ], ['kind' => Array_::KIND_SHORT]);
+        $mergedArray = new Array_(array_merge(array_map(static fn (New_ $new): ArrayItem => new ArrayItem($new), $parameters), $return->expr->items), ['kind' => Array_::KIND_SHORT]);
         $mergedArray->setAttribute(AttributeKey::NEWLINED_ARRAY_PRINT, true);
 
         $return->expr = $mergedArray;
@@ -621,7 +644,7 @@ CODE_SAMPLE
         }
 
         $return = $this->returnNodeFinder->findOnlyReturnWithExpr($classMethod);
-        if (! $return?->expr instanceof Array_) {
+        if (! (($nullsafeVariable1 = $return) ? $nullsafeVariable1->expr : null) instanceof Array_) {
             return null;
         }
 
@@ -845,14 +868,14 @@ CODE_SAMPLE
 
         $name = $this->valueResolver->getValue($nameArg->value);
 
-        return is_string($name) && ! str_contains($name, '|');
+        return is_string($name) && strpos($name, '|') === false;
     }
 
     private function setAttributeArg(Attribute $attribute, string $name, int $position, Expr $expr): void
     {
         $arg = $this->findArg($attribute->args, $name, $position);
         if (! $arg instanceof Arg) {
-            $attribute->args[] = new Arg($expr, name: new Identifier($name));
+            $attribute->args[] = new Arg($expr, false, false, [], new Identifier($name));
 
             return;
         }

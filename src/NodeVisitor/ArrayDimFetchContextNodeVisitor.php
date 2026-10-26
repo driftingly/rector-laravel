@@ -36,36 +36,59 @@ use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 
 final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implements DecoratingNodeVisitorInterface
 {
-    public const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR = 'is_inside_array_dim_fetch_with_dim_not_scalar';
-    public const string IS_IN_SUPERGLOBAL_ASSIGN = 'is_in_superglobal_assign';
-    public const string IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR = 'is_inside_array_dim_fetch_with_dim_not_expr';
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    /**
+     * @var string
+     */
+    public const IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_SCALAR = 'is_inside_array_dim_fetch_with_dim_not_scalar';
+    /**
+     * @var string
+     */
+    public const IS_IN_SUPERGLOBAL_ASSIGN = 'is_in_superglobal_assign';
+    /**
+     * @var string
+     */
+    public const IS_INSIDE_ARRAY_DIM_FETCH_WITH_DIM_NOT_EXPR = 'is_inside_array_dim_fetch_with_dim_not_expr';
 
     /**
      * Marks nodes that PHP only accepts as a variable, so replacing them with a function or
      * method call would be a fatal error: assignment targets (including compound, reference,
      * destructuring and nested dimensions), increment/decrement, foreach targets, by-reference
      * arguments, and the operands of isset()/unset().
+     * @var string
      */
-    public const string IS_IN_WRITE_CONTEXT = 'is_in_write_context';
+    public const IS_IN_WRITE_CONTEXT = 'is_in_write_context';
 
     /**
      * Marks nodes inside a "$string {$interpolation}", where a call cannot be written either.
+     * @var string
      */
-    public const string IS_IN_INTERPOLATED_STRING = 'is_in_interpolated_string';
+    public const IS_IN_INTERPOLATED_STRING = 'is_in_interpolated_string';
 
-    private const array SUPERGLOBAL_NAMES = ['_SERVER', '_GET', '_POST', '_REQUEST', '_ENV'];
+    /**
+     * @var mixed[]
+     */
+    private const SUPERGLOBAL_NAMES = ['_SERVER', '_GET', '_POST', '_REQUEST', '_ENV'];
 
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
+    public function __construct(NodeNameResolver $nodeNameResolver, ReflectionProvider $reflectionProvider)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function enterNode(Node $node)
     {
         $this->markWriteContext($node);
 
         if (! $node instanceof ArrayDimFetch) {
-            if (in_array($node::class, [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
+            if (in_array(get_class($node), [Assign::class, Isset_::class, Unset_::class, InterpolatedString::class], true)
                 && (! $node instanceof Assign || $this->isSuperglobalAssign($node))) {
                 SimpleCallableNodeTraverser::traverseNodesWithCallable($node, static function (Node $subNode) {
                     if ($subNode instanceof ArrayDimFetch || $subNode instanceof Variable) {
@@ -213,7 +236,7 @@ final class ArrayDimFetchContextNodeVisitor extends NodeVisitorAbstract implemen
         foreach ($funcCall->getArgs() as $position => $arg) {
             $parameter = $arg->name instanceof Identifier
                 ? $this->findParameterByName($parameters, $arg->name->toString())
-                : ($parameters[$position] ?? ($lastParameter?->isVariadic() === true ? $lastParameter : null));
+                : ($parameters[$position] ?? ((($nullsafeVariable1 = $lastParameter) ? $nullsafeVariable1->isVariadic() : null) === true ? $lastParameter : null));
 
             if ($parameter === null) {
                 continue;

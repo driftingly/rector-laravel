@@ -30,8 +30,35 @@ use RectorLaravel\AbstractRector;
 
 abstract class AbstractAddGenericReturnTypeToRelationsRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
+    /**
+     * @readonly
+     */
+    private TypeComparator $typeComparator;
+    /**
+     * @readonly
+     */
+    private DocBlockUpdater $docBlockUpdater;
+    /**
+     * @readonly
+     */
+    private PhpDocInfoFactory $phpDocInfoFactory;
+    /**
+     * @readonly
+     */
+    private BetterNodeFinder $betterNodeFinder;
+    /**
+     * @readonly
+     */
+    private StaticTypeMapper $staticTypeMapper;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
     // Relation methods which are supported by this Rector.
-    private const array RELATION_METHODS = [
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_METHODS = [
         'hasOne', 'hasOneThrough', 'morphOne',
         'belongsTo', 'morphTo',
         'hasMany', 'hasManyThrough', 'morphMany',
@@ -39,19 +66,26 @@ abstract class AbstractAddGenericReturnTypeToRelationsRector extends AbstractRec
     ];
 
     // Relation methods which need the class as TChildModel.
-    private const array RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_WITH_CHILD_METHODS = ['belongsTo', 'morphTo'];
 
     // Relation methods which need the class as TIntermediateModel.
-    private const array RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
+    /**
+     * @var mixed[]
+     */
+    private const RELATION_WITH_INTERMEDIATE_METHODS = ['hasManyThrough', 'hasOneThrough'];
 
-    public function __construct(
-        private readonly TypeComparator $typeComparator,
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
-        private readonly BetterNodeFinder $betterNodeFinder,
-        private readonly StaticTypeMapper $staticTypeMapper,
-        private readonly ReflectionProvider $reflectionProvider,
-    ) {}
+    public function __construct(TypeComparator $typeComparator, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder, StaticTypeMapper $staticTypeMapper, ReflectionProvider $reflectionProvider)
+    {
+        $this->typeComparator = $typeComparator;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->staticTypeMapper = $staticTypeMapper;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * @return array<class-string<Node>>
@@ -234,7 +268,7 @@ abstract class AbstractAddGenericReturnTypeToRelationsRector extends AbstractRec
 
         $classReflection = $scope->getClassReflection();
 
-        return $classReflection?->getName();
+        return ($nullsafeVariable1 = $classReflection) ? $nullsafeVariable1->getName() : null;
     }
 
     /**

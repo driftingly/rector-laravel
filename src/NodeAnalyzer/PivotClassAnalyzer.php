@@ -20,23 +20,50 @@ use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\PHPStan\ScopeFetcher;
 
-final readonly class PivotClassAnalyzer
+final class PivotClassAnalyzer
 {
-    public function __construct(
-        private NodeNameResolver $nodeNameResolver,
-        private NodeTypeResolver $nodeTypeResolver,
-        private BetterNodeFinder $betterNodeFinder,
-        private ModelAnalyzer $modelAnalyzer,
-        private ReflectionProvider $reflectionProvider,
-    ) {}
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @readonly
+     */
+    private NodeTypeResolver $nodeTypeResolver;
+    /**
+     * @readonly
+     */
+    private BetterNodeFinder $betterNodeFinder;
+    /**
+     * @readonly
+     */
+    private ModelAnalyzer $modelAnalyzer;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    public function __construct(NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver, BetterNodeFinder $betterNodeFinder, ModelAnalyzer $modelAnalyzer, ReflectionProvider $reflectionProvider)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodeTypeResolver = $nodeTypeResolver;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->modelAnalyzer = $modelAnalyzer;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function matchRelationTableArg(MethodCall $methodCall): ?Arg
     {
-        $tablePosition = match (true) {
-            $this->nodeNameResolver->isName($methodCall->name, 'belongsToMany') => 1,
-            $this->isMorphRelation($methodCall) => 2,
-            default => null,
-        };
+        switch (true) {
+            case $this->nodeNameResolver->isName($methodCall->name, 'belongsToMany'):
+                $tablePosition = 1;
+                break;
+            case $this->isMorphRelation($methodCall):
+                $tablePosition = 2;
+                break;
+            default:
+                $tablePosition = null;
+                break;
+        }
 
         if ($tablePosition === null) {
             return null;
@@ -236,7 +263,7 @@ final readonly class PivotClassAnalyzer
     private function tableFollowsRelationConvention(MethodCall $methodCall, string $table): bool
     {
         if ($this->isMorphRelation($methodCall)) {
-            $morphName = $methodCall->getArg('name', 1)?->value;
+            $morphName = ($nullsafeVariable1 = $methodCall->getArg('name', 1)) ? $nullsafeVariable1->value : null;
 
             // the framework pluralises the last word of the relationship name, which is what Str::plural does
             return $morphName instanceof String_ && Str::plural($morphName->value) === $table;

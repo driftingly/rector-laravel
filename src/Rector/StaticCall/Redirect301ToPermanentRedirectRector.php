@@ -25,13 +25,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class Redirect301ToPermanentRedirectRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
     /**
-     * @var ObjectType[]
+     * @readonly
      */
-    private readonly array $routerObjectTypes;
+    private ValueResolver $valueResolver;
+    /**
+     * @var ObjectType[]
+     * @readonly
+     */
+    private array $routerObjectTypes;
 
     public function __construct(
-        private readonly ValueResolver $valueResolver,
+        ValueResolver $valueResolver
     ) {
+        $this->valueResolver = $valueResolver;
         $this->routerObjectTypes = [
             new ObjectType('Illuminate\Support\Facades\Route'),
             new ObjectType('Illuminate\Routing\Route'),

@@ -23,7 +23,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CarbonSetTestNowToTravelToRector extends AbstractRector
 {
-    private const string TEST_CASE_CLASS = 'Illuminate\Foundation\Testing\TestCase';
+    /**
+     * @var string
+     */
+    private const TEST_CASE_CLASS = 'Illuminate\Foundation\Testing\TestCase';
 
     /**
      * @throws PoorDocumentationException

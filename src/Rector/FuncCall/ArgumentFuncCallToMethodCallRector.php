@@ -32,15 +32,28 @@ use Webmozart\Assert\Assert;
 final class ArgumentFuncCallToMethodCallRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
+     * @readonly
+     */
+    private ArrayTypeAnalyzer $arrayTypeAnalyzer;
+    /**
+     * @readonly
+     */
+    private ClassDependencyManipulator $classDependencyManipulator;
+    /**
+     * @readonly
+     */
+    private PropertyNaming $propertyNaming;
+    /**
      * @var ArgumentFuncCallToMethodCallInterface[]
      */
     private array $argumentFuncCallToMethodCalls = [];
 
-    public function __construct(
-        private readonly ArrayTypeAnalyzer $arrayTypeAnalyzer,
-        private readonly ClassDependencyManipulator $classDependencyManipulator,
-        private readonly PropertyNaming $propertyNaming
-    ) {}
+    public function __construct(ArrayTypeAnalyzer $arrayTypeAnalyzer, ClassDependencyManipulator $classDependencyManipulator, PropertyNaming $propertyNaming)
+    {
+        $this->arrayTypeAnalyzer = $arrayTypeAnalyzer;
+        $this->classDependencyManipulator = $classDependencyManipulator;
+        $this->propertyNaming = $propertyNaming;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -163,11 +176,14 @@ CODE_SAMPLE
         $this->argumentFuncCallToMethodCalls = $configuration;
     }
 
+    /**
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch
+     */
     public function refactorFuncCallToMethodCall(
         FuncCall $funcCall,
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
         PropertyFetch $propertyFetch
-    ): MethodCall|PropertyFetch {
+    ) {
         if ($funcCall->args === []) {
             return $this->refactorEmptyFuncCallArgs($argumentFuncCallToMethodCall, $propertyFetch);
         }
@@ -201,10 +217,13 @@ CODE_SAMPLE
         return new MethodCall($propertyFetch, $arrayFuncCallToMethodCall->getNonArrayMethod(), $funcCall->getArgs());
     }
 
+    /**
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch
+     */
     private function refactorEmptyFuncCallArgs(
         ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall,
         PropertyFetch $propertyFetch
-    ): MethodCall|PropertyFetch {
+    ) {
         if ($argumentFuncCallToMethodCall->getMethodIfNoArgs() !== null) {
             return $this->nodeFactory->createMethodCall($propertyFetch, $argumentFuncCallToMethodCall->getMethodIfNoArgs());
         }
