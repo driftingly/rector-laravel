@@ -6,3 +6,6 @@ composer.lock
 
 .phpunit.result.cache
 .phpunit.cache
+
+# lock files created by Rector AbstractRectorTestCase in fixture directories
+.fixture.lock
