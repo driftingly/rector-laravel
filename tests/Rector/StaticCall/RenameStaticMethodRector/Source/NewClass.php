@@ -2,6 +2,4 @@
 
 namespace RectorLaravel\Tests\Rector\StaticCall\RenameStaticMethodRector\Source;
 
-class NewClass
-{
-}
+class NewClass {}
