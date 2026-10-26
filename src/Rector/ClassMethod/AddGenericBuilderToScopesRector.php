@@ -35,14 +35,39 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class AddGenericBuilderToScopesRector extends AbstractRector
 {
-    public function __construct(
-        private readonly TypeComparator $typeComparator,
-        private readonly PhpDocInfoFactory $phpDocInfoFactory,
-        private readonly DocBlockUpdater $docBlockUpdater,
-        private readonly StaticTypeMapper $staticTypeMapper,
-        private readonly ReflectionProvider $reflectionProvider,
-        private readonly ScopeAnalyzer $scopeAnalyzer,
-    ) {}
+    /**
+     * @readonly
+     */
+    private TypeComparator $typeComparator;
+    /**
+     * @readonly
+     */
+    private PhpDocInfoFactory $phpDocInfoFactory;
+    /**
+     * @readonly
+     */
+    private DocBlockUpdater $docBlockUpdater;
+    /**
+     * @readonly
+     */
+    private StaticTypeMapper $staticTypeMapper;
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    /**
+     * @readonly
+     */
+    private ScopeAnalyzer $scopeAnalyzer;
+    public function __construct(TypeComparator $typeComparator, PhpDocInfoFactory $phpDocInfoFactory, DocBlockUpdater $docBlockUpdater, StaticTypeMapper $staticTypeMapper, ReflectionProvider $reflectionProvider, ScopeAnalyzer $scopeAnalyzer)
+    {
+        $this->typeComparator = $typeComparator;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->staticTypeMapper = $staticTypeMapper;
+        $this->reflectionProvider = $reflectionProvider;
+        $this->scopeAnalyzer = $scopeAnalyzer;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

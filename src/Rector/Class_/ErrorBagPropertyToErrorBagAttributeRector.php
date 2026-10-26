@@ -25,9 +25,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ErrorBagPropertyToErrorBagAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    public function __construct(
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-    ) {}
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer)
+    {
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {

@@ -7,14 +7,34 @@ namespace RectorLaravel\ValueObject;
 use PHPStan\Type\ObjectType;
 use Rector\Validation\RectorAssert;
 
-final readonly class RenameStaticMethod
+final class RenameStaticMethod
 {
+    /**
+     * @readonly
+     */
+    private string $oldClass;
+    /**
+     * @readonly
+     */
+    private string $oldMethod;
+    /**
+     * @readonly
+     */
+    private string $newClass;
+    /**
+     * @readonly
+     */
+    private string $newMethod;
     public function __construct(
-        private string $oldClass,
-        private string $oldMethod,
-        private string $newClass,
-        private string $newMethod
+        string $oldClass,
+        string $oldMethod,
+        string $newClass,
+        string $newMethod
     ) {
+        $this->oldClass = $oldClass;
+        $this->oldMethod = $oldMethod;
+        $this->newClass = $newClass;
+        $this->newMethod = $newMethod;
         RectorAssert::className($oldClass);
         RectorAssert::methodName($oldMethod);
         RectorAssert::className($newClass);

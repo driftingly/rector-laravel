@@ -32,7 +32,7 @@ final class CollectionCountComparisonToIsEmptyRector extends AbstractRector
      *
      * @var array<class-string<BinaryOp>, array<int, string>>
      */
-    private const array METHOD_BY_OPERATOR_AND_NUMBER = [
+    private const METHOD_BY_OPERATOR_AND_NUMBER = [
         Equal::class => [0 => 'isEmpty'],
         Greater::class => [0 => 'isNotEmpty'],
         GreaterOrEqual::class => [1 => 'isNotEmpty'],
@@ -48,7 +48,7 @@ final class CollectionCountComparisonToIsEmptyRector extends AbstractRector
      *
      * @var array<class-string<BinaryOp>, class-string<BinaryOp>>
      */
-    private const array MIRRORED_OPERATORS = [
+    private const MIRRORED_OPERATORS = [
         Equal::class => Equal::class,
         Greater::class => Smaller::class,
         GreaterOrEqual::class => SmallerOrEqual::class,
@@ -99,11 +99,11 @@ CODE_SAMPLE
     public function refactor(Node $node): ?MethodCall
     {
         if ($node->right instanceof Int_) {
-            $operator = $node::class;
+            $operator = get_class($node);
             $countCall = $node->left;
             $number = $node->right->value;
         } elseif ($node->left instanceof Int_) {
-            $operator = self::MIRRORED_OPERATORS[$node::class];
+            $operator = self::MIRRORED_OPERATORS[get_class($node)];
             $countCall = $node->right;
             $number = $node->left->value;
         } else {

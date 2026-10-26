@@ -12,11 +12,16 @@ use PHPStan\Type\ObjectType;
 use ReflectionException;
 use Throwable;
 
-final readonly class ModelAnalyzer
+final class ModelAnalyzer
 {
-    public function __construct(
-        private ReflectionProvider $reflectionProvider,
-    ) {}
+    /**
+     * @readonly
+     */
+    private ReflectionProvider $reflectionProvider;
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     protected static function relationType(): ObjectType
     {
@@ -30,7 +35,7 @@ final readonly class ModelAnalyzer
      *
      * @throws InvalidArgumentException|ReflectionException
      */
-    public function getTable(string|ObjectType $model): ?string
+    public function getTable($model): ?string
     {
         if (! is_string($model)) {
             /** @var class-string<Model> $model */
@@ -59,16 +64,22 @@ final readonly class ModelAnalyzer
      * @param  class-string<Model>|ObjectType  $model
      * @param  class-string<Model>|ObjectType  $related
      */
-    public function getJoiningTable(string|ObjectType $model, string|ObjectType $related): ?string
+    public function getJoiningTable($model, $related): ?string
     {
         $modelInstance = $this->tryResolveModelClassToInstance($model);
         $relatedInstance = $this->tryResolveModelClassToInstance($related);
 
-        $table = match (true) {
-            $modelInstance instanceof Model => $modelInstance->joiningTable($this->resolveClassName($related), $relatedInstance),
-            $relatedInstance instanceof Model => $relatedInstance->joiningTable($this->resolveClassName($model), $modelInstance),
-            default => null,
-        };
+        switch (true) {
+            case $modelInstance instanceof Model:
+                $table = $modelInstance->joiningTable($this->resolveClassName($related), $relatedInstance);
+                break;
+            case $relatedInstance instanceof Model:
+                $table = $relatedInstance->joiningTable($this->resolveClassName($model), $modelInstance);
+                break;
+            default:
+                $table = null;
+                break;
+        }
 
         if (! is_string($table)) {
             return null;
@@ -84,7 +95,7 @@ final readonly class ModelAnalyzer
      *
      * @throws ReflectionException
      */
-    public function getPrimaryKey(string|ObjectType $model): ?string
+    public function getPrimaryKey($model): ?string
     {
         $model = $this->resolveModelClassToInstance($model);
 
@@ -104,7 +115,7 @@ final readonly class ModelAnalyzer
     /**
      * @param  class-string<Model>|ObjectType  $model
      */
-    public function isQueryScopeOnModel(string|ObjectType $model, string $scopeName, Scope $scope): bool
+    public function isQueryScopeOnModel($model, string $scopeName, Scope $scope): bool
     {
         if (! is_string($model)) {
             /** @var class-string<Model> $model */
@@ -129,7 +140,7 @@ final readonly class ModelAnalyzer
     /**
      * @param  class-string<Model>|ObjectType  $model
      */
-    public function isRelationshipOnModel(string|ObjectType $model, string $relationName, Scope $scope): bool
+    public function isRelationshipOnModel($model, string $relationName, Scope $scope): bool
     {
         if (! is_string($model)) {
             /** @var class-string<Model> $model */
@@ -201,11 +212,11 @@ final readonly class ModelAnalyzer
      *
      * @param  class-string<Model>|ObjectType  $model
      */
-    private function tryResolveModelClassToInstance(string|ObjectType $model): ?Model
+    private function tryResolveModelClassToInstance($model): ?Model
     {
         try {
             return $this->resolveModelClassToInstance($model);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -214,7 +225,7 @@ final readonly class ModelAnalyzer
      * @param  class-string<Model>|ObjectType  $model
      * @return class-string<Model>
      */
-    private function resolveClassName(string|ObjectType $model): string
+    private function resolveClassName($model): string
     {
         if (is_string($model)) {
             return $model;
@@ -233,7 +244,7 @@ final readonly class ModelAnalyzer
      *
      * @throws ReflectionException
      */
-    private function resolveModelClassToInstance(string|ObjectType $model): ?Model
+    private function resolveModelClassToInstance($model): ?Model
     {
         $classReflection = is_string($model)
             ? $this->getClass($model)
@@ -248,13 +259,13 @@ final readonly class ModelAnalyzer
             $instance = $classReflection->getNativeReflection()->newInstance();
 
             return $instance;
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
         }
 
         try {
             /** @var Model $instance */
             $instance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             // a class which is only being analysed cannot be loaded, so no instance can be made of it
             return null;
         }
@@ -263,7 +274,7 @@ final readonly class ModelAnalyzer
         if (method_exists($instance, 'initializeModelAttributes')) {
             try {
                 $instance->initializeModelAttributes();
-            } catch (Throwable) {
+            } catch (Throwable $exception) {
             }
         }
 

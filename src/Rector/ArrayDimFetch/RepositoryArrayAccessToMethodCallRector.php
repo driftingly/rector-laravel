@@ -30,7 +30,7 @@ final class RepositoryArrayAccessToMethodCallRector extends AbstractRector
      *
      * @var array<string, array{0: string, 1: string, 2: string, 3: string}>
      */
-    private const array TYPE_TO_METHODS = [
+    private const TYPE_TO_METHODS = [
         'Illuminate\Contracts\Config\Repository' => ['get', 'set', 'has', 'set'],
         'Illuminate\Contracts\Cache\Repository' => ['get', 'set', 'has', 'forget'],
     ];

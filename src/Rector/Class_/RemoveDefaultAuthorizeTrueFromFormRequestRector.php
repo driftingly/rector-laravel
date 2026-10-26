@@ -27,13 +27,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RemoveDefaultAuthorizeTrueFromFormRequestRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    private const string AUTHORIZE = 'authorize';
+    /**
+     * @readonly
+     */
+    private ReflectionResolver $reflectionResolver;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
+     * @readonly
+     */
+    private ReturnNodeFinder $returnNodeFinder;
+    /**
+     * @var string
+     */
+    private const AUTHORIZE = 'authorize';
 
-    public function __construct(
-        private readonly ReflectionResolver $reflectionResolver,
-        private readonly ValueResolver $valueResolver,
-        private readonly ReturnNodeFinder $returnNodeFinder,
-    ) {}
+    public function __construct(ReflectionResolver $reflectionResolver, ValueResolver $valueResolver, ReturnNodeFinder $returnNodeFinder)
+    {
+        $this->reflectionResolver = $reflectionResolver;
+        $this->valueResolver = $valueResolver;
+        $this->returnNodeFinder = $returnNodeFinder;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
@@ -120,7 +136,7 @@ CODE_SAMPLE
 
         $return = $this->returnNodeFinder->findOnlyReturnWithExpr($classMethod);
 
-        return $return?->expr instanceof Expr && $this->valueResolver->isTrue($return->expr);
+        return (($nullsafeVariable1 = $return) ? $nullsafeVariable1->expr : null) instanceof Expr && $this->valueResolver->isTrue($return->expr);
     }
 
     /**
