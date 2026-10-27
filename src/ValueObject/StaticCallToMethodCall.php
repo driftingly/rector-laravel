@@ -10,14 +10,34 @@ use PhpParser\Node\Name;
 use PHPStan\Type\ObjectType;
 use Rector\Validation\RectorAssert;
 
-final readonly class StaticCallToMethodCall
+final class StaticCallToMethodCall
 {
+    /**
+     * @readonly
+     */
+    private string $staticClass;
+    /**
+     * @readonly
+     */
+    private string $staticMethod;
+    /**
+     * @readonly
+     */
+    private string $classType;
+    /**
+     * @readonly
+     */
+    private string $methodName;
     public function __construct(
-        private string $staticClass,
-        private string $staticMethod,
-        private string $classType,
-        private string $methodName
+        string $staticClass,
+        string $staticMethod,
+        string $classType,
+        string $methodName
     ) {
+        $this->staticClass = $staticClass;
+        $this->staticMethod = $staticMethod;
+        $this->classType = $classType;
+        $this->methodName = $methodName;
         RectorAssert::className($staticClass);
         // special char to match all method names
         if ($staticMethod !== '*') {

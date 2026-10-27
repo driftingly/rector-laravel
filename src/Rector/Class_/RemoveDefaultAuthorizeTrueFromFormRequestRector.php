@@ -27,12 +27,24 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RemoveDefaultAuthorizeTrueFromFormRequestRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    private const string AUTHORIZE = 'authorize';
+    /**
+     * @readonly
+     */
+    private ReflectionResolver $reflectionResolver;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
+     * @var string
+     */
+    private const AUTHORIZE = 'authorize';
 
-    public function __construct(
-        private readonly ReflectionResolver $reflectionResolver,
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    public function __construct(ReflectionResolver $reflectionResolver, ValueResolver $valueResolver)
+    {
+        $this->reflectionResolver = $reflectionResolver;
+        $this->valueResolver = $valueResolver;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {

@@ -22,7 +22,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ContainerArrayAccessToMethodCallRector extends AbstractRector
 {
-    private const string CONTAINER_CONTRACT = 'Illuminate\Contracts\Container\Container';
+    /**
+     * @var string
+     */
+    private const CONTAINER_CONTRACT = 'Illuminate\Contracts\Container\Container';
 
     public function getRuleDefinition(): RuleDefinition
     {

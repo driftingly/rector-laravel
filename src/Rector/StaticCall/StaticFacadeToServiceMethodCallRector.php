@@ -31,14 +31,23 @@ use Webmozart\Assert\Assert;
 final class StaticFacadeToServiceMethodCallRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
+     * @readonly
+     */
+    private ClassDependencyManipulator $classDependencyManipulator;
+    /**
+     * @readonly
+     */
+    private PropertyNaming $propertyNaming;
+    /**
      * @var StaticCallToMethodCall[]
      */
     private array $staticCallsToMethodCalls = [];
 
-    public function __construct(
-        private readonly ClassDependencyManipulator $classDependencyManipulator,
-        private readonly PropertyNaming $propertyNaming
-    ) {}
+    public function __construct(ClassDependencyManipulator $classDependencyManipulator, PropertyNaming $propertyNaming)
+    {
+        $this->classDependencyManipulator = $classDependencyManipulator;
+        $this->propertyNaming = $propertyNaming;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

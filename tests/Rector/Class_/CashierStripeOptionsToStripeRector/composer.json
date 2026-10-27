@@ -1,5 +1,0 @@
-{
-    "require": {
-        "laravel/cashier": "^13.0"
-    }
-}

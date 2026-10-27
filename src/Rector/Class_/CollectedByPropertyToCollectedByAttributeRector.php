@@ -29,10 +29,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CollectedByPropertyToCollectedByAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    public function __construct(
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-        private readonly ReturnNodeFinder $returnNodeFinder,
-    ) {}
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    /**
+     * @readonly
+     */
+    private ReturnNodeFinder $returnNodeFinder;
+    public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer, ReturnNodeFinder $returnNodeFinder)
+    {
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+        $this->returnNodeFinder = $returnNodeFinder;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
@@ -130,7 +139,7 @@ CODE_SAMPLE
         }
 
         $return = $this->returnNodeFinder->findOnlyReturnWithExpr($classMethod);
-        if (! $return?->expr instanceof New_) {
+        if (! (($nullsafeVariable1 = $return) ? $nullsafeVariable1->expr : null) instanceof New_) {
             return null;
         }
 

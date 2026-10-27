@@ -25,11 +25,24 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class TablePropertyToTableAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    public function __construct(
-        private readonly TableAttributeFactory $tableAttributeFactory,
-        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
-        private readonly ValueResolver $valueResolver,
-    ) {}
+    /**
+     * @readonly
+     */
+    private TableAttributeFactory $tableAttributeFactory;
+    /**
+     * @readonly
+     */
+    private PhpAttributeAnalyzer $phpAttributeAnalyzer;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    public function __construct(TableAttributeFactory $tableAttributeFactory, PhpAttributeAnalyzer $phpAttributeAnalyzer, ValueResolver $valueResolver)
+    {
+        $this->tableAttributeFactory = $tableAttributeFactory;
+        $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+        $this->valueResolver = $valueResolver;
+    }
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {

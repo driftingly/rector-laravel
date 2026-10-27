@@ -6,13 +6,28 @@ namespace RectorLaravel\ValueObject;
 
 use Rector\Validation\RectorAssert;
 
-final readonly class FuncCallToStaticCall
+final class FuncCallToStaticCall
 {
+    /**
+     * @readonly
+     */
+    private string $oldFuncName;
+    /**
+     * @readonly
+     */
+    private string $newClassName;
+    /**
+     * @readonly
+     */
+    private string $newMethodName;
     public function __construct(
-        private string $oldFuncName,
-        private string $newClassName,
-        private string $newMethodName
+        string $oldFuncName,
+        string $newClassName,
+        string $newMethodName
     ) {
+        $this->oldFuncName = $oldFuncName;
+        $this->newClassName = $newClassName;
+        $this->newMethodName = $newMethodName;
         RectorAssert::functionName($oldFuncName);
         RectorAssert::className($newClassName);
         RectorAssert::methodName($newMethodName);
