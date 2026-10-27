@@ -8,11 +8,11 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Reflection\ReflectionResolver;
-use Rector\TypeDeclarationDocblocks\NodeFinder\ReturnNodeFinder;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
@@ -32,7 +32,6 @@ final class RemoveDefaultAuthorizeTrueFromFormRequestRector extends AbstractRect
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver,
         private readonly ValueResolver $valueResolver,
-        private readonly ReturnNodeFinder $returnNodeFinder,
     ) {}
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
@@ -118,9 +117,13 @@ CODE_SAMPLE
             return false;
         }
 
-        $return = $this->returnNodeFinder->findOnlyReturnWithExpr($classMethod);
+        if ($classMethod->stmts === null || count($classMethod->stmts) !== 1) {
+            return false;
+        }
 
-        return $return?->expr instanceof Expr && $this->valueResolver->isTrue($return->expr);
+        $return = $classMethod->stmts[0];
+
+        return $return instanceof Return_ && $return->expr instanceof Expr && $this->valueResolver->isTrue($return->expr);
     }
 
     /**
