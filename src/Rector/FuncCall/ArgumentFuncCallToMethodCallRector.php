@@ -9,6 +9,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
@@ -19,6 +20,7 @@ use Rector\NodeTypeResolver\TypeAnalyzer\ArrayTypeAnalyzer;
 use Rector\PostRector\ValueObject\PropertyMetadata;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface;
+use RectorLaravel\NodeAnalyzer\FinalParentConstructorAnalyzer;
 use RectorLaravel\Tests\Rector\FuncCall\ArgumentFuncCallToMethodCallRector\ArgumentFuncCallToMethodCallRectorTest;
 use RectorLaravel\ValueObject\ArgumentFuncCallToMethodCall;
 use RectorLaravel\ValueObject\ArrayFuncCallToMethodCall;
@@ -39,7 +41,8 @@ final class ArgumentFuncCallToMethodCallRector extends AbstractRector implements
     public function __construct(
         private readonly ArrayTypeAnalyzer $arrayTypeAnalyzer,
         private readonly ClassDependencyManipulator $classDependencyManipulator,
-        private readonly PropertyNaming $propertyNaming
+        private readonly PropertyNaming $propertyNaming,
+        private readonly FinalParentConstructorAnalyzer $finalParentConstructorAnalyzer
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -96,6 +99,10 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
+        if ($this->finalParentConstructorAnalyzer->hasFinalParentConstructor($node)) {
+            return null;
+        }
+
         $hasChanged = false;
         $class = $node;
 
@@ -112,7 +119,8 @@ CODE_SAMPLE
                 $class,
                 &$hasChanged
             ): ?Node {
-                if (! $node instanceof FuncCall) {
+                // Skip dynamic calls like $get('field'), which share a name with a helper.
+                if (! $node instanceof FuncCall || ! $node->name instanceof Name) {
                     return null;
                 }
 

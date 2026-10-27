@@ -19,6 +19,7 @@ use Rector\Naming\Naming\PropertyNaming;
 use Rector\NodeManipulator\ClassDependencyManipulator;
 use Rector\PostRector\ValueObject\PropertyMetadata;
 use RectorLaravel\AbstractRector;
+use RectorLaravel\NodeAnalyzer\FinalParentConstructorAnalyzer;
 use RectorLaravel\Tests\Rector\StaticCall\StaticFacadeToServiceMethodCallRector\StaticFacadeToServiceMethodCallRectorTest;
 use RectorLaravel\ValueObject\StaticCallToMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -37,7 +38,8 @@ final class StaticFacadeToServiceMethodCallRector extends AbstractRector impleme
 
     public function __construct(
         private readonly ClassDependencyManipulator $classDependencyManipulator,
-        private readonly PropertyNaming $propertyNaming
+        private readonly PropertyNaming $propertyNaming,
+        private readonly FinalParentConstructorAnalyzer $finalParentConstructorAnalyzer
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -87,8 +89,13 @@ CODE_SAMPLE
     {
         $class = $node;
         $hasChanged = false;
+        $hasFinalParentConstructor = $this->finalParentConstructorAnalyzer->hasFinalParentConstructor($node);
 
         foreach ($node->getMethods() as $classMethod) {
+            if ($hasFinalParentConstructor && ! $classMethod->isStatic()) {
+                continue;
+            }
+
             $this->traverseNodesWithCallable($classMethod, function (Node $node) use (
                 $class,
                 $classMethod,
