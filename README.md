@@ -174,6 +174,7 @@ Remember to always add `--` before the arguments when using the composer script.
 Thank you everyone who works so hard on improving this package:
 
 - [@TomasVotruba](https://github.com/TomasVotruba)
+- [@samsonasik](https://github.com/samsonasik)
 - [@peterfox](https://github.com/peterfox)
 - [@GeniJaho](https://github.com/GeniJaho)
 - [@driftingly](https://github.com/driftingly)

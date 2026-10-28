@@ -12,7 +12,6 @@ use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Arguments\ValueObject\ArgumentAdderWithoutDefaultValue;
 use Rector\Config\RectorConfig;
 use Rector\Removing\Rector\Class_\RemoveInterfacesRector;
-use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
 use Rector\Removing\Rector\ClassMethod\ArgumentRemoverRector;
 use Rector\Removing\ValueObject\ArgumentRemover;
 use Rector\Renaming\Rector\Class_\RenameAttributeRector;
@@ -20,14 +19,10 @@ use Rector\Renaming\Rector\FuncCall\RenameFunctionRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
-use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameAttribute;
 use Rector\Renaming\ValueObject\RenameProperty;
-use Rector\Renaming\ValueObject\RenameStaticMethod;
-use Rector\Transform\Rector\FuncCall\FuncCallToStaticCallRector;
 use Rector\Transform\Rector\StaticCall\StaticCallToFuncCallRector;
-use Rector\Transform\ValueObject\FuncCallToStaticCall;
 use Rector\Transform\ValueObject\StaticCallToFuncCall;
 use Rector\Transform\ValueObject\StringToClassConstant;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddParamTypeDeclarationRector;
@@ -35,7 +30,7 @@ use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration;
 use Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration;
 use Rector\ValueObject\Visibility;
-use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
+use Rector\Visibility\Rector\Class_\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 use RectorLaravel\Rector\Cast\DatabaseExpressionCastsToMethodCallRector;
 use RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector;
@@ -67,6 +62,7 @@ use RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector;
 use RectorLaravel\Rector\Class_\PreserveKeysPropertyToPreserveKeysAttributeRector;
 use RectorLaravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
 use RectorLaravel\Rector\Class_\QueuePropertyToQueueAttributeRector;
+use RectorLaravel\Rector\Class_\RemoveTraitUseRector;
 use RectorLaravel\Rector\Class_\ReplaceExpectsMethodsInTestsRector;
 use RectorLaravel\Rector\Class_\ReplaceQueueTraitsWithQueueableRector;
 use RectorLaravel\Rector\Class_\RouteKeyMethodToRouteKeyAttributeRector;
@@ -87,6 +83,7 @@ use RectorLaravel\Rector\ClassMethod\AddParentRegisterToEventServiceProviderRect
 use RectorLaravel\Rector\ClassMethod\MigrateToSimplifiedAttributeRector;
 use RectorLaravel\Rector\ClassMethod\ScopeNamedClassMethodToScopeAttributedClassMethodRector;
 use RectorLaravel\Rector\FuncCall\DispatchNonShouldQueueToDispatchSyncRector;
+use RectorLaravel\Rector\FuncCall\FuncCallToStaticCallRector;
 use RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector;
 use RectorLaravel\Rector\MethodCall\ChangeQueryWhereDateValueWithCarbonRector;
 use RectorLaravel\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector;
@@ -98,8 +95,11 @@ use RectorLaravel\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector;
 use RectorLaravel\Rector\PropertyFetch\ReplaceFakerPropertyFetchWithMethodCallRector;
 use RectorLaravel\Rector\StaticCall\EventStringToClassConstantRector;
 use RectorLaravel\Rector\StaticCall\Redirect301ToPermanentRedirectRector;
+use RectorLaravel\Rector\StaticCall\RenameStaticMethodRector;
 use RectorLaravel\Rector\StaticCall\ReplaceAssertTimesSendWithAssertSentTimesRector;
 use RectorLaravel\ValueObject\AddArgumentDefaultValue;
+use RectorLaravel\ValueObject\FuncCallToStaticCall;
+use RectorLaravel\ValueObject\RenameStaticMethod;
 
 /**
  * Single composer-based config, picked up by `RectorConfig::configure()->withComposerBased(laravel: true)`.
@@ -426,8 +426,12 @@ return static function (RectorConfig $rectorConfig): void {
         new RenameProperty('Illuminate\Contracts\Queue\ShouldQueue', 'timeoutAt', 'retryUntil'),
     ], 'laravel/framework', '>=8.0');
 
+    // Laravel 11 brought back PendingMail::sendNow() to send queueable mailables synchronously.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Mail\PendingMail', 'sendNow', 'send'),
+    ], 'laravel/framework', '>=8.0 <11.0');
+
+    $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameMethodRector::class, [
         new MethodCallRename('Illuminate\Contracts\Queue\ShouldQueue', 'retryAfter', 'backoff'),
         new MethodCallRename('Illuminate\Contracts\Queue\ShouldQueue', 'timeoutAt', 'retryUntil'),
         new MethodCallRename('Illuminate\Testing\TestResponse', 'decodeResponseJson', 'json'),

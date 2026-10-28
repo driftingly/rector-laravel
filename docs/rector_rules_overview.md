@@ -1,4 +1,4 @@
-# 131 Rules Overview
+# 138 Rules Overview
 
 ## AbortIfRector
 
@@ -744,6 +744,24 @@ Changes model newCollection method to use the CollectedBy attribute
 
 <br>
 
+## CollectionCountComparisonToIsEmptyRector
+
+Convert collection `count()` comparisons against 0 or 1 to `isEmpty()` or `isNotEmpty()`
+
+- class: [`RectorLaravel\Rector\Expr\CollectionCountComparisonToIsEmptyRector`](../src/Rector/Expr/CollectionCountComparisonToIsEmptyRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+ $collection = new Collection([1, 2, 3]);
+-$collection->count() > 0;
+-$collection->count() === 0;
++$collection->isNotEmpty();
++$collection->isEmpty();
+```
+
+<br>
+
 ## CollectionWhereToContainsRector
 
 Convert `where()->isNotEmpty()` to `contains()` and `where()->isEmpty()` to `doesntContain()` on collections
@@ -801,6 +819,37 @@ Changes the hidden property to use the Hidden attribute on console commands
 
 <br>
 
+## CommandPropertyToAsCommandAttributeRector
+
+Changes the name/signature and description properties of a console command to the AsCommand attribute
+
+- class: [`RectorLaravel\Rector\Class_\CommandPropertyToAsCommandAttributeRector`](../src/Rector/Class_/CommandPropertyToAsCommandAttributeRector.php)
+
+```diff
+ use Illuminate\Console\Command;
++use Symfony\Component\Console\Attribute\AsCommand;
++use Symfony\Component\Console\Input\InputArgument;
++use Symfony\Component\Console\Input\InputOption;
+
++#[AsCommand(name: 'mail:send', description: 'Send the queued emails')]
+ class SendEmails extends Command
+ {
+-    protected $signature = 'mail:send {user} {--queue}';
++    protected function getArguments(): array
++    {
++        return [new InputArgument('user', InputArgument::REQUIRED)];
++    }
+
+-    protected $description = 'Send the queued emails';
++    protected function getOptions(): array
++    {
++        return [new InputOption('queue', null, InputOption::VALUE_NONE)];
++    }
+ }
+```
+
+<br>
+
 ## ConfigToTypedConfigMethodCallRector
 
 Refactor `config()` calls to use type-specific methods when the expected type is known
@@ -837,6 +886,23 @@ Changes model connection property to use the Connection attribute
  {
 -    protected $connection = 'sqlite';
  }
+```
+
+<br>
+
+## ContainerArrayAccessToMethodCallRector
+
+Change array access on the container to the matching method call, as the contract does not extend ArrayAccess
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\ContainerArrayAccessToMethodCallRector`](../src/Rector/ArrayDimFetch/ContainerArrayAccessToMethodCallRector.php)
+
+```diff
+-$container['foo'];
+-$container['foo'] = 'Foo';
+-isset($container['foo']);
++$container->make('foo');
++$container->bind('foo', 'Foo');
++$container->bound('foo');
 ```
 
 <br>
@@ -1592,7 +1658,7 @@ Migrate to the new Model attributes syntax
 
 ## MinutesToSecondsInCacheRector
 
-Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and Illuminate\Support\Facades\Cache
+Change minutes argument to seconds in `Illuminate\Contracts\Cache\Store` and `Illuminate\Support\Facades\Cache`
 
 - class: [`RectorLaravel\Rector\StaticCall\MinutesToSecondsInCacheRector`](../src/Rector/StaticCall/MinutesToSecondsInCacheRector.php)
 
@@ -1827,6 +1893,46 @@ refactors calls with the pre Laravel 11 methods for blueprint geometry columns
 
 <br>
 
+## RelationTableStringToPivotClassRector
+
+Changes the pivot table name of a many to many relation to the pivot model class.
+
+This is not purely a naming change: the framework applies a pivot class given as the table as if `using()` had been called, so the relation's pivot instances gain the class's casts, accessors, `$timestamps` and `$incrementing`.
+
+- class: [`RectorLaravel\Rector\ClassMethod\RelationTableStringToPivotClassRector`](../src/Rector/ClassMethod/RelationTableStringToPivotClassRector.php)
+
+```diff
+-$this->belongsToMany(Tag::class, 'post_tag');
++$this->belongsToMany(Tag::class, \App\Models\PostTag::class);
+```
+
+<br>
+
+## RemoveDefaultAuthorizeTrueFromFormRequestRector
+
+Remove the `authorize()` method from FormRequest classes when it only returns true, as `passesAuthorization()` defaults to true when the method does not exist
+
+- class: [`RectorLaravel\Rector\Class_\RemoveDefaultAuthorizeTrueFromFormRequestRector`](../src/Rector/Class_/RemoveDefaultAuthorizeTrueFromFormRequestRector.php)
+
+```diff
+ use Illuminate\Foundation\Http\FormRequest;
+
+ class StorePostRequest extends FormRequest
+ {
+-    public function authorize(): bool
+-    {
+-        return true;
+-    }
+-
+     public function rules(): array
+     {
+         return [];
+     }
+ }
+```
+
+<br>
+
 ## RemoveDumpDataDeadCodeRector
 
 It will removes the dump data just like dd or dump functions from the code.`
@@ -2051,6 +2157,25 @@ Change if report to report_if
 
 <br>
 
+## RepositoryArrayAccessToMethodCallRector
+
+Change array access on a config or cache repository to the matching method call, as the contracts do not extend ArrayAccess
+
+- class: [`RectorLaravel\Rector\ArrayDimFetch\RepositoryArrayAccessToMethodCallRector`](../src/Rector/ArrayDimFetch/RepositoryArrayAccessToMethodCallRector.php)
+
+```diff
+-$config['app.name'];
+-$config['app.name'] = 'Foo';
+-isset($config['app.name']);
+-unset($config['app.name']);
++$config->get('app.name');
++$config->set('app.name', 'Foo');
++$config->has('app.name');
++$config->set('app.name');
+```
+
+<br>
+
 ## RequestStaticValidateToInjectRector
 
 Change static `validate()` method to `$request->validate()`
@@ -2266,6 +2391,30 @@ Use `Sleep::sleep()` and `Sleep::usleep()` instead of the `sleep()` and `usleep(
 ```diff
 -sleep(5);
 +\Illuminate\Support\Sleep::sleep(5);
+```
+
+<br>
+
+## StaticFacadeToServiceMethodCallRector
+
+Change static facade call to service method via constructor injection
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\StaticCall\StaticFacadeToServiceMethodCallRector`](../src/Rector/StaticCall/StaticFacadeToServiceMethodCallRector.php)
+
+```diff
+ class SomeController
+ {
++    public function __construct(private readonly \Illuminate\Auth\AuthManager $authManager)
++    {
++    }
+     public function store()
+     {
+-        return \Illuminate\Support\Facades\Auth::user();
++        return $this->authManager->user();
+     }
+ }
 ```
 
 <br>
