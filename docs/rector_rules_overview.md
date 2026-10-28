@@ -764,7 +764,7 @@ Convert collection `count()` comparisons against 0 or 1 to `isEmpty()` or `isNot
 
 ## CollectionWhereToContainsRector
 
-Convert `where()->isNotEmpty()` to `contains()` and `where()->isEmpty()` to `doesntContain()` on collections
+Convert `where()`/`whereStrict()` followed by `isNotEmpty()` or `isEmpty()` to `contains()` or `doesntContain()` on collections
 
 - class: [`RectorLaravel\Rector\MethodCall\CollectionWhereToContainsRector`](../src/Rector/MethodCall/CollectionWhereToContainsRector.php)
 
@@ -774,8 +774,10 @@ Convert `where()->isNotEmpty()` to `contains()` and `where()->isEmpty()` to `doe
  $collection = new Collection([['status' => 'open']]);
 -$collection->where('status', 'open')->isNotEmpty();
 -$collection->where('priority', '>', 3)->isEmpty();
+-$collection->whereStrict('status', 'open')->isNotEmpty();
 +$collection->contains('status', 'open');
 +$collection->doesntContain('priority', '>', 3);
++$collection->contains('status', '===', 'open');
 ```
 
 <br>
