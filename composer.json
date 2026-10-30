@@ -27,7 +27,6 @@
         "symplify/rule-doc-generator": "^12.2",
         "tightenco/duster": "^3.1",
         "nette/utils": "^4.0",
-        "tracy/tracy": "^2.10",
         "boundwize/structarmed": "^0.19",
         "illuminate/support": "^13.0"
     },
@@ -44,8 +43,7 @@
             "RectorLaravel\\Tests\\": "tests",
             "RectorLaravel\\Commands\\": "commands"
         },
-        "classmap": ["stubs"],
-        "files": ["tests/debug_functions.php"]
+        "classmap": ["stubs"]
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --ansi",
