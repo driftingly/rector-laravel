@@ -2305,7 +2305,7 @@ Changes model scope methods to use the scope attribute
 
 ## ServerVariableToRequestFacadeRector
 
-Change server variable to Request facade's server method
+Change server variable to Request facade's server method, except in files returning a value like config files, which are loaded before facades are available
 
 - class: [`RectorLaravel\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector`](../src/Rector/ArrayDimFetch/ServerVariableToRequestFacadeRector.php)
 
