@@ -103,6 +103,14 @@ CODE_SAMPLE, ['App\Models\User']
             return true;
         }
 
+        foreach ($class->getTraitUses() as $traitUse) {
+            foreach ($traitUse->traits as $trait) {
+                if ($this->isName($trait, self::TRAIT_NAME)) {
+                    return true;
+                }
+            }
+        }
+
         $classReflection = $this->reflectionResolver->resolveClassReflection($class);
         if (! $classReflection instanceof ClassReflection) {
             return true;

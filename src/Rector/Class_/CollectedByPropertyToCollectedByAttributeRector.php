@@ -14,9 +14,9 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ObjectType;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\TypeDeclarationDocblocks\NodeFinder\ReturnNodeFinder;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
@@ -29,7 +29,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class CollectedByPropertyToCollectedByAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    public function __construct(private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer) {}
+    public function __construct(
+        private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
+        private readonly ReturnNodeFinder $returnNodeFinder,
+    ) {}
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
@@ -126,12 +129,12 @@ CODE_SAMPLE
             return null;
         }
 
-        $onlyStmt = $classMethod->stmts[0];
-        if (! $onlyStmt instanceof Return_ || ! $onlyStmt->expr instanceof New_) {
+        $return = $this->returnNodeFinder->findOnlyReturnWithExpr($classMethod);
+        if (! $return?->expr instanceof New_) {
             return null;
         }
 
-        $newClass = $onlyStmt->expr->class;
+        $newClass = $return->expr->class;
         if (! $newClass instanceof Name) {
             return null;
         }
