@@ -11,11 +11,11 @@ use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\Exception\PoorDocumentationException;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\StaticCall\DispatchToHelperFunctionsRector\DispatchToHelperFunctionsRectorTest;
-use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see DispatchToHelperFunctionsRectorTest
