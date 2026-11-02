@@ -19,11 +19,11 @@ use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Reflection\ReflectionResolver;
+use Rector\RuleDoc\CodeSample\ConfiguredCodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\RouterRegisterNodeAnalyzer;
 use RectorLaravel\Tests\Rector\StaticCall\RouteActionCallableRector\RouteActionCallableRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**

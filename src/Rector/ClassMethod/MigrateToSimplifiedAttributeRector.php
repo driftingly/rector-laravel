@@ -25,12 +25,12 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\ClassMethod\MigrateToSimplifiedAttributeRector\MigrateToSimplifiedAttributeRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /** @see MigrateToSimplifiedAttributeRectorTest */
 final class MigrateToSimplifiedAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface

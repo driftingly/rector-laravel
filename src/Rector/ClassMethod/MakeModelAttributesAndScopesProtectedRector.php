@@ -11,11 +11,11 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\ScopeAnalyzer;
 use RectorLaravel\Tests\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector\MakeModelAttributesAndScopesProtectedRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see MakeModelAttributesAndScopesProtectedRectorTest

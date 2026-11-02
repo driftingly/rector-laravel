@@ -8,10 +8,10 @@ use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector\ThrowIfAndThrowUnlessExceptionsToUseClassStringRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see ThrowIfAndThrowUnlessExceptionsToUseClassStringRectorTest

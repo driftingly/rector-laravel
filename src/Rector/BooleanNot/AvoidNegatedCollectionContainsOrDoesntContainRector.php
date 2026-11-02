@@ -9,10 +9,10 @@ use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\BooleanNot\AvoidNegatedCollectionContainsOrDoesntContainRector\AvoidNegatedCollectionContainsOrDoesntContainRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see AvoidNegatedCollectionContainsOrDoesntContainRectorTest

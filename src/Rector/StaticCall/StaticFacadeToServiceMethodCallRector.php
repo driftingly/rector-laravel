@@ -18,11 +18,11 @@ use Rector\Exception\ShouldNotHappenException;
 use Rector\Naming\Naming\PropertyNaming;
 use Rector\NodeManipulator\ClassDependencyManipulator;
 use Rector\PostRector\ValueObject\PropertyMetadata;
+use Rector\RuleDoc\CodeSample\ConfiguredCodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\StaticCall\StaticFacadeToServiceMethodCallRector\StaticFacadeToServiceMethodCallRectorTest;
 use RectorLaravel\ValueObject\StaticCallToMethodCall;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
 /**

@@ -12,11 +12,11 @@ use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
 use Rector\PHPStan\ScopeFetcher;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\Exception\PoorDocumentationException;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\StaticCall\CarbonSetTestNowToTravelToRector\CarbonSetTestNowToTravelToRectorTest;
-use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see CarbonSetTestNowToTravelToRectorTest

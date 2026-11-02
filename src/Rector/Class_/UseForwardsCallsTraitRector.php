@@ -13,12 +13,12 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitor;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeAnalyzer\CallUserFuncAnalyzer;
 use RectorLaravel\Tests\Rector\Class_\UseForwardsCallsTraitRector\UseForwardsCallsTraitRectorTest;
 use RectorLaravel\ValueObject\ForwardingCall;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see UseForwardsCallsTraitRectorTest

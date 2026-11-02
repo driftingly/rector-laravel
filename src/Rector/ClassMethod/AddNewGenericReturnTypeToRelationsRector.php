@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\ClassMethod;
 
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddNewGenericReturnTypeToRelationsRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Adds generics in the Laravel 11.15+ format, using `$this` as the child generic, but without the Pivot generic

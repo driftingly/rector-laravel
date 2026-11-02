@@ -11,10 +11,10 @@ use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypeCombinator;
 use Rector\PHPStan\ScopeFetcher;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\MethodCall\ConvertEnumerableToArrayToAllRector\ConvertEnumerableToArrayToAllRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see ConvertEnumerableToArrayToAllRectorTest

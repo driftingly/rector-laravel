@@ -15,12 +15,12 @@ use PhpParser\Node\Stmt\Nop;
 use PHPStan\Type\ObjectType;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\NodeFactory\AppAssignFactory;
 use RectorLaravel\Tests\Rector\Assign\CallOnAppArrayAccessToStandaloneAssignRector\CallOnAppArrayAccessToStandaloneAssignRectorTest;
 use RectorLaravel\ValueObject\ServiceNameTypeAndVariableName;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see CallOnAppArrayAccessToStandaloneAssignRectorTest

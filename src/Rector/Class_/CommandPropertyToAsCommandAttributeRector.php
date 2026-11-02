@@ -40,6 +40,8 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Reflection\ReflectionResolver;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use Rector\TypeDeclarationDocblocks\NodeFinder\ReturnNodeFinder;
 use Rector\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
@@ -47,8 +49,6 @@ use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Class_\CommandPropertyToAsCommandAttributeRector\CommandPropertyToAsCommandAttributeRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see CommandPropertyToAsCommandAttributeRectorTest
