@@ -17,10 +17,10 @@ use PhpParser\Node\Expr\BinaryOp\SmallerOrEqual;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\Int_;
 use PHPStan\Type\ObjectType;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\Expr\CollectionCountComparisonToIsEmptyRector\CollectionCountComparisonToIsEmptyRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see CollectionCountComparisonToIsEmptyRectorTest

@@ -10,11 +10,11 @@ use PhpParser\Node\Param;
 use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\TypeComparator\TypeComparator;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use RectorLaravel\AbstractRector;
 use RectorLaravel\Tests\Rector\FuncCall\TypeHintTappableCallRector\TypeHintTappableCallRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see TypeHintTappableCallRectorTest

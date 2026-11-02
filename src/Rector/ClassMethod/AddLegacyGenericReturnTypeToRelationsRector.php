@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace RectorLaravel\Rector\ClassMethod;
 
+use Rector\RuleDoc\CodeSample\CodeSample;
+use Rector\RuleDoc\RuleDefinition;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use RectorLaravel\Tests\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector\AddLegacyGenericReturnTypeToRelationsRectorTest;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Adds generics in the pre-11.15 format, using the child model class as the second generic instead of `$this`.
