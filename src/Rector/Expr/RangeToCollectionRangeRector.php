@@ -110,7 +110,7 @@ CODE_SAMPLE
         }
 
         $rangeArgs = $this->resolvePositionalArgs($rangeCall);
-        if ($rangeArgs === null || count($rangeArgs) < 2) {
+        if ($rangeArgs === null || count($rangeArgs) < 2 || count($rangeArgs) > 3) {
             return null;
         }
 
