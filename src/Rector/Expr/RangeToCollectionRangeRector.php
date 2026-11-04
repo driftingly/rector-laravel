@@ -114,6 +114,12 @@ CODE_SAMPLE
             return null;
         }
 
+        foreach ($rangeArgs as $rangeArg) {
+            if (! $this->getType($rangeArg->value)->isInteger()->yes()) {
+                return null;
+            }
+        }
+
         return $rangeArgs;
     }
 
