@@ -9,9 +9,7 @@
 
 ## Available Rules
 
-See all available Laravel rules [here](/docs/rector_rules_overview.md). This list includes even the rules that are not yet released, but are available under the `dev-main` branch.
-
-You can also find the released rules on the Rector [Find Rule](https://getrector.com/find-rule?activeRectorSetGroup=laravel) page.
+See the released Laravel rules on the Rector [Find Rule](https://getrector.com/find-rule?activeRectorSetGroup=laravel) page.
 
 ## Install
 
