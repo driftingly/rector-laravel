@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
@@ -28,10 +30,14 @@ final class EloquentMagicMethodToQueryBuilderRector extends AbstractRector imple
 {
     public const string EXCLUDE_METHODS = 'exclude_methods';
 
+    public const string REMOVE_QUERY_FOR_EXCLUDED_METHODS = 'remove_query_for_excluded_methods';
+
     /**
      * @var string[]
      */
     private array $excludeMethods = [];
+
+    private bool $removeQueryForExcludedMethods = false;
 
     public function __construct(
         private readonly ReflectionProvider $reflectionProvider
@@ -59,7 +65,24 @@ CODE_SAMPLE
                     , [
                         self::EXCLUDE_METHODS => ['find'],
                     ]),
+                new ConfiguredCodeSample(
+                    <<<'CODE_SAMPLE'
+use App\Models\User;
 
+$user = User::first();
+$user = User::query()->find(1);
+CODE_SAMPLE
+                    ,
+                    <<<'CODE_SAMPLE'
+use App\Models\User;
+
+$user = User::query()->first();
+$user = User::find(1);
+CODE_SAMPLE
+                    , [
+                        self::EXCLUDE_METHODS => ['find'],
+                        self::REMOVE_QUERY_FOR_EXCLUDED_METHODS => true,
+                    ]),
             ]);
     }
 
@@ -68,14 +91,18 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [StaticCall::class];
+        return [StaticCall::class, MethodCall::class];
     }
 
     /**
-     * @param  StaticCall  $node
+     * @param  StaticCall|MethodCall  $node
      */
     public function refactor(Node $node): ?Node
     {
+        if ($node instanceof MethodCall) {
+            return $this->removeQueryForExcludedMethod($node);
+        }
+
         if (! $node->name instanceof Identifier) {
             return null;
         }
@@ -89,27 +116,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $resolvedType = $this->nodeTypeResolver->getType($node->class);
-
-        $classNames = $resolvedType->isClassString()->yes()
-            ? $resolvedType->getClassStringObjectType()->getObjectClassNames()
-            : $resolvedType->getObjectClassNames();
-
-        $classReflection = null;
-
-        foreach ($classNames as $className) {
-            if (! $this->reflectionProvider->hasClass($className)) {
-                continue;
-            }
-
-            $classReflection = $this->reflectionProvider->getClass($className);
-
-            if ($classReflection->is(Model::class)) {
-                break;
-            }
-
-            $classReflection = null;
-        }
+        $classReflection = $this->resolveModelReflection($node->class);
 
         if (! $classReflection instanceof ClassReflection) {
             return null;
@@ -127,11 +134,70 @@ CODE_SAMPLE
      */
     public function configure(array $configuration): void
     {
+        $removeQueryForExcludedMethods = $configuration[self::REMOVE_QUERY_FOR_EXCLUDED_METHODS] ?? false;
+        Assert::boolean($removeQueryForExcludedMethods);
+        unset($configuration[self::REMOVE_QUERY_FOR_EXCLUDED_METHODS]);
+
         $excludeMethods = $configuration[self::EXCLUDE_METHODS] ?? $configuration;
         Assert::isArray($excludeMethods);
         Assert::allString($excludeMethods);
 
         $this->excludeMethods = $excludeMethods;
+        $this->removeQueryForExcludedMethods = $removeQueryForExcludedMethods;
+    }
+
+    private function removeQueryForExcludedMethod(MethodCall $methodCall): ?StaticCall
+    {
+        if (! $this->removeQueryForExcludedMethods
+            || ! $methodCall->name instanceof Identifier
+            || ! in_array($methodCall->name->toString(), $this->excludeMethods, true)
+        ) {
+            return null;
+        }
+
+        $query = $methodCall->var;
+        if (! $query instanceof StaticCall
+            || ! $this->isName($query->name, 'query')
+            || $query->args !== []
+            || ! $query->class instanceof Name
+            || $query->class->isSpecialClassName()
+        ) {
+            return null;
+        }
+
+        $classReflection = $this->resolveModelReflection($query->class);
+
+        if (! $classReflection instanceof ClassReflection
+            || $classReflection->getNativeMethod('query')->getDeclaringClass()->getName() !== Model::class
+            || ! $this->isMagicMethod($classReflection, $methodCall->name->toString())
+        ) {
+            return null;
+        }
+
+        return new StaticCall($query->class, $methodCall->name, $methodCall->args);
+    }
+
+    private function resolveModelReflection(Expr|Name $class): ?ClassReflection
+    {
+        $resolvedType = $this->nodeTypeResolver->getType($class);
+
+        $classNames = $resolvedType->isClassString()->yes()
+            ? $resolvedType->getClassStringObjectType()->getObjectClassNames()
+            : $resolvedType->getObjectClassNames();
+
+        foreach ($classNames as $className) {
+            if (! $this->reflectionProvider->hasClass($className)) {
+                continue;
+            }
+
+            $classReflection = $this->reflectionProvider->getClass($className);
+
+            if ($classReflection->is(Model::class)) {
+                return $classReflection;
+            }
+        }
+
+        return null;
     }
 
     private function isMagicMethod(ClassReflection $classReflection, string $methodName): bool

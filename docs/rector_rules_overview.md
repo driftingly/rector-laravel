@@ -1115,6 +1115,17 @@ The EloquentMagicMethodToQueryBuilderRule is designed to automatically transform
 
 <br>
 
+```diff
+ use App\Models\User;
+
+-$user = User::first();
+-$user = User::query()->find(1);
++$user = User::query()->first();
++$user = User::find(1);
+```
+
+<br>
+
 ## EloquentOrderByToLatestOrOldestRector
 
 Changes `orderBy()` to `latest()` or `oldest()`
