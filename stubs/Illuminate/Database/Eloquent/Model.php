@@ -46,6 +46,14 @@ abstract class Model
     }
 
     /**
+     * @param  array<int, string>|string  $columns
+     */
+    public static function all($columns = ['*'])
+    {
+        return static::query()->get(is_array($columns) ? $columns : func_get_args());
+    }
+
+    /**
      * The framework resolves the Table attribute into the table and primary key properties when the model is
      * constructed. A table declared on the model itself takes precedence over the attribute, and the primary
      * key is only taken from the attribute while the model still uses the default one.

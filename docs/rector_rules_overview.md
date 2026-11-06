@@ -1144,6 +1144,23 @@ Changes `orderBy()` to `latest()` or `oldest()`
 
 <br>
 
+## EloquentQueryGetToAllRector
+
+Changes `Model::query()->get()` to `Model::all()`
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentQueryGetToAllRector`](../src/Rector/MethodCall/EloquentQueryGetToAllRector.php)
+
+```diff
+ use App\Models\User;
+
+-$users = User::query()->get();
+-$names = User::query()->get(['name']);
++$users = User::all();
++$names = User::all(['name']);
+```
+
+<br>
+
 ## EloquentWhereRelationTypeHintingParameterRector
 
 Add type hinting to where relation has methods e.g. `whereHas`, `orWhereHas`, `whereDoesntHave`, `orWhereDoesntHave`, `whereHasMorph`, `orWhereHasMorph`, `whereDoesntHaveMorph`, `orWhereDoesntHaveMorph`
