@@ -24,6 +24,7 @@ use RectorLaravel\Rector\FuncCall\SleepFuncToSleepStaticCallRector;
 use RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector;
 use RectorLaravel\Rector\FuncCall\UnlinkFuncCallToFileFacadeDeleteRector;
 use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
+use RectorLaravel\Rector\MethodCall\EloquentQueryToModelStaticMethodRector;
 use RectorLaravel\Rector\MethodCall\RedirectBackToBackHelperRector;
 use RectorLaravel\Rector\MethodCall\RedirectRouteToToRouteHelperRector;
 use RectorLaravel\Rector\MethodCall\ReverseConditionableMethodCallRector;
@@ -58,6 +59,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(DispatchToHelperFunctionsRector::class);
     $rectorConfig->rule(NotFilledBlankFuncCallToBlankFilledFuncCallRector::class);
     $rectorConfig->rule(EloquentOrderByToLatestOrOldestRector::class);
+    $rectorConfig->rule(EloquentQueryToModelStaticMethodRector::class);
     $rectorConfig->rule(AppToResolveRector::class);
     $rectorConfig->rule(RelationTableStringToPivotClassRector::class);
     $rectorConfig->rule(UnlinkFuncCallToFileFacadeDeleteRector::class);
