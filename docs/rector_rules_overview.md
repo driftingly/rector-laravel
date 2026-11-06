@@ -1,4 +1,4 @@
-# 137 Rules Overview
+# 138 Rules Overview
 
 ## AbortIfRector
 
@@ -1140,6 +1140,27 @@ Changes `orderBy()` to `latest()` or `oldest()`
 +$builder->oldest($allowed_variable_name);
  $builder->orderBy($unallowed_variable_name);
  $builder->orderBy('unallowed_column_name');
+```
+
+<br>
+
+## EloquentQueryToModelStaticMethodRector
+
+Changes `Model::query()->method()` to the static method on the model that wraps it
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\MethodCall\EloquentQueryToModelStaticMethodRector`](../src/Rector/MethodCall/EloquentQueryToModelStaticMethodRector.php)
+
+```diff
+ use App\Models\User;
+
+-$users = User::query()->get();
+-$users = User::query()->with('posts')->where('active', true)->get();
+-$user = User::query()->useWritePdo()->find(1);
++$users = User::all();
++$users = User::with('posts')->where('active', true)->get();
++$user = User::onWriteConnection()->find(1);
 ```
 
 <br>
