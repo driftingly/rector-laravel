@@ -1,4 +1,4 @@
-# 137 Rules Overview
+# 138 Rules Overview
 
 ## AbortIfRector
 
@@ -1678,6 +1678,21 @@ Refactor Model `$casts` property with `casts()` method
 +        ];
 +    }
  }
+```
+
+<br>
+
+## ModelFreshToRefreshRector
+
+Convert Model::fresh() to the non-nullable Model::refresh() when the receiver is a local variable created in the same scope (create(), find()...) and never read again
+
+- class: [`RectorLaravel\Rector\ClassMethod\ModelFreshToRefreshRector`](../src/Rector/ClassMethod/ModelFreshToRefreshRector.php)
+
+```diff
+ $job = Job::create(['status' => 'pending']);
+
+-$this->assertSame('done', $job->fresh()->status);
++$this->assertSame('done', $job->refresh()->status);
 ```
 
 <br>
