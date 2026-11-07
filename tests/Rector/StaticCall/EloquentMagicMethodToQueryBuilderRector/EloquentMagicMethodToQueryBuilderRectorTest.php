@@ -12,7 +12,7 @@ final class EloquentMagicMethodToQueryBuilderRectorTest extends AbstractRectorTe
 {
     public static function provideData(): Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
+        return self::yieldFilesFromDirectory(__DIR__ . '/Fixture/Default');
     }
 
     /**
