@@ -170,8 +170,14 @@ CODE_SAMPLE
             return null;
         }
 
-        // we want the value of the integer if it's known
-        $value = ($type->getConstantScalarValues()[0] ?? null);
+        $values = $type->getConstantScalarValues();
+
+        // a union of status codes (e.g. a ternary) has no single equivalent method
+        if (count($values) !== 1) {
+            return null;
+        }
+
+        $value = $values[0];
 
         if (! is_int($value)) {
             return null;
