@@ -1,4 +1,4 @@
-# 137 Rules Overview
+# 138 Rules Overview
 
 ## AbortIfRector
 
@@ -1282,6 +1282,23 @@ Call the state methods directly instead of specify the name of state.
 -$factory->states('premium', 'delinquent');
 +$factory->delinquent();
 +$factory->premium()->delinquent();
+```
+
+<br>
+
+## FactoryCountAndStateToMethodCallsRector
+
+Move the count and state arguments of `HasFactory::factory()` into `count()` and `state()` calls.
+
+- class: [`RectorLaravel\Rector\StaticCall\FactoryCountAndStateToMethodCallsRector`](../src/Rector/StaticCall/FactoryCountAndStateToMethodCallsRector.php)
+
+```diff
+-User::factory(3);
+-User::factory(['name' => 'Taylor']);
+-User::factory(3, ['name' => 'Taylor']);
++User::factory()->count(3);
++User::factory()->state(['name' => 'Taylor']);
++User::factory()->count(3)->state(['name' => 'Taylor']);
 ```
 
 <br>
