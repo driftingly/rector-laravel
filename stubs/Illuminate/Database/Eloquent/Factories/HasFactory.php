@@ -6,4 +6,7 @@ if (trait_exists('Illuminate\Database\Eloquent\Factories\HasFactory')) {
     return;
 }
 
-trait HasFactory {}
+trait HasFactory
+{
+    public static function factory($count = null, $state = []) {}
+}
