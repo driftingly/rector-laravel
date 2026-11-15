@@ -33,10 +33,6 @@ use RectorLaravel\Tests\Rector\Class_\NewFactoryMethodToUseFactoryAttributeRecto
  */
 final class NewFactoryMethodToUseFactoryAttributeRector extends AbstractRector implements ComposerPackageConstraintInterface
 {
-    private const string USE_FACTORY_ATTRIBUTE = 'Illuminate\Database\Eloquent\Attributes\UseFactory';
-
-    private const string HAS_FACTORY_TRAIT = 'Illuminate\Database\Eloquent\Factories\HasFactory';
-
     public function __construct(
         private readonly PhpAttributeAnalyzer $phpAttributeAnalyzer,
         private readonly ReflectionResolver $reflectionResolver,
@@ -124,7 +120,7 @@ CODE_SAMPLE
 
         $node->attrGroups[] = new AttributeGroup([
             new Attribute(
-                new FullyQualified(self::USE_FACTORY_ATTRIBUTE),
+                new FullyQualified('Illuminate\Database\Eloquent\Attributes\UseFactory'),
                 [new Arg($factoryClass)]
             ),
         ]);
@@ -145,14 +141,14 @@ CODE_SAMPLE
             return true;
         }
 
-        if ($this->phpAttributeAnalyzer->hasPhpAttribute($class, self::USE_FACTORY_ATTRIBUTE)) {
+        if ($this->phpAttributeAnalyzer->hasPhpAttribute($class, 'Illuminate\Database\Eloquent\Attributes\UseFactory')) {
             return true;
         }
 
         $classReflection = $this->reflectionResolver->resolveClassReflection($class);
 
         return ! $classReflection instanceof ClassReflection
-            || ! $classReflection->hasTraitUse(self::HAS_FACTORY_TRAIT);
+            || ! $classReflection->hasTraitUse('Illuminate\Database\Eloquent\Factories\HasFactory');
     }
 
     private function resolveFactoryClassFromMethod(ClassMethod $classMethod): ?ClassConstFetch
@@ -171,7 +167,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $staticCall->class instanceof Name || $this->isNames($staticCall->class, ['self', 'static', 'parent'])) {
+        if (! $staticCall->class instanceof Name) {
             return null;
         }
 
@@ -189,7 +185,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $default->class instanceof Name || $this->isNames($default->class, ['self', 'static', 'parent'])) {
+        if (! $default->class instanceof Name) {
             return null;
         }
 
@@ -201,8 +197,7 @@ CODE_SAMPLE
         foreach ($class->stmts as $key => $stmt) {
             if ($stmt === $replacedStmt) {
                 unset($class->stmts[$key]);
-
-                return;
+                break;
             }
         }
     }
