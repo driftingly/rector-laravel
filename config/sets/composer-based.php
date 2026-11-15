@@ -59,6 +59,7 @@ use RectorLaravel\Rector\Class_\LivewireComponentComputedMethodToComputedAttribu
 use RectorLaravel\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector;
 use RectorLaravel\Rector\Class_\MaxExceptionsPropertyToMaxExceptionsAttributeRector;
 use RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector;
+use RectorLaravel\Rector\Class_\NewFactoryMethodToUseFactoryAttributeRector;
 use RectorLaravel\Rector\Class_\PreserveKeysPropertyToPreserveKeysAttributeRector;
 use RectorLaravel\Rector\Class_\PropertyDeferToDeferrableProviderToRector;
 use RectorLaravel\Rector\Class_\QueuePropertyToQueueAttributeRector;
@@ -543,6 +544,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
     $rectorConfig->rule(HiddenPropertyToHiddenAttributeRector::class);
+    $rectorConfig->rule(NewFactoryMethodToUseFactoryAttributeRector::class);
     $rectorConfig->rule(RouteKeyMethodToRouteKeyAttributeRector::class);
     $rectorConfig->rule(TablePropertyToTableAttributeRector::class);
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
