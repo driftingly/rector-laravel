@@ -23,6 +23,7 @@ use RectorLaravel\Rector\Class_\HelpPropertyToHelpAttributeRector;
 use RectorLaravel\Rector\Class_\HiddenPropertyToHiddenAttributeRector;
 use RectorLaravel\Rector\Class_\JobConnectionPropertyToJobConnectionAttributeRector;
 use RectorLaravel\Rector\Class_\MaxExceptionsPropertyToMaxExceptionsAttributeRector;
+use RectorLaravel\Rector\Class_\NewFactoryMethodToUseFactoryAttributeRector;
 use RectorLaravel\Rector\Class_\PreserveKeysPropertyToPreserveKeysAttributeRector;
 use RectorLaravel\Rector\Class_\QueuePropertyToQueueAttributeRector;
 use RectorLaravel\Rector\Class_\RouteKeyMethodToRouteKeyAttributeRector;
@@ -56,6 +57,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FillablePropertyToFillableAttributeRector::class);
     $rectorConfig->rule(GuardedPropertyToGuardedAttributeRector::class);
     $rectorConfig->rule(HiddenPropertyToHiddenAttributeRector::class);
+    $rectorConfig->rule(NewFactoryMethodToUseFactoryAttributeRector::class);
     $rectorConfig->rule(RouteKeyMethodToRouteKeyAttributeRector::class);
     $rectorConfig->rule(TablePropertyToTableAttributeRector::class);
     $rectorConfig->rule(TouchesPropertyToTouchesAttributeRector::class);
