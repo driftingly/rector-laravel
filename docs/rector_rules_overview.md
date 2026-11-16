@@ -1,4 +1,4 @@
-# 137 Rules Overview
+# 138 Rules Overview
 
 ## AbortIfRector
 
@@ -34,6 +34,27 @@ Adds default value for arguments in defined methods.
 +    public function someMethod($value = false)
      {
      }
+ }
+```
+
+<br>
+
+## AddExceptionToLoggerContextInCatchBlockRector
+
+Pass the caught exception under the "exception" key of the logger context in catch blocks, as PSR-3 requires, so that error trackers such as Sentry can report its stack trace
+
+- class: [`RectorLaravel\Rector\Catch_\AddExceptionToLoggerContextInCatchBlockRector`](../src/Rector/Catch_/AddExceptionToLoggerContextInCatchBlockRector.php)
+
+```diff
+ try {
+     $this->import();
+ } catch (Exception $e) {
+-    $this->logger->error('Import failed');
+-    Log::warning('Import failed', ['file' => $file]);
+-    $this->logger->error('Import failed', ['error' => $e]);
++    $this->logger->error('Import failed', ['exception' => $e]);
++    Log::warning('Import failed', ['file' => $file, 'exception' => $e]);
++    $this->logger->error('Import failed', ['exception' => $e]);
  }
 ```
 
