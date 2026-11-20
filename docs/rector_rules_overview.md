@@ -1,4 +1,4 @@
-# 137 Rules Overview
+# 142 Rules Overview
 
 ## AbortIfRector
 
@@ -422,6 +422,29 @@ Convert array access to `Arr::get()` method call, skips isset/empty checks, assi
  empty($array['key']);
  $array['key'] = 'value';
  unset($array['key']);
+```
+
+<br>
+
+## AssertDatabaseCountToAssertDatabaseEmptyRector
+
+Replace `assertDatabaseCount($table, 0)` with `assertDatabaseEmpty($table)`
+
+- class: [`RectorLaravel\Rector\MethodCall\AssertDatabaseCountToAssertDatabaseEmptyRector`](../src/Rector/MethodCall/AssertDatabaseCountToAssertDatabaseEmptyRector.php)
+
+```diff
+ class ExampleTest extends \Illuminate\Foundation\Testing\TestCase
+ {
+     public function testFoo()
+     {
+-        $this->assertDatabaseCount('users', 0);
+-        $this->assertDatabaseCount(User::class, 0);
+-        $this->assertDatabaseCount('users', 0, 'other');
++        $this->assertDatabaseEmpty('users');
++        $this->assertDatabaseEmpty(User::class);
++        $this->assertDatabaseEmpty('users', 'other');
+     }
+ }
 ```
 
 <br>
@@ -1374,6 +1397,42 @@ Changes model fillable property to use the fillable attribute
 
 <br>
 
+## FuncCallToNewRector
+
+Change configured function calls to new Instance
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\FuncCall\FuncCallToNewRector`](../src/Rector/FuncCall/FuncCallToNewRector.php)
+
+```diff
+ class SomeClass
+ {
+     public function run()
+     {
+-        $collection = collect([]);
++        $collection = new \Illuminate\Support\Collection([]);
+     }
+ }
+```
+
+<br>
+
+## FuncCallToStaticCallRector
+
+Turn defined function call to static method call
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\FuncCall\FuncCallToStaticCallRector`](../src/Rector/FuncCall/FuncCallToStaticCallRector.php)
+
+```diff
+-array_get($array, "key");
++\Illuminate\Support\Arr::get($array, "key");
+```
+
+<br>
+
 ## GuardedPropertyToGuardedAttributeRector
 
 Changes model guarded property to use the guarded attribute
@@ -1981,6 +2040,38 @@ Removes redundant with helper calls
 ```diff
 -with(new Object())->something();
 +(new Object())->something();
+```
+
+<br>
+
+## RemoveTraitUseRector
+
+Remove specific traits from code
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\Class_\RemoveTraitUseRector`](../src/Rector/Class_/RemoveTraitUseRector.php)
+
+```diff
+ class SomeController
+ {
+-    use \Illuminate\Foundation\Auth\Access\AuthorizesResources;
+ }
+```
+
+<br>
+
+## RenameStaticMethodRector
+
+Turn static method names to new ones, optionally on a new class
+
+:wrench: **configure it!**
+
+- class: [`RectorLaravel\Rector\StaticCall\RenameStaticMethodRector`](../src/Rector/StaticCall/RenameStaticMethodRector.php)
+
+```diff
+-\Illuminate\Support\Facades\Input::get("name");
++\Illuminate\Support\Facades\Request::input("name");
 ```
 
 <br>
