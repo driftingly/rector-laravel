@@ -35,7 +35,7 @@ final class RouteActionCallableRector extends AbstractRector implements Configur
 {
     public const string ROUTES = 'routes';
 
-    public const string NAMESPACE = 'namespace';
+    public const string CONTROLLER_NAMESPACE = 'namespace';
 
     public const string NAMESPACE_ATTRIBUTE = 'laravel_route_group_namespace';
 
@@ -76,7 +76,7 @@ Route::group(['namespace' => 'Admin'], function () {
 CODE_SAMPLE
                 ,
                 [
-                    self::NAMESPACE => 'App\Http\Controllers',
+                    self::CONTROLLER_NAMESPACE => 'App\Http\Controllers',
                 ]
             ),
         ]);
@@ -219,7 +219,7 @@ CODE_SAMPLE
         /** @var array<string, string> $routes */
         $this->routes = $routes;
 
-        $namespace = $configuration[self::NAMESPACE] ?? self::DEFAULT_NAMESPACE;
+        $namespace = $configuration[self::CONTROLLER_NAMESPACE] ?? self::DEFAULT_NAMESPACE;
         Assert::string($namespace);
         $this->namespace = $namespace;
     }
