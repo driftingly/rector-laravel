@@ -46,6 +46,41 @@ abstract class Model
     }
 
     /**
+     * @param  mixed  $id
+     * @return static|null
+     */
+    public static function find($id)
+    {
+        return new static;
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     * @return static
+     */
+    public static function create(array $attributes = [])
+    {
+        return new static($attributes);
+    }
+
+    /**
+     * @param  array<int, string>|string  $with
+     * @return static|null
+     */
+    public function fresh($with = [])
+    {
+        return null;
+    }
+
+    /**
+     * @return $this
+     */
+    public function refresh()
+    {
+        return $this;
+    }
+
+    /**
      * The framework resolves the Table attribute into the table and primary key properties when the model is
      * constructed. A table declared on the model itself takes precedence over the attribute, and the primary
      * key is only taken from the attribute while the model still uses the default one.
