@@ -4,7 +4,6 @@
 .github export-ignore
 banner.png export-ignore
 commands export-ignore
-docs export-ignore
 duster.json export-ignore
 phpstan.neon export-ignore
 phpunit.xml export-ignore
