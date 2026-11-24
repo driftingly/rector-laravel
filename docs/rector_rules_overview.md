@@ -1,4 +1,4 @@
-# 137 Rules Overview
+# 138 Rules Overview
 
 ## AbortIfRector
 
@@ -1785,6 +1785,23 @@ Changes the queue property to use the Queue attribute
  {
 -    public $queue = 'podcasts';
  }
+```
+
+<br>
+
+## RangeToCollectionRangeRector
+
+Change `new Collection(range())` and `collect(range())` to `Collection::range()`
+
+- class: [`RectorLaravel\Rector\Expr\RangeToCollectionRangeRector`](../src/Rector/Expr/RangeToCollectionRangeRector.php)
+
+```diff
+ use Illuminate\Support\Collection;
+
+-new Collection(range(1, 10));
+-collect(range(1, 10));
++Collection::range(1, 10);
++\Illuminate\Support\Collection::range(1, 10);
 ```
 
 <br>

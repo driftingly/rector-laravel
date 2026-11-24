@@ -15,4 +15,7 @@ if (class_exists('Illuminate\Support\Collection')) {
  *
  * @implements Enumerable<TKey, TValue>
  */
-class Collection implements Enumerable {}
+class Collection implements Enumerable
+{
+    public static function range($from, $to, $step = 1) {}
+}
