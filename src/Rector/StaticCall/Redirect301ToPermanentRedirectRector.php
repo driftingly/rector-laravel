@@ -86,6 +86,10 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
+        if (! $this->isName($node->name, 'redirect')) {
+            return null;
+        }
+
         if (! $this->nodeTypeResolver->isObjectTypes($node->class, $this->routerObjectTypes)) {
             return null;
         }
