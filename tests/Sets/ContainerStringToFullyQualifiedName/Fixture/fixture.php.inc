@@ -14,7 +14,6 @@ app('auth');
 app('cookie');
 app('queue');
 app('queue.connection');
-app('queue.worker');
 app('cache');
 app('cache.store');
 app('filesystem');
@@ -22,6 +21,7 @@ app('encrypter');
 app('files');
 app('hash');
 app('mailer');
+app('blade.compiler');
 
 ?>
 -----
@@ -41,7 +41,6 @@ app(\Illuminate\Contracts\Auth\Factory::class);
 app(\Illuminate\Cookie\CookieJar::class);
 app(\Illuminate\Queue\QueueManager::class);
 app(\Illuminate\Contracts\Queue\Queue::class);
-app(\Illuminate\Queue\Worker::class);
 app(\Illuminate\Contracts\Cache\Factory::class);
 app(\Illuminate\Cache\Repository::class);
 app(\Illuminate\Contracts\Filesystem\Factory::class);
@@ -49,5 +48,6 @@ app(\Illuminate\Encryption\Encrypter::class);
 app(\Illuminate\Filesystem\Filesystem::class);
 app(\Illuminate\Hashing\HashManager::class);
 app(\Illuminate\Mail\Mailer::class);
+app(\Illuminate\View\Compilers\BladeCompiler::class);
 
 ?>
