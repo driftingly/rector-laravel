@@ -9,7 +9,6 @@ use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
 use Rector\RuleDoc\CodeSample\CodeSample;
@@ -104,7 +103,7 @@ CODE_SAMPLE
 
         $param = $closure->getParams()[0];
 
-        if ($param->type instanceof Name) {
+        if ($param->type !== null) {
             return null;
         }
 
